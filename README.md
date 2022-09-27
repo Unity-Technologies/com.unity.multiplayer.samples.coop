@@ -103,30 +103,32 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 ### Services (Lobby, Relay, etc)
 |Services||
 | :-- | --: |
-| Lobby calls - LobbyServiceFacade | [ TODO ](TODO) |
-| Relay setup | [ TODO ](TODO) |
-| Auth | [ TODO ](TODO) |
+| Lobby and relay - host creation | [ Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs ](Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs) - CreateLobbyRequest() |
+| Lobby and relay - client join | [ Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs ](Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs) - JoinLobbyRequest() |
+
+| Relay Join | [ Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs) - StartClientLobby() |
+| Relay Create | [ Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs) - StartHostLobby() |
+| Auth | [ Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs ](Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs) - EnsurePlayerIsAuthorized() |
 
 ### Utils
 | Boss Room specific utils ||
 | :-- | --: |
-| Network Object Pooling | [ TODO ](TODO) |
-| NetworkGuid | [ TODO ](TODO) |
+| Network Object Pooling | [ Assets/Scripts/Infrastructure/NetworkObjectPool.cs ](Assets/Scripts/Infrastructure/NetworkObjectPool.cs) |
+| NetworkGuid | [ Assets/Scripts/Infrastructure/NetworkGuid.cs ](Assets/Scripts/Infrastructure/NetworkGuid.cs) |
 
 | Reusable utils ||
 | :-- | --: |
-| Netcode hooks | [ TODO ](TODO) |
-| Spawner | [ TODO ](TODO) |
-| Session manager | [ TODO ](TODO) |
-| Relay utils | [ TODO ](TODO) |
-| Client authority | [ TODO ](TODO) |
-| Scene utils | [ TODO ](TODO) |
+| Netcode hooks | [ Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetcodeHooks.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetcodeHooks.cs) |
+| Spawner for in-scene objects | [ Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs) |
+| Session manager for reconnection | [ Packages/com.unity.multiplayer.samples.coop/Utilities/Net/SessionManager.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/SessionManager.cs) |
+| Relay utils | [ Packages/com.unity.multiplayer.samples.coop/Utilities/Net/UnityRelayUtilities.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/UnityRelayUtilities.cs) |
+| Client authority | [ Packages/com.unity.multiplayer.samples.coop/Utilities/Net/ClientAuthority/ClientNetworkTransform.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/ClientAuthority/ClientNetworkTransform.cs) |
+| Scene utils with synced loading screens | [ Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/ ](Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/) |
 
 | Dev tools ||
 | :-- | --: |
-| RNSM | [ TODO ](TODO) |
-| ParrelSync |[ TODO ](TODO) |
-| Artificial network conditions |[ TODO ](TODO) |
+| RNSM custom config | [ Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset) |
+| ParrelSync |[ Packages/manifest.json ](Packages/manifest.json) |
 
 ## Getting the project
 ### Direct download
