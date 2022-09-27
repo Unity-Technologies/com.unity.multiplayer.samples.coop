@@ -48,6 +48,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Scene Bootstrapper: future proofing bootstrap scene so we don't rely on Startup's path. MTT-3707. (#735)
 * Better instructions for host listen IP. (#738) Most useful cases are usually 127.0.0.1 and 0.0.0.0.
 * Tank's shield charge animation not getting stuck due to multiple invocations. (#742)
+* Lobby join button not interactable if no join code is provided. (#744) This prevents an ArgumentNullException happening when we try to join a Lobby with an empty join code.
 
 ## [v1.3.0-pre] - 2022-06-23
 
