@@ -14,10 +14,16 @@ namespace Unity.BossRoom.Gameplay.UI
     /// </summary>
     public class LobbyJoiningUI : MonoBehaviour
     {
-        [SerializeField] LobbyListItemUI m_LobbyListItemPrototype;
-        [SerializeField] InputField m_JoinCodeField;
-        [SerializeField] CanvasGroup m_CanvasGroup;
-        [SerializeField] Graphic m_EmptyLobbyListLabel;
+        [SerializeField]
+        LobbyListItemUI m_LobbyListItemPrototype;
+        [SerializeField]
+        InputField m_JoinCodeField;
+        [SerializeField]
+        CanvasGroup m_CanvasGroup;
+        [SerializeField]
+        Graphic m_EmptyLobbyListLabel;
+        [SerializeField]
+        Button m_JoinLobbyButton;
 
         IObjectResolver m_Container;
         LobbyUIMediator m_LobbyUIMediator;
@@ -59,9 +65,10 @@ namespace Unity.BossRoom.Gameplay.UI
         /// <summary>
         /// Added to the InputField component's OnValueChanged callback for the join code text.
         /// </summary>
-        public void SanitizeJoinCodeInputText()
+        public void OnJoinCodeInputTextChanged()
         {
             m_JoinCodeField.text = SanitizeJoinCode(m_JoinCodeField.text);
+            m_JoinLobbyButton.interactable = m_JoinCodeField.text.Length > 0;
         }
 
         string SanitizeJoinCode(string dirtyString)
