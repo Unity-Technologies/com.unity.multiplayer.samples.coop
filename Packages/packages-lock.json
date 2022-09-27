@@ -119,7 +119,7 @@
       }
     },
     "com.unity.multiplayer.tools": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.tools.git#chore/MTT-4389_ngo+netsim",
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.tools.git#develop",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -129,17 +129,17 @@
         "com.unity.collections": "1.1.0",
         "com.unity.modules.uielements": "1.0.0"
       },
-      "hash": "e15a42e7601a9ee44df20861d1c4d00ff58df5b3"
+      "hash": "6172b3eda68d0d29222b75810402defbf5655f94"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#test/netsim-bossroom",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.nuget.mono-cecil": "1.10.1",
         "com.unity.transport": "1.2.0"
       },
-      "hash": "c375eafe52819dd24fc282603c1b2772a2ca200a"
+      "hash": "9185677b6f0c862e368bffe9c6028836b4c05ff9"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.4",
