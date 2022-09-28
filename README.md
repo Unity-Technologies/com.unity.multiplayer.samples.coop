@@ -9,7 +9,7 @@
 <!-- TOC generated from https://luciopaiva.com/markdown-toc/ -->
 
 - [Boss Room](#boss-room)
-- [Index of resources in this project](#index-of-ressources-in-this-project)
+- [Index of resources in this project](#index-of-resources-in-this-project)
   - [Gameplay](#gameplay)
   - [Game Flow](#game-flow)
   - [Connectivity](#connectivity)
@@ -49,7 +49,7 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 
 ![](Documentation/Images/Players.png)
 
-## Index of ressources in this project
+## Index of resources in this project
 
 ### Gameplay
 * Action anticipation - AnticipateActionClient() in [Assets/Scripts/Gameplay/Action/Action.cs](Assets/Scripts/Gameplay/Action/Action.cs)
