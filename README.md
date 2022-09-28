@@ -9,7 +9,7 @@
 <!-- TOC generated from https://luciopaiva.com/markdown-toc/ -->
 
 - [Boss Room](#boss-room)
-- [Index of ressources in this project](#index-of-ressources-in-this-project)
+- [Index of resources in this project](#index-of-ressources-in-this-project)
   - [Gameplay](#gameplay)
   - [Game Flow](#game-flow)
   - [Connectivity](#connectivity)
