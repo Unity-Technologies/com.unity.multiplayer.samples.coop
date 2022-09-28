@@ -4,12 +4,9 @@
 | Support is available on [Discord](https://discord.gg/mNgM2XRDpb) and [forums](https://forum.unity.com/forums/multiplayer.26/) to help you work through issues you may encounter when using Boss Room. |
 | -- |
 
-[Test with broken link](test-with-broken-link)
-
 ## Table of content
 
 <!-- TOC generated from https://luciopaiva.com/markdown-toc/ -->
-
 
 
 - [Boss Room](#boss-room)
@@ -176,9 +173,7 @@ One of the eight clients acts as the host/server. That client will use a composi
 
 The game is server-authoritative, with latency-masking animations. Position updates are done through NetworkedVars that sync position, rotation and movement speed. NetworkedVars and Remote Procedure Calls (RPC) endpoints are isolated in a class that is shared between the server and client specialized logic components.
 
-Code is organized in domain based assemblies. See our [Architecture.md](Architecture.md) file for more details.
-
-For an overview of the project's architecture please check out our [ARCHITECTURE.md](ARCHITECTURE.md).
+Code is organized in domain based assemblies. See our [ARCHITECTURE.md](ARCHITECTURE.md) file for more details.
 
 ---------------
 
