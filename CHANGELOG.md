@@ -49,6 +49,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Better instructions for host listen IP. (#738) Most useful cases are usually 127.0.0.1 and 0.0.0.0.
 * Tank's shield charge animation not getting stuck due to multiple invocations. (#742)
 * Lobby join button not interactable if no join code is provided. (#744) This prevents an ArgumentNullException happening when we try to join a Lobby with an empty join code.
+* Lobby UI unblocking before it should. (#748) This makes sure that we are not unblocking the UI while we are in the middle of the connection process, to prevent users from starting a second one at the same time. Now the UI stays blocked until the connection either succeeds of fails.
 
 ## [v1.3.0-pre] - 2022-06-23
 
