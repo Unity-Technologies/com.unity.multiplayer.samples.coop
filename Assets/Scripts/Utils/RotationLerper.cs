@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Utils
 {
     /// <summary>
     /// Utility struct to linearly interpolate between two Quaternion values. Allows for flexible linear interpolations

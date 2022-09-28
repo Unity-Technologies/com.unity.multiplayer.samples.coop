@@ -64,13 +64,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
+    TypeName: Unity.BossRoom.ApplicationLifecycle.ApplicationController
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 0}
   - {fileID: 0}
   m_NetcodeHooks: {fileID: 6576822806953781696}
-  synchronizedStateData: {fileID: 6889826313803109754}
+  networkPostGame: {fileID: 6889826313803109754}
 --- !u!114 &6576822806953781696
 MonoBehaviour:
   m_ObjectHideFlags: 0

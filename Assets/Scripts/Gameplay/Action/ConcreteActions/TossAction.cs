@@ -1,12 +1,11 @@
 using System;
-using UnityEngine;
-using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Action responsible for creating a physics-based thrown object.
@@ -16,7 +15,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     {
         bool m_Launched;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             // snap to face the direction we're firing
 
@@ -36,12 +35,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     }
 
                     // snap to face our target! This is the direction we'll attack in
-                    parent.physicsWrapper.Transform.LookAt(lookAtPosition);
+                    serverCharacter.physicsWrapper.Transform.LookAt(lookAtPosition);
                 }
             }
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
-            parent.NetState.RecvDoActionClientRPC(Data);
+            serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -51,11 +50,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             m_Launched = false;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (TimeRunning >= Config.ExecTimeSeconds && !m_Launched)
             {
-                Throw(parent);
+                Throw(clientCharacter);
             }
 
             return true;

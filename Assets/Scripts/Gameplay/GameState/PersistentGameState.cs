@@ -1,8 +1,7 @@
 using System;
-using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameState
 {
     public enum WinState
     {

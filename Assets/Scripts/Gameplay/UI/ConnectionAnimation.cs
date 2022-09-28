@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// A Temporary animation script that rotates the image on the game

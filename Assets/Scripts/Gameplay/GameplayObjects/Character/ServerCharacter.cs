@@ -1,30 +1,111 @@
+using System;
 using System.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.Actions;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character.AI;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Action = Unity.BossRoom.Gameplay.Actions.Action;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
-    public class ServerCharacter : NetworkBehaviour
+    /// <summary>
+    /// Contains all NetworkVariables, RPCs and server-side logic of a character.
+    /// This class was separated in two to keep client and server context self contained. This way you don't have to continuously ask yourself if code is running client or server side.
+    /// </summary>
+    [RequireComponent(typeof(NetworkHealthState),
+        typeof(NetworkLifeState),
+        typeof(NetworkAvatarGuidState))]
+    public class ServerCharacter : NetworkBehaviour, ITargetable
     {
+        [FormerlySerializedAs("m_ClientVisualization")]
         [SerializeField]
-        NetworkCharacterState m_NetworkCharacterState;
+        ClientCharacter m_ClientCharacter;
 
-        public NetworkCharacterState NetState => m_NetworkCharacterState;
+        public ClientCharacter clientCharacter => m_ClientCharacter;
+
+        [SerializeField]
+        CharacterClass m_CharacterClass;
+
+        public CharacterClass CharacterClass
+        {
+            get
+            {
+                if (m_CharacterClass == null)
+                {
+                    m_CharacterClass = m_State.RegisteredAvatar.CharacterClass;
+                }
+
+                return m_CharacterClass;
+            }
+
+            set => m_CharacterClass = value;
+        }
+
+        /// Indicates how the character's movement should be depicted.
+        public NetworkVariable<MovementStatus> MovementStatus { get; } = new NetworkVariable<MovementStatus>();
+
+        public NetworkVariable<ulong> HeldNetworkObject { get; } = new NetworkVariable<ulong>();
+
+        /// <summary>
+        /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
+        /// </summary>
+        public NetworkVariable<bool> IsStealthy { get; } = new NetworkVariable<bool>();
+
+        public NetworkHealthState NetHealthState { get; private set; }
+
+        /// <summary>
+        /// The active target of this character.
+        /// </summary>
+        public NetworkVariable<ulong> TargetId { get; } = new NetworkVariable<ulong>();
+
+        /// <summary>
+        /// Current HP. This value is populated at startup time from CharacterClass data.
+        /// </summary>
+        public int HitPoints
+        {
+            get => NetHealthState.HitPoints.Value;
+            private set => NetHealthState.HitPoints.Value = value;
+        }
+
+        public NetworkLifeState NetLifeState { get; private set; }
+
+        /// <summary>
+        /// Current LifeState. Only Players should enter the FAINTED state.
+        /// </summary>
+        public LifeState LifeState
+        {
+            get => NetLifeState.LifeState.Value;
+            private set => NetLifeState.LifeState.Value = value;
+        }
 
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
-        public bool IsNpc
-        {
-            get { return NetState.IsNpc; }
-        }
+        public bool IsNpc => CharacterClass.IsNpc;
+
+        public bool IsValidTarget => LifeState != LifeState.Dead;
+
+        /// <summary>
+        /// Returns true if the Character is currently in a state where it can play actions, false otherwise.
+        /// </summary>
+        public bool CanPerformActions => LifeState == LifeState.Alive;
+
+        /// <summary>
+        /// Character Type. This value is populated during character selection.
+        /// </summary>
+        public CharacterTypeEnum CharacterType => CharacterClass.CharacterType;
+
+        private ServerActionPlayer m_ServerActionPlayer;
 
         /// <summary>
         /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
         /// calling 'PlayAction' directly on this, as the ServerCharacter has certain game-level checks it performs in its own wrapper.
         /// </summary>
-        public ServerActionPlayer ActionPlayer { get { return m_ServerActionPlayer; } }
+        public ServerActionPlayer ActionPlayer => m_ServerActionPlayer;
 
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
@@ -38,8 +119,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
         private Action m_StartingAction;
 
-        private ServerActionPlayer m_ServerActionPlayer;
-        private AIBrain m_AIBrain;
 
         [SerializeField]
         DamageReceiver m_DamageReceiver;
@@ -59,9 +138,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public ServerAnimationHandler serverAnimationHandler => m_ServerAnimationHandler;
 
-        private void Awake()
+        private AIBrain m_AIBrain;
+        NetworkAvatarGuidState m_State;
+
+        void Awake()
         {
             m_ServerActionPlayer = new ServerActionPlayer(this);
+            NetLifeState = GetComponent<NetworkLifeState>();
+            NetHealthState = GetComponent<NetworkHealthState>();
+            m_State = GetComponent<NetworkAvatarGuidState>();
         }
 
         public override void OnNetworkSpawn()
@@ -69,14 +154,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (!IsServer) { enabled = false; }
             else
             {
-                NetState.DoActionEventServer += OnActionPlayRequest;
-                NetState.ReceivedClientInput += OnClientMoveRequest;
-                NetState.OnStopChargingUpServer += OnStoppedChargingUp;
-                NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
-                m_DamageReceiver.damageReceived += ReceiveHP;
-                m_DamageReceiver.collisionEntered += CollisionEntered;
+                NetLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+                m_DamageReceiver.DamageReceived += ReceiveHP;
+                m_DamageReceiver.CollisionEntered += CollisionEntered;
 
-                if (NetState.IsNpc)
+                if (IsNpc)
                 {
                     m_AIBrain = new AIBrain(this, m_ServerActionPlayer);
                 }
@@ -92,59 +174,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkDespawn()
         {
-            if (NetState)
-            {
-                NetState.DoActionEventServer -= OnActionPlayRequest;
-                NetState.ReceivedClientInput -= OnClientMoveRequest;
-                NetState.OnStopChargingUpServer -= OnStoppedChargingUp;
-                NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
-            }
+            NetLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
 
             if (m_DamageReceiver)
             {
-                m_DamageReceiver.damageReceived -= ReceiveHP;
-                m_DamageReceiver.collisionEntered -= CollisionEntered;
+                m_DamageReceiver.DamageReceived -= ReceiveHP;
+                m_DamageReceiver.CollisionEntered -= CollisionEntered;
             }
         }
 
-        void InitializeHitPoints()
-        {
-            NetState.HitPoints = NetState.CharacterClass.BaseHP.Value;
-
-            if (!IsNpc)
-            {
-                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
-                if (sessionPlayerData is { HasCharacterSpawned: true })
-                {
-                    NetState.HitPoints = sessionPlayerData.Value.CurrentHitPoints;
-                    if (NetState.HitPoints <= 0)
-                    {
-                        NetState.LifeState = LifeState.Fainted;
-                    }
-                }
-            }
-        }
 
         /// <summary>
-        /// Play a sequence of actions!
+        /// RPC to send inputs for this character from a client to a server.
         /// </summary>
-        public void PlayAction(ref ActionRequestData action)
+        /// <param name="movementTarget">The position which this character should move towards.</param>
+        [ServerRpc]
+        public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
-            //the character needs to be alive in order to be able to play actions
-            if (NetState.LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
-            {
-                if (action.CancelMovement)
-                {
-                    m_Movement.CancelMove();
-                }
-
-                m_ServerActionPlayer.PlayAction(ref action);
-            }
-        }
-
-        private void OnClientMoveRequest(Vector3 targetPosition)
-        {
-            if (NetState.LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            if (LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
                 // if we're currently playing an interruptible action, interrupt it!
                 if (m_ServerActionPlayer.GetActiveActionInfo(out ActionRequestData data))
@@ -156,28 +203,82 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 }
 
                 m_ServerActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true); //clear target on move.
-                m_Movement.SetMovementTarget(targetPosition);
+                m_Movement.SetMovementTarget(movementTarget);
             }
         }
 
-        private void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
+        // ACTION SYSTEM
+
+        /// <summary>
+        /// Client->Server RPC that sends a request to play an action.
+        /// </summary>
+        /// <param name="data">Data about which action to play and its associated details. </param>
+        [ServerRpc]
+        public void RecvDoActionServerRPC(ActionRequestData data)
+        {
+            ActionRequestData data1 = data;
+            if (!GameDataSource.Instance.GetActionPrototypeByID(data1.ActionID).Config.IsFriendly)
+            {
+                // notify running actions that we're using a new attack. (e.g. so Stealth can cancel itself)
+                ActionPlayer.OnGameplayActivity(Action.GameplayActivity.UsingAttackAction);
+            }
+
+            PlayAction(ref data1);
+        }
+
+        // UTILITY AND SPECIAL-PURPOSE RPCs
+
+        /// <summary>
+        /// Called on server when the character's client decides they have stopped "charging up" an attack.
+        /// </summary>
+        [ServerRpc]
+        public void RecvStopChargingUpServerRpc()
+        {
+            m_ServerActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
+        }
+
+        void InitializeHitPoints()
+        {
+            HitPoints = CharacterClass.BaseHP.Value;
+
+            if (!IsNpc)
+            {
+                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                if (sessionPlayerData is { HasCharacterSpawned: true })
+                {
+                    HitPoints = sessionPlayerData.Value.CurrentHitPoints;
+                    if (HitPoints <= 0)
+                    {
+                        LifeState = LifeState.Fainted;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Play a sequence of actions!
+        /// </summary>
+        public void PlayAction(ref ActionRequestData action)
+        {
+            //the character needs to be alive in order to be able to play actions
+            if (LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            {
+                if (action.CancelMovement)
+                {
+                    m_Movement.CancelMove();
+                }
+
+                m_ServerActionPlayer.PlayAction(ref action);
+            }
+        }
+
+        void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
         {
             if (lifeState != LifeState.Alive)
             {
                 m_ServerActionPlayer.ClearActions(true);
                 m_Movement.CancelMove();
             }
-        }
-
-        private void OnActionPlayRequest(ActionRequestData data)
-        {
-            if (!GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config.IsFriendly)
-            {
-                // notify running actions that we're using a new attack. (e.g. so Stealth can cancel itself)
-                ActionPlayer.OnGameplayActivity(Action.GameplayActivity.UsingAttackAction);
-            }
-
-            PlayAction(ref data);
         }
 
         IEnumerator KilledDestroyProcess()
@@ -208,7 +309,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 // Don't apply damage if god mode is on
-                if (NetState.NetworkLifeState.IsGodMode.Value)
+                if (NetLifeState.IsGodMode.Value)
                 {
                     return;
                 }
@@ -221,7 +322,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 serverAnimationHandler.NetworkAnimator.SetTrigger("HitReact1");
             }
 
-            NetState.HitPoints = Mathf.Clamp(NetState.HitPoints + HP, 0, NetState.CharacterClass.BaseHP.Value);
+            HitPoints = Mathf.Clamp(HitPoints + HP, 0, CharacterClass.BaseHP.Value);
 
             if (m_AIBrain != null)
             {
@@ -231,20 +332,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
-            if (NetState.HitPoints <= 0)
+            if (HitPoints <= 0)
             {
                 if (IsNpc)
                 {
-                    if (m_KilledDestroyDelaySeconds >= 0.0f && NetState.LifeState != LifeState.Dead)
+                    if (m_KilledDestroyDelaySeconds >= 0.0f && LifeState != LifeState.Dead)
                     {
                         StartCoroutine(KilledDestroyProcess());
                     }
 
-                    NetState.LifeState = LifeState.Dead;
+                    LifeState = LifeState.Dead;
                 }
                 else
                 {
-                    NetState.LifeState = LifeState.Fainted;
+                    LifeState = LifeState.Fainted;
                 }
 
                 m_ServerActionPlayer.ClearActions(false);
@@ -269,23 +370,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <param name="HP">The HP to set to a newly revived character.</param>
         public void Revive(ServerCharacter inflicter, int HP)
         {
-            if (NetState.LifeState == LifeState.Fainted)
+            if (LifeState == LifeState.Fainted)
             {
-                NetState.HitPoints = Mathf.Clamp(HP, 0, NetState.CharacterClass.BaseHP.Value);
-                NetState.NetworkLifeState.LifeState.Value = LifeState.Alive;
+                HitPoints = Mathf.Clamp(HP, 0, CharacterClass.BaseHP.Value);
+                NetLifeState.LifeState.Value = LifeState.Alive;
             }
         }
 
         void Update()
         {
             m_ServerActionPlayer.OnUpdate();
-            if (m_AIBrain != null && NetState.LifeState == LifeState.Alive && m_BrainEnabled)
+            if (m_AIBrain != null && LifeState == LifeState.Alive && m_BrainEnabled)
             {
                 m_AIBrain.Update();
             }
         }
 
-        private void CollisionEntered(Collision collision)
+        void CollisionEntered(Collision collision)
         {
             if (m_ServerActionPlayer != null)
             {
@@ -293,14 +394,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        private void OnStoppedChargingUp()
-        {
-            m_ServerActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
-        }
-
         /// <summary>
         /// This character's AIBrain. Will be null if this is not an NPC.
         /// </summary>
         public AIBrain AIBrain { get { return m_AIBrain; } }
+
     }
 }

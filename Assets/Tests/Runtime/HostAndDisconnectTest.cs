@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
+using Unity.BossRoom.Gameplay.GameState;
+using Unity.BossRoom.Gameplay.UI;
 using NUnit.Framework;
-using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+namespace Unity.BossRoom.Tests.Runtime
 {
     public class HostAndDisconnectTest
     {

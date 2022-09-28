@@ -1,7 +1,8 @@
 using System;
+using Unity.BossRoom.Infrastructure;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.Configuration
 {
     /// <summary>
     /// This ScriptableObject defines a Player Character for BossRoom. It defines its CharacterClass field for
@@ -9,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     [CreateAssetMenu]
     [Serializable]
-    public class Avatar : GuidScriptableObject
+    public sealed class Avatar : GuidScriptableObject
     {
         public CharacterClass CharacterClass;
 

@@ -1,11 +1,9 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// The "Target" Action is not a skill, but rather the result of a user left-clicking an enemy. This
@@ -16,20 +14,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     [CreateAssetMenu(menuName = "BossRoom/Actions/Target Action")]
     public partial class TargetAction : Action
     {
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             //we must always clear the existing target, even if we don't run. This is how targets get cleared--running a TargetAction
             //with no target selected.
-            parent.NetState.TargetId.Value = 0;
+            serverCharacter.TargetId.Value = 0;
 
             //there can only be one TargetAction at a time!
-            parent.ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
+            serverCharacter.ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
 
             if (Data.TargetIds == null || Data.TargetIds.Length == 0) { return false; }
 
-            parent.NetState.TargetId.Value = TargetId;
+            serverCharacter.TargetId.Value = TargetId;
 
-            FaceTarget(parent, TargetId);
+            FaceTarget(serverCharacter, TargetId);
 
             return true;
         }
@@ -42,24 +40,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             m_NewTarget = 0;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             bool isValid = ActionUtils.IsValidTarget(TargetId);
 
-            if (parent.ActionPlayer.RunningActionCount == 1 && !parent.Movement.IsMoving() && isValid)
+            if (clientCharacter.ActionPlayer.RunningActionCount == 1 && !clientCharacter.Movement.IsMoving() && isValid)
             {
                 //we're the only action running, and we're not moving, so let's swivel to face our target, just to be cool!
-                FaceTarget(parent, TargetId);
+                FaceTarget(clientCharacter, TargetId);
             }
 
             return isValid;
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
-            if (parent.NetState.TargetId.Value == TargetId)
+            if (serverCharacter.TargetId.Value == TargetId)
             {
-                parent.NetState.TargetId.Value = 0;
+                serverCharacter.TargetId.Value = 0;
             }
         }
 

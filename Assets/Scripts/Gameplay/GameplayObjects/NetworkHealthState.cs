@@ -2,7 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// MonoBehaviour containing only one NetworkVariableInt which represents this object's health.
@@ -13,10 +13,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public NetworkVariable<int> HitPoints = new NetworkVariable<int>();
 
         // public subscribable event to be invoked when HP has been fully depleted
-        public event Action hitPointsDepleted;
+        public event Action HitPointsDepleted;
 
         // public subscribable event to be invoked when HP has been replenished
-        public event Action hitPointsReplenished;
+        public event Action HitPointsReplenished;
 
         void OnEnable()
         {
@@ -33,12 +33,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (previousValue > 0 && newValue <= 0)
             {
                 // newly reached 0 HP
-                hitPointsDepleted?.Invoke();
+                HitPointsDepleted?.Invoke();
             }
             else if (previousValue <= 0 && newValue > 0)
             {
                 // newly revived
-                hitPointsReplenished?.Invoke();
+                HitPointsReplenished?.Invoke();
             }
         }
     }

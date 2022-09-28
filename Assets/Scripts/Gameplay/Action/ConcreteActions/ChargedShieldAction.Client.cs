@@ -1,7 +1,9 @@
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using System;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.VisualEffects;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public partial class ChargedShieldAction
     {
@@ -15,12 +17,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         SpecialFXGraphic m_ShieldGraphics;
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             return IsChargingUp() || (Time.time - m_StoppedChargingUpTime) < Config.EffectDurationSeconds;
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter clientCharacter)
         {
             if (IsChargingUp())
             {
@@ -37,7 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void OnStoppedChargingUpClient(ClientCharacterVisualization parent, float finalChargeUpPercentage)
+        public override void OnStoppedChargingUpClient(ClientCharacter clientCharacter, float finalChargeUpPercentage)
         {
             if (!IsChargingUp()) { return; }
 
@@ -51,18 +53,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // if fully charged, we show a special graphic
             if (Mathf.Approximately(finalChargeUpPercentage, 1))
             {
-                m_ShieldGraphics = InstantiateSpecialFXGraphic(Config.Spawns[1], parent.transform, true);
+                m_ShieldGraphics = InstantiateSpecialFXGraphic(Config.Spawns[1], clientCharacter.transform, true);
             }
         }
 
-        public override void AnticipateActionClient(ClientCharacterVisualization parent)
+        public override void AnticipateActionClient(ClientCharacter clientCharacter)
         {
             // because this action can be visually started and stopped as often and as quickly as the player wants, it's possible
             // for several copies of this action to be playing at once. This can lead to situations where several
             // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
             // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
-            parent.OurAnimator.ResetTrigger(Config.Anim2);
-            base.AnticipateActionClient(parent);
+            clientCharacter.OurAnimator.ResetTrigger(Config.Anim2);
+            base.AnticipateActionClient(clientCharacter);
         }
     }
 }

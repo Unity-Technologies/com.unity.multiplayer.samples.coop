@@ -1,10 +1,10 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Base class representing a connection state.

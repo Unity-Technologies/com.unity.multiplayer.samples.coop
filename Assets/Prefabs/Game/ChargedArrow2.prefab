@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3502399447191095046}
   - component: {fileID: -3511301982335683285}
   - component: {fileID: 144087972406990258}
-  - component: {fileID: 1392226273213099329}
   m_Layer: 7
   m_Name: ChargedArrow2
   m_TagString: Untagged
@@ -104,20 +103,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a091211e6ee54d14f965bccf3b7db5bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetState: {fileID: 1392226273213099329}
   m_OurCollider: {fileID: 8403335067046434128}
---- !u!114 &1392226273213099329
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2842198241268549130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f1775357f78b684294a25ef49f1a97d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_OnHitParticlePrefab: {fileID: -6745866273066112404, guid: ae64395b058ab5e4db24271fb6fadb93, type: 3}
+  m_TrailRenderer: {fileID: 4685086537884760797}
+  m_Visualization: {fileID: 6052162863261286440}
 --- !u!1001 &9068228851964018290
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -173,8 +162,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChargedArrow2Graphics
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 153916515354694390, guid: 113758aacd326b5478e4d68c739b6cb8, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 113758aacd326b5478e4d68c739b6cb8, type: 3}
+--- !u!96 &4685086537884760797 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 4385405951379145903, guid: 113758aacd326b5478e4d68c739b6cb8, type: 3}
+  m_PrefabInstance: {fileID: 9068228851964018290}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6052162863261286440 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3325143161705299546, guid: 113758aacd326b5478e4d68c739b6cb8, type: 3}
