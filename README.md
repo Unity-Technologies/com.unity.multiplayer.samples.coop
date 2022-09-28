@@ -8,6 +8,8 @@
 
 <!-- TOC generated from https://luciopaiva.com/markdown-toc/ -->
 
+[Test with broken link](test with broken link)
+
 - [Boss Room](#boss-room)
 - [Index of resources in this project](#index-of-resources-in-this-project)
   - [Gameplay](#gameplay)
