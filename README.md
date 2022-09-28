@@ -62,7 +62,7 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 * Physics object throwing - [Assets/Scripts/Gameplay/Action/ConcreteActions/TossAction.cs ](Assets/Scripts/Gameplay/Action/ConcreteActions/TossAction.cs)
 * Dynamic imp spawning with portals - [Assets/Scripts/Gameplay/GameplayObjects/ServerWaveSpawner.cs ](Assets/Scripts/Gameplay/GameplayObjects/ServerWaveSpawner.cs)
 * In scene placed dynamic objects (imps) - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs)
-* Static objects (non-destroyableslike doors, switches, etc) - [Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs](Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs)
+* Static objects (non-destroyables like doors, switches, etc) - [Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs](Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs)
 * State tracking with breakables, switch, doors
   * [Assets/Scripts/Gameplay/GameplayObjects/Breakable.cs ](Assets/Scripts/Gameplay/GameplayObjects/Breakable.cs)
   * [Assets/Scripts/Gameplay/GameplayObjects/FloorSwitch.cs](Assets/Scripts/Gameplay/GameplayObjects/FloorSwitch.cs)
