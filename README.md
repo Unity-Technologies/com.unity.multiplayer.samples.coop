@@ -9,7 +9,7 @@
 <!-- TOC generated from https://luciopaiva.com/markdown-toc/ -->
 
 - [Boss Room](#boss-room)
-- [Index of ressources in this project](#index-of-ressources-in-this-project)
+- [Index of resources in this project](#index-of-ressources-in-this-project)
   - [Gameplay](#gameplay)
   - [Game Flow](#game-flow)
   - [Connectivity](#connectivity)
@@ -62,15 +62,15 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 * Physics object throwing - [Assets/Scripts/Gameplay/Action/ConcreteActions/TossAction.cs ](Assets/Scripts/Gameplay/Action/ConcreteActions/TossAction.cs)
 * Dynamic imp spawning with portals - [Assets/Scripts/Gameplay/GameplayObjects/ServerWaveSpawner.cs ](Assets/Scripts/Gameplay/GameplayObjects/ServerWaveSpawner.cs)
 * In scene placed dynamic objects (imps) - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs)
-* Static objects (non-destroyableslike doors, switches, etc) - [Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs](Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs)
+* Static objects (non-destroyables like doors, switches, etc) - [Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs](Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs)
 * State tracking with breakables, switch, doors
   * [Assets/Scripts/Gameplay/GameplayObjects/Breakable.cs ](Assets/Scripts/Gameplay/GameplayObjects/Breakable.cs)
   * [Assets/Scripts/Gameplay/GameplayObjects/FloorSwitch.cs](Assets/Scripts/Gameplay/GameplayObjects/FloorSwitch.cs)
   * [Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs](Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs)
 * NetworkVariable with Enum - [Assets/Scripts/Gameplay/GameState/NetworkPostGame.cs](Assets/Scripts/Gameplay/GameState/NetworkPostGame.cs)
 * NetworkVariable with custom serialization (GUID) - [Assets/Scripts/Infrastructure/NetworkGuid.cs](Assets/Scripts/Infrastructure/NetworkGuid.cs)
-* NetworkVariable with fixed string |[Assets/Scripts/Utils/NetworkNameState.cs](Assets/Scripts/Utils/NetworkNameState.cs)
-* NetworkList with custom serialization (LobbyPlayerState) |[Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)<br>[Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)
+* NetworkVariable with fixed string - [Assets/Scripts/Utils/NetworkNameState.cs](Assets/Scripts/Utils/NetworkNameState.cs)
+* NetworkList with custom serialization (LobbyPlayerState) - [Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)<br>[Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)
 * Persistent player (over multiple scenes) - [Assets/Scripts/Gameplay/GameplayObjects/PersistentPlayer.cs ](Assets/Scripts/Gameplay/GameplayObjects/PersistentPlayer.cs)
 * Character logic (including player's avatar) - [Assets/Scripts/Gameplay/GameplayObjects/Character/ ](Assets/Scripts/Gameplay/GameplayObjects/Character/) <br> [ Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs ](Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs)
 
@@ -79,7 +79,7 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 * Game flow state machine - All child classes in [Assets/Scripts/Gameplay/GameState/GameStateBehaviour.cs ](Assets/Scripts/Gameplay/GameState/GameStateBehaviour.cs)
 * Scene loading and progress sharing - [ackages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/](Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/)
 * Synced UI with character select - [Assets/Scripts/Gameplay/GameState/ClientCharSelectState.cs ](Assets/Scripts/Gameplay/GameState/ClientCharSelectState.cs)
-* In game lobby (character selection) - [Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs ](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)<br>[Assets/Scripts/Gameplay/GameState/ServerCharSelectState.cs](Assets/Scripts/Gameplay/GameState/ServerCharSelectState.cs)
+* In-game lobby (character selection) - [Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs ](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)<br>[Assets/Scripts/Gameplay/GameState/ServerCharSelectState.cs](Assets/Scripts/Gameplay/GameState/ServerCharSelectState.cs)
 * Win state - [Assets/Scripts/Gameplay/GameState/PersistentGameState.cs](Assets/Scripts/Gameplay/GameState/PersistentGameState.cs)
 
 ### Connectivity
@@ -92,7 +92,7 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 * Lobby and relay - client join - JoinLobbyRequest() in [Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs ](Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs)
 * Relay Join - StartClientLobby() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
 * Relay Create - StartHostLobby() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
-* Auth - EnsurePlayerIsAuthorized() in [Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs ](Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs)
+* Authentication - EnsurePlayerIsAuthorized() in [Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs ](Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs)
 
 ### Tools and Utilities
 * Networked message channel (inter-class and networked messaging) - [Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs](Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs)
@@ -166,13 +166,13 @@ Alternatively you can use Port Forwarding. The https://portforward.com/ site has
 ------------------------------------------
 
 ## Exploring the project
-BossRoom is an eight-player co-op RPG game experience, where players collaborate to take down some minions, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. Control model is click-to-move, with skills triggered by mouse button or hotkey.
+BossRoom is an eight-player co-op RPG game experience, where players collaborate to take down some imps, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. Control model is click-to-move, with skills triggered by mouse button or hotkey.
 
 One of the eight clients acts as the host/server. That client will use a compositional approach so that its entities have both server and client components.
 
 The game is server-authoritative, with latency-masking animations. Position updates are done through NetworkedVars that sync position, rotation and movement speed. NetworkedVars and Remote Procedure Calls (RPC) endpoints are isolated in a class that is shared between the server and client specialized logic components. All game logic runs in FixedUpdate at 30 Hz, matching our network update rate.
 
-Code is organized into three separate assemblies: **Client**, **Shared** and **Server** which reference each other when appropriate.
+Code is organized in domain based assemblies. See our [Architecture.md](Architecture.md) file for more details.
 
 For an overview of the project's architecture please check out our [ARCHITECTURE.md](ARCHITECTURE.md).
 
