@@ -4,11 +4,13 @@
 | Support is available on [Discord](https://discord.gg/mNgM2XRDpb) and [forums](https://forum.unity.com/forums/multiplayer.26/) to help you work through issues you may encounter when using Boss Room. |
 | -- |
 
+[Test with broken link](test-with-broken-link)
+
 ## Table of content
 
 <!-- TOC generated from https://luciopaiva.com/markdown-toc/ -->
 
-[Test with broken link](test with broken link)
+
 
 - [Boss Room](#boss-room)
 - [Index of resources in this project](#index-of-resources-in-this-project)
