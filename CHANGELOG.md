@@ -21,8 +21,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Changed
 * Updated tools, authentication and relay packages (#690)
 * Replaced our dependency injection solution with VContainer. (#679)
-* NetworkedMessageChannels can now be subscribed to before initiating a connection (#670)
-* Refactored connection management into simpler state machine (#666)
+* NetworkedMessageChannels can now be subscribed to before initiating a connection (#670) This allows a subscription's lifetime to not be restricted by a connection, so subscribing before a connection is possible, and subscriptions will still work properly if the connection ends and a new one begins.
+* Refactored connection management into simpler state machine (#666) This makes the connection flow easier to follow. Each connection state now handles user inputs and Netcode callbacks as they should, removing the need for big switch-cases of if-else statements. These inputs and callbacks also trigger transitions between these states.
 * Merged GameState bridge classes (the ones that contained no or limited functionality) (#697 #732) This cleans up our sometimes too verbose code split.
 * Modified the red arrow of the boss charge attack to fade in and out (rather than just being enabled disabled) (#715)
 * Rearranged the Action system by adding more folders that separate different pieces more clearly (#701)
@@ -42,7 +42,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Removed
 *
 ### Fixed
-* Subscribing to a message channel while unsubscribing is pending (#675)
+* Subscribing to a message channel while unsubscribing is pending (#675). This issue prevented us from subscribing to a message channel after having unsubscribed to it if no message had been sent between the un-subscription and the new subscription.
 * Using ```Visible``` instead of ```Enabled``` to make sure RNSM continues updating when off (#702)
 * Some NetworkBehaviours are disabled instead of being destroyed (#718) - This preserves the index order for NetworkBehaviours between server and clients, resulting in no indexing issue for sending/receiving RPCs.
 * Scene Bootstrapper: future proofing bootstrap scene so we don't rely on Startup's path. MTT-3707. (#735)
