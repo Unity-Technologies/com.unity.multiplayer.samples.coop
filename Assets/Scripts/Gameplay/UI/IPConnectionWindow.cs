@@ -35,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_ConnectStatusSubscriber.Unsubscribe(OnConnectStatusMessage);
+            m_ConnectStatusSubscriber?.Unsubscribe(OnConnectStatusMessage);
         }
 
         void OnConnectStatusMessage(ConnectStatus connectStatus)
