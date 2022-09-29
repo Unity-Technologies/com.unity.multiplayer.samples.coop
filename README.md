@@ -74,6 +74,8 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 * NetworkList with custom serialization (LobbyPlayerState) - [Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)<br>[Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)
 * Persistent player (over multiple scenes) - [Assets/Scripts/Gameplay/GameplayObjects/PersistentPlayer.cs ](Assets/Scripts/Gameplay/GameplayObjects/PersistentPlayer.cs)
 * Character logic (including player's avatar) - [Assets/Scripts/Gameplay/GameplayObjects/Character/ ](Assets/Scripts/Gameplay/GameplayObjects/Character/) <br> [ Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs ](Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs)
+* Character movements - [Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacterMovement.cs](Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacterMovement.cs)
+* Player spawn - SpawnPlayer() in [Assets/Scripts/Gameplay/GameState/ServerBossRoomState.cs](Assets/Scripts/Gameplay/GameState/ServerBossRoomState.cs)
 
 ### Game Flow
 * Application Controller - [Assets/Scripts/ApplicationLifecycle/ApplicationController.cs ](Assets/Scripts/ApplicationLifecycle/ApplicationController.cs)
