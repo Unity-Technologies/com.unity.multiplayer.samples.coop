@@ -68,18 +68,19 @@ namespace Unity.BossRoom.Infrastructure
 
         public void Unsubscribe(Action<T> handler)
         {
-            Assert.IsTrue(IsSubscribed(handler), "Attempting to unsubscribe with a handler that is not subscribed");
-
-            if (m_PendingHandlers.ContainsKey(handler))
+            if (IsSubscribed(handler))
             {
-                if (m_PendingHandlers[handler])
+                if (m_PendingHandlers.ContainsKey(handler))
                 {
-                    m_PendingHandlers.Remove(handler);
+                    if (m_PendingHandlers[handler])
+                    {
+                        m_PendingHandlers.Remove(handler);
+                    }
                 }
-            }
-            else
-            {
-                m_PendingHandlers[handler] = false;
+                else
+                {
+                    m_PendingHandlers[handler] = false;
+                }
             }
         }
 
