@@ -84,6 +84,7 @@ namespace Unity.BossRoom.ConnectionManagement
         /// Multiple things can be done here, some asynchronously. For example, it could authenticate your user against an auth service like UGS' auth service. It can
         /// also send custom messages to connecting users before they receive their connection result (this is useful to set status messages client side
         /// when connection is refused, for example).
+        /// Implementation for those are left to the reader.
         /// </remarks>
         /// <param name="request"> The initial request contains, among other things, binary data passed into StartClient. In our case, this is the client's GUID,
         /// which is a unique identifier for their install of the game that persists across app restarts.
