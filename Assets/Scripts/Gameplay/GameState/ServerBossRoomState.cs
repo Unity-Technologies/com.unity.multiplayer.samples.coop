@@ -77,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void OnNetworkDespawn()
         {
-            m_LifeStateChangedEventMessageSubscriber.Unsubscribe(OnLifeStateChangedEventMessage);
+            m_LifeStateChangedEventMessageSubscriber?.Unsubscribe(OnLifeStateChangedEventMessage);
 
             NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnServerLoadComplete;
             NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;

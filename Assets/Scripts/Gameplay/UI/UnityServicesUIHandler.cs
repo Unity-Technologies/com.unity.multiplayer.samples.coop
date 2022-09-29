@@ -87,7 +87,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_ServiceErrorSubscription.Unsubscribe(ServiceErrorHandler);
+            m_ServiceErrorSubscription?.Unsubscribe(ServiceErrorHandler);
         }
     }
 }

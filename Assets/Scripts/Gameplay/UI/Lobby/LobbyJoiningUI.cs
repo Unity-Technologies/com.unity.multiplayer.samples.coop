@@ -35,13 +35,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if (m_UpdateRunner != null)
             {
-                m_UpdateRunner.Unsubscribe(PeriodicRefresh);
+                m_UpdateRunner?.Unsubscribe(PeriodicRefresh);
             }
         }
 
         void OnDestroy()
         {
-            m_LocalLobbiesRefreshedSub.Unsubscribe(UpdateUI);
+            m_LocalLobbiesRefreshedSub?.Unsubscribe(UpdateUI);
         }
 
         [Inject]
