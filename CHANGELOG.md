@@ -19,7 +19,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * NetworkObjectSpawner handles dynamically spawning in-scene placed NetworkObjects (#717) - You can't place a NetworkObject in scene directly and destroy it at runtime. This PR showcases proper handling of NetworkObjects that you'd wish to place inside of scenes, but would still want to destroy at game-time. Examples of these are: Imps, VandalImps, ImpBoss. NetworkObjects such as doors, crystals, door switch, etc. remain the same, statically-placed in scene.
 * Quality levels settings set up for Desktop [MTT-4450] (#713)
 * Added custom RNSM config with graph for RTT instead of single value (#747)
-
+* Added Unsubscribe API for the ISubscriber<T> along with refactoring of the codebase to use this API instead of IDisposable handle when there is just one subscription (#612)
 ### Changed
 * Updated tools, authentication and relay packages (#690)
 * Replaced our dependency injection solution with VContainer. (#679)
