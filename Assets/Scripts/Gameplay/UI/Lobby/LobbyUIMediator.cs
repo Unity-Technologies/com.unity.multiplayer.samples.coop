@@ -119,14 +119,18 @@ namespace Unity.BossRoom.Gameplay.UI
 
             bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
 
-            if (!playerIsAuthorized)
+            if (blockUI && !playerIsAuthorized)
             {
                 UnblockUIAfterLoadingIsComplete();
                 return;
             }
 
             await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
-            UnblockUIAfterLoadingIsComplete();
+
+            if (blockUI)
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
         }
 
         public async void JoinLobbyWithCodeRequest(string lobbyCode)
