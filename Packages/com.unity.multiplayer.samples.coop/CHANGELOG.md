@@ -3,7 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-*
+* Added custom RNSM config with graph for RTT instead of single value (#747)
 ### Changed
 *
 ### Removed
