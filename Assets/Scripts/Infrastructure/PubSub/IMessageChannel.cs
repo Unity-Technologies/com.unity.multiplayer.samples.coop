@@ -10,12 +10,12 @@ namespace Unity.BossRoom.Infrastructure
     public interface ISubscriber<T>
     {
         IDisposable Subscribe(Action<T> handler);
+        void Unsubscribe(Action<T> handler);
     }
 
     public interface IMessageChannel<T> : IPublisher<T>, ISubscriber<T>, IDisposable
     {
         bool IsDisposed { get; }
-        void Unsubscribe(Action<T> handler);
     }
 
     public interface IBufferedMessageChannel<T> : IMessageChannel<T>
