@@ -1,14 +1,14 @@
 using System;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.Configuration
 {
     /// <summary>
     /// This ScriptableObject will be the container for all possible Avatars inside BossRoom.
     /// <see cref="Avatar"/>
     /// </summary>
     [CreateAssetMenu]
-    public class AvatarRegistry : ScriptableObject
+    public sealed class AvatarRegistry : ScriptableObject
     {
         [SerializeField]
         Avatar[] m_Avatars;

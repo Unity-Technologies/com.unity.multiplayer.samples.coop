@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3502399447191095046}
   - component: {fileID: -2604036011194100329}
   - component: {fileID: 144087972406990258}
-  - component: {fileID: 1392226273213099329}
   m_Layer: 7
   m_Name: ChargedArrow3
   m_TagString: Untagged
@@ -31,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7856784432745151475}
   m_Father: {fileID: 0}
@@ -77,17 +77,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TransformAuthority: 0
-  FixedSendsPerSecond: 50
-  InterpolatePosition: 1
-  SnapDistance: 10
-  InterpolateServer: 1
-  MinMeters: 0.15
-  MinDegrees: 1.5
-  MinSize: 0.15
-  Channel: 6
-  m_UseLocal:
-    m_InternalValue: 0
+  SyncPositionX: 1
+  SyncPositionY: 0
+  SyncPositionZ: 1
+  SyncRotAngleX: 0
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 0
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 0
+  Interpolate: 1
 --- !u!114 &144087972406990258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,20 +103,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a091211e6ee54d14f965bccf3b7db5bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetState: {fileID: 1392226273213099329}
   m_OurCollider: {fileID: 8403335067046434128}
---- !u!114 &1392226273213099329
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2842198241268549130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f1775357f78b684294a25ef49f1a97d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_OnHitParticlePrefab: {fileID: 4562743285343113751, guid: 274d5f31ee594904399cb65bae8ec339, type: 3}
+  m_TrailRenderer: {fileID: 9219353030242320945}
+  m_Visualization: {fileID: 7856784432745151475}
 --- !u!1001 &4840718439739065769
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -174,5 +167,10 @@ PrefabInstance:
 --- !u!4 &7856784432745151475 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3325143161705299546, guid: 6a92ad6db28369f4bb6b63e3fcf3cf7f, type: 3}
+  m_PrefabInstance: {fileID: 4840718439739065769}
+  m_PrefabAsset: {fileID: 0}
+--- !u!96 &9219353030242320945 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 4385405950053795736, guid: 6a92ad6db28369f4bb6b63e3fcf3cf7f, type: 3}
   m_PrefabInstance: {fileID: 4840718439739065769}
   m_PrefabAsset: {fileID: 0}

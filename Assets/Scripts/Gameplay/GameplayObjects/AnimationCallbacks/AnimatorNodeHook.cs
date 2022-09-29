@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
 {
     /// <summary>
     /// This is attached to each layer in the animator's state machines that needs to be able
@@ -21,7 +22,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     public class AnimatorNodeHook : StateMachineBehaviour
     {
         private AnimatorTriggeredSpecialFX[] m_CachedTriggerRefs;
-        // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
+
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             if (m_CachedTriggerRefs == null)
@@ -35,13 +36,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-        //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-        //{
-        //
-        //}
-
-        // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
         override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             if (m_CachedTriggerRefs == null)

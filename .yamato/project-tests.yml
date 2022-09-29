@@ -17,7 +17,7 @@ test_{{ project.name }}_{{ editor }}_{{ platform.name }}:
     - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - unity-downloader-cli -u {{ editor }} -c editor -w --fast
-    - upm-ci project test -u {{ editor }} --project-path {{ project.path }} --type project-tests --extra-utr-arg=--testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+    - upm-ci project test -u {{ editor }} --project-path {{ project.path }} --type project-tests --extra-utr-arg=--testfilter=Unity.BossRoom.Tests.Runtime
   artifacts:
     logs:
       paths:

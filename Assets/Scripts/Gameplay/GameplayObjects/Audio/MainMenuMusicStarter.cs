@@ -1,7 +1,8 @@
+using System;
+using Unity.BossRoom.Audio;
 using UnityEngine;
 
-
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Audio
 {
     /// <summary>
     /// Simple class to play game theme on scene load

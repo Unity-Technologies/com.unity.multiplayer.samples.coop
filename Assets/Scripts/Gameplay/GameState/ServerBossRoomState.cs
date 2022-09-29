@@ -1,16 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.Gameplay.Messages;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.Utils;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using VContainer;
 using Random = UnityEngine.Random;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameState
 {
     /// <summary>
     /// Server specialization of core BossRoom game logic.
@@ -18,11 +25,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     [RequireComponent(typeof(NetcodeHooks))]
     public class ServerBossRoomState : GameStateBehaviour
     {
+        [FormerlySerializedAs("m_NetworkWinState")]
         [SerializeField]
-        NetcodeHooks m_NetcodeHooks;
+        PersistentGameState persistentGameState;
 
         [SerializeField]
-        TransformVariable m_NetworkGameStateTransform;
+        NetcodeHooks m_NetcodeHooks;
 
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
@@ -52,11 +60,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [Inject] ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
 
         [Inject] ConnectionManager m_ConnectionManager;
+        [Inject] PersistentGameState m_PersistentGameState;
 
         protected override void Awake()
         {
             base.Awake();
-
             m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
             m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
         }
@@ -68,30 +76,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 enabled = false;
                 return;
             }
-
+            m_PersistentGameState.Reset();
             m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
-
-            NetworkManager.Singleton.SceneManager.OnLoadComplete += OnServerLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnUnloadComplete += OnServerUnloadComplete;
-        }
-
-        void OnNetworkDespawn()
-        {
-            m_LifeStateChangedEventMessageSubscriber?.Unsubscribe(OnLifeStateChangedEventMessage);
-
-            NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnServerLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;
-        }
-
-        void OnServerLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
-        {
-            if (clientId != NetworkManager.ServerClientId)
-            {
-                return;
-            }
-
-            // reset win state
-            SetWinState(WinState.Invalid);
 
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
@@ -100,13 +86,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
         }
 
-        void OnServerUnloadComplete(ulong clientId, string sceneName)
+        void OnNetworkDespawn()
         {
-            if (clientId != NetworkManager.ServerClientId)
-            {
-                return;
-            }
-
+            m_LifeStateChangedEventMessageSubscriber?.Unsubscribe(OnLifeStateChangedEventMessage);
             NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
             NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnSynchronizeComplete;
@@ -260,7 +242,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
                 // if any player is alive just return
-                if (serverCharacter.NetState && serverCharacter.NetState.LifeState == LifeState.Alive)
+                if (serverCharacter && serverCharacter.LifeState == LifeState.Alive)
                 {
                     return;
                 }
@@ -276,21 +258,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             StartCoroutine(CoroGameOver(k_WinDelay, true));
         }
 
-        void SetWinState(WinState winState)
-        {
-            if (m_NetworkGameStateTransform && m_NetworkGameStateTransform.Value &&
-                m_NetworkGameStateTransform.Value.TryGetComponent(out NetworkGameState networkGameState))
-            {
-                networkGameState.NetworkWinState.winState.Value = winState;
-            }
-        }
-
         IEnumerator CoroGameOver(float wait, bool gameWon)
         {
+            m_PersistentGameState.SetWinState(gameWon ? WinState.Win : WinState.Loss);
+
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);
-
-            SetWinState(gameWon ? WinState.Win : WinState.Loss);
 
             SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
         }

@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.Configuration
 {
     /// <summary>
     /// Data storage of all the valid strings used to create a player's name.

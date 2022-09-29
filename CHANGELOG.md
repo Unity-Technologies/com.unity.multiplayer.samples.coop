@@ -9,17 +9,47 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-* Unsubscribe API for the ISubscriber<T> along with refactoring of the codebase to use this API instead of IDisposable handle when there is just one subscription.
+* Added tests for connection management (#692). These are integration tests to validate that the state machine works properly. They use Netcode's NetworkIntegrationTest
+* Added handling the OnTransportFailure callback (#707). This callback is invoked when a failure happens on the transport's side, for example if the host loses connection to the Relay service. This won't get called when the host is just listening with direct IP, this would need to be handled differently (by pinging an external service like google to test for internet connectivity for example). Boss Room now handles that callback by returning to the Offline state.
+* Pickup and Drop action added to the Action system. Actionable once targeting a "Heavy"-tagged NetworkObject. (#372) - This shows NetworkObject parenting with a pattern to follow animation bones (the hands when picking up)
+* Art and sound polish for the pick up and drop action (#749)
+* LODs setup for some art assets [MTT-4451] (#712)
+* Introduced a mechanism for identifying actions by their runtime-generated ActionID, instead of relying on a fragile ActionType enumeration (#705)
+* NetworkObjectSpawner handles dynamically spawning in-scene placed NetworkObjects (#717) - You can't place a NetworkObject in scene directly and destroy it at runtime. This PR showcases proper handling of NetworkObjects that you'd wish to place inside of scenes, but would still want to destroy at game-time. Examples of these are: Imps, VandalImps, ImpBoss. NetworkObjects such as doors, crystals, door switch, etc. remain the same, statically-placed in scene.
+* Quality levels settings set up for Desktop [MTT-4450] (#713)
+* Added custom RNSM config with graph for RTT instead of single value (#747)
+* Added Unsubscribe API for the ISubscriber<T> along with refactoring of the codebase to use this API instead of IDisposable handle when there is just one subscription.
 ### Changed
 * Updated tools, authentication and relay packages (#690)
 * Replaced our dependency injection solution with VContainer. (#679)
 * NetworkedMessageChannels can now be subscribed to before initiating a connection (#670)
 * Refactored connection management into simpler state machine (#666)
-* 
+* Merged GameState bridge classes (the ones that contained no or limited functionality) (#697 #732) This cleans up our sometimes too verbose code split.
+* Modified the red arrow of the boss charge attack to fade in and out (rather than just being enabled disabled) (#715)
+* Rearranged the Action system by adding more folders that separate different pieces more clearly (#701)
+* Action and ActionFX classes have been merged into a single Scriptable Object-based Action class; all the existing actions have been refactored to follow this new design (#705)
+* Refactored the Action system so that the action objects themselves are pooled Scriptable Objects (#705)
+* Configured the NetworkTransform components of every NetworkObject to reduce the bandwidth usage (#716). This prevents the unnecessary synchronization of data that clients do not need, i.e. a character's scale or y position. In the case of a character, it reduced the size of each update from 47B to 23B.
+* Instead of a NetworkBehaviour that carries a WinState netvar we now pass the win state on the server to the PostGame scene and it then stores that state in the netvar, eliminating the need to preserve a NetworkBehaviour-bearing gameObject across scenes. (#724)
+* Bump to NGO 1.0.1 (#720)
+* Reduced the MaxPacketQueueSize UTP parameter value from 512 to 256 (#728). This reduces the amount of memory used by UTP by around 1 MB. Boss Room does not need a bigger queue size than this because there can only be 7 clients connected to a host and UTP already limits the maximum number of in-flight packets to 32 per connection.
+* Updated Lobby package to 1.0.3 and reworked our auto-reconnect flow to use the Reconnect feature from the Lobby API (#737). Now, clients do not leave the lobby when they are disconnected, and the host does not remove them from it. They are marked as disconnected by the Relay server and can attempt to reconnect to the lobby directly, until a certain timeout (specified by the Disconnect removal time parameer, set in the dashboard configuration).
+* Cleanup
+  * Namespaces in the project have been changed to map to their assembly definitions (#732)
+  * Numerous name changes for fields and variables to match their new type names (#732)
+  * Removed DynamicNavObstacle - an unused class (#732)
+  * Merged networked data classes into their Server counterparts. An example of that change is the contents of NetworkCharacterState getting moved into ServerCharacter, contents of NetworkDoorState getting moved into SwitchedDoor etc. (#732)
+* Engine version bump to 2021.3.10f1 (#740)
 ### Removed
 *
 ### Fixed
 * Subscribing to a message channel while unsubscribing is pending (#675)
+* Using ```Visible``` instead of ```Enabled``` to make sure RNSM continues updating when off (#702)
+* Some NetworkBehaviours are disabled instead of being destroyed (#718) - This preserves the index order for NetworkBehaviours between server and clients, resulting in no indexing issue for sending/receiving RPCs.
+* Scene Bootstrapper: future proofing bootstrap scene so we don't rely on Startup's path. MTT-3707. (#735)
+* Better instructions for host listen IP. (#738) Most useful cases are usually 127.0.0.1 and 0.0.0.0.
+* Tank's shield charge animation not getting stuck due to multiple invocations. (#742)
+* Lobby join button not interactable if no join code is provided. (#744) This prevents an ArgumentNullException happening when we try to join a Lobby with an empty join code.
 
 ## [v1.3.0-pre] - 2022-06-23
 

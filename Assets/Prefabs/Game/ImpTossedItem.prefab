@@ -46,7 +46,6 @@ GameObject:
   - component: {fileID: 3757530492134123977}
   - component: {fileID: 6563030650317158872}
   - component: {fileID: 6687170048049847228}
-  - component: {fileID: 5792943200133235216}
   - component: {fileID: 6117531884891153614}
   - component: {fileID: 1764934990006973250}
   - component: {fileID: 5323097792596109926}
@@ -124,9 +123,9 @@ MonoBehaviour:
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
@@ -156,15 +155,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bff02995bf9984488cdd9c4cda2c328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DamagePoints: 1
+  m_DamagePoints: 150
   m_HitRadius: 5
   m_KnockbackSpeed: 4.2
   m_KnockbackDuration: 0.4
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 72
-  detonateAfterSeconds: 5
-  destroyAfterSeconds: 6
+    m_Bits: 8
+  m_DetonateAfterSeconds: 5
+  m_DestroyAfterSeconds: 6
   detonatedCallback:
     m_PersistentCalls:
       m_Calls:
@@ -205,18 +204,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &5792943200133235216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5473352307376472481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f9ce43d3a12cc143a792bd3006335bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   m_TossedItemVisualTransform: {fileID: 6872988056795508615}
   m_TossedObjectGraphics: {fileID: 4462238722508864556}
   m_FallingSound: {fileID: 6117531884891153614}

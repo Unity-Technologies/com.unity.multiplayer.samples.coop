@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Unity.BossRoom.Utils;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UUnity.BossRoom.ConnectionManagement;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     public enum ConnectStatus
     {
@@ -56,13 +58,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         ConnectionState m_CurrentState;
 
-        [SerializeField]
+        [Inject]
         NetworkManager m_NetworkManager;
         public NetworkManager NetworkManager => m_NetworkManager;
 
         [SerializeField]
-        NetworkObject m_GameState;
-        public NetworkObject GameState => m_GameState;
+        int m_NbReconnectAttempts = 2;
+
+        public int NbReconnectAttempts => m_NbReconnectAttempts;
 
         [Inject]
         IObjectResolver m_Resolver;
@@ -96,6 +99,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
             NetworkManager.OnServerStarted += OnServerStarted;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
+            NetworkManager.OnTransportFailure += OnTransportFailure;
         }
 
         void OnDestroy()
@@ -104,12 +108,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
             NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectCallback;
             NetworkManager.OnServerStarted -= OnServerStarted;
             NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
-
+            NetworkManager.OnTransportFailure -= OnTransportFailure;
         }
 
         internal void ChangeState(ConnectionState nextState)
         {
-            Debug.Log($"Changed connection state from {m_CurrentState.GetType().Name} to {nextState.GetType().Name}.");
+            Debug.Log($"{name}: Changed connection state from {m_CurrentState.GetType().Name} to {nextState.GetType().Name}.");
 
             if (m_CurrentState != null)
             {
@@ -137,6 +141,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
         {
             m_CurrentState.ApprovalCheck(request, response);
+        }
+
+        void OnTransportFailure()
+        {
+            m_CurrentState.OnTransportFailure();
         }
 
         public void StartClientLobby(string playerName)
@@ -183,11 +192,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// Sends a DisconnectReason to all connected clients. This should only be done on the server, prior to disconnecting the clients.
         /// </summary>
         /// <param name="status"> The reason for the upcoming disconnect.</param>
-        public static void SendServerToAllClientsSetDisconnectReason(ConnectStatus status)
+        public void SendServerToAllClientsSetDisconnectReason(ConnectStatus status)
         {
             var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
             writer.WriteValueSafe(status);
-            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessageToAll(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), writer);
+            NetworkManager.CustomMessagingManager.SendNamedMessageToAll(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), writer);
         }
 
         /// <summary>
@@ -195,11 +204,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         /// <param name="clientID"> id of the client to send to </param>
         /// <param name="status"> The reason for the upcoming disconnect.</param>
-        public static void SendServerToClientSetDisconnectReason(ulong clientID, ConnectStatus status)
+        public void SendServerToClientSetDisconnectReason(ulong clientID, ConnectStatus status)
         {
             var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
             writer.WriteValueSafe(status);
-            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
+            NetworkManager.CustomMessagingManager.SendNamedMessage(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
         }
     }
 }

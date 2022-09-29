@@ -1,16 +1,21 @@
 using System;
 using System.Collections;
-using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
-using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.ApplicationLifecycle.Messages;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.GameState;
+using Unity.BossRoom.Gameplay.Messages;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices;
+using Unity.BossRoom.UnityServices.Auth;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.Utils;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Shared
+namespace Unity.BossRoom.ApplicationLifecycle
 {
 
     /// <summary>
@@ -20,6 +25,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
     {
         [SerializeField] UpdateRunner m_UpdateRunner;
         [SerializeField] ConnectionManager m_ConnectionManager;
+        [SerializeField] NetworkManager m_NetworkManager;
 
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -30,8 +36,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         {
             base.Configure(builder);
             builder.RegisterComponent(m_UpdateRunner);
-            builder.RegisterComponent(m_ConnectionManager.NetworkManager);
             builder.RegisterComponent(m_ConnectionManager);
+            builder.RegisterComponent(m_NetworkManager);
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
@@ -39,6 +45,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             builder.Register<LocalLobby>(Lifetime.Singleton);
 
             builder.Register<ProfileManager>(Lifetime.Singleton);
+
+            builder.Register<PersistentGameState>(Lifetime.Singleton);
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
             // Registering as instance to prevent code stripping on iOS

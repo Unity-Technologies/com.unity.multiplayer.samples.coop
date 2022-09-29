@@ -1,10 +1,14 @@
+using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.BossRoom.Gameplay.UserInput;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
-using SkillTriggerStyle = Unity.Multiplayer.Samples.BossRoom.Client.ClientInputSender.SkillTriggerStyle;
+using Action = Unity.BossRoom.Gameplay.Actions.Action;
+using SkillTriggerStyle = Unity.BossRoom.Gameplay.UserInput.ClientInputSender.SkillTriggerStyle;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Provides logic for a Hero Action Bar with attack, skill buttons and a button to open emotes panel
@@ -35,18 +39,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <summary>
         /// Our input-sender. Initialized in RegisterInputSender()
         /// </summary>
-        Client.ClientInputSender m_InputSender;
+        ClientInputSender m_InputSender;
 
         /// <summary>
         /// Cached reference to local player's net state.
         /// We find the Sprites to use by checking the Skill1, Skill2, and Skill3 members of our chosen CharacterClass
         /// </summary>
-        NetworkCharacterState m_NetState;
+        ServerCharacter m_ServerCharacter;
 
         /// <summary>
         /// If we have another player selected, this is a reference to their stats; if anything else is selected, this is null
         /// </summary>
-        NetworkCharacterState m_SelectedPlayerNetState;
+        ServerCharacter m_SelectedPlayerServerCharacter;
 
         /// <summary>
         /// If m_SelectedPlayerNetState is non-null, this indicates whether we think they're alive. (Updated every frame)
@@ -73,12 +77,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             public readonly ActionButtonType Type;
             public readonly UIHUDButton Button;
-            public readonly Client.UITooltipDetector Tooltip;
+            public readonly UITooltipDetector Tooltip;
 
-            /// <summary>
-            /// The current ActionType that is used when this button is pressed.
+            /// <summary> T
+            /// The current Action that is used when this button is pressed.
             /// </summary>
-            public ActionType CurActionType;
+            public Action CurAction;
 
             readonly HeroActionBar m_Owner;
 
@@ -86,8 +90,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 Type = type;
                 Button = button;
-                Tooltip = button.GetComponent<Client.UITooltipDetector>();
-                CurActionType = ActionType.None;
+                Tooltip = button.GetComponent<UITooltipDetector>();
                 m_Owner = owner;
             }
 
@@ -136,19 +139,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             m_InputSender = inputSender;
-            m_NetState = m_InputSender.GetComponent<NetworkCharacterState>();
-            m_NetState.TargetId.OnValueChanged += OnSelectionChanged;
+            m_ServerCharacter = m_InputSender.GetComponent<ServerCharacter>();
+            m_ServerCharacter.TargetId.OnValueChanged += OnSelectionChanged;
+            m_ServerCharacter.HeldNetworkObject.OnValueChanged += OnHeldNetworkObjectChanged;
+            UpdateAllActionButtons();
+        }
+
+        void OnHeldNetworkObjectChanged(ulong previousValue, ulong newValue)
+        {
             UpdateAllActionButtons();
         }
 
         void DeregisterInputSender()
         {
             m_InputSender = null;
-            if (m_NetState)
+            if (m_ServerCharacter != null)
             {
-                m_NetState.TargetId.OnValueChanged -= OnSelectionChanged;
+                m_ServerCharacter.TargetId.OnValueChanged -= OnSelectionChanged;
+                m_ServerCharacter.HeldNetworkObject.OnValueChanged -= OnHeldNetworkObjectChanged;
             }
-            m_NetState = null;
+            m_ServerCharacter = null;
         }
 
         void Awake()
@@ -183,13 +193,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
+            DeregisterInputSender();
+
             ClientPlayerAvatar.LocalClientSpawned -= RegisterInputSender;
             ClientPlayerAvatar.LocalClientDespawned -= DeregisterInputSender;
-
-            if (m_NetState)
-            {
-                m_NetState.TargetId.OnValueChanged -= OnSelectionChanged;
-            }
         }
 
         void Update()
@@ -197,14 +204,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             // If we have another player selected, see if their aliveness state has changed,
             // and if so, update the interactiveness of the basic-action button
 
-            if (Input.GetKeyUp(KeyCode.Alpha4))
+            if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha4))
             {
                 m_ButtonInfo[ActionButtonType.EmoteBar].Button.OnPointerUpEvent.Invoke();
             }
 
-            if (!m_SelectedPlayerNetState) { return; }
+            if (!m_SelectedPlayerServerCharacter) { return; }
 
-            bool isAliveNow = m_SelectedPlayerNetState.NetworkLifeState.LifeState.Value == LifeState.Alive;
+            bool isAliveNow = m_SelectedPlayerServerCharacter.NetLifeState.LifeState.Value == LifeState.Alive;
             if (isAliveNow != m_WasSelectedPlayerAliveDuringLastUpdate)
             {
                 // this will update the icons so that the basic-action button's interactiveness is correct
@@ -233,7 +240,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // send input to begin the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurActionType, SkillTriggerStyle.UI);
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction, SkillTriggerStyle.UI);
         }
 
         void OnButtonClickedUp(ActionButtonType buttonType)
@@ -251,7 +258,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // send input to complete the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurActionType, SkillTriggerStyle.UIRelease);
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction, SkillTriggerStyle.UIRelease);
         }
 
         /// <summary>
@@ -260,46 +267,64 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         void UpdateAllActionButtons()
         {
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], m_NetState.CharacterClass.Skill1);
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], m_NetState.CharacterClass.Skill2);
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], m_NetState.CharacterClass.Skill3);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], m_ServerCharacter.CharacterClass.Skill1);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], m_ServerCharacter.CharacterClass.Skill2);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], m_ServerCharacter.CharacterClass.Skill3);
 
-            // special case: when we have a player selected, we change the meaning of the basic action
-            if (m_NetState.TargetId.Value != 0
-                && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
+            var isHoldingNetworkObject =
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_ServerCharacter.HeldNetworkObject.Value,
+                    out var heldNetworkObject);
+
+            NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_ServerCharacter.TargetId.Value,
+                out var selection);
+
+            if (isHoldingNetworkObject)
+            {
+                // show drop!
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.DropActionPrototype, true);
+            }
+            if ((m_ServerCharacter.TargetId.Value != 0
+                    && selection != null
+                    && selection.TryGetComponent(out PickUpState pickUpState))
+               )
+            {
+                // special case: targeting a pickup-able item or holding a pickup object
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.PickUpActionPrototype, true);
+            }
+            else if (m_ServerCharacter.TargetId.Value != 0
                 && selection != null
-                && selection.NetworkObjectId != m_NetState.NetworkObjectId
-                && selection.TryGetComponent(out NetworkCharacterState charState)
+                && selection.NetworkObjectId != m_ServerCharacter.NetworkObjectId
+                && selection.TryGetComponent(out ServerCharacter charState)
                 && !charState.IsNpc)
             {
+                // special case: when we have a player selected, we change the meaning of the basic action
                 // we have another player selected! In that case we want to reflect that our basic Action is a Revive, not an attack!
                 // But we need to know if the player is alive... if so, the button should be disabled (for better player communication)
 
-                bool isAlive = charState.NetworkLifeState.LifeState.Value == LifeState.Alive;
-                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.GeneralRevive, !isAlive);
+                bool isAlive = charState.NetLifeState.LifeState.Value == LifeState.Alive;
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.ReviveActionPrototype, !isAlive);
 
                 // we'll continue to monitor our selected player every frame to see if their life-state changes.
-                m_SelectedPlayerNetState = charState;
+                m_SelectedPlayerServerCharacter = charState;
                 m_WasSelectedPlayerAliveDuringLastUpdate = isAlive;
             }
             else
             {
-                m_SelectedPlayerNetState = null;
+                m_SelectedPlayerServerCharacter = null;
                 m_WasSelectedPlayerAliveDuringLastUpdate = false;
             }
         }
 
-        void UpdateActionButton(ActionButtonInfo buttonInfo, ActionType actionType, bool isClickable = true)
+        void UpdateActionButton(ActionButtonInfo buttonInfo, Action action, bool isClickable = true)
         {
             // first find the info we need (sprite and description)
             Sprite sprite = null;
             string description = "";
 
-            if (actionType != ActionType.None)
+            if (action != null)
             {
-                var desc = GameDataSource.Instance.ActionDataByType[actionType];
-                sprite = desc.Icon;
-                description = desc.Description;
+                sprite = action.Config.Icon;
+                description = action.Config.Description;
             }
 
             // set up UI elements appropriately
@@ -316,7 +341,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // store the action type so that we can retrieve it in click events
-            buttonInfo.CurActionType = actionType;
+            buttonInfo.CurAction = action;
         }
     }
 }
