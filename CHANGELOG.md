@@ -32,7 +32,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Refactored the Action system so that the action objects themselves are pooled Scriptable Objects (#705)
 * Configured the NetworkTransform components of every NetworkObject to reduce the bandwidth usage (#716). This prevents the unnecessary synchronization of data that clients do not need, i.e. a character's scale or y position. In the case of a character, it reduced the size of each update from 47B to 23B.
 * Instead of a NetworkBehaviour that carries a WinState netvar we now pass the win state on the server to the PostGame scene and it then stores that state in the netvar, eliminating the need to preserve a NetworkBehaviour-bearing gameObject across scenes. (#724)
-* Bump to NGO 1.0.1 (#720)
 * Reduced the MaxPacketQueueSize UTP parameter value from 512 to 256 (#728). This reduces the amount of memory used by UTP by around 1 MB. Boss Room does not need a bigger queue size than this because there can only be 7 clients connected to a host and UTP already limits the maximum number of in-flight packets to 32 per connection.
 * Updated Lobby package to 1.0.3 and reworked our auto-reconnect flow to use the Reconnect feature from the Lobby API (#737). Now, clients do not leave the lobby when they are disconnected, and the host does not remove them from it. They are marked as disconnected by the Relay server and can attempt to reconnect to the lobby directly, until a certain timeout (specified by the Disconnect removal time parameer, set in the dashboard configuration).
 * Cleanup
@@ -52,6 +51,11 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Tank's shield charge animation not getting stuck due to multiple invocations. (#742)
 * Lobby join button not interactable if no join code is provided. (#744) This prevents an ArgumentNullException happening when we try to join a Lobby with an empty join code.
 * Lobby UI unblocking before it should. (#748) This makes sure that we are not unblocking the UI while we are in the middle of the connection process, to prevent users from starting a second one at the same time. Now the UI stays blocked until the connection either succeeds of fails.
+
+## [1.3.1-pre] - 2022-09-13
+
+### Fixed
+* Bumped the project to NGO 1.0.2 (#726)
 
 ## [v1.3.0-pre] - 2022-06-23
 
