@@ -10,7 +10,7 @@ namespace Unity.BossRoom.Gameplay.UI
 {
     public class UnityServicesUIHandler : MonoBehaviour
     {
-        IDisposable m_Subscriptions;
+        ISubscriber<UnityServiceErrorMessage> m_ServiceErrorSubscription;
 
         void Awake()
         {
@@ -20,7 +20,8 @@ namespace Unity.BossRoom.Gameplay.UI
         [Inject]
         void Initialize(ISubscriber<UnityServiceErrorMessage> serviceError)
         {
-            m_Subscriptions = serviceError.Subscribe(ServiceErrorHandler);
+            m_ServiceErrorSubscription = serviceError;
+            m_ServiceErrorSubscription.Subscribe(ServiceErrorHandler);
         }
 
         void ServiceErrorHandler(UnityServiceErrorMessage error)
@@ -86,7 +87,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void OnDestroy()
         {
-            m_Subscriptions?.Dispose();
+            m_ServiceErrorSubscription?.Unsubscribe(ServiceErrorHandler);
         }
     }
 }

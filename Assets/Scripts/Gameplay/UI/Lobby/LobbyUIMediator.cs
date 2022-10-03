@@ -29,7 +29,7 @@ namespace Unity.BossRoom.Gameplay.UI
         LocalLobby m_LocalLobby;
         NameGenerationData m_NameGenerationData;
         ConnectionManager m_ConnectionManager;
-        IDisposable m_Subscriptions;
+        ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
 
         const string k_DefaultLobbyName = "no-name";
 
@@ -50,10 +50,10 @@ namespace Unity.BossRoom.Gameplay.UI
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
             m_ConnectionManager = connectionManager;
-
+            m_ConnectStatusSubscriber = connectStatusSub;
             RegenerateName();
 
-            m_Subscriptions = connectStatusSub.Subscribe(OnConnectStatus);
+            m_ConnectStatusSubscriber.Subscribe(OnConnectStatus);
         }
 
         void OnConnectStatus(ConnectStatus status)
@@ -66,7 +66,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void OnDestroy()
         {
-            m_Subscriptions?.Dispose();
+            m_ConnectStatusSubscriber?.Unsubscribe(OnConnectStatus);
         }
 
         //Lobby and Relay calls done from UI
@@ -119,14 +119,18 @@ namespace Unity.BossRoom.Gameplay.UI
 
             bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
 
-            if (!playerIsAuthorized)
+            if (blockUI && !playerIsAuthorized)
             {
                 UnblockUIAfterLoadingIsComplete();
                 return;
             }
 
             await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
-            UnblockUIAfterLoadingIsComplete();
+
+            if (blockUI)
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
         }
 
         public async void JoinLobbyWithCodeRequest(string lobbyCode)
