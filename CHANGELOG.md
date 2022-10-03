@@ -9,7 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-* Added TOC and Index of educational concepts to readme (#736)
+* Added TOC and Index of educational concepts to readme (#736) Boss Room can be quite intimidating for first time users. This index will hopefully help soften the onboarding.
 * Added tests for connection management (#692). These are integration tests to validate that the state machine works properly. They use Netcode's NetworkIntegrationTest
 * Added handling the OnTransportFailure callback (#707). This callback is invoked when a failure happens on the transport's side, for example if the host loses connection to the Relay service. This won't get called when the host is just listening with direct IP, this would need to be handled differently (by pinging an external service like google to test for internet connectivity for example). Boss Room now handles that callback by returning to the Offline state.
 * Pickup and Drop action added to the Action system. Actionable once targeting a "Heavy"-tagged NetworkObject. (#372) - This shows NetworkObject parenting with a pattern to follow animation bones (the hands when picking up)
@@ -18,7 +18,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Introduced a mechanism for identifying actions by their runtime-generated ActionID, instead of relying on a fragile ActionType enumeration (#705)
 * NetworkObjectSpawner handles dynamically spawning in-scene placed NetworkObjects (#717) - You can't place a NetworkObject in scene directly and destroy it at runtime. This PR showcases proper handling of NetworkObjects that you'd wish to place inside of scenes, but would still want to destroy at game-time. Examples of these are: Imps, VandalImps, ImpBoss. NetworkObjects such as doors, crystals, door switch, etc. remain the same, statically-placed in scene.
 * Quality levels settings set up for Desktop [MTT-4450] (#713)
-* Added custom RNSM config with graph for RTT instead of single value (#747)
+* Added custom RNSM config with graph for RTT instead of single value (#747) Being able to *see* latency bumps and variation is helpful to identify the cause of in-game issues. This also adds clearer headers for each RNSM graphs.
 * Added Unsubscribe API for the ISubscriber<T> along with refactoring of the codebase to use this API instead of IDisposable handle when there is just one subscription (#612)
 ### Changed
 * Updated tools, authentication and relay packages (#690)
