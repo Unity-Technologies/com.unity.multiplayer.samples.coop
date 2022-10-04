@@ -9,7 +9,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     public static class UnityRelayUtilities
     {
-        const string k_KDtlsConnType = "udp";
+        const string k_KDtlsConnType = "dtls";
 
         public static async
             Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string

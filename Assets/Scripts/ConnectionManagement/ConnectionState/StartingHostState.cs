@@ -82,7 +82,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                     // we now need to set the RelayCode somewhere :P
                     var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-                    utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: false);
+                    utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
                 }
                 catch (Exception e)
                 {
