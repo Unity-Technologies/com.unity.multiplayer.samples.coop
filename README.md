@@ -1,6 +1,9 @@
 ![Banner](Documentation/Images/Banner.png)
 ## Co-op multiplayer RPG and utilities built with Unity Netcode for GameObjects
 
+|[Feedback Form](#feedback-form) |
+| -- |
+
 | Support is available on [Discord](https://discord.gg/mNgM2XRDpb) and [forums](https://forum.unity.com/forums/multiplayer.26/) to help you work through issues you may encounter when using Boss Room. |
 | -- |
 
@@ -27,6 +30,7 @@
   - [Bite-size Samples](#bite-size-samples)
 - [Contributing](#contributing)
 - [Feedback Form](#feedback-form)
+
 
 ## Boss Room
 
