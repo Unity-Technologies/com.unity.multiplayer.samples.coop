@@ -26,6 +26,7 @@
 - [Other samples](#other-samples)
   - [Bite-size Samples](#bite-size-samples)
 - [Contributing](#contributing)
+- [Feedback Form](#feedback-form)
 
 ## Boss Room
 
@@ -206,3 +207,9 @@ Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting
 For further discussion points and to connect with the team, join us on the Unity Multiplayer Networking Discord Server - Channel #dev-samples
 
 [![Discord](https://img.shields.io/discord/449263083769036810.svg?label=discord&logo=discord&color=informational)](https://discord.gg/FM8SE9E)
+
+## Feedback Form
+
+Thank you for cloning Boss Room and taking a look at the project. To help us improve and build better samples in the future, please consider submitting feedback about your experiences with Boss Room and let us know if you were able to learn everything you needed to today. It'll only take a couple of minutes. Thanks!
+
+[Enter the Boss Room Feedback Form](https://unitytech.typeform.com/bossroom)
