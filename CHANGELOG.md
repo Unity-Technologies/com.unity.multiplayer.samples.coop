@@ -20,6 +20,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Quality levels settings set up for Desktop [MTT-4450] (#713)
 * Added custom RNSM config with graph for RTT instead of single value (#747) Being able to *see* latency bumps and variation is helpful to identify the cause of in-game issues. This also adds clearer headers for each RNSM graphs.
 * Added Unsubscribe API for the ISubscriber<T> along with refactoring of the codebase to use this API instead of IDisposable handle when there is just one subscription (#612)
+* Vandal Imp and bomb throwing action integrated in main game: NetworkRigidbody-based toss Action, thrown by VandalImp class (code already in 1.3.0)
+  * Art and sound pass for NetworkRigidbody-based toss action [MTT-2732] (#689) This also adds the Vandal imp to the main game.
 ### Changed
 * Updated tools, authentication and relay packages (#690)
 * Replaced our dependency injection solution with VContainer. (#679) This helps us reduce the amount of code we have to maintain.
@@ -70,7 +72,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Updated boss room's root scene to automatically load child scenes at editor time (#653)
 * Users can change profile in-game in addition to the -AuthProfile command line argument (#636)
 * New Vandal Imp and bomb throwing action: NetworkRigidbody-based toss Action, thrown by new VandalImp class [MTT-2333] (#671)
-  * Art and sound pass for NetworkRigidbody-based toss action [MTT-2732] (#689)
 
 ### Changed
 * Bump NGO to pre.10 (#678) --> Fix in Boss Room related to the connection approval breaking change. Removing useless ForceNetworkSerializeByMemcpy for player names.
