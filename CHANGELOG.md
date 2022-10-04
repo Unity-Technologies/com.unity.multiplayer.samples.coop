@@ -22,14 +22,13 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Added Unsubscribe API for the ISubscriber<T> along with refactoring of the codebase to use this API instead of IDisposable handle when there is just one subscription (#612)
 ### Changed
 * Updated tools, authentication and relay packages (#690)
-* Replaced our dependency injection solution with VContainer. (#679)
+* Replaced our dependency injection solution with VContainer. (#679) This helps us reduce the amount of code we have to maintain.
 * NetworkedMessageChannels can now be subscribed to before initiating a connection (#670) This allows a subscription's lifetime to not be restricted by a connection, so subscribing before a connection is possible, and subscriptions will still work properly if the connection ends and a new one begins.
-* Refactored connection management into simpler state machine (#666) This makes the connection flow easier to follow. Each connection state now handles user inputs and Netcode callbacks as they should, removing the need for big switch-cases of if-else statements. These inputs and callbacks also trigger transitions between these states.
+* Refactored connection management into simpler state machine (#666) This makes the connection flow easier to follow and maintain. Each connection state now handles user inputs and Netcode callbacks as they should, removing the need for big switch-cases of if-else statements. These inputs and callbacks also trigger transitions between these states.
 * Merged GameState bridge classes (the ones that contained no or limited functionality) (#697 #732) This cleans up our sometimes too verbose code split.
 * Modified the red arrow of the boss charge attack to fade in and out (rather than just being enabled disabled) (#715)
 * Rearranged the Action system by adding more folders that separate different pieces more clearly (#701)
-* Action and ActionFX classes have been merged into a single Scriptable Object-based Action class; all the existing actions have been refactored to follow this new design (#705)
-* Refactored the Action system so that the action objects themselves are pooled Scriptable Objects (#705)
+* Action and ActionFX classes have been merged into a single pooled Scriptable Object-based Action class; all the existing actions have been refactored to follow this new design (#705) This should make these more readable and consistent following our client/server/shared to domain based assemblies refactor.
 * Configured the NetworkTransform components of every NetworkObject to reduce the bandwidth usage (#716). This prevents the unnecessary synchronization of data that clients do not need, i.e. a character's scale or y position. In the case of a character, it reduced the size of each update from 47B to 23B.
 * Instead of a NetworkBehaviour that carries a WinState netvar we now pass the win state on the server to the PostGame scene and it then stores that state in the netvar, eliminating the need to preserve a NetworkBehaviour-bearing gameObject across scenes. (#724)
 * Reduced the MaxPacketQueueSize UTP parameter value from 512 to 256 (#728). This reduces the amount of memory used by UTP by around 1 MB. Boss Room does not need a bigger queue size than this because there can only be 7 clients connected to a host and UTP already limits the maximum number of in-flight packets to 32 per connection.
