@@ -113,6 +113,8 @@ Boss Room is a multiplayer experience that’s meant to be playable over interne
 
 The following classes are of interest to learn more about our UGS wrappers and integration:
 
+As to not sprinkle service access logic everywhere and have a single source of truth for service access, we've wrapped UGS SDK access into Facades and used UI mediators to contain the service logic triggered by UIs. These are called in multiple places throughout our code base.
+
 - [AuthenticationServiceFacade.cs](Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs)
 - [LobbyServiceFacade.cs](Assets/Scripts/UnityServices/Lobby/LobbyServiceFacade.cs)
 - Lobby and relay - client join - JoinLobbyRequest() in [Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs](Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs)
