@@ -93,7 +93,6 @@ The transport is set in the transport field in the `NetworkManager`. We are usin
 
 Unity Transport Package is a network transport layer, packaged with network simulation tools which are useful for spotting networking issues early during development. This protocol is initialized to use direct IP to connect, but is configured at runtime to use Unity Relay if starting a game as a host using the Lobby Service, or joining a Lobby as a client. Unity Relay is a relay service provided by Unity services, supported by Unity Transport. See the documentation on [Unity Transport Package](https://docs-multiplayer.unity3d.com/docs/transport-utp/about-transport-utp/#unity-transport-package-utp) and on [Unity Relay](https://docs-multiplayer.unity3d.com/docs/relay/relay).
 
-`StartingHostState` and `ClientConnectingState` are the ones that would need to be extended if we needed to add a new transport. Both of these classes assume that we are using UTP.
 
 ## Connection flow state machine
 
