@@ -97,7 +97,8 @@ Unity Transport Package is a network transport layer, packaged with network simu
 
 ## Connection flow state machine
 
-The Boss Room network connection flow is owned by the `ConnectionManager`, which is a simple state machine. It receives inputs from Netcode or from the user, and handles it according to its current state. Each state inherits from the ConnectionState abstract class. The following diagram shows how each state transitions to the others based on outside inputs.
+The Boss Room network connection flow is owned by the `ConnectionManager`, which is a simple state machine. It receives inputs from Netcode or from the user, and handles them according to its current state. Each state inherits from the ConnectionState abstract class. The following diagram shows how each state transitions to the others based on outside inputs.
+If one were to add a new transport, `StartingHostState` and `ClientConnectingState` are the states that would need to be extended. Both of these classes assume that we are using UTP at the moment.
 
 ![boss room connection manager state machine](Documentation/Images/BossRoomConnectionManager.png "connection manager state machine")
 
