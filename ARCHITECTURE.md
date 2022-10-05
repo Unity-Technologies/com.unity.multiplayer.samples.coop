@@ -153,9 +153,9 @@ Inside `BossRoom` scene, `ServerBossRoomState` spawns a `PlayerAvatar` per Persi
 
 `ClientCharacter` primarily is a host for the `ClientActionPlayer` class, and it also contains the client RPCs for the character gameplay logic.
 
-### Game data setup
+### Game config setup
 
-Game data in Boss Room is defined in `ScriptableObjects`.
+Game config in Boss Room is defined in `ScriptableObjects`.
 
 A singleton class [GameDataSource.cs](Assets/Scripts/Gameplay/GameplayObjects/RuntimeDataContainers/GameDataSource.cs) is responsible for storing all the actions and character classes in the game.
 
@@ -192,8 +192,11 @@ On the client that is requesting an ability we can play an anticipatory animatio
 - Client clicks mouse on target destination.
 - Client->server RPC, containing target destination.
 - Anticipatory animation plays immediately on client.
+- Network latency
+- Server receives the RPC
 - Server performs pathfinding.
 - Once pathfinding is finished, server representation of entity starts updating its NetworkVariables at the same cadence as FixedUpdate.
+- Network latency before clients receive replication data.
 - Visuals GameObject never outpaces the simulation GameObject, and so is always slightly behind and interpolating towards the networked position and rotation.
 
 ### Navigation system
@@ -204,7 +207,7 @@ Each scene which uses navigation or dynamic navigation objects should have a `Na
 
 The project is using `NavMeshComponents`. This means direct building from the Navigation window will not give the desired results. Instead find a `NavMeshComponent` in the given scene e.g. a __NavMeshSurface__ and use the __Bake__ button of that script. Also make sure that there is always only one navmesh file per scene. Navmesh files are stored in a folder with the same name as the corresponding scene. You can recognize them based on their icon in the editor. They follow the naming pattern "NavMesh-<name-of-creating-object\.asset>"
 
-## Important architectural patterns and decisions
+## Noteworthy architectural patterns and decisions
 
 In Boss Room we made several noteworthy architectural decisions:
 
@@ -220,7 +223,7 @@ DI also allows us to circumvent the problem of cross-scene references to common 
 
 Original problem: reading code with client and server code mixing together adds complexity and makes it easier to make mistakes. That code will often run in a single context, either client or server.
 
-Boss Room explored different client-server code separation approaches. We decided in the end to revert our initial client/server/shared assemblies to a more classic domain driven assembly architecture, but still keeping certain more complex classes with a client/server separation.
+Boss Room explored different client-server code separation approaches. For readers that have been following us since the beginning, we decided in the end to revert our initial client/server/shared assemblies to a more classic domain driven assembly architecture, but still keeping certain more complex classes with a client/server separation.
 
 Our initial thinking was separating assemblies by client and server would allow for easier porting to Dedicated Game Server (DGS) afterward. You’d only need to strip a single assembly to make sure that code only runs when necessary.
 
