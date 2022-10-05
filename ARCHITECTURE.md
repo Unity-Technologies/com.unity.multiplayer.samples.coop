@@ -39,31 +39,23 @@ This assembly separation style forces us to have better separation of concerns a
 
 ## Application flow
 
-Boss Room assumes that the `Startup` scene is loaded first.  \
+Boss Room assumes that the `Startup` scene is loaded first.
 
 > __An interesting trick__:
 >
 > We have an editor tool that enforces start from that scene even if we're working in some other scene. This tool can be disabled via an editor Menu: `Boss Room > Don't Load Bootsrap Scene On Play` and vice-versa via `Boss Room > Load Bootsrap Scene On Play`.
 
-ApplicationController class serves as the entrypoint and composition root of the application. It lives on a GameObject in the Startup scene. Here we bind dependencies that should exist throughout the lifetime of the application - the core DI-managed “singletons” of our game.  \
-
-> __Note__:
->
-> `ApplilcationController` inherits from the `VContainer`'s `LifetimeScope` - a class that serves as a dependency injection scope and bootstrapper, where we can bind dependencies.
+`ApplicationController` component serves as the entrypoint and composition root of the application. It lives on a GameObject in the Startup scene. Here we bind dependencies that should exist throughout the lifetime of the application - the core DI-managed “singletons” of our game. See [Dependency Injection](#dependency-injection) section for more information.
 
 ## Game state and scene flow
 
 After the initial bootstrap logic is complete, the ApplicationController loads the `MainMenu` scene.
 
-Each scene has its own entrypoint component sitting on a root-level game object. It serves as a scene-specific entrypoint, which, similar to ApplicationController binds dependencies (but these dependencies are local to the specific scene and will be released when the scene unloads). These `State` classes inherit from `LifetimeScope` too, and in the inspector they are set up to have ApplicationController to be their parent scope.
+Each scene has its own entrypoint component sitting on a root-level game object. It serves as a scene-specific composition root.
 
-For MainMenu scene we only have the “MainMenuClientState”, however for the scenes that contain networked logic we also have the `server` counterparts to the client scenes, and both exist on the same game object.
+For MainMenu scene we only have the `MainMenuClientState`, however for the scenes that contain networked logic we also have the `server` counterparts to the client scenes, and both exist on the same game object.
 
 As soon as we get into the CharSelect scene (either by joining or hosting a game) - our NetworkManager instance is running. The host drives game state transitions and also controls the set of scenes that are currently loaded in the game - this indirectly forces all the clients to load the same set of scenes as the server they are connected to (via Netcode's networked scene management).
-
-> __Note__:
->
-> In Inspector we can choose a parent scope for any `LifetimeScope`s - it’s useful to set a cross-scene reference to some parent scope (most commonly ApplicationController). This allows us to bind our scene-specific dependencies, and still have easy access to the global dependencies of the ApplicationController in our State-specific version of a `LifetimeScope` object.
 
 ### Application Flow Diagram
 
@@ -205,11 +197,9 @@ Each scene which uses navigation or dynamic navigation objects should have a `Na
 
 #### Building a navigation mesh
 
-The project is using `NavMeshComponents`. This means direct building from the Navigation window will not give the desired results. Instead find a `NavMeshComponent` in the given scene e.g. a __NavMeshSurface__ and use the __Bake__ button of that script. Also make sure that there is always only one navmesh file per scene. Navmesh files are stored in a folder with the same name as the corresponding scene. You can recognize them based on their icon in the editor. They follow the naming pattern "NavMesh-<name-of-creating-object\.asset>"
+The project is using `NavMeshComponents`. This means direct building from the Navigation window will not give the desired results. Instead find a `NavMeshComponent` in the given scene e.g. a __NavMeshSurface__ and use the __Bake__ button of that script. Also make sure that there is always only one navmesh file per scene. Navmesh files are stored in a folder with the same name as the corresponding scene. You can recognize them based on their icon in the editor. They follow the naming pattern "NavMesh-<name-of-creating-object.asset>"
 
 ## Noteworthy architectural patterns and decisions
-
-In Boss Room we made several noteworthy architectural decisions:
 
 ### Dependency Injection
 
@@ -218,6 +208,12 @@ We use [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection
 DI allows us to clearly define our dependencies in code, as opposed to using static access, pervasive singletons or scriptable object references (aka Scriptable Object Architecture). Code is easy to version-control and comparatively easy to understand for a programmer, as opposed to Unity YAML-based objects, such as scenes, scriptable object instances and prefabs.
 
 DI also allows us to circumvent the problem of cross-scene references to common dependencies, even though we still have to manage the lifecycle of MonoBehaviour-based dependencies by marking them with DontDestroyOnLoad and destroying them manually when appropriate.
+
+> __Note__:
+>
+> `ApplilcationController` inherits from the `VContainer`'s `LifetimeScope` - a class that serves as a dependency injection scope and bootstrapper, where we can bind dependencies. Scene-specific State classes inherit from `LifetimeScope` too.
+> 
+> In Inspector we can choose a parent scope for any `LifetimeScope`s - it’s useful to set a cross-scene reference to some parent scope (most commonly `ApplicationController`). This allows us to bind our scene-specific dependencies, and still have easy access to the global dependencies of the `ApplicationController` in our State-specific version of a `LifetimeScope` object.
 
 ### Client/Server code separation
 
