@@ -132,6 +132,12 @@ Inside `CharSelect` scene, clients select from 8 possible avatar classes, and th
 
 Inside `BossRoom` scene, `ServerBossRoomState` spawns a `PlayerAvatar` per PersistentPlayer present.
 
+Once initialized successfully, the `PlayerAvatar` GameObject hierarchy inside `BossRoom` scene will look something like (in the case of a selected Archer Boy class):
+
+* Player Avatar: a NetworkObject that will be destroyed when BossRoom scene is unloaded
+  * Player Graphics: a child GameObject containing NetworkAnimator component responsible for replicating animations invoked on the server
+    * PlayerGraphics_Archer_Boy: a purely graphical representation of the selected avatar class
+
 `ClientAvatarGuidHandler`, a `NetworkBehaviour` component residing on the `PlayerAvatar` prefab instance will fetch the validated avatar GUID from `NetworkAvatarGuidState`, and spawn a local, non-networked graphics GameObject corresponding to the avatar GUID.
 
 ### Characters
