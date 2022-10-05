@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5655447013084909147}
   - component: {fileID: 3608714310874968837}
-  - component: {fileID: -1764033382396218637}
   - component: {fileID: 5762482089640033414}
   - component: {fileID: 1290852967062359934}
   m_Layer: 0
@@ -59,22 +58,6 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &-1764033382396218637
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 297185343939699586}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e631ac38df479741af592cf6a1fb553, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parentReference:
-    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
-  autoRun: 1
-  autoInjectGameObjects: []
 --- !u!114 &5762482089640033414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,11 +71,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
+    TypeName: Unity.BossRoom.ApplicationLifecycle.ApplicationController
   autoRun: 1
   autoInjectGameObjects: []
   m_NetcodeHooks: {fileID: 1290852967062359934}
-  m_NetworkGameStateTransform: {fileID: 11400000, guid: 07bddcdf06738e74cb79d30065ff96af, type: 2}
   m_PlayerPrefab: {fileID: 6009713983291384767, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
   m_PlayerSpawnPoints:
   - {fileID: 6319832178442273571}

@@ -1,4 +1,6 @@
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+using System;
+
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
 {
 
     /// <summary>

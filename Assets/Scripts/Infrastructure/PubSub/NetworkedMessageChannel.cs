@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
+namespace Unity.BossRoom.Infrastructure
 {
     /// <summary>
     /// This type of message channel allows the server to publish a message that will be sent to clients as well as

@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Utils
 {
     /// This utility help showing Network statistics at runtime.
     ///
@@ -72,7 +72,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             bool isClientOnly = IsClient && !IsServer;
             if (!IsOwner && isClientOnly) // we don't want to track player ghost stats, only our own
             {
-                Destroy(this);
+                enabled = false;
                 return;
             }
 

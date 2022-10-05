@@ -15,7 +15,7 @@ using UnityEngine;
 /// Also, performance note: self-destruction is a convenient idiom but not the most performant one. In games
 /// for mobile devices (and other lower-graphics-power platforms), it's best to use object pooling instead.
 /// </remarks>
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Utils
 {
     public class TimedSelfDestruct : MonoBehaviour
     {

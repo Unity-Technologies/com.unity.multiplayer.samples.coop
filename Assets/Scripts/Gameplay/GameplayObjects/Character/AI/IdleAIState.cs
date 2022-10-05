@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
 {
     public class IdleAIState : AIState
     {

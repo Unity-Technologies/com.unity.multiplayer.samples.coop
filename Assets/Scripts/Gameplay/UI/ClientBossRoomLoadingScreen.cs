@@ -1,8 +1,9 @@
 using System;
+using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class ClientBossRoomLoadingScreen : ClientLoadingScreen
     {

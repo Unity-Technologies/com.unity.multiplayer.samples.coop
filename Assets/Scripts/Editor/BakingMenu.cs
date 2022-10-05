@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.Rendering;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
+namespace Unity.BossRoom.Editor
 {
     /// <summary>
     /// This is a script that creates a menu for baking lights (and changing other lighting features) for Boss Room.
