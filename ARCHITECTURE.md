@@ -122,6 +122,10 @@ The following classes are of interest to learn more about our UGS wrappers and i
 
 ## Core gameplay structure
 
+> __Note__:
+>
+> An `Avatar` is at the same level as an `Imp` and live in a scene. A `Persistent Player` lives across scenes.
+
 `Persistent Player` prefab is what goes into the `Player Prefab` slot in the `Network Manager` of the Boss Room. As such - there will be one spawned per client, with the clients owning their respective `Persistent Player` instances.
 
 Note: there is no need to mark these `Persistent Player` instances as `DontDestroyOnLoad` - NGO automatically keeps these prefabs alive between scene loads while the connections are live.
