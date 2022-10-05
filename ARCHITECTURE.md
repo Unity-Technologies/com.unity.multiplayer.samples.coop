@@ -165,7 +165,11 @@ A singleton class [GameDataSource.cs](Assets/Scripts/Gameplay/GameplayObjects/Ru
 
 ### Action System
 
-Action System is a generalized mechanism for Characters to "do stuff" in a networked way. ScriptableObject-derived Actions are implementing both client and server logic of any given thing that the characters can do in the game.
+> __Note__:
+>
+> Boss Room's action system was built for Boss Room's own purpose. To allow for better game design emergence from your game designers, you'll need to implement your own.
+
+Boss Room's Action System is a generalized mechanism for Characters to "do stuff" in a networked way. ScriptableObject-derived Actions are implementing both client and server logic of any given thing that the characters can do in the game.
 
 We have a variety of actions that serve different purposes - some actions are generic and reused by different types of characters, and others are specific to the type of the character.
 
