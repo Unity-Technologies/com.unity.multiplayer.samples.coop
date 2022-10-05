@@ -4,6 +4,7 @@
 
 ### Added
 * Added custom RNSM config with graph for RTT instead of single value (#747)
+* ClientLoadingScreen now sets raycast blocking to true when the loading screen is visible (#760)~~~~
 ### Changed
 *
 ### Removed
