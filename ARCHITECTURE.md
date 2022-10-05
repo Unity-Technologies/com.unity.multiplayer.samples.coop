@@ -71,7 +71,7 @@ As soon as we get into the CharSelect scene (either by joining or hosting a game
 
 > __Note__:
 >
-> BossRoom scene consists of four scenes where the primary scene (BossRoom itself) contains the State components and other logic of the game, along with the navmesh for the level and the trigger areas that let the server know that it needs to load a given subscene.
+> The main room's scene is split in four scenes where the primary scene (BossRoom's root scene) contains the State components and game logic, along with the navmesh for the level and the trigger areas that let the server know that it needs to load a given subscene. Each subscene is then loaded additively with those triggers.
 >
 > Subscenes contain spawn points for the enemies and visual assets for their respective segment of the level. The server unloads subscenes that don't contain any active players and then loads the subscenes that are needed based on the position of the players - if at least one player overlaps with the subscene's trigger area, the subscene is loaded.
 
