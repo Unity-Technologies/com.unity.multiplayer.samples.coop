@@ -144,7 +144,7 @@ Inside `BossRoom` scene, `ServerBossRoomState` spawns a `PlayerAvatar` per Persi
 
 ### Characters
 
-`ServerCharacter` contains NetworkVariables that store the state of any given character, and the server RPCs. It is responsible for executing or kicking off the server-side logic for the characters, which includes:
+`ServerCharacter` lives on a PlayerAvatar or other NPC character and contains server RPCs and NetworkVariables that store the state of any given character. It is responsible for executing or kicking off the server-side logic for the characters, which includes:
 
 - movement and pathfinding via `ServerCharacterMovement` - it uses NavMeshAgent that lives on the server to translate the character’s transform, which is synchronized using NetworkTransform component;
 - player action queueing and execution via `ServerActionPlayer`;
