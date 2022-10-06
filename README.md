@@ -206,9 +206,6 @@ Running the game over internet currently requires setting up a relay.
   
 ## Troubleshooting
   
-**Known Issues**   
- Find an up-to-date list of Boss Room's knows issues in te changelog of our ['Releases'](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page.
-  
 **Bugs**  
   Report bugs using the [Unity bug submission process](https://unity3d.com/unity/qa/bug-reporting).
   
