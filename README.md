@@ -116,7 +116,7 @@ In order to see the multiplayer functionality in action we can either run multip
 First, build an executable by clicking **'File/Build Settings'** in the menu bar, and then click **'Build'**.<br>  
 ![](Documentation/Images/BuildProject.png)
 
-Once the build has completed you can launch several instances of the built executable in order to both host and join a game.<br>  
+Once the build has completed you can launch several instances of the built executable in order to both host and join a game. When using several instances locally, you will have to set different profiles for each instance for authentication purposes, by using the **'Change Profile'** button. <br>  
 > __Mac users:__ to run multiple instances of the same app, you need to use the command line.  Run `open -n BossRoom.app`
 
 ---------------
