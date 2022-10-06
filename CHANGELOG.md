@@ -10,7 +10,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ### Added
 * Added TOC and Index of educational concepts to readme (#736) Boss Room can be quite intimidating for first time users. This index will hopefully help soften the onboarding.
-
 * Added tests for connection management (#692). These are integration tests to validate that the state machine works properly. They use Netcode's NetworkIntegrationTest
 * Added handling the OnTransportFailure callback (#707). This callback is invoked when a failure happens on the transport's side, for example if the host loses connection to the Relay service. This won't get called when the host is just listening with direct IP, this would need to be handled differently (by pinging an external service like google to test for internet connectivity for example). Boss Room now handles that callback by returning to the Offline state.
 * Pickup and Drop action added to the Action system. Actionable once targeting a "Heavy"-tagged NetworkObject. (#372) - This shows NetworkObject parenting with a pattern to follow animation bones (the hands when picking up)
@@ -20,36 +19,34 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * NetworkObjectSpawner handles dynamically spawning in-scene placed NetworkObjects (#717) - You can't place a NetworkObject in scene directly and destroy it at runtime. This PR showcases proper handling of NetworkObjects that you'd wish to place inside of scenes, but would still want to destroy at game-time. Examples of these are: Imps, VandalImps, ImpBoss. NetworkObjects such as doors, crystals, door switch, etc. remain the same, statically-placed in scene.
 * Quality levels settings set up for Desktop [MTT-4450] (#713)
 * Added custom RNSM config with graph for RTT instead of single value (#747) Being able to *see* latency bumps and variation is helpful to identify the cause of in-game issues. This also adds clearer headers for each RNSM graphs.
-* Added Unsubscribe API for the ISubscriber<T> along with refactoring of the codebase to use this API instead of IDisposable handle when there is just one subscription (#612)
 * Vandal Imp and bomb throwing action integrated in main game: NetworkRigidbody-based toss Action, thrown by VandalImp class (code already in 1.3.0)
-  * Art and sound pass for NetworkRigidbody-based toss action [MTT-2732] (#689) This also adds the Vandal imp to the main game.
+* Art and sound pass for NetworkRigidbody-based toss action [MTT-2732] (#689) This also adds the Vandal imp to the main game.
+
 ### Changed
 * Updated tools, authentication and relay packages (#690)
- 
-* Replaced our dependency injection solution with VContainer. (#679) This helps us reduce the amount of code we have to maintain.
 * NetworkedMessageChannels can now be subscribed to before initiating a connection (#670) This allows a subscription's lifetime to not be restricted by a connection, so subscribing before a connection is possible, and subscriptions will still work properly if the connection ends and a new one begins.
-* Refactored connection management into simpler state machine (#666) This makes the connection flow easier to follow and maintain. Each connection state now handles user inputs and Netcode callbacks as they should, removing the need for big switch-cases of if-else statements. These inputs and callbacks also trigger transitions between these states.
-* Merged GameState bridge classes (the ones that contained no or limited functionality) (#697 #732) This cleans up our sometimes too verbose code split.
 * Modified the red arrow of the boss charge attack to fade in and out (rather than just being enabled disabled) (#715)
-* Rearranged the Action system by adding more folders that separate different pieces more clearly (#701)
 * Action and ActionFX classes have been merged into a single pooled Scriptable Object-based Action class; all the existing actions have been refactored to follow this new design (#705) This should make these more readable and consistent following our client/server/shared to domain based assemblies refactor.
 * Configured the NetworkTransform components of every NetworkObject to reduce the bandwidth usage (#716). This prevents the unnecessary synchronization of data that clients do not need, i.e. a character's scale or y position. In the case of a character, it reduced the size of each update from 47B to 23B.
 * Instead of a NetworkBehaviour that carries a WinState netvar we now pass the win state on the server to the PostGame scene and it then stores that state in the netvar, eliminating the need to preserve a NetworkBehaviour-bearing gameObject across scenes. (#724)
 * Reduced the MaxPacketQueueSize UTP parameter value from 512 to 256 (#728). This reduces the amount of memory used by UTP by around 1 MB. Boss Room does not need a bigger queue size than this because there can only be 7 clients connected to a host and UTP already limits the maximum number of in-flight packets to 32 per connection.
 * Updated Lobby package to 1.0.3 and reworked our auto-reconnect flow to use the Reconnect feature from the Lobby API (#737). Now, clients do not leave the lobby when they are disconnected, and the host does not remove them from it. They are marked as disconnected by the Relay server and can attempt to reconnect to the lobby directly, until a certain timeout (specified by the Disconnect removal time parameer, set in the dashboard configuration).
+
 ### Cleanup
-  * Namespaces in the project have been changed to map to their assembly definitions (#732)
- 
-  * Numerous name changes for fields and variables to match their new type names (#732)
-  * Removed DynamicNavObstacle - an unused class (#732)
-  * Merged networked data classes into their Server counterparts. An example of that change is the contents of NetworkCharacterState getting moved into ServerCharacter, contents of NetworkDoorState getting moved into SwitchedDoor etc. (#732)
+* Refactored connection management into simpler state machine (#666) This makes the connection flow easier to follow and maintain. Each connection state now handles user inputs and Netcode callbacks as they should, removing the need for big switch-cases of if-else statements. These inputs and callbacks also trigger transitions between these states.
+* Rearranged the Action system by adding more folders that separate different pieces more clearly (#701)
+* Merged GameState bridge classes (the ones that contained no or limited functionality) (#697 #732) This cleans up our sometimes too verbose code split.
+* Replaced our dependency injection solution with VContainer. (#679) This helps us reduce the amount of code we have to maintain.
+* Added Unsubscribe API for the ISubscriber<T> along with refactoring of the codebase to use this API instead of IDisposable handle when there is just one subscription (#612)
+* Namespaces in the project have been changed to map to their assembly definitions (#732)
+* Numerous name changes for fields and variables to match their new type names (#732)
+* Removed DynamicNavObstacle - an unused class (#732)
+* Merged networked data classes into their Server counterparts. An example of that change is the contents of NetworkCharacterState getting moved into ServerCharacter, contents of NetworkDoorState getting moved into SwitchedDoor etc. (#732)
 * Engine version bump to 2021.3.10f1 (#740)
 * Updated the Architecture.md to match the current state of the project, with all of our recent refactorings. Architecture.md now also has a lot of links to the relevant classes, simplifying the navigation in our code-base (#763)
-### Removed
-*
+
 ### Fixed
 * Subscribing to a message channel while unsubscribing is pending (#675). This issue prevented us from subscribing to a message channel after having unsubscribed to it if no message had been sent between the un-subscription and the new subscription.
- 
 * Using ```Visible``` instead of ```Enabled``` to make sure RNSM continues updating when off (#702)
 * Some NetworkBehaviours are disabled instead of being destroyed (#718) - This preserves the index order for NetworkBehaviours between server and clients, resulting in no indexing issue for sending/receiving RPCs.
 * Scene Bootstrapper: future proofing bootstrap scene so we don't rely on Startup's path. MTT-3707. (#735)
