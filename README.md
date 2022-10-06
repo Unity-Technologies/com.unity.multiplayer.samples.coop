@@ -206,7 +206,9 @@ Running the game over internet currently requires setting up a relay.
 ## Troubleshooting
   
 **Bugs**  
-  Report bugs using the [Unity bug submission process](https://unity3d.com/unity/qa/bug-reporting).
+ Report bugs in Boss Room using Github [issues](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/issues)
+ Report NGO bugs using NGO Github [issues](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects)
+  Report Unity bugs using the [Unity bug submission process](https://unity3d.com/unity/qa/bug-reporting).
   
  **Documentation**  
   For a deep dive into Unity Netcode and Boss Room, visit our [documentation site](https://docs-multiplayer.unity3d.com/).
