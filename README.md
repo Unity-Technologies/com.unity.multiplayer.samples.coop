@@ -54,7 +54,7 @@ To connect and find support, join the multiplayer community on the Unity [Discor
 
 Boss Room is designed to be used in its entirety to help you explore the concepts and patterns behind a multiplayer game flow; such as character abilities, casting animations to hide latency, replicated objects, RPCs, and integration with the [Relay](https://unity.com/products/relay), [Lobby](https://unity.com/products/lobby), and [Authentication](https://unity.com/products/authentication) services.
 
-You can use the project as a starting point for your own Unity game or use elements individually. 
+You can use the project as a reference starting point for your own Unity game or use elements individually.
 
 This repository also contains a [Utilities](Packages/com.unity.multiplayer.samples.coop) package, containing reusable sample scripts. You can install it using the following manifest file entry:
 
