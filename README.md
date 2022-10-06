@@ -19,7 +19,7 @@ Boss Room is compatible with the latest Unity Long Term Support (LTS) editor ver
 
 Find our full project documentation, [here](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom/index.html).
 
-To connect and find support, join the multiplayer community on the Unity [Discord](https://discord.gg/mNgM2XRDpb) and [Forum](https://forum.unity.com/forums/multiplayer.26/).<br> Alternatively, tell us what you think using our new [Feedback Form](#feedback-form) <center>.
+To connect and find support, join the multiplayer community on the Unity [Discord](https://discord.gg/mNgM2XRDpb) and [Forum](https://forum.unity.com/forums/multiplayer.26/).<br> Got feedback? Tell us what you think using our new [Feedback Form](#feedback-form) <center>.
 | -- |
 
 
