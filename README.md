@@ -1,7 +1,7 @@
 ![Banner](Documentation/Images/Banner.png)
 ## Co-op multiplayer RPG and utilities built with Unity Netcode for GameObjects
 
-Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. It is an educational sample designed to showcase typical gameplay [patterns](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom-actions/index.html) that are frequently featured in similar networked games.
+Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. It is an educational sample designed to showcase typical netcode [patterns](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom-actions/index.html) that are frequently featured in similar multiplayer games.
 
 
 __PLEASE NOTE__:
