@@ -90,7 +90,7 @@ Once you have downloaded the project, follow the steps below to get up and runni
  - Add the project to the _Unity Hub_ by clicking on the **Add** button and pointing it to the root folder of the downloaded project.
  	- __Please note :__ the first time you open the project Unity will import all assets, which will take longer than usual.
 
- - Once open, select the 'Startup' scene and click the **Play** button. You can then host a new game or join an existing one using the in-game UI.
+ - Hit the **Play** button. You can then host a new game or join an existing one using the in-game UI.
 
   ![](Documentation/Images/StartupScene.png)
   
