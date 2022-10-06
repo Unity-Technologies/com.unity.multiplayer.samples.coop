@@ -76,7 +76,7 @@ For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/A
 
 ### Installing Git LFS to clone locally
 
-Boss Room uses Git Large Files Support (LFS) to handle all large assets required locally. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions.
+Boss Room uses Git Large Files Support (LFS) to handle all large assets required locally. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions. This step is only needed if cloning locally. You can also just download the project which will already include large files.
 
 ## Registering the project with Unity Gaming Services (UGS)
 
