@@ -102,8 +102,7 @@ BossRoom is an eight-player co-op RPG game experience, where players collaborate
 One of the eight clients acts as the host/server. That client will use a compositional approach so that its entities have both server and client components.
 
 - The game is server-authoritative, with latency-masking animations. 
-- Position updates are carried out through NetworkedVars that sync position, rotation and movement speed. 
-- NetworkedVars and Remote Procedure Calls (RPC) endpoints are isolated in a class that is shared between the server and client specialized logic - components.
+- Position updates are carried out through NetworkTransform that sync position and rotation. 
 
 Code is organized in domain-based assemblies. See our [ARCHITECTURE.md](ARCHITECTURE.md) file for more details.
   
