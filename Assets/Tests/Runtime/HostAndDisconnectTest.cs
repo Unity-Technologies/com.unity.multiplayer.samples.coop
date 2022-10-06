@@ -1,15 +1,16 @@
 using System;
 using System.Collections;
+using Unity.BossRoom.Gameplay.GameState;
+using Unity.BossRoom.Gameplay.UI;
 using NUnit.Framework;
-using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+namespace Unity.BossRoom.Tests.Runtime
 {
     public class HostAndDisconnectTest
     {
@@ -117,9 +118,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
 
-            var scope = clientMainMenuState.Scope;
+            var container = clientMainMenuState.Container;
+            var ipUIMediator = container.Resolve<IPUIMediator>();
 
-            var ipUIMediator = scope.Resolve<IPUIMediator>();
             Assert.That(ipUIMediator != null, $"{nameof(IPUIMediator)} component not found!");
 
             var ipHostingUI = ipUIMediator.IPHostingUI;

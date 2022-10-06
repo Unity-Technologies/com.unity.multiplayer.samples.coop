@@ -1,14 +1,15 @@
 using System;
-using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.BossRoom.Gameplay.Configuration;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices.Auth;
+using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.Services.Core;
-using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class LobbyUIMediator : MonoBehaviour
     {
@@ -27,9 +28,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         LocalLobbyUser m_LocalUser;
         LocalLobby m_LocalLobby;
         NameGenerationData m_NameGenerationData;
-        GameNetPortal m_GameNetPortal;
-        ClientGameNetPortal m_ClientNetPortal;
-        IDisposable m_Subscriptions;
+        ConnectionManager m_ConnectionManager;
+        ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
 
         const string k_DefaultLobbyName = "no-name";
 
@@ -40,9 +40,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             LocalLobbyUser localUser,
             LocalLobby localLobby,
             NameGenerationData nameGenerationData,
-            GameNetPortal gameNetPortal,
             ISubscriber<ConnectStatus> connectStatusSub,
-            ClientGameNetPortal clientGameNetPortal
+            ConnectionManager connectionManager
         )
         {
             m_AuthenticationServiceFacade = authenticationServiceFacade;
@@ -50,17 +49,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LocalUser = localUser;
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
-            m_GameNetPortal = gameNetPortal;
-            m_ClientNetPortal = clientGameNetPortal;
-
+            m_ConnectionManager = connectionManager;
+            m_ConnectStatusSubscriber = connectStatusSub;
             RegenerateName();
 
-            m_Subscriptions = connectStatusSub.Subscribe(OnConnectStatus);
+            m_ConnectStatusSubscriber.Subscribe(OnConnectStatus);
         }
 
         void OnConnectStatus(ConnectStatus status)
         {
-            if (status == ConnectStatus.GenericDisconnect)
+            if (status is ConnectStatus.GenericDisconnect or ConnectStatus.StartClientFailed)
             {
                 UnblockUIAfterLoadingIsComplete();
             }
@@ -68,12 +66,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_Subscriptions?.Dispose();
+            m_ConnectStatusSubscriber?.Unsubscribe(OnConnectStatus);
         }
 
         //Lobby and Relay calls done from UI
 
-        public async void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers)
+        public async void CreateLobbyRequest(string lobbyName, bool isPrivate)
         {
             // before sending request to lobby service, populate an empty lobby name, if necessary
             if (string.IsNullOrEmpty(lobbyName))
@@ -91,17 +89,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, maxPlayers, isPrivate);
+            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, m_ConnectionManager.MaxConnectedPlayers, isPrivate);
 
             if (lobbyCreationAttempt.Success)
             {
                 m_LocalUser.IsHost = true;
                 m_LobbyServiceFacade.SetRemoteLobby(lobbyCreationAttempt.Lobby);
 
-                m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
-
-                Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-                m_GameNetPortal.StartUnityRelayHost();
+                Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}");
+                m_ConnectionManager.StartHostLobby(m_LocalUser.DisplayName);
             }
             else
             {
@@ -111,7 +107,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public async void QueryLobbiesRequest(bool blockUI)
         {
-            if (UnityServices.State != ServicesInitializationState.Initialized)
+            if (Unity.Services.Core.UnityServices.State != ServicesInitializationState.Initialized)
             {
                 return;
             }
@@ -123,14 +119,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
 
-            if (!playerIsAuthorized)
+            if (blockUI && !playerIsAuthorized)
             {
                 UnblockUIAfterLoadingIsComplete();
                 return;
             }
 
             await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
-            UnblockUIAfterLoadingIsComplete();
+
+            if (blockUI)
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
         }
 
         public async void JoinLobbyWithCodeRequest(string lobbyCode)
@@ -205,22 +205,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        async void OnJoinedLobby(Lobby remoteLobby)
+        void OnJoinedLobby(Unity.Services.Lobbies.Models.Lobby remoteLobby)
         {
             m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
-            m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
             Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-            await m_ClientNetPortal.StartClientUnityRelayModeAsync(OnRelayJoinFailed);
-
-            void OnRelayJoinFailed(string message)
-            {
-                PopupManager.ShowPopupPanel("Relay join failed", message);
-                Debug.Log($"Relay join failed: {message}");
-                //leave the lobby if relay failed for some reason
-                m_LobbyServiceFacade.EndTracking();
-                UnblockUIAfterLoadingIsComplete();
-            }
+            m_ConnectionManager.StartClientLobby(m_LocalUser.DisplayName);
         }
 
         //show/hide UI
@@ -235,6 +225,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;
+            m_LobbyCreationUI.Hide();
+            m_LobbyJoiningUI.Hide();
         }
 
         public void ToggleJoinLobbyUI()

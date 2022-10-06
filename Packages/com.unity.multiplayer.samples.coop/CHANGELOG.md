@@ -1,5 +1,10 @@
 # Multiplayer Samples Co-op Changelog
 
+## [1.4.0] - 2022-10-06
+
+### Added
+* Added custom RNSM config with graph for RTT instead of single value (#747)
+
 ## [1.3.1-pre] - 2022-09-13
 
 ### Fixed

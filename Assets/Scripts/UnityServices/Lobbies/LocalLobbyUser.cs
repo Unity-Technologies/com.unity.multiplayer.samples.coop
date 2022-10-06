@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Services.Lobbies.Models;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
+namespace Unity.BossRoom.UnityServices.Lobbies
 {
     /// <summary>
     /// Data for a local lobby user instance. This will update data and is observed to know when to push local user changes to the entire lobby.

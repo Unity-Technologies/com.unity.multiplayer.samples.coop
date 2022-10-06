@@ -1,9 +1,12 @@
 using System;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Avatar = Unity.BossRoom.Gameplay.Configuration.Avatar;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     /// <summary>
     /// NetworkBehaviour component to send/receive GUIDs from server to clients.
@@ -13,8 +16,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [FormerlySerializedAs("AvatarGuidArray")]
         [HideInInspector]
         public NetworkVariable<NetworkGuid> AvatarGuid = new NetworkVariable<NetworkGuid>();
-
-        CharacterClassContainer m_CharacterClassContainer;
 
         [SerializeField]
         AvatarRegistry m_AvatarRegistry;
@@ -34,9 +35,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        void Awake()
+        public void SetRandomAvatar()
         {
-            m_CharacterClassContainer = GetComponent<CharacterClassContainer>();
+            AvatarGuid.Value = m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
         }
 
         void RegisterAvatar(Guid guid)
@@ -62,7 +63,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             m_Avatar = avatar;
 
-            m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
+            if (TryGetComponent<ServerCharacter>(out var serverCharacter))
+            {
+                serverCharacter.CharacterClass = avatar.CharacterClass;
+            }
         }
     }
 }

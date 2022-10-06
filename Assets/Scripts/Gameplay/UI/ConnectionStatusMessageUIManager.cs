@@ -1,8 +1,10 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Infrastructure;
 using UnityEngine;
+using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Subscribes to connection status messages to display them through the popup panel.

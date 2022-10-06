@@ -9,7 +9,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     public static class UnityRelayUtilities
     {
-        private const string kDtlsConnType = "dtls";
+        const string k_KDtlsConnType = "dtls";
 
         public static async
             Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string
@@ -20,7 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             try
             {
-                allocation = await Relay.Instance.CreateAllocationAsync(maxConnections, region);
+                allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections, region);
             }
             catch (Exception exception)
             {
@@ -31,26 +31,26 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             try
             {
-                joinCode = await Relay.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
             }
             catch (Exception exception)
             {
                 throw new Exception($"Creating join code request has failed: \n {exception.Message}");
             }
 
-            var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == kDtlsConnType);
+            var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == k_KDtlsConnType);
             return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes,
                 allocation.ConnectionData, allocation.Key, joinCode);
         }
 
         public static async
-            Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[]
+            Task<(string ipv4address, ushort port, byte[] allocationIdBytes, Guid allocationId, byte[] connectionData, byte[]
                 hostConnectionData, byte[] key)> JoinRelayServerFromJoinCode(string joinCode)
         {
             JoinAllocation allocation;
             try
             {
-                allocation = await Relay.Instance.JoinAllocationAsync(joinCode);
+                allocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
             }
             catch (Exception exception)
             {
@@ -61,8 +61,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             Debug.Log($"host: {allocation.HostConnectionData[0]} {allocation.HostConnectionData[1]}");
             Debug.Log($"client: {allocation.AllocationId}");
 
-            var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == kDtlsConnType);
-            return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes,
+            var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == k_KDtlsConnType);
+            return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes, allocation.AllocationId,
                 allocation.ConnectionData, allocation.HostConnectionData, allocation.Key);
         }
     }

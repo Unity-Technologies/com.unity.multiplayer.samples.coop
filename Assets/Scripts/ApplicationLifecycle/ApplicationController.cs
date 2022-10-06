@@ -1,113 +1,104 @@
 using System;
 using System.Collections;
-using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
-using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
-using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.Utilities;
+using Unity.BossRoom.ApplicationLifecycle.Messages;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.GameState;
+using Unity.BossRoom.Gameplay.Messages;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices;
+using Unity.BossRoom.UnityServices.Auth;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.Utils;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VContainer;
+using VContainer.Unity;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Shared
+namespace Unity.BossRoom.ApplicationLifecycle
 {
+
     /// <summary>
     /// An entry point to the application, where we bind all the common dependencies to the root DI scope.
     /// </summary>
-    public class ApplicationController : MonoBehaviour
+    public class ApplicationController : LifetimeScope
     {
         [SerializeField] UpdateRunner m_UpdateRunner;
-        [SerializeField] GameNetPortal m_GameNetPortal;
-        [SerializeField] ClientGameNetPortal m_ClientNetPortal;
-        [SerializeField] ServerGameNetPortal m_ServerGameNetPortal;
+        [SerializeField] ConnectionManager m_ConnectionManager;
+        [SerializeField] NetworkManager m_NetworkManager;
 
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
+
         IDisposable m_Subscriptions;
 
-        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
-
-        private void Awake()
+        protected override void Configure(IContainerBuilder builder)
         {
-            Application.wantsToQuit += OnWantToQuit;
-
-            DontDestroyOnLoad(gameObject);
-            DontDestroyOnLoad(m_UpdateRunner.gameObject);
-
-            var scope = DIScope.RootScope;
-
-            scope.BindInstanceAsSingle(this);
-            scope.BindInstanceAsSingle(m_UpdateRunner);
-            scope.BindInstanceAsSingle(m_GameNetPortal);
-            scope.BindInstanceAsSingle(m_ClientNetPortal);
-            scope.BindInstanceAsSingle(m_ServerGameNetPortal);
+            base.Configure(builder);
+            builder.RegisterComponent(m_UpdateRunner);
+            builder.RegisterComponent(m_ConnectionManager);
+            builder.RegisterComponent(m_NetworkManager);
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
-            scope.BindAsSingle<LocalLobbyUser>();
-            scope.BindAsSingle<LocalLobby>();
+            builder.Register<LocalLobbyUser>(Lifetime.Singleton);
+            builder.Register<LocalLobby>(Lifetime.Singleton);
 
-            scope.BindAsSingle<ProfileManager>();
+            builder.Register<ProfileManager>(Lifetime.Singleton);
+
+            builder.Register<PersistentGameState>(Lifetime.Singleton);
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
-            scope.BindMessageChannelInstance<QuitGameSessionMessage>();
-            scope.BindMessageChannelInstance<QuitApplicationMessage>();
-            scope.BindMessageChannelInstance<UnityServiceErrorMessage>();
-            scope.BindMessageChannelInstance<ConnectStatus>();
-            scope.BindMessageChannelInstance<DoorStateChangedEventMessage>();
+            // Registering as instance to prevent code stripping on iOS
+            builder.RegisterInstance(new MessageChannel<QuitApplicationMessage>()).AsImplementedInterfaces();
+            builder.RegisterInstance(new MessageChannel<UnityServiceErrorMessage>()).AsImplementedInterfaces();
+            builder.RegisterInstance(new MessageChannel<ConnectStatus>()).AsImplementedInterfaces();
+            builder.RegisterInstance(new MessageChannel<DoorStateChangedEventMessage>()).AsImplementedInterfaces();
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
             //they are networked so that the clients can subscribe to those messages that are published by the server
-            scope.BindNetworkedMessageChannelInstance<LifeStateChangedEventMessage>();
-            scope.BindNetworkedMessageChannelInstance<ConnectionEventMessage>();
+            builder.RegisterComponent(new NetworkedMessageChannel<LifeStateChangedEventMessage>()).AsImplementedInterfaces();
+            builder.RegisterComponent(new NetworkedMessageChannel<ConnectionEventMessage>()).AsImplementedInterfaces();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            scope.BindNetworkedMessageChannelInstance<CheatUsedMessage>();
+            builder.RegisterComponent(new NetworkedMessageChannel<CheatUsedMessage>()).AsImplementedInterfaces();
 #endif
 
             //this message channel is essential and persists for the lifetime of the lobby and relay services
-            scope.BindMessageChannelInstance<ReconnectMessage>();
+            builder.RegisterInstance(new MessageChannel<ReconnectMessage>()).AsImplementedInterfaces();
 
             //buffered message channels hold the latest received message in buffer and pass to any new subscribers
-            scope.BindBufferedMessageChannelInstance<LobbyListFetchedMessage>();
+            builder.RegisterInstance(new BufferedMessageChannel<LobbyListFetchedMessage>()).AsImplementedInterfaces();
 
             //all the lobby service stuff, bound here so that it persists through scene loads
-            scope.BindAsSingle<AuthenticationServiceFacade>(); //a manager entity that allows us to do anonymous authentication with unity services
-            scope.BindAsSingle<LobbyServiceFacade>();
+            builder.Register<AuthenticationServiceFacade>(Lifetime.Singleton); //a manager entity that allows us to do anonymous authentication with unity services
 
-            scope.FinalizeScopeConstruction();
-
-            foreach (var o in m_GameObjectsThatWillBeInjectedAutomatically)
-            {
-                scope.InjectIn(o);
-            }
-
-            m_LocalLobby = scope.Resolve<LocalLobby>();
-            m_LobbyServiceFacade = scope.Resolve<LobbyServiceFacade>();
-
-            var quitGameSessionSub = scope.Resolve<ISubscriber<QuitGameSessionMessage>>();
-            var quitApplicationSub = scope.Resolve<ISubscriber<QuitApplicationMessage>>();
-
-            var subHandles = new DisposableGroup();
-            subHandles.Add(quitGameSessionSub.Subscribe(LeaveSession));
-            subHandles.Add(quitApplicationSub.Subscribe(QuitGame));
-            m_Subscriptions = subHandles;
-
-            Application.targetFrameRate = 120;
+            //LobbyServiceFacade is registered as entrypoint because it wants a callback after container is built to do it's initialization
+            builder.RegisterEntryPoint<LobbyServiceFacade>(Lifetime.Singleton).AsSelf();
         }
 
         private void Start()
         {
+            m_LocalLobby = Container.Resolve<LocalLobby>();
+            m_LobbyServiceFacade = Container.Resolve<LobbyServiceFacade>();
+
+            var quitApplicationSub = Container.Resolve<ISubscriber<QuitApplicationMessage>>();
+
+            var subHandles = new DisposableGroup();
+            subHandles.Add(quitApplicationSub.Subscribe(QuitGame));
+            m_Subscriptions = subHandles;
+
+            Application.wantsToQuit += OnWantToQuit;
+            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(m_UpdateRunner.gameObject);
+            Application.targetFrameRate = 120;
             SceneManager.LoadScene("MainMenu");
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             m_Subscriptions?.Dispose();
             m_LobbyServiceFacade?.EndTracking();
-            DIScope.RootScope.Dispose();
-            DIScope.RootScope = null;
+            base.OnDestroy();
         }
 
         /// <summary>
@@ -137,23 +128,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
                 StartCoroutine(LeaveBeforeQuit());
             }
             return canQuit;
-        }
-
-        // TODO remove messaging for this once we have vcontainer.
-        private void LeaveSession(QuitGameSessionMessage msg)
-        {
-            m_LobbyServiceFacade.EndTracking();
-
-            if (msg.UserRequested)
-            {
-                // first disconnect then return to menu
-                var gameNetPortal = GameNetPortal.Instance;
-                if (gameNetPortal != null)
-                {
-                    gameNetPortal.RequestDisconnect();
-                }
-            }
-            SceneLoaderWrapper.Instance.LoadScene("MainMenu", useNetworkSceneManager: false);
         }
 
         private void QuitGame(QuitApplicationMessage msg)

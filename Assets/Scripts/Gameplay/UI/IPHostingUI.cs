@@ -1,8 +1,9 @@
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class IPHostingUI : MonoBehaviour
     {
@@ -12,13 +13,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         CanvasGroup m_CanvasGroup;
 
-        IPUIMediator m_IPUIMediator;
-
-        [Inject]
-        void InjectDependencies(IPUIMediator ipUIMediator)
-        {
-            m_IPUIMediator = ipUIMediator;
-        }
+        [Inject] IPUIMediator m_IPUIMediator;
 
         void Awake()
         {

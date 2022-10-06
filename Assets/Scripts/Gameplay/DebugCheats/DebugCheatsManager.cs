@@ -1,12 +1,16 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.Gameplay.Messages;
+using Unity.BossRoom.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
+namespace Unity.BossRoom.DebugCheats
 {
     /// <summary>
     /// Handles debug cheat events, applies them on the server and logs them on all clients. This class is only
@@ -29,17 +33,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
         [SerializeField]
         KeyCode m_OpenWindowKeyCode = KeyCode.Slash;
 
-        ServerSwitchedDoor m_ServerSwitchedDoor;
+        SwitchedDoor m_SwitchedDoor;
 
-        ServerSwitchedDoor ServerSwitchedDoor
+        SwitchedDoor SwitchedDoor
         {
             get
             {
-                if (m_ServerSwitchedDoor == null)
+                if (m_SwitchedDoor == null)
                 {
-                    m_ServerSwitchedDoor = FindObjectOfType<ServerSwitchedDoor>();
+                    m_SwitchedDoor = FindObjectOfType<SwitchedDoor>();
                 }
-                return m_ServerSwitchedDoor;
+                return m_SwitchedDoor;
             }
         }
 
@@ -47,13 +51,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
 
         bool m_DestroyPortalsOnNextToggle = true;
 
-        IPublisher<CheatUsedMessage> m_CheatUsedMessagePublisher;
-
         [Inject]
-        void InjectDependencies(IPublisher<CheatUsedMessage> publisher)
-        {
-            m_CheatUsedMessagePublisher = publisher;
-        }
+        IPublisher<CheatUsedMessage> m_CheatUsedMessagePublisher;
 
         void Update()
         {
@@ -154,7 +153,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
             if (playerServerCharacter != null)
             {
-                var targetId = playerServerCharacter.NetState.TargetId.Value;
+                var targetId = playerServerCharacter.TargetId.Value;
                 if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject obj))
                 {
                     var damageable = obj.GetComponent<IDamageable>();
@@ -177,11 +176,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
         {
             foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
             {
-                if (serverCharacter.IsNpc && serverCharacter.NetState.LifeState == LifeState.Alive)
+                if (serverCharacter.IsNpc && serverCharacter.LifeState == LifeState.Alive)
                 {
                     if (serverCharacter.gameObject.TryGetComponent(out IDamageable damageable))
                     {
-                        damageable.ReceiveHP(null, -serverCharacter.NetState.HitPoints);
+                        damageable.ReceiveHP(null, -serverCharacter.HitPoints);
                     }
                 }
             }
@@ -195,7 +194,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
             if (playerServerCharacter != null)
             {
-                playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
+                playerServerCharacter.NetLifeState.IsGodMode.Value = !playerServerCharacter.NetLifeState.IsGodMode.Value;
                 PublishCheatUsedMessage(clientId, "ToggleGodMode");
             }
         }
@@ -207,8 +206,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
             if (playerServerCharacter != null)
             {
-                var baseHp = playerServerCharacter.NetState.CharacterClass.BaseHP.Value;
-                if (playerServerCharacter.NetState.LifeState == LifeState.Fainted)
+                var baseHp = playerServerCharacter.CharacterClass.BaseHP.Value;
+                if (playerServerCharacter.LifeState == LifeState.Fainted)
                 {
                     playerServerCharacter.Revive(null, baseHp);
                 }
@@ -256,9 +255,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
         [ServerRpc(RequireOwnership = false)]
         void ToggleDoorServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            if (ServerSwitchedDoor != null)
+            if (SwitchedDoor != null)
             {
-                ServerSwitchedDoor.ForceOpen = !ServerSwitchedDoor.ForceOpen;
+                SwitchedDoor.ForceOpen = !SwitchedDoor.ForceOpen;
                 PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "ToggleDoor");
             }
             else
@@ -270,7 +269,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
         [ServerRpc(RequireOwnership = false)]
         void TogglePortalsServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            foreach (var portal in FindObjectsOfType<ServerEnemyPortal>())
+            foreach (var portal in FindObjectsOfType<EnemyPortal>())
             {
                 if (m_DestroyPortalsOnNextToggle)
                 {

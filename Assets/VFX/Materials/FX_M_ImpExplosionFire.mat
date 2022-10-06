@@ -10,7 +10,6 @@ Material:
   m_Name: FX_M_ImpExplosionFire
   m_Shader: {fileID: -6465566751694194690, guid: 42787e4b9b9ce6049827a84217a0075e, type: 3}
   m_ValidKeywords:
-  - _ALPHAPREMULTIPLY_ON
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 0
@@ -116,7 +115,7 @@ Material:
     - Vector1_ffa04a928dac4de2b4be502e4caee4d3_1: 1
     - _AlphaClip: 0
     - _AlphaCutoff: 0.5
-    - _Blend: 1
+    - _Blend: 0
     - _BumpScale: 1
     - _CastShadows: 0
     - _Cull: 2
@@ -144,7 +143,7 @@ Material:
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _StepSubtract: 0
     - _Surface: 1
     - _Switch_Alpha: 1

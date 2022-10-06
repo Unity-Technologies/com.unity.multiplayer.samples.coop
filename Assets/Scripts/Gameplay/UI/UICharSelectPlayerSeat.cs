@@ -1,8 +1,11 @@
+using System;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.Gameplay.GameState;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Controls one of the eight "seats" on the character-select screen (the boxes along the bottom).
@@ -40,7 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private int m_PlayerNumber;
 
         // the last SeatState we were assigned
-        private CharSelectData.SeatState m_State;
+        private NetworkCharSelection.SeatState m_State;
 
         // once this is true, we're never clickable again!
         private bool m_IsDisabled;
@@ -48,12 +51,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         public void Initialize(int seatIndex)
         {
             m_SeatIndex = seatIndex;
-            m_State = CharSelectData.SeatState.Inactive;
+            m_State = NetworkCharSelection.SeatState.Inactive;
             m_PlayerNumber = -1;
             ConfigureStateGraphics();
         }
 
-        public void SetState(CharSelectData.SeatState state, int playerIndex, string playerName)
+        public void SetState(NetworkCharSelection.SeatState state, int playerIndex, string playerName)
         {
             if (state == m_State && playerIndex == m_PlayerNumber)
                 return; // no actual changes
@@ -61,14 +64,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_State = state;
             m_PlayerNumber = playerIndex;
             m_PlayerNameHolder.text = playerName;
-            if (m_State == CharSelectData.SeatState.Inactive)
+            if (m_State == NetworkCharSelection.SeatState.Inactive)
                 m_PlayerNumber = -1;
             ConfigureStateGraphics();
         }
 
         public bool IsLocked()
         {
-            return m_State == CharSelectData.SeatState.LockedIn;
+            return m_State == NetworkCharSelection.SeatState.LockedIn;
         }
 
         public void SetDisableInteraction(bool disable)
@@ -103,7 +106,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void ConfigureStateGraphics()
         {
-            if (m_State == CharSelectData.SeatState.Inactive)
+            if (m_State == NetworkCharSelection.SeatState.Inactive)
             {
                 m_InactiveStateVisuals.SetActive(true);
                 m_ActiveStateVisuals.SetActive(false);
@@ -123,7 +126,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 m_PlayerNameHolder.color = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
                 m_Button.interactable = m_IsDisabled ? false : true;
 
-                if (m_State == CharSelectData.SeatState.LockedIn)
+                if (m_State == NetworkCharSelection.SeatState.LockedIn)
                 {
                     m_Glow.color = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
                     m_Glow.gameObject.SetActive(true);

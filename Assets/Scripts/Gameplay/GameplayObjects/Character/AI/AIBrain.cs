@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Gameplay.Actions;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
 {
     /// <summary>
     /// Handles enemy AI. Contains AIStateLogics that handle some of the details,
@@ -20,7 +22,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         static readonly AIStateType[] k_AIStates = (AIStateType[])Enum.GetValues(typeof(AIStateType));
 
         private ServerCharacter m_ServerCharacter;
-        private ActionPlayer m_ActionPlayer;
+        private ServerActionPlayer m_ServerActionPlayer;
         private AIStateType m_CurrentState;
         private Dictionary<AIStateType, AIState> m_Logics;
         private List<ServerCharacter> m_HatedEnemies;
@@ -31,16 +33,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private float m_DetectRangeOverride = -1;
 
-        public AIBrain(ServerCharacter me, ActionPlayer myActionPlayer)
+        public AIBrain(ServerCharacter me, ServerActionPlayer myServerActionPlayer)
         {
             m_ServerCharacter = me;
-            m_ActionPlayer = myActionPlayer;
+            m_ServerActionPlayer = myServerActionPlayer;
 
             m_Logics = new Dictionary<AIStateType, AIState>
             {
                 [AIStateType.IDLE] = new IdleAIState(this),
                 //[ AIStateType.WANDER ] = new WanderAIState(this), // not written yet
-                [AIStateType.ATTACK] = new AttackAIState(this, m_ActionPlayer),
+                [AIStateType.ATTACK] = new AttackAIState(this, m_ServerActionPlayer),
             };
             m_HatedEnemies = new List<ServerCharacter>();
             m_CurrentState = AIStateType.IDLE;
@@ -96,8 +98,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (potentialFoe == null ||
                 potentialFoe.IsNpc ||
-                potentialFoe.NetState.LifeState != LifeState.Alive ||
-                potentialFoe.NetState.IsStealthy.Value)
+                potentialFoe.LifeState != LifeState.Alive ||
+                potentialFoe.IsStealthy.Value)
             {
                 return false;
             }
@@ -150,7 +152,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             get
             {
-                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType];
+                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.CharacterType];
             }
         }
 

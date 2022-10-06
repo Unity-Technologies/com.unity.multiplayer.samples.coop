@@ -1,9 +1,10 @@
+using System;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Lobbies;
 using UnityEngine;
+using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// An individual Lobby UI in the list of available lobbies
@@ -13,14 +14,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] TextMeshProUGUI m_lobbyNameText;
         [SerializeField] TextMeshProUGUI m_lobbyCountText;
 
-        LobbyUIMediator m_LobbyUIMediator;
+        [Inject] LobbyUIMediator m_LobbyUIMediator;
+
         LocalLobby m_Data;
 
-        [Inject]
-        void InjectDependencies(LobbyUIMediator lobbyUIMediator)
-        {
-            m_LobbyUIMediator = lobbyUIMediator;
-        }
 
         public void SetData(LocalLobby data)
         {

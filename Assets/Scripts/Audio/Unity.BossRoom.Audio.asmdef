@@ -2,7 +2,7 @@
     "name": "Unity.BossRoom.Audio",
     "rootNamespace": "",
     "references": [
-        "GUID:59b3bd604d0445f583783872c3e648fc"
+        "Unity.BossRoom.Utils"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

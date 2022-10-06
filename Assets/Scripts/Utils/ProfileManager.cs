@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 
 #if UNITY_EDITOR
 using System.Security.Cryptography;
@@ -10,7 +9,7 @@ using System.Text;
 
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Shared
+namespace Unity.BossRoom.Utils
 {
     public class ProfileManager
     {

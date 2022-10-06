@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.Configuration
 {
     /// <summary>
     /// Describes how a specific character visualization should be animated.

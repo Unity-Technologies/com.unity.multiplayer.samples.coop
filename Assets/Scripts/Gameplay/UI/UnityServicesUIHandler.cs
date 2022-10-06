@@ -1,15 +1,16 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices;
+using Unity.BossRoom.Utils;
 using Unity.Services.Lobbies;
 using UnityEngine;
+using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class UnityServicesUIHandler : MonoBehaviour
     {
-        IDisposable m_Subscriptions;
+        ISubscriber<UnityServiceErrorMessage> m_ServiceErrorSubscription;
 
         void Awake()
         {
@@ -19,7 +20,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [Inject]
         void Initialize(ISubscriber<UnityServiceErrorMessage> serviceError)
         {
-            m_Subscriptions = serviceError.Subscribe(ServiceErrorHandler);
+            m_ServiceErrorSubscription = serviceError;
+            m_ServiceErrorSubscription.Subscribe(ServiceErrorHandler);
         }
 
         void ServiceErrorHandler(UnityServiceErrorMessage error)
@@ -85,7 +87,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_Subscriptions?.Dispose();
+            m_ServiceErrorSubscription?.Unsubscribe(ServiceErrorHandler);
         }
     }
 }
