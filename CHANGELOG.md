@@ -41,6 +41,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * Removed DynamicNavObstacle - an unused class (#732)
   * Merged networked data classes into their Server counterparts. An example of that change is the contents of NetworkCharacterState getting moved into ServerCharacter, contents of NetworkDoorState getting moved into SwitchedDoor etc. (#732)
 * Engine version bump to 2021.3.10f1 (#740)
+* Updated the Architecture.md to match the current state of the project, with all of our recent refactorings. Architecture.md now also has a lot of links to the relevant classes, simplifying the navigation in our code-base (#763)
 ### Removed
 *
 ### Fixed
