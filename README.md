@@ -15,7 +15,7 @@ Boss Room is compatible with the latest Unity Long Term Support (LTS) editor ver
 
 **Boss Room's min spec devices are:**
 - iPhone 6S
-- Pixel 3 <br>
+- Samsung Galaxy J2 Core <br>
 
 Find our full project documentation, [here](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom/index.html).
 
