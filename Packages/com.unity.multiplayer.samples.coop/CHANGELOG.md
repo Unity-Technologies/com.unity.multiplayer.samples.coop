@@ -1,5 +1,16 @@
 # Multiplayer Samples Co-op Changelog
 
+## [Unreleased] - yyyy-mm-dd
+
+### Added
+* ClientLoadingScreen now sets raycast blocking to true when the loading screen is visible (#760)
+### Changed
+*
+### Removed
+*
+### Fixed
+*
+
 ## [1.4.0] - 2022-10-06
 
 ### Added
