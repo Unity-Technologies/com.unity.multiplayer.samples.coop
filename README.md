@@ -189,6 +189,7 @@ Running the game over internet currently requires setting up a relay.
 * Relay Join - StartClientLobby() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
 * Relay Create - StartHostLobby() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
 * Authentication - EnsurePlayerIsAuthorized() in [Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs ](Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs)
+* Profile manager for ParrelSync and local play [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
 
 ### Tools and Utilities
 * Networked message channel (inter-class and networked messaging) - [Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs](Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs)
