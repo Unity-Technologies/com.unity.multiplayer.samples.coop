@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Audio
 {
     /// <summary>
     /// Music player that handles start of boss battle, victory and restart
@@ -24,11 +24,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// static accessor for ClientMusicPlayer
         /// </summary>
         public static ClientMusicPlayer Instance { get; private set; }
-
-        void Start()
-        {
-
-        }
 
         public void PlayThemeMusic(bool restart)
         {

@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Editor
+namespace Unity.BossRoom.Editor
 {
     /// <summary>
     /// Class that permits auto-loading a bootstrap scene when the editor switches play state. This class is
@@ -27,47 +27,37 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
     [InitializeOnLoad]
     public class SceneBootstrapper
     {
-        const string k_BootstrapSceneKey = "BootstrapScene";
         const string k_PreviousSceneKey = "PreviousScene";
-        const string k_LoadBootstrapSceneKey = "LoadBootstrapScene";
+        const string k_ShouldLoadBootstrapSceneKey = "LoadBootstrapScene";
 
         const string k_LoadBootstrapSceneOnPlay = "Boss Room/Load Bootstrap Scene On Play";
         const string k_DoNotLoadBootstrapSceneOnPlay = "Boss Room/Don't Load Bootstrap Scene On Play";
 
         const string k_TestRunnerSceneName = "InitTestScene";
 
-        static bool s_StoppingAndStarting;
+        static bool s_RestartingToSwitchScene;
 
-        static string BootstrapScene
-        {
-            get
-            {
-                if (!EditorPrefs.HasKey(k_BootstrapSceneKey))
-                {
-                    EditorPrefs.SetString(k_BootstrapSceneKey, EditorBuildSettings.scenes[0].path);
-                }
-                return EditorPrefs.GetString(k_BootstrapSceneKey, EditorBuildSettings.scenes[0].path);
-            }
-            set => EditorPrefs.SetString(k_BootstrapSceneKey, value);
-        }
+        static string BootstrapScene => EditorBuildSettings.scenes[0].path;
 
+        // to track where to go back to
         static string PreviousScene
         {
             get => EditorPrefs.GetString(k_PreviousSceneKey);
             set => EditorPrefs.SetString(k_PreviousSceneKey, value);
         }
 
-        static bool LoadBootstrapScene
+        static bool ShouldLoadBootstrapScene
         {
             get
             {
-                if (!EditorPrefs.HasKey(k_LoadBootstrapSceneKey))
+                if (!EditorPrefs.HasKey(k_ShouldLoadBootstrapSceneKey))
                 {
-                    EditorPrefs.SetBool(k_LoadBootstrapSceneKey, true);
+                    EditorPrefs.SetBool(k_ShouldLoadBootstrapSceneKey, true);
                 }
-                return EditorPrefs.GetBool(k_LoadBootstrapSceneKey, true);
+
+                return EditorPrefs.GetBool(k_ShouldLoadBootstrapSceneKey, true);
             }
-            set => EditorPrefs.SetBool(k_LoadBootstrapSceneKey, value);
+            set => EditorPrefs.SetBool(k_ShouldLoadBootstrapSceneKey, value);
         }
 
         static SceneBootstrapper()
@@ -78,45 +68,52 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
         [MenuItem(k_LoadBootstrapSceneOnPlay, true)]
         static bool ShowLoadBootstrapSceneOnPlay()
         {
-            return !LoadBootstrapScene;
+            return !ShouldLoadBootstrapScene;
         }
 
         [MenuItem(k_LoadBootstrapSceneOnPlay)]
         static void EnableLoadBootstrapSceneOnPlay()
         {
-            LoadBootstrapScene = true;
+            ShouldLoadBootstrapScene = true;
         }
 
         [MenuItem(k_DoNotLoadBootstrapSceneOnPlay, true)]
         static bool ShowDoNotLoadBootstrapSceneOnPlay()
         {
-            return LoadBootstrapScene;
+            return ShouldLoadBootstrapScene;
         }
 
         [MenuItem(k_DoNotLoadBootstrapSceneOnPlay)]
         static void DisableDoNotLoadBootstrapSceneOnPlay()
         {
-            LoadBootstrapScene = false;
+            ShouldLoadBootstrapScene = false;
         }
 
-        static void EditorApplicationOnplayModeStateChanged(PlayModeStateChange obj)
+        static void EditorApplicationOnplayModeStateChanged(PlayModeStateChange playModeStateChange)
         {
             if (IsTestRunnerActive())
             {
                 return;
             }
 
-            if (!LoadBootstrapScene)
+            if (!ShouldLoadBootstrapScene)
             {
                 return;
             }
 
-            if (s_StoppingAndStarting)
+            if (s_RestartingToSwitchScene)
             {
+                if (playModeStateChange == PlayModeStateChange.EnteredPlayMode)
+                {
+                    // for some reason there's multiple start and stops events happening while restarting the editor playmode. We're making sure to
+                    // set stoppingAndStarting only when we're done and we've entered playmode. This way we won't corrupt "activeScene" with the multiple
+                    // start and stop and will be able to return to the scene we were editing at first
+                    s_RestartingToSwitchScene = false;
+                }
                 return;
             }
 
-            if (obj == PlayModeStateChange.ExitingEditMode)
+            if (playModeStateChange == PlayModeStateChange.ExitingEditMode)
             {
                 // cache previous scene so we return to this scene after play session, if possible
                 PreviousScene = EditorSceneManager.GetActiveScene().path;
@@ -130,33 +127,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                     {
                         var activeScene = EditorSceneManager.GetActiveScene();
 
-                        s_StoppingAndStarting = activeScene.path == string.Empty ||
-                            !BootstrapScene.Contains(activeScene.path);
+                        s_RestartingToSwitchScene = activeScene.path == string.Empty || !BootstrapScene.Contains(activeScene.path);
 
                         // we only manually inject Bootstrap scene if we are in a blank empty scene,
                         // or if the active scene is not already BootstrapScene
-                        if (s_StoppingAndStarting)
+                        if (s_RestartingToSwitchScene)
                         {
-                            s_StoppingAndStarting = true;
-                            EditorApplication.ExitPlaymode();
+                            EditorApplication.isPlaying = false;
 
                             // scene is included in build settings; open it
                             EditorSceneManager.OpenScene(BootstrapScene);
 
-                            EditorApplication.EnterPlaymode();
-                            s_StoppingAndStarting = false;
-
+                            EditorApplication.isPlaying = true;
                         }
                     }
                 }
                 else
                 {
                     // user either hit "Cancel" or exited window; don't open bootstrap scene & return to editor
-
                     EditorApplication.isPlaying = false;
                 }
             }
-            else if (obj == PlayModeStateChange.EnteredEditMode)
+            else if (playModeStateChange == PlayModeStateChange.EnteredEditMode)
             {
                 if (!string.IsNullOrEmpty(PreviousScene))
                 {

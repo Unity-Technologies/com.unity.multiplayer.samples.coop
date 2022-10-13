@@ -1,19 +1,20 @@
 using System;
 using System.Threading.Tasks;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to when a client is attempting to connect to a server. Starts the client when
     /// entering. If successful, transitions to the ClientConnected state. If not, transitions to the Offline state. If
     /// given a disconnect reason first, transitions to the DisconnectingWithReason state.
     /// </summary>
-    class ClientConnectingState : ConnectionState
+    class ClientConnectingState : OnlineState
     {
         [Inject]
         protected LobbyServiceFacade m_LobbyServiceFacade;
@@ -22,7 +23,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Enter()
         {
-            ConnectClient();
+#pragma warning disable 4014
+            ConnectClientAsync();
+#pragma warning restore 4014
         }
 
         public override void Exit() { }
@@ -39,19 +42,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
-        public override void OnUserRequestedShutdown()
-        {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-        }
-
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
         {
             m_ConnectStatusPublisher.Publish(disconnectReason);
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
         }
 
-        protected async Task ConnectClient()
+        protected async Task ConnectClientAsync()
         {
             bool success = true;
             if (m_LobbyServiceFacade.CurrentUnityLobby != null)
@@ -81,10 +78,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             try
             {
-                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) =
+                var (ipv4Address, port, allocationIdBytes, allocationId, connectionData, hostConnectionData, key) =
                     await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_LocalLobby.RelayJoinCode);
 
-                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_LocalLobby.RelayJoinCode);
+                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationId.ToString(), m_LocalLobby.RelayJoinCode);
                 var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }

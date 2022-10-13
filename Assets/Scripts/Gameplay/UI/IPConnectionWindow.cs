@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class IPConnectionWindow : MonoBehaviour
     {
@@ -19,12 +20,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [Inject] IPUIMediator m_IPUIMediator;
 
-        IDisposable m_Subscription;
+        ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
 
         [Inject]
         void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSubscriber)
         {
-            m_Subscription = connectStatusSubscriber.Subscribe(OnConnectStatusMessage);
+            m_ConnectStatusSubscriber = connectStatusSubscriber;
+            m_ConnectStatusSubscriber.Subscribe(OnConnectStatusMessage);
         }
 
         void Awake()
@@ -34,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_Subscription.Dispose();
+            m_ConnectStatusSubscriber?.Unsubscribe(OnConnectStatusMessage);
         }
 
         void OnConnectStatusMessage(ConnectStatus connectStatus)

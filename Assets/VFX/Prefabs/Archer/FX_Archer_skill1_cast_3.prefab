@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6398153809166015533}
   - component: {fileID: 6398153809166015532}
   - component: {fileID: 6398153809166015535}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: FX_Archer_skill1_cast_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62,7 +62,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0
+    scalar: 0.6
     minScalar: 0
     maxCurve:
       serializedVersion: 2
@@ -4841,7 +4841,7 @@ GameObject:
   - component: {fileID: 6398153809314029581}
   - component: {fileID: 6398153809314029579}
   - component: {fileID: 6398153809314029578}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Archer_cast_Main_Flare_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4886,7 +4886,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0
+    scalar: 0.6
     minScalar: 0
     maxCurve:
       serializedVersion: 2
@@ -9732,7 +9732,7 @@ GameObject:
   - component: {fileID: 6398153809445317525}
   - component: {fileID: 6398153809445317523}
   - component: {fileID: 6398153809445317522}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Archer_cast_Impact_circle_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9777,7 +9777,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0.55
+    scalar: 1.15
     minScalar: 0
     maxCurve:
       serializedVersion: 2
@@ -14614,7 +14614,7 @@ GameObject:
   - component: {fileID: 6398153809656611276}
   - component: {fileID: 6398153809656611274}
   - component: {fileID: 6398153809656611277}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Archer_cast_Rotating_texture_sniper_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14659,7 +14659,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0
+    scalar: 0.6
     minScalar: 0
     maxCurve:
       serializedVersion: 2
@@ -19505,7 +19505,7 @@ GameObject:
   - component: {fileID: 6398153810290219729}
   - component: {fileID: 6398153810290219311}
   - component: {fileID: 6398153810290219310}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Archer_cast_Cast_Particles_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19550,7 +19550,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0
+    scalar: 0.6
     minScalar: 0
     maxCurve:
       serializedVersion: 2
@@ -24387,7 +24387,7 @@ GameObject:
   - component: {fileID: 6398153810878844327}
   - component: {fileID: 6398153810878844325}
   - component: {fileID: 6398153810878844324}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Archer_cast_Rotating_texture_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24432,7 +24432,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0
+    scalar: 0.6
     minScalar: 0
     maxCurve:
       serializedVersion: 2
@@ -29278,7 +29278,7 @@ GameObject:
   - component: {fileID: 6398153810943521971}
   - component: {fileID: 6398153810943521969}
   - component: {fileID: 6398153810943521968}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Archer_cast_Glow_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29323,7 +29323,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0
+    scalar: 0.6
     minScalar: 0
     maxCurve:
       serializedVersion: 2

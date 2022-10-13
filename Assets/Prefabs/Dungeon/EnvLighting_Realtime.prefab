@@ -28,6 +28,7 @@ Transform:
   m_LocalRotation: {x: 0.81108785, y: -0.18585822, z: 0.35118234, w: 0.42926013}
   m_LocalPosition: {x: 85.69, y: 22.12, z: 58}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2345875387662447015}
   m_RootOrder: 4
@@ -106,7 +107,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Version: 1
   m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1 &4120743145451824075
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,6 +142,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: 0.0000000074505797, w: 1}
   m_LocalPosition: {x: 4.2179117, y: 3, z: 7.2377605}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2345875387662447015}
   m_RootOrder: 1
@@ -228,6 +237,7 @@ Transform:
   m_LocalRotation: {x: 0.95784193, y: -0, z: -0, w: 0.2872957}
   m_LocalPosition: {x: 3.9300022, y: 8.73, z: 14.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2345875387662447015}
   m_RootOrder: 0
@@ -281,7 +291,7 @@ Light:
   m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 321
+    m_Bits: 1345
   m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
@@ -306,7 +316,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Version: 1
   m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1 &5714540223158245146
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,6 +350,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9063507186799076179}
   - {fileID: 8437740688137792944}
@@ -370,6 +388,7 @@ Transform:
   m_LocalRotation: {x: -0.62597513, y: 0.29568666, z: -0.67815936, w: -0.24662624}
   m_LocalPosition: {x: 114.24, y: 21.18, z: 36.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2345875387662447015}
   m_RootOrder: 5
@@ -463,6 +482,7 @@ Transform:
   m_LocalRotation: {x: 0.4522047, y: 0.0093468055, z: 0.0058525437, w: -0.89184606}
   m_LocalPosition: {x: 34.61, y: -7.25, z: 0.40999985}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2345875387662447015}
   m_RootOrder: 2
@@ -557,6 +577,7 @@ Transform:
   m_LocalRotation: {x: -0.29004472, y: -0.44186503, z: 0.8349052, w: -0.15350159}
   m_LocalPosition: {x: 115.49, y: 22.12, z: 18.72}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2345875387662447015}
   m_RootOrder: 3
@@ -635,4 +656,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Version: 1
   m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}

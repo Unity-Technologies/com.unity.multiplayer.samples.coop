@@ -1,13 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
+using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Component responsible for spawning prefab clones in waves on the server.
-    /// <see cref="ServerEnemyPortal"/> calls our SetSpawnerEnabled() to turn on/off spawning.
+    /// <see cref="EnemyPortal"/> calls our SetSpawnerEnabled() to turn on/off spawning.
     /// </summary>
     public class ServerWaveSpawner : NetworkBehaviour
     {
@@ -257,7 +259,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             int numPlayers = 0;
             foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                if (serverCharacter.NetState.NetworkLifeState.LifeState.Value == LifeState.Alive)
+                if (serverCharacter.NetLifeState.LifeState.Value == LifeState.Alive)
                 {
                     ++numPlayers;
                 }
@@ -283,7 +285,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // and is not occluded by a blocking collider.
             foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                if (!m_DetectStealthyPlayers && serverCharacter.NetState.IsStealthy.Value)
+                if (!m_DetectStealthyPlayers && serverCharacter.IsStealthy.Value)
                 {
                     // we don't detect stealthy players
                     continue;

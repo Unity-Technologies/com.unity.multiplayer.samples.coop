@@ -1,8 +1,9 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// UI object that visually represents an object's health. Visuals are updated when NetworkVariable is modified.

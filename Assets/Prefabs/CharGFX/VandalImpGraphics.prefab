@@ -1322,12 +1322,12 @@ MonoBehaviour:
   - m_AnimatorNodeName: Attack1
     m_AnimatorNodeNameHash: -47317214
     m_Prefab: {fileID: 0}
-    m_PrefabSpawnDelaySeconds: 0.8
+    m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: a08cbad8bcaf8c345aa6ae1e7578eee9, type: 3}
+    m_SoundEffect: {fileID: 0}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
@@ -1357,6 +1357,7 @@ MonoBehaviour:
     m_LoopSound: 0
   m_AudioSources:
   - {fileID: -8069025211240352543}
+  - {fileID: -4965377615854939036}
   - {fileID: -4965377615854939036}
   m_Animator: {fileID: 234724737205816310}
   m_ClientCharacterVisualization: {fileID: 0}
@@ -2071,7 +2072,7 @@ GameObject:
   - component: {fileID: 8731501901720154717}
   - component: {fileID: 4907214515068745264}
   m_Layer: 6
-  m_Name: Imp_WeaponR
+  m_Name: Imp_TossedObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

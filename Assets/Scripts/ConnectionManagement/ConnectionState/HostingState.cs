@@ -1,19 +1,20 @@
 using System;
 using System.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to a listening host. Handles incoming client connections. When shutting down or
     /// being timed out, transitions to the Offline state.
     /// </summary>
-    class HostingState : ConnectionState
+    class HostingState : OnlineState
     {
         [Inject]
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -25,10 +26,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Enter()
         {
-            var gameState = UnityEngine.Object.Instantiate(m_ConnectionManager.GameState);
-
-            gameState.Spawn();
-
             SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
 
             //The "BossRoom" server always advances to CharSelect immediately on start. Different games
@@ -62,11 +59,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
                 if (playerId != null)
                 {
-                    if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-                    {
-                        m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
-                    }
-
                     var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
                     if (sessionData.HasValue)
                     {
@@ -79,7 +71,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnUserRequestedShutdown()
         {
-            ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
+            m_ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
             // Wait before shutting down to make sure clients receive that message before they are disconnected
             m_ConnectionManager.StartCoroutine(WaitToShutdown());
         }
@@ -92,6 +84,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// Multiple things can be done here, some asynchronously. For example, it could authenticate your user against an auth service like UGS' auth service. It can
         /// also send custom messages to connecting users before they receive their connection result (this is useful to set status messages client side
         /// when connection is refused, for example).
+        /// Note on authentication: It's usually harder to justify having authentication in a client hosted game's connection approval. Since the host can't be trusted,
+        /// clients shouldn't send it private authentication tokens you'd usually send to a dedicated server.
         /// </remarks>
         /// <param name="request"> The initial request contains, among other things, binary data passed into StartClient. In our case, this is the client's GUID,
         /// which is a unique identifier for their install of the game that persists across app restarts.
@@ -133,12 +127,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 response.Pending = true; // give some time for server to send connection status message to clients
                 response.Approved = false;
-                ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+                m_ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
                 yield return null; // wait a frame so UTP can flush it's messages on next update
                 response.Pending = false; // connection approval process can be finished.
             }
 
-            ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+            m_ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
             m_ConnectionManager.StartCoroutine(WaitToDenyApproval());
             if (m_LobbyServiceFacade.CurrentUnityLobby != null)
             {

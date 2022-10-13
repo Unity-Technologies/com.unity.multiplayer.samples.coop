@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Navigation
 {
     /// <summary>
     /// This system exists to coordinate path finding and navigation functionality in a scene.

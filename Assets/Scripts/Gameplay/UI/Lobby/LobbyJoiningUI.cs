@@ -1,28 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Handles the list of LobbyListItemUIs and ensures it stays synchronized with the lobby list from the service.
     /// </summary>
     public class LobbyJoiningUI : MonoBehaviour
     {
-        [SerializeField] LobbyListItemUI m_LobbyListItemPrototype;
-        [SerializeField] InputField m_JoinCodeField;
-        [SerializeField] CanvasGroup m_CanvasGroup;
-        [SerializeField] Graphic m_EmptyLobbyListLabel;
+        [SerializeField]
+        LobbyListItemUI m_LobbyListItemPrototype;
+        [SerializeField]
+        InputField m_JoinCodeField;
+        [SerializeField]
+        CanvasGroup m_CanvasGroup;
+        [SerializeField]
+        Graphic m_EmptyLobbyListLabel;
+        [SerializeField]
+        Button m_JoinLobbyButton;
 
         IObjectResolver m_Container;
         LobbyUIMediator m_LobbyUIMediator;
         UpdateRunner m_UpdateRunner;
-        IDisposable m_Subscriptions;
+        ISubscriber<LobbyListFetchedMessage> m_LocalLobbiesRefreshedSub;
+
         List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
 
         void Awake()
@@ -34,13 +41,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if (m_UpdateRunner != null)
             {
-                m_UpdateRunner.Unsubscribe(PeriodicRefresh);
+                m_UpdateRunner?.Unsubscribe(PeriodicRefresh);
             }
         }
 
         void OnDestroy()
         {
-            m_Subscriptions?.Dispose();
+            m_LocalLobbiesRefreshedSub?.Unsubscribe(UpdateUI);
         }
 
         [Inject]
@@ -53,15 +60,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_Container = container;
             m_LobbyUIMediator = lobbyUIMediator;
             m_UpdateRunner = updateRunner;
-            m_Subscriptions = localLobbiesRefreshedSub.Subscribe(UpdateUI);
+            m_LocalLobbiesRefreshedSub = localLobbiesRefreshedSub;
+            m_LocalLobbiesRefreshedSub.Subscribe(UpdateUI);
         }
 
         /// <summary>
         /// Added to the InputField component's OnValueChanged callback for the join code text.
         /// </summary>
-        public void SanitizeJoinCodeInputText()
+        public void OnJoinCodeInputTextChanged()
         {
             m_JoinCodeField.text = SanitizeJoinCode(m_JoinCodeField.text);
+            m_JoinLobbyButton.interactable = m_JoinCodeField.text.Length > 0;
         }
 
         string SanitizeJoinCode(string dirtyString)
