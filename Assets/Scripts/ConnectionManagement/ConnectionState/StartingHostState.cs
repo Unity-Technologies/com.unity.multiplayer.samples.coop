@@ -1,9 +1,13 @@
 using System;
+using ConnectionManagement.ConnectionState;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
 using UnityEngine;
 using VContainer;
 
@@ -19,11 +23,13 @@ namespace Unity.BossRoom.ConnectionManagement
         LobbyServiceFacade m_LobbyServiceFacade;
         [Inject]
         LocalLobby m_LocalLobby;
+        ConnectionMethodBase m_ConnectionMethod;
 
-        /// <summary>
-        /// How many connections we create a Unity relay allocation for
-        /// </summary>
-        const int k_MaxUnityRelayConnections = 8;
+        public StartingHostState Configure(ConnectionMethodBase baseConnectionMethod)
+        {
+            m_ConnectionMethod = baseConnectionMethod;
+            return this;
+        }
 
         public override void Enter()
         {
@@ -36,9 +42,14 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
             {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
-                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
+                StartHostFailed();
             }
+        }
+
+        void StartHostFailed()
+        {
+            m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
         public override void OnServerStarted()
@@ -68,36 +79,21 @@ namespace Unity.BossRoom.ConnectionManagement
 
         async void StartHost()
         {
-            if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+            try
             {
-                Debug.Log("Setting up Unity Relay host");
-
-                try
-                {
-                    var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) =
-                        await UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
-
-                    m_LocalLobby.RelayJoinCode = joinCode;
-                    //next line enabled lobby and relay services integration
-                    await m_LobbyServiceFacade.UpdateLobbyDataAsync(m_LocalLobby.GetDataForUnityServices());
-                    await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
-
-                    // we now need to set the RelayCode somewhere :P
-                    var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-                    utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogErrorFormat($"{e.Message}");
-                    throw;
-                }
-
+                await m_ConnectionMethod.SetupHostConnectionAsync();
                 Debug.Log($"Created relay allocation with join code {m_LocalLobby.RelayJoinCode}");
-            }
 
-            if (!m_ConnectionManager.NetworkManager.StartHost())
+                // NGO's StartHost launches everything
+                if (!m_ConnectionManager.NetworkManager.StartHost())
+                {
+                    OnClientDisconnect(m_ConnectionManager.NetworkManager.LocalClientId);
+                }
+            }
+            catch (Exception)
             {
-                OnClientDisconnect(m_ConnectionManager.NetworkManager.LocalClientId);
+                StartHostFailed();
+                throw;
             }
         }
     }

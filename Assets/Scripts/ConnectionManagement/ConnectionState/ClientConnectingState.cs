@@ -1,9 +1,12 @@
 using System;
 using System.Threading.Tasks;
+using ConnectionManagement.ConnectionState;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
+using Unity.Services.Relay;
 using UnityEngine;
 using VContainer;
 
@@ -20,6 +23,36 @@ namespace Unity.BossRoom.ConnectionManagement
         protected LobbyServiceFacade m_LobbyServiceFacade;
         [Inject]
         protected LocalLobby m_LocalLobby;
+        ConnectionMethodBase m_ConnectionMethod;
+
+        public ClientConnectingState Configure(ConnectionMethodBase baseConnectionMethod)
+        {
+            m_ConnectionMethod = baseConnectionMethod;
+            return this;
+        }
+
+        internal async Task ConnectClientAsync()
+        {
+            try
+            {
+                // Setup NGO with current connection method
+                await m_ConnectionMethod.SetupClientConnectionAsync();
+
+                // NGO's StartClient launches everything
+                if (!m_ConnectionManager.NetworkManager.StartClient())
+                {
+                    throw new Exception("NetworkManager StartClient failed");
+                }
+
+                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+                m_ConnectionManager.RegisterCustomMessages();
+            }
+            catch (Exception)
+            {
+                StartingClientFailedAsync();
+                throw;
+            }
+        }
 
         public override void Enter()
         {
@@ -38,6 +71,12 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnClientDisconnect(ulong _)
         {
+            // client ID is necessarily ours here
+            StartingClientFailedAsync();
+        }
+
+        protected void StartingClientFailedAsync()
+        {
             m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
@@ -46,54 +85,6 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             m_ConnectStatusPublisher.Publish(disconnectReason);
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
-        }
-
-        protected async Task ConnectClientAsync()
-        {
-            bool success = true;
-            if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-            {
-                success = await JoinRelayServerAsync();
-            }
-
-            if (success)
-            {
-                success = m_ConnectionManager.NetworkManager.StartClient();
-            }
-
-            if (success)
-            {
-                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-                m_ConnectionManager.RegisterCustomMessages();
-            }
-            else
-            {
-                OnClientDisconnect(0);
-            }
-        }
-
-        async Task<bool> JoinRelayServerAsync()
-        {
-            Debug.Log($"Setting Unity Relay client with join code {m_LocalLobby.RelayJoinCode}");
-
-            try
-            {
-                var (ipv4Address, port, allocationIdBytes, allocationId, connectionData, hostConnectionData, key) =
-                    await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_LocalLobby.RelayJoinCode);
-
-                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationId.ToString(), m_LocalLobby.RelayJoinCode);
-                var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-                utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
-            }
-            catch (Exception e)
-            {
-                Debug.Log($"Relay join failed: {e.Message}");
-                //leave the lobby if relay failed for some reason
-                await m_LobbyServiceFacade.EndTracking();
-                return false;
-            }
-
-            return true;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using ConnectionManagement.ConnectionState;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.BossRoom.Utils;
@@ -22,6 +23,8 @@ namespace UUnity.BossRoom.ConnectionManagement
         LobbyServiceFacade m_LobbyServiceFacade;
         [Inject]
         ProfileManager m_ProfileManager;
+        [Inject]
+        LocalLobby m_LocalLobby;
 
         const string k_MainMenuSceneName = "MainMenu";
 
@@ -39,55 +42,22 @@ namespace UUnity.BossRoom.ConnectionManagement
 
         public override void StartClientIP(string playerName, string ipaddress, int port)
         {
-            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetConnectionData(ipaddress, (ushort)port);
-            SetConnectionPayload(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting.Configure(new ConnectionMethodIP(ipaddress, (ushort)port, m_ConnectionManager, m_ProfileManager, playerName)));
         }
 
         public override void StartClientLobby(string playerName)
         {
-            SetConnectionPayload(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting.Configure(new ConnectionMethodRelay(m_LobbyServiceFacade, m_LocalLobby, m_ConnectionManager, m_ProfileManager, playerName)));
         }
 
         public override void StartHostIP(string playerName, string ipaddress, int port)
         {
-            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetConnectionData(ipaddress, (ushort)port);
-
-            SetConnectionPayload(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost.Configure(new ConnectionMethodIP(ipaddress, (ushort)port, m_ConnectionManager, m_ProfileManager, playerName)));
         }
 
         public override void StartHostLobby(string playerName)
         {
-            SetConnectionPayload(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost);
-        }
-
-        void SetConnectionPayload(string playerId, string playerName)
-        {
-            var payload = JsonUtility.ToJson(new ConnectionPayload()
-            {
-                playerId = playerId,
-                playerName = playerName,
-                isDebug = Debug.isDebugBuild
-            });
-
-            var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
-
-            m_ConnectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
-        }
-
-        string GetPlayerId()
-        {
-            if (UnityServices.State != ServicesInitializationState.Initialized)
-            {
-                return ClientPrefs.GetGuid() + m_ProfileManager.Profile;
-            }
-
-            return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + m_ProfileManager.Profile;
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost.Configure(new ConnectionMethodRelay(m_LobbyServiceFacade, m_LocalLobby, m_ConnectionManager, m_ProfileManager, playerName)));
         }
     }
 }
