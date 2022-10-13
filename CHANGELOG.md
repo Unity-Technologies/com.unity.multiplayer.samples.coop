@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
+## [Unreleased] - yyyy-mm-dd
+
+### Added
+* 
+
+### Changed
+* 
+
+### Cleanup
+* Removed unnecessary FindObjectOfType usage inside of ClientCharSelectState (#754)
+
+### Fixed
+* 
+
 ## [2.0.0] - 2022-10-06
 
 ### Added
