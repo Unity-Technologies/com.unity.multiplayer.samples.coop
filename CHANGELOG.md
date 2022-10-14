@@ -18,7 +18,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Removed unnecessary FindObjectOfType usage inside of ClientCharSelectState (#754)
 
 ### Fixed
-* 
+* Fixed up some minor art bugs (#762 #768)
 
 ## [2.0.0] - 2022-10-06
 
