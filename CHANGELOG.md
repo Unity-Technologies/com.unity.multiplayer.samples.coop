@@ -18,7 +18,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Removed unnecessary FindObjectOfType usage inside of ClientCharSelectState (#754)
 
 ### Fixed
-* 
+* Reenabled depth buffer in the URP settings to enable the use of soft particles (#762)
 
 ## [2.0.0] - 2022-10-06
 
