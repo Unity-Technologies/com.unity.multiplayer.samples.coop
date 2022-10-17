@@ -42,22 +42,28 @@ namespace UUnity.BossRoom.ConnectionManagement
 
         public override void StartClientIP(string playerName, string ipaddress, int port)
         {
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting.Configure(new ConnectionMethodIP(ipaddress, (ushort)port, m_ConnectionManager, m_ProfileManager, playerName)));
+            var connectionMethod = new ConnectionMethodIP(ipaddress, (ushort)port, m_ConnectionManager, m_ProfileManager, playerName);
+            m_ConnectionManager.m_ClientReconnecting.Configure(connectionMethod);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting.Configure(connectionMethod));
         }
 
         public override void StartClientLobby(string playerName)
         {
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting.Configure(new ConnectionMethodRelay(m_LobbyServiceFacade, m_LocalLobby, m_ConnectionManager, m_ProfileManager, playerName)));
+            var connectionMethod = new ConnectionMethodRelay(m_LobbyServiceFacade, m_LocalLobby, m_ConnectionManager, m_ProfileManager, playerName);
+            m_ConnectionManager.m_ClientReconnecting.Configure(connectionMethod);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting.Configure(connectionMethod));
         }
 
         public override void StartHostIP(string playerName, string ipaddress, int port)
         {
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost.Configure(new ConnectionMethodIP(ipaddress, (ushort)port, m_ConnectionManager, m_ProfileManager, playerName)));
+            var connectionMethod = new ConnectionMethodIP(ipaddress, (ushort)port, m_ConnectionManager, m_ProfileManager, playerName);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost.Configure(connectionMethod));
         }
 
         public override void StartHostLobby(string playerName)
         {
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost.Configure(new ConnectionMethodRelay(m_LobbyServiceFacade, m_LocalLobby, m_ConnectionManager, m_ProfileManager, playerName)));
+            var connectionMethod = new ConnectionMethodRelay(m_LobbyServiceFacade, m_LocalLobby, m_ConnectionManager, m_ProfileManager, playerName);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost.Configure(connectionMethod));
         }
     }
 }

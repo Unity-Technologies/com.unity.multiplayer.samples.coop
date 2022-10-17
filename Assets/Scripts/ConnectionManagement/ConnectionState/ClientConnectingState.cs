@@ -48,7 +48,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnClientDisconnect(ulong _)
         {
-            // client ID is necessarily ours here
+            // client ID is for sure ours here
             StartingClientFailedAsync();
         }
 
@@ -83,6 +83,7 @@ namespace Unity.BossRoom.ConnectionManagement
             }
             catch (Exception e)
             {
+                Debug.LogError("Error connecting client, see following exception");
                 Debug.LogException(e);
                 StartingClientFailedAsync();
                 throw;
