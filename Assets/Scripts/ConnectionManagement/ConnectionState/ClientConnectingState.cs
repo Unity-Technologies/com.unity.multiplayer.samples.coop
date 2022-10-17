@@ -81,8 +81,9 @@ namespace Unity.BossRoom.ConnectionManagement
                 SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
                 m_ConnectionManager.RegisterCustomMessages();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.LogException(e);
                 StartingClientFailedAsync();
                 throw;
             }
