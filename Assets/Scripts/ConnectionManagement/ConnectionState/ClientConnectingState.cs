@@ -31,29 +31,6 @@ namespace Unity.BossRoom.ConnectionManagement
             return this;
         }
 
-        internal async Task ConnectClientAsync()
-        {
-            try
-            {
-                // Setup NGO with current connection method
-                await m_ConnectionMethod.SetupClientConnectionAsync();
-
-                // NGO's StartClient launches everything
-                if (!m_ConnectionManager.NetworkManager.StartClient())
-                {
-                    throw new Exception("NetworkManager StartClient failed");
-                }
-
-                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-                m_ConnectionManager.RegisterCustomMessages();
-            }
-            catch (Exception)
-            {
-                StartingClientFailedAsync();
-                throw;
-            }
-        }
-
         public override void Enter()
         {
 #pragma warning disable 4014
@@ -85,6 +62,30 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             m_ConnectStatusPublisher.Publish(disconnectReason);
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
+        }
+
+
+        internal async Task ConnectClientAsync()
+        {
+            try
+            {
+                // Setup NGO with current connection method
+                await m_ConnectionMethod.SetupClientConnectionAsync();
+
+                // NGO's StartClient launches everything
+                if (!m_ConnectionManager.NetworkManager.StartClient())
+                {
+                    throw new Exception("NetworkManager StartClient failed");
+                }
+
+                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+                m_ConnectionManager.RegisterCustomMessages();
+            }
+            catch (Exception)
+            {
+                StartingClientFailedAsync();
+                throw;
+            }
         }
     }
 }
