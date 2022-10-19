@@ -59,7 +59,9 @@ namespace ConnectionManagement.ConnectionState
         }
     }
 
-    // Simple IP connection setup with UTP
+    /// <summary>
+    /// Simple IP connection setup with UTP
+    /// </summary>
     class ConnectionMethodIP : ConnectionMethodBase
     {
         string m_Ipaddress;
