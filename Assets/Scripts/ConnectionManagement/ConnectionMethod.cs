@@ -13,24 +13,19 @@ using UnityEngine;
 
 namespace ConnectionManagement.ConnectionState
 {
+    /// <summary>
+    /// ConnectionMethod contains all setup needed to setup NGO to be ready to start a connection, either host or client side.
+    /// Please override this abstract class to add a new transport or way of connecting.
+    /// </summary>
     public abstract class ConnectionMethodBase
     {
         protected ConnectionManager m_ConnectionManager;
         readonly ProfileManager m_ProfileManager;
-        readonly string m_PlayerName;
+        protected readonly string m_PlayerName;
 
-        public virtual async Task SetupHostConnectionAsync()
-        {
-            // Since hosts are clients too, we need to set their payload as well
-            SetConnectionPayload(GetPlayerId(), m_PlayerName);
-            // This method is virtual, see child classes for further implementation
-        }
+        public abstract Task SetupHostConnectionAsync();
 
-        public virtual async Task SetupClientConnectionAsync()
-        {
-            SetConnectionPayload(GetPlayerId(), m_PlayerName);
-            // This method is virtual, see child classes for further implementation
-        }
+        public abstract Task SetupClientConnectionAsync();
 
         public ConnectionMethodBase(ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
         {
@@ -39,7 +34,7 @@ namespace ConnectionManagement.ConnectionState
             m_PlayerName = playerName;
         }
 
-        void SetConnectionPayload(string playerId, string playerName)
+        protected void SetConnectionPayload(string playerId, string playerName)
         {
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
@@ -53,7 +48,7 @@ namespace ConnectionManagement.ConnectionState
             m_ConnectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
         }
 
-        string GetPlayerId()
+        protected string GetPlayerId()
         {
             if (UnityServices.State != ServicesInitializationState.Initialized)
             {
@@ -64,6 +59,7 @@ namespace ConnectionManagement.ConnectionState
         }
     }
 
+    // Simple IP connection setup with UTP
     class ConnectionMethodIP : ConnectionMethodBase
     {
         string m_Ipaddress;
@@ -79,19 +75,22 @@ namespace ConnectionManagement.ConnectionState
 
         public override async Task SetupClientConnectionAsync()
         {
-            await base.SetupClientConnectionAsync();
+            SetConnectionPayload(GetPlayerId(), m_PlayerName);
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(m_Ipaddress, m_Port);
         }
 
         public override async Task SetupHostConnectionAsync()
         {
-            await base.SetupHostConnectionAsync();
+            SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(m_Ipaddress, m_Port);
         }
     }
 
+    /// <summary>
+    /// UTP's Relay connection setup
+    /// </summary>
     class ConnectionMethodRelay : ConnectionMethodBase
     {
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -109,7 +108,7 @@ namespace ConnectionManagement.ConnectionState
         {
             Debug.Log("Setting up Unity Relay client");
 
-            await base.SetupClientConnectionAsync();
+            SetConnectionPayload(GetPlayerId(), m_PlayerName);
 
             if (m_LobbyServiceFacade.CurrentUnityLobby == null)
             {
@@ -135,7 +134,7 @@ namespace ConnectionManagement.ConnectionState
         {
             Debug.Log("Setting up Unity Relay host");
 
-            await base.SetupHostConnectionAsync();
+            SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
 
             // Create relay allocation
             Allocation hostAllocation = await RelayService.Instance.CreateAllocationAsync(m_ConnectionManager.MaxConnectedPlayers, region: null);
