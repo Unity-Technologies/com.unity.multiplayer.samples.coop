@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.BossRoom.Utils;
 using Unity.Netcode.Transports.UTP;
@@ -11,7 +10,7 @@ using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
 
-namespace ConnectionManagement.ConnectionState
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// ConnectionMethod contains all setup needed to setup NGO to be ready to start a connection, either host or client side.
@@ -50,7 +49,7 @@ namespace ConnectionManagement.ConnectionState
 
         protected string GetPlayerId()
         {
-            if (UnityServices.State != ServicesInitializationState.Initialized)
+            if (Services.Core.UnityServices.State != ServicesInitializationState.Initialized)
             {
                 return ClientPrefs.GetGuid() + m_ProfileManager.Profile;
             }

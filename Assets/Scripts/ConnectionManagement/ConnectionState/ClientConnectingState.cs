@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using ConnectionManagement.ConnectionState;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;

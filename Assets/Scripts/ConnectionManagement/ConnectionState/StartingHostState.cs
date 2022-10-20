@@ -1,5 +1,4 @@
 using System;
-using ConnectionManagement.ConnectionState;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
