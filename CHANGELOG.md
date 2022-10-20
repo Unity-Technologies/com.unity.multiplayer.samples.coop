@@ -21,6 +21,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Reenabled depth buffer in the URP settings to enable the use of soft particles (#762)
 * Moved a torch out of a corner so that the flame VFX don't clip (#768)
 * Fixed issue where pressing 1 on keyboard would not invoke Revive or Pickup/Drop Actions (#770) Authority on modification of displayed Action now comes from a single spot, ClientInputSender.
+* Mage's heal FX plays out on itself and on targets. Added ability for SpecialFXGraphic components to remain at spawn rotation (#771)
 
 ## [2.0.0] - 2022-10-06
 
