@@ -177,6 +177,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1829276847453002016}
     - target: {fileID: 7420593339233078707, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
+      propertyPath: m_ClientCharacter
+      value: 
+      objectReference: {fileID: 7209204667172237188}
+    - target: {fileID: 7420593339233078707, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_ClientVisualization
       value: 
       objectReference: {fileID: 7209204667172237188}
@@ -278,6 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 331c67f15523ad7419792662b9768f44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ServerCharacter: {fileID: 741733315856861890}
   m_PhysicsWrapper: {fileID: 6116655102486013040}
 --- !u!114 &4887850889182527394
 MonoBehaviour:

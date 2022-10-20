@@ -8,7 +8,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
-using Action = Unity.BossRoom.Gameplay.Actions.Action;
 
 namespace Unity.BossRoom.Gameplay.UserInput
 {
@@ -40,6 +39,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
         RaycastHitComparer m_RaycastHitComparer;
 
+        [SerializeField]
         ServerCharacter m_ServerCharacter;
 
         /// <summary>
@@ -108,6 +108,21 @@ namespace Unity.BossRoom.Gameplay.UserInput
         [SerializeField]
         PhysicsWrapper m_PhysicsWrapper;
 
+        public ActionState actionState1 { get; private set; }
+
+        public ActionState actionState2 { get; private set; }
+
+        public ActionState actionState3 { get; private set; }
+
+        public System.Action action1ModifiedCallback;
+
+        ServerCharacter m_TargetServerCharacter;
+
+        void Awake()
+        {
+            m_MainCamera = Camera.main;
+        }
+
         public override void OnNetworkSpawn()
         {
             if (!IsClient || !IsOwner)
@@ -117,16 +132,71 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 return;
             }
 
+            m_ServerCharacter.TargetId.OnValueChanged += OnTargetChanged;
+            m_ServerCharacter.HeldNetworkObject.OnValueChanged += OnHeldNetworkObjectChanged;
+
+            if (CharacterClass.Skill1 &&
+                GameDataSource.Instance.TryGetActionPrototypeByID(CharacterClass.Skill1.ActionID, out var action1))
+            {
+                actionState1 = new ActionState() { actionID = action1.ActionID, selectable = true };
+            }
+            if (CharacterClass.Skill2 &&
+                GameDataSource.Instance.TryGetActionPrototypeByID(CharacterClass.Skill2.ActionID, out var action2))
+            {
+                actionState2 = new ActionState() { actionID = action2.ActionID, selectable = true };
+            }
+            if (CharacterClass.Skill3 &&
+                GameDataSource.Instance.TryGetActionPrototypeByID(CharacterClass.Skill3.ActionID, out var action3))
+            {
+                actionState3 = new ActionState() { actionID = action3.ActionID, selectable = true };
+            }
+
             m_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
             m_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
 
             m_RaycastHitComparer = new RaycastHitComparer();
         }
 
-        void Awake()
+        public override void OnNetworkDespawn()
         {
-            m_ServerCharacter = GetComponent<ServerCharacter>();
-            m_MainCamera = Camera.main;
+            if (m_ServerCharacter)
+            {
+                m_ServerCharacter.TargetId.OnValueChanged -= OnTargetChanged;
+                m_ServerCharacter.HeldNetworkObject.OnValueChanged -= OnHeldNetworkObjectChanged;
+            }
+
+            if (m_TargetServerCharacter)
+            {
+                m_TargetServerCharacter.NetLifeState.LifeState.OnValueChanged -= OnTargetLifeStateChanged;
+            }
+        }
+
+        void OnTargetChanged(ulong previousValue, ulong newValue)
+        {
+            if (m_TargetServerCharacter)
+            {
+                m_TargetServerCharacter.NetLifeState.LifeState.OnValueChanged -= OnTargetLifeStateChanged;
+            }
+
+            m_TargetServerCharacter = null;
+
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(newValue, out var selection) &&
+                selection.TryGetComponent(out m_TargetServerCharacter))
+            {
+                m_TargetServerCharacter.NetLifeState.LifeState.OnValueChanged += OnTargetLifeStateChanged;
+            }
+
+            UpdateAction1();
+        }
+
+        void OnHeldNetworkObjectChanged(ulong previousValue, ulong newValue)
+        {
+            UpdateAction1();
+        }
+
+        void OnTargetLifeStateChanged(LifeState previousValue, LifeState newValue)
+        {
+            UpdateAction1();
         }
 
         void FinishSkill()
@@ -387,19 +457,14 @@ namespace Unity.BossRoom.Gameplay.UserInput
         /// <param name="actionID"> The action you'd like to perform. </param>
         /// <param name="triggerStyle"> What input style triggered this action. </param>
         /// <param name="targetId"> NetworkObjectId of target. </param>
-        public void RequestAction(Action action, SkillTriggerStyle triggerStyle, ulong targetId = 0)
+        public void RequestAction(ActionID actionID, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
-            if (action == null)
-            {
-                return;
-            }
-
-            Assert.IsNotNull(GameDataSource.Instance.GetActionPrototypeByID(action.ActionID),
-                $"Action {action.name} must be contained in the Action prototypes of GameDataSource!");
+            Assert.IsNotNull(GameDataSource.Instance.GetActionPrototypeByID(actionID),
+                $"Action with actionID {actionID} must be contained in the Action prototypes of GameDataSource!");
 
             if (m_ActionRequestCount < m_ActionRequests.Length)
             {
-                m_ActionRequests[m_ActionRequestCount].RequestedActionID = action.ActionID;
+                m_ActionRequests[m_ActionRequestCount].RequestedActionID = actionID;
                 m_ActionRequests[m_ActionRequestCount].TriggerStyle = triggerStyle;
                 m_ActionRequests[m_ActionRequestCount].TargetId = targetId;
                 m_ActionRequestCount++;
@@ -408,46 +473,46 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
         void Update()
         {
-            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha1))
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                RequestAction(CharacterClass.Skill1, SkillTriggerStyle.Keyboard);
+                RequestAction(actionState1.actionID, SkillTriggerStyle.Keyboard);
             }
-            else if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha1))
+            else if (Input.GetKeyUp(KeyCode.Alpha1))
             {
-                RequestAction(CharacterClass.Skill1, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(actionState1.actionID, SkillTriggerStyle.KeyboardRelease);
             }
-            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha2))
+            if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                RequestAction(CharacterClass.Skill2, SkillTriggerStyle.Keyboard);
+                RequestAction(actionState2.actionID, SkillTriggerStyle.Keyboard);
             }
-            else if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha2))
+            else if (Input.GetKeyUp(KeyCode.Alpha2))
             {
-                RequestAction(CharacterClass.Skill2, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(actionState2.actionID, SkillTriggerStyle.KeyboardRelease);
             }
-            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha3))
+            if (Input.GetKeyDown(KeyCode.Alpha3))
             {
-                RequestAction(CharacterClass.Skill3, SkillTriggerStyle.Keyboard);
+                RequestAction(actionState3.actionID, SkillTriggerStyle.Keyboard);
             }
-            else if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha3))
+            else if (Input.GetKeyUp(KeyCode.Alpha3))
             {
-                RequestAction(CharacterClass.Skill3, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(actionState3.actionID, SkillTriggerStyle.KeyboardRelease);
             }
 
-            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha5))
+            if (Input.GetKeyDown(KeyCode.Alpha5))
             {
-                RequestAction(GameDataSource.Instance.Emote1ActionPrototype, SkillTriggerStyle.Keyboard);
+                RequestAction(GameDataSource.Instance.Emote1ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
             }
-            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha6))
+            if (Input.GetKeyDown(KeyCode.Alpha6))
             {
-                RequestAction(GameDataSource.Instance.Emote2ActionPrototype, SkillTriggerStyle.Keyboard);
+                RequestAction(GameDataSource.Instance.Emote2ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
             }
-            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha7))
+            if (Input.GetKeyDown(KeyCode.Alpha7))
             {
-                RequestAction(GameDataSource.Instance.Emote3ActionPrototype, SkillTriggerStyle.Keyboard);
+                RequestAction(GameDataSource.Instance.Emote3ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
             }
-            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha8))
+            if (Input.GetKeyDown(KeyCode.Alpha8))
             {
-                RequestAction(GameDataSource.Instance.Emote4ActionPrototype, SkillTriggerStyle.Keyboard);
+                RequestAction(GameDataSource.Instance.Emote4ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
             }
 
             if (!EventSystem.current.IsPointerOverGameObject() && m_CurrentSkillInput == null)
@@ -455,19 +520,80 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 //IsPointerOverGameObject() is a simple way to determine if the mouse is over a UI element. If it is, we don't perform mouse input logic,
                 //to model the button "blocking" mouse clicks from falling through and interacting with the world.
 
-                if (UnityEngine.Input.GetMouseButtonDown(1))
+                if (Input.GetMouseButtonDown(1))
                 {
-                    RequestAction(CharacterClass.Skill1, SkillTriggerStyle.MouseClick);
+                    RequestAction(CharacterClass.Skill1.ActionID, SkillTriggerStyle.MouseClick);
                 }
 
-                if (UnityEngine.Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0))
                 {
-                    RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype, SkillTriggerStyle.MouseClick);
+                    RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype.ActionID, SkillTriggerStyle.MouseClick);
                 }
-                else if (UnityEngine.Input.GetMouseButton(0))
+                else if (Input.GetMouseButton(0))
                 {
                     m_MoveRequest = true;
                 }
+            }
+        }
+
+        void UpdateAction1()
+        {
+            var isHoldingNetworkObject =
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_ServerCharacter.HeldNetworkObject.Value,
+                    out var heldNetworkObject);
+
+            NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_ServerCharacter.TargetId.Value,
+                out var selection);
+
+            var isSelectable = true;
+            if (isHoldingNetworkObject)
+            {
+                // show drop!
+
+                actionState1.actionID = GameDataSource.Instance.DropActionPrototype.ActionID;
+            }
+            else if ((m_ServerCharacter.TargetId.Value != 0
+                    && selection != null
+                    && selection.TryGetComponent(out PickUpState pickUpState))
+               )
+            {
+                // special case: targeting a pickup-able item or holding a pickup object
+
+                actionState1.actionID = GameDataSource.Instance.PickUpActionPrototype.ActionID;
+            }
+            else if (m_ServerCharacter.TargetId.Value != 0
+                && selection != null
+                && selection.NetworkObjectId != m_ServerCharacter.NetworkObjectId
+                && selection.TryGetComponent(out ServerCharacter charState)
+                && !charState.IsNpc)
+            {
+                // special case: when we have a player selected, we change the meaning of the basic action
+                // we have another player selected! In that case we want to reflect that our basic Action is a Revive, not an attack!
+                // But we need to know if the player is alive... if so, the button should be disabled (for better player communication)
+
+                actionState1.actionID = GameDataSource.Instance.ReviveActionPrototype.ActionID;
+                isSelectable = charState.NetLifeState.LifeState.Value != LifeState.Alive;
+            }
+            else
+            {
+                actionState1.SetActionState(CharacterClass.Skill1.ActionID);
+            }
+
+            actionState1.selectable = isSelectable;
+
+            action1ModifiedCallback?.Invoke();
+        }
+
+        public class ActionState
+        {
+            public ActionID actionID { get; internal set; }
+
+            public bool selectable { get; internal set; }
+
+            internal void SetActionState(ActionID newActionID, bool isSelectable = true)
+            {
+                actionID = newActionID;
+                selectable = isSelectable;
             }
         }
     }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.BossRoom.Gameplay.UserInput;
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
-using Unity.Netcode;
 using UnityEngine;
 using Action = Unity.BossRoom.Gameplay.Actions.Action;
 using SkillTriggerStyle = Unity.BossRoom.Gameplay.UserInput.ClientInputSender.SkillTriggerStyle;
@@ -40,22 +39,6 @@ namespace Unity.BossRoom.Gameplay.UI
         /// Our input-sender. Initialized in RegisterInputSender()
         /// </summary>
         ClientInputSender m_InputSender;
-
-        /// <summary>
-        /// Cached reference to local player's net state.
-        /// We find the Sprites to use by checking the Skill1, Skill2, and Skill3 members of our chosen CharacterClass
-        /// </summary>
-        ServerCharacter m_ServerCharacter;
-
-        /// <summary>
-        /// If we have another player selected, this is a reference to their stats; if anything else is selected, this is null
-        /// </summary>
-        ServerCharacter m_SelectedPlayerServerCharacter;
-
-        /// <summary>
-        /// If m_SelectedPlayerNetState is non-null, this indicates whether we think they're alive. (Updated every frame)
-        /// </summary>
-        bool m_WasSelectedPlayerAliveDuringLastUpdate;
 
         /// <summary>
         /// Identifiers for the buttons on the action bar.
@@ -139,26 +122,46 @@ namespace Unity.BossRoom.Gameplay.UI
             }
 
             m_InputSender = inputSender;
-            m_ServerCharacter = m_InputSender.GetComponent<ServerCharacter>();
-            m_ServerCharacter.TargetId.OnValueChanged += OnSelectionChanged;
-            m_ServerCharacter.HeldNetworkObject.OnValueChanged += OnHeldNetworkObjectChanged;
-            UpdateAllActionButtons();
+            m_InputSender.action1ModifiedCallback += Action1ModifiedCallback;
+
+            Action action1 = null;
+            if (m_InputSender.actionState1 != null)
+            {
+                GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState1.actionID, out action1);
+            }
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], action1);
+
+            Action action2 = null;
+            if (m_InputSender.actionState2 != null)
+            {
+                GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState2.actionID, out action2);
+            }
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], action2);
+
+            Action action3 = null;
+            if (m_InputSender.actionState3 != null)
+            {
+                GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState3.actionID, out action3);
+            }
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], action3);
         }
 
-        void OnHeldNetworkObjectChanged(ulong previousValue, ulong newValue)
+        void Action1ModifiedCallback()
         {
-            UpdateAllActionButtons();
+            var action = GameDataSource.Instance.GetActionPrototypeByID(m_InputSender.actionState1.actionID);
+
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction],
+                action,
+                m_InputSender.actionState1.selectable);
         }
 
         void DeregisterInputSender()
         {
-            m_InputSender = null;
-            if (m_ServerCharacter != null)
+            if (m_InputSender)
             {
-                m_ServerCharacter.TargetId.OnValueChanged -= OnSelectionChanged;
-                m_ServerCharacter.HeldNetworkObject.OnValueChanged -= OnHeldNetworkObjectChanged;
+                m_InputSender.action1ModifiedCallback -= Action1ModifiedCallback;
             }
-            m_ServerCharacter = null;
+            m_InputSender = null;
         }
 
         void Awake()
@@ -201,29 +204,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void Update()
         {
-            // If we have another player selected, see if their aliveness state has changed,
-            // and if so, update the interactiveness of the basic-action button
-
-            if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha4))
+            if (Input.GetKeyUp(KeyCode.Alpha4))
             {
                 m_ButtonInfo[ActionButtonType.EmoteBar].Button.OnPointerUpEvent.Invoke();
             }
-
-            if (!m_SelectedPlayerServerCharacter) { return; }
-
-            bool isAliveNow = m_SelectedPlayerServerCharacter.NetLifeState.LifeState.Value == LifeState.Alive;
-            if (isAliveNow != m_WasSelectedPlayerAliveDuringLastUpdate)
-            {
-                // this will update the icons so that the basic-action button's interactiveness is correct
-                UpdateAllActionButtons();
-            }
-
-            m_WasSelectedPlayerAliveDuringLastUpdate = isAliveNow;
-        }
-
-        void OnSelectionChanged(ulong oldSelectionNetworkId, ulong newSelectionNetworkId)
-        {
-            UpdateAllActionButtons();
         }
 
         void OnButtonClickedDown(ActionButtonType buttonType)
@@ -240,7 +224,7 @@ namespace Unity.BossRoom.Gameplay.UI
             }
 
             // send input to begin the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction, SkillTriggerStyle.UI);
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction.ActionID, SkillTriggerStyle.UI);
         }
 
         void OnButtonClickedUp(ActionButtonType buttonType)
@@ -258,61 +242,7 @@ namespace Unity.BossRoom.Gameplay.UI
             }
 
             // send input to complete the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction, SkillTriggerStyle.UIRelease);
-        }
-
-        /// <summary>
-        /// Updates all the action buttons and caches info about the currently-selected entity (when appropriate):
-        /// stores info in m_SelectedPlayerNetState and m_WasSelectedPlayerAliveDuringLastUpdate
-        /// </summary>
-        void UpdateAllActionButtons()
-        {
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], m_ServerCharacter.CharacterClass.Skill1);
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], m_ServerCharacter.CharacterClass.Skill2);
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], m_ServerCharacter.CharacterClass.Skill3);
-
-            var isHoldingNetworkObject =
-                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_ServerCharacter.HeldNetworkObject.Value,
-                    out var heldNetworkObject);
-
-            NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_ServerCharacter.TargetId.Value,
-                out var selection);
-
-            if (isHoldingNetworkObject)
-            {
-                // show drop!
-                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.DropActionPrototype, true);
-            }
-            if ((m_ServerCharacter.TargetId.Value != 0
-                    && selection != null
-                    && selection.TryGetComponent(out PickUpState pickUpState))
-               )
-            {
-                // special case: targeting a pickup-able item or holding a pickup object
-                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.PickUpActionPrototype, true);
-            }
-            else if (m_ServerCharacter.TargetId.Value != 0
-                && selection != null
-                && selection.NetworkObjectId != m_ServerCharacter.NetworkObjectId
-                && selection.TryGetComponent(out ServerCharacter charState)
-                && !charState.IsNpc)
-            {
-                // special case: when we have a player selected, we change the meaning of the basic action
-                // we have another player selected! In that case we want to reflect that our basic Action is a Revive, not an attack!
-                // But we need to know if the player is alive... if so, the button should be disabled (for better player communication)
-
-                bool isAlive = charState.NetLifeState.LifeState.Value == LifeState.Alive;
-                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.ReviveActionPrototype, !isAlive);
-
-                // we'll continue to monitor our selected player every frame to see if their life-state changes.
-                m_SelectedPlayerServerCharacter = charState;
-                m_WasSelectedPlayerAliveDuringLastUpdate = isAlive;
-            }
-            else
-            {
-                m_SelectedPlayerServerCharacter = null;
-                m_WasSelectedPlayerAliveDuringLastUpdate = false;
-            }
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction.ActionID, SkillTriggerStyle.UIRelease);
         }
 
         void UpdateActionButton(ActionButtonInfo buttonInfo, Action action, bool isClickable = true)
