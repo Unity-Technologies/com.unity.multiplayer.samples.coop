@@ -239,7 +239,8 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public void SelectPartyMember(int slot)
         {
-            m_ClientSender.RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype, ClientInputSender.SkillTriggerStyle.UI, m_PartyIds[slot]);
+            m_ClientSender.RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype.ActionID,
+                ClientInputSender.SkillTriggerStyle.UI, m_PartyIds[slot]);
         }
 
         // helper to initialize the Allies array - safe to call multiple times
