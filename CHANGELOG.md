@@ -12,7 +12,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * 
 
 ### Changed
-* Updated Boss Room to NGO 1.1.0
+* Updated Boss Room to NGO 1.1.0 (#708)
   *  Now uses managed types for custom INetworkSerializable in NetworkVariables. NetworkGUID is now a class instead of a struct.
   * Cleanup Relay and UTP setup. Flow is now simpler, no need for the RelayUtilities anymore.
     * This cleansup various setup steps and puts them all in a new "ConnectionMethod.cs".
@@ -25,6 +25,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ### Fixed
 * Reenabled depth buffer in the URP settings to enable the use of soft particles (#762)
+* Moved a torch out of a corner so that the flame VFX don't clip (#768)
 
 ## [2.0.0] - 2022-10-06
 

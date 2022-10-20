@@ -7,7 +7,7 @@
 ### Changed
 *
 ### Removed
-* Deprecated Unity Relay Utilities, it should no longer be needed with NGO 1.1.0's new API for setting up Relay
+* Deprecated Unity Relay Utilities, it should no longer be needed with NGO 1.1.0's new API for setting up Relay (#708)
 ### Fixed
 *
 
