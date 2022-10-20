@@ -146,6 +146,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_RateLimitQuery.PutOnCooldown();
                 }
+                else if (e.Reason != LobbyExceptionReason.LobbyNotFound)
+                {
+                    PublishError(e);
+                }
             }
         }
 
@@ -170,6 +174,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 if (e.Reason == LobbyExceptionReason.RateLimited)
                 {
                     m_RateLimitHost.PutOnCooldown();
+                }
+                else
+                {
+                    PublishError(e);
                 }
             }
 
@@ -207,6 +215,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_RateLimitJoin.PutOnCooldown();
                 }
+                else
+                {
+                    PublishError(e);
+                }
             }
 
             return (false, null);
@@ -233,6 +245,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 if (e.Reason == LobbyExceptionReason.RateLimited)
                 {
                     m_RateLimitQuickJoin.PutOnCooldown();
+                }
+                else
+                {
+                    PublishError(e);
                 }
             }
 
@@ -261,12 +277,28 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_RateLimitQuery.PutOnCooldown();
                 }
+                else
+                {
+                    PublishError(e);
+                }
             }
         }
 
         public async Task<Lobby> ReconnectToLobbyAsync(string lobbyId)
         {
-            return await m_LobbyApiInterface.ReconnectToLobby(lobbyId);
+            try
+            {
+                return await m_LobbyApiInterface.ReconnectToLobby(lobbyId);
+            }
+            catch (LobbyServiceException e)
+            {
+                if (e.Reason != LobbyExceptionReason.LobbyNotFound)
+                {
+                    PublishError(e);
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -280,9 +312,12 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
             }
             catch (LobbyServiceException e)
-                when (e is { Reason: LobbyExceptionReason.LobbyNotFound })
             {
                 // If Lobby is not found, it has already been deleted. No need to throw here.
+                if (e.Reason != LobbyExceptionReason.LobbyNotFound)
+                {
+                    PublishError(e);
+                }
             }
 
         }
@@ -291,7 +326,18 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         {
             if (m_LocalUser.IsHost)
             {
-                await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
+                try
+                {
+                    await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
+                }
+                catch (LobbyServiceException e)
+                {
+                    // If Lobby is not found, it has already been deleted. No need to throw here.
+                    if (e.Reason != LobbyExceptionReason.LobbyNotFound)
+                    {
+                        PublishError(e);
+                    }
+                }
             }
             else
             {
@@ -303,7 +349,14 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         {
             if (m_LocalUser.IsHost)
             {
-                await m_LobbyApiInterface.DeleteLobby(lobbyId);
+                try
+                {
+                    await m_LobbyApiInterface.DeleteLobby(lobbyId);
+                }
+                catch (LobbyServiceException e)
+                {
+                    PublishError(e);
+                }
             }
             else
             {
@@ -336,6 +389,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_RateLimitQuery.PutOnCooldown();
                 }
+                else if (e.Reason != LobbyExceptionReason.LobbyNotFound)
+                {
+                    PublishError(e);
+                }
             }
         }
 
@@ -358,6 +415,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 if (e.Reason == LobbyExceptionReason.RateLimited)
                 {
                     m_RateLimitQuery.PutOnCooldown();
+                }
+                else
+                {
+                    PublishError(e);
                 }
 
                 //todo - retry logic? SDK is supposed to handle this eventually
@@ -406,6 +467,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_RateLimitQuery.PutOnCooldown();
                 }
+                else
+                {
+                    PublishError(e);
+                }
             }
         }
 
@@ -418,8 +483,24 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             if (m_HeartbeatTime > k_HeartbeatPeriod)
             {
                 m_HeartbeatTime -= k_HeartbeatPeriod;
-                m_LobbyApiInterface.SendHeartbeatPing(CurrentUnityLobby.Id);
+                try
+                {
+                    m_LobbyApiInterface.SendHeartbeatPing(CurrentUnityLobby.Id);
+                }
+                catch (LobbyServiceException e)
+                {
+                    if (e.Reason != LobbyExceptionReason.LobbyNotFound)
+                    {
+                        PublishError(e);
+                    }
+                }
             }
+        }
+
+        void PublishError(LobbyServiceException e)
+        {
+            var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
+            m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Lobby Error", reason, UnityServiceErrorMessage.Service.Lobby, e));
         }
     }
 }
