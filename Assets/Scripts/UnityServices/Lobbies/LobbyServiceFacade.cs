@@ -91,9 +91,18 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             {
                 CurrentUnityLobby = null;
 
-                if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
+                var lobbyId = m_LocalLobby?.LobbyID;
+
+                if (!string.IsNullOrEmpty(lobbyId))
                 {
-                    task = LeaveLobbyAsync(m_LocalLobby?.LobbyID);
+                    if (m_LocalUser.IsHost)
+                    {
+                        task = DeleteLobbyAsync(lobbyId);
+                    }
+                    else
+                    {
+                        task = LeaveLobbyAsync(lobbyId);
+                    }
                 }
 
                 m_LocalUser.ResetState();
@@ -345,7 +354,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
-        public async void DeleteLobbyAsync(string lobbyId)
+        public async Task DeleteLobbyAsync(string lobbyId)
         {
             if (m_LocalUser.IsHost)
             {
