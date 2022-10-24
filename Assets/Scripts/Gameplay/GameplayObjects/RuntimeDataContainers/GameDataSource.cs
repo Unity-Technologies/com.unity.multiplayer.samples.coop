@@ -84,6 +84,21 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             return m_AllActions[index.ID];
         }
 
+        public bool TryGetActionPrototypeByID(ActionID index, out Action action)
+        {
+            for (int i = 0; i < m_AllActions.Count; i++)
+            {
+                if (m_AllActions[i].ActionID == index)
+                {
+                    action = m_AllActions[i];
+                    return true;
+                }
+            }
+
+            action = null;
+            return false;
+        }
+
         /// <summary>
         /// Contents of the CharacterData list, indexed by CharacterType for convenience.
         /// </summary>
