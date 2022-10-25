@@ -55,10 +55,10 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 switch (buttonIndex)
                 {
-                    case 0: m_InputSender.RequestAction(GameDataSource.Instance.Emote1ActionPrototype, SkillTriggerStyle.UI); break;
-                    case 1: m_InputSender.RequestAction(GameDataSource.Instance.Emote2ActionPrototype, SkillTriggerStyle.UI); break;
-                    case 2: m_InputSender.RequestAction(GameDataSource.Instance.Emote3ActionPrototype, SkillTriggerStyle.UI); break;
-                    case 3: m_InputSender.RequestAction(GameDataSource.Instance.Emote4ActionPrototype, SkillTriggerStyle.UI); break;
+                    case 0: m_InputSender.RequestAction(GameDataSource.Instance.Emote1ActionPrototype.ActionID, SkillTriggerStyle.UI); break;
+                    case 1: m_InputSender.RequestAction(GameDataSource.Instance.Emote2ActionPrototype.ActionID, SkillTriggerStyle.UI); break;
+                    case 2: m_InputSender.RequestAction(GameDataSource.Instance.Emote3ActionPrototype.ActionID, SkillTriggerStyle.UI); break;
+                    case 3: m_InputSender.RequestAction(GameDataSource.Instance.Emote4ActionPrototype.ActionID, SkillTriggerStyle.UI); break;
                 }
             }
 

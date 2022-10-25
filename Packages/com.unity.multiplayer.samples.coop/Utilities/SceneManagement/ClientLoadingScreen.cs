@@ -71,7 +71,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void Start()
         {
-            m_CanvasGroup.alpha = 0;
+            SetCanvasVisibility(false);
             m_LoadingProgressManager.onTrackersUpdated += OnProgressTrackersUpdated;
         }
 
@@ -130,7 +130,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         public void StartLoadingScreen(string sceneName)
         {
-            m_CanvasGroup.alpha = 1;
+            SetCanvasVisibility(true);
             m_LoadingScreenRunning = true;
             UpdateLoadingScreen(sceneName);
             ReinitializeProgressBars();
@@ -220,6 +220,12 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
+        void SetCanvasVisibility(bool visible)
+        {
+            m_CanvasGroup.alpha = visible ? 1 : 0;
+            m_CanvasGroup.blocksRaycasts = visible;
+        }
+
         IEnumerator FadeOutCoroutine()
         {
             yield return new WaitForSeconds(m_DelayBeforeFadeOut);
@@ -233,7 +239,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 currentTime += Time.deltaTime;
             }
 
-            m_CanvasGroup.alpha = 0;
+            SetCanvasVisibility(false);
         }
     }
 }

@@ -86,6 +86,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   m_NetcodeHooks: {fileID: 8494646029522094751}
+  m_NetworkCharSelection: {fileID: 3565665953789623673}
   m_AnimationTriggerOnCharSelect: BeginRevive
   m_AnimationTriggerOnCharChosen: BeginRevive
   m_PlayerSeats:
