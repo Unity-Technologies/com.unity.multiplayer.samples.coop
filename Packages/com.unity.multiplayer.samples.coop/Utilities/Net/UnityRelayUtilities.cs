@@ -11,9 +11,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         const string k_KDtlsConnType = "dtls";
 
-        public static async
-            Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string
-                joinCode)> AllocateRelayServerAndGetJoinCode(int maxConnections, string region = null)
+        /// <summary>
+        /// Deprecated, please see updated ConnectionManager sample code for an example on how to connect to Relay
+        /// </summary>
+        /// <param name="maxConnections"></param>
+        /// <param name="region"></param>
+        /// <param name="relayInstance"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static async Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string joinCode)>
+            AllocateRelayServerAndGetJoinCode(int maxConnections, string region = null)
         {
             Allocation allocation;
             string joinCode;
@@ -43,9 +50,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 allocation.ConnectionData, allocation.Key, joinCode);
         }
 
-        public static async
-            Task<(string ipv4address, ushort port, byte[] allocationIdBytes, Guid allocationId, byte[] connectionData, byte[]
-                hostConnectionData, byte[] key)> JoinRelayServerFromJoinCode(string joinCode)
+        /// <summary>
+        /// Deprecated, please see updated ConnectionManager sample code for an example on how to connect to Relay
+        /// </summary>
+        /// <param name="joinCode"></param>
+        /// <param name="relayInstance"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static async Task<(string ipv4address, ushort port, byte[] allocationIdBytes, Guid allocationId, byte[] connectionData, byte[] hostConnectionData, byte[] key)>
+            JoinRelayServerFromJoinCode(string joinCode)
         {
             JoinAllocation allocation;
             try

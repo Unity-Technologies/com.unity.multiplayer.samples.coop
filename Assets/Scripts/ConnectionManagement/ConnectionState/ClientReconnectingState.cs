@@ -25,9 +25,9 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void Enter()
         {
+            m_NbAttempts = 0;
             m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
             m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
-            m_NbAttempts = 0;
         }
 
         public override void Exit()
