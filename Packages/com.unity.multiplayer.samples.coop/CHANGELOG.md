@@ -1,15 +1,12 @@
 # Multiplayer Samples Co-op Changelog
 
-## [Unreleased] - yyyy-mm-dd
+## [1.4.1] - 2022-10-25
 
-### Added
-* ClientLoadingScreen now sets raycast blocking to true when the loading screen is visible (#760)
 ### Changed
-*
+* ClientLoadingScreen now sets raycast blocking to true when the loading screen is visible (#760)
+
 ### Removed
-*
-### Fixed
-*
+* Deprecated Unity Relay Utilities, it should no longer be needed with NGO 1.1.0's new API for setting up Relay (#708)
 
 ## [1.4.0] - 2022-10-06
 
