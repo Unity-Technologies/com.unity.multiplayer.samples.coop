@@ -20,7 +20,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [2.0.1] - 2022-10-25
 
 ### Changed
-
 * Updated Boss Room to NGO 1.1.0 (#708)
   *  Now uses managed types for custom INetworkSerializable in NetworkVariables. NetworkGUID is now a class instead of a struct.
   * Cleanup Relay and UTP setup. Flow is now simpler, no need for the RelayUtilities anymore.
