@@ -3,7 +3,7 @@ using Unity.Netcode;
 
 namespace Unity.BossRoom.Infrastructure
 {
-    public struct NetworkGuid : INetworkSerializable
+    public class NetworkGuid : INetworkSerializable
     {
         public ulong FirstHalf;
         public ulong SecondHalf;
