@@ -2,7 +2,7 @@
   "dependencies": {
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation.components": "https://github.com/Unity-Technologies/NavMeshComponents.git#package",
-    "com.unity.cinemachine": "2.8.6",
+    "com.unity.cinemachine": "2.8.9",
     "com.unity.collab-proxy": "1.17.2",
     "com.unity.ide.rider": "3.0.15",
     "com.unity.ide.visualstudio": "2.0.16",
@@ -14,7 +14,7 @@
     "com.unity.performance.profile-analyzer": "1.1.1",
     "com.unity.postprocessing": "3.2.2",
     "com.unity.render-pipelines.universal": "12.1.7",
-    "com.unity.services.authentication": "2.1.1",
+    "com.unity.services.authentication": "2.2.0",
     "com.unity.services.lobby": "1.0.3",
     "com.unity.services.relay": "1.0.3",
     "com.unity.test-framework": "1.1.31",
