@@ -17,6 +17,11 @@ Additional documentation and release notes are available at [Multiplayer Documen
 *
 ### Fixed
 *
+
+## [2.0.2] - 2022-11-01
+### Fixed
+* Bumped Unity editor version to fix android build error (#779)
+
 ## [2.0.1] - 2022-10-25
 
 ### Changed
