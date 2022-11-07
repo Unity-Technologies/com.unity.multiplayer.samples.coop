@@ -1,6 +1,6 @@
 # Multiplayer Samples Co-op Changelog
 
-## [unreleased] - aaaa-mm-dd
+## [1.5.0] - 2022-11-07
 
 ### Changed
 * ClientNetworkAnimator component has been added to the Samples Utilities Package. This allows for authority on Animators to be passed onto clients, meaning animations will be client-driven.
