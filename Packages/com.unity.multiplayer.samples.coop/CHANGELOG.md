@@ -1,5 +1,9 @@
 # Multiplayer Samples Co-op Changelog
 
+## [unreleased] - yyyy-mm-dd
+### Changed
+* 
+
 ## [1.5.0] - 2022-11-07
 
 ### Changed
