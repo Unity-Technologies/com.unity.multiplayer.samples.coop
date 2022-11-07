@@ -13,6 +13,9 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Changed
 * Hosts now delete their lobby when shutting down instead of only leaving it (#772) Since Boss Room doesn't support host migration, there is no need to keep the lobby alive after the host shuts down. This also changes how LobbyServiceExceptions are handled to prevent popup messages on clients trying to leave a lobby that is already deleted, following the best practices outlined in this doc : https://docs.unity.com/lobby/delete-a-lobby.html
 
+### Fixed
+* Mage's heal FX plays out on itself and on targets. Added ability for SpecialFXGraphic components to remain at spawn rotation (#771)
+
 ## [2.0.2] - 2022-11-01
 ### Fixed
 * Bumped Unity editor version to fix android build error (#779)
@@ -35,7 +38,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Reenabled depth buffer in the URP settings to enable the use of soft particles (#762)
 * Moved a torch out of a corner so that the flame VFX don't clip (#768)
 * Fixed issue where pressing 1 on keyboard would not invoke Revive or Pickup/Drop Actions (#770) Authority on modification of displayed Action now comes from a single spot, ClientInputSender.
-* Mage's heal FX plays out on itself and on targets. Added ability for SpecialFXGraphic components to remain at spawn rotation (#771)
 
 ## [2.0.0] - 2022-10-06
 
