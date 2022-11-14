@@ -16,7 +16,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Cleanup
 *
 ### Fixed
-*
+* Elements inside the Tank's and Rogue's AnimatorTriggeredSpecialFX list have been revised to not loop AudioSource clips, ending the logging of multiple warnings to the console (#785)
 
 ## [2.0.2] - 2022-11-01
 ### Fixed
