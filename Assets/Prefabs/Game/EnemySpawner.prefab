@@ -466,8 +466,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BreakableElements: []
   m_DormantCooldown: 180
-  IsBroken:
-    m_InternalValue: 0
+  m_Breakable: {fileID: 5343699662503375493}
+  m_WaveSpawner: {fileID: 4844841199312666291}
 --- !u!114 &5343699662503375493
 MonoBehaviour:
   m_ObjectHideFlags: 0
