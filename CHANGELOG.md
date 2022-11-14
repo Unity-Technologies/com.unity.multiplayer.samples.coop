@@ -16,7 +16,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Cleanup
 *
 ### Fixed
-*
+* EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
 
 ## [2.0.2] - 2022-11-01
 ### Fixed
