@@ -40,7 +40,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         public Material ReticuleFriendlyMat => m_VisualizationConfiguration.ReticuleFriendlyMat;
 
-
         CharacterSwap m_CharacterSwapper;
 
         public CharacterSwap CharacterSwap => m_CharacterSwapper;
@@ -56,8 +55,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         PositionLerper m_PositionLerper;
 
         RotationLerper m_RotationLerper;
-
-        PhysicsWrapper m_PhysicsWrapper;
 
         // this value suffices for both positional and rotational interpolations; one may have a constant value for each
         const float k_LerpTime = 0.08f;
@@ -129,20 +126,19 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
             m_ServerCharacter = GetComponentInParent<ServerCharacter>();
 
-            m_PhysicsWrapper = m_ServerCharacter.GetComponent<PhysicsWrapper>();
-
             m_ServerCharacter.IsStealthy.OnValueChanged += OnStealthyChanged;
             m_ServerCharacter.MovementStatus.OnValueChanged += OnMovementStatusChanged;
             OnMovementStatusChanged(MovementStatus.Normal, m_ServerCharacter.MovementStatus.Value);
 
             // sync our visualization position & rotation to the most up to date version received from server
-            transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
+            transform.SetPositionAndRotation(serverCharacter.physicsWrapper.Transform.position,
+                serverCharacter.physicsWrapper.Transform.rotation);
             m_LerpedPosition = transform.position;
             m_LerpedRotation = transform.rotation;
 
             // similarly, initialize start position and rotation for smooth lerping purposes
-            m_PositionLerper = new PositionLerper(m_PhysicsWrapper.Transform.position, k_LerpTime);
-            m_RotationLerper = new RotationLerper(m_PhysicsWrapper.Transform.rotation, k_LerpTime);
+            m_PositionLerper = new PositionLerper(serverCharacter.physicsWrapper.Transform.position, k_LerpTime);
+            m_RotationLerper = new RotationLerper(serverCharacter.physicsWrapper.Transform.rotation, k_LerpTime);
 
             if (!m_ServerCharacter.IsNpc)
             {
@@ -166,8 +162,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
                     if (m_ServerCharacter.TryGetComponent(out ClientInputSender inputSender))
                     {
-                        // TODO: revisit; anticipated actions would play twice on the host
-                        if (!IsServer)
+                        // anticipated actions will only be played on non-host, owning clients
+                        if (!m_IsHost)
                         {
                             inputSender.ActionInputEvent += OnActionInput;
                         }
@@ -181,10 +177,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         {
             if (m_ServerCharacter)
             {
-                //m_NetState.DoActionEventClient -= PerformActionFX;
-                //m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
-                //m_NetState.CancelActionsByPrototypeIDEventClient -= CancelActionFXByPrototypeID;
-                //m_NetState.OnStopChargingUpClient -= OnStoppedChargingUpClient;
                 m_ServerCharacter.IsStealthy.OnValueChanged -= OnStealthyChanged;
 
                 if (m_ServerCharacter.TryGetComponent(out ClientInputSender sender))
@@ -282,9 +274,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 // the starting point for each interpolation since the root's position and rotation are modified in
                 // FixedUpdate, thus altering this transform (being a child) in the process.
                 m_LerpedPosition = m_PositionLerper.LerpPosition(m_LerpedPosition,
-                    m_PhysicsWrapper.Transform.position);
+                    serverCharacter.physicsWrapper.Transform.position);
                 m_LerpedRotation = m_RotationLerper.LerpRotation(m_LerpedRotation,
-                    m_PhysicsWrapper.Transform.rotation);
+                    serverCharacter.physicsWrapper.Transform.rotation);
                 transform.SetPositionAndRotation(m_LerpedPosition, m_LerpedRotation);
             }
 
