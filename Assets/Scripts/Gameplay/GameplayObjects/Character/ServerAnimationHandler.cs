@@ -47,7 +47,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public override void OnNetworkDespawn()
         {
-            if (IsServer)
+            if (IsServer && m_NetworkLifeState)
             {
                 m_NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
             }
