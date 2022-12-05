@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace Unity.BossRoom.Editor
+namespace Unity.Multiplayer.Samples.Utilities
 {
     /// <remarks>
     /// Custom readme editor window based on the readme created for URP. For more context, see:
@@ -12,7 +12,7 @@ namespace Unity.BossRoom.Editor
     /// </remarks>
     [CustomEditor(typeof(Readme))]
     [InitializeOnLoad]
-    public class ReadmeEditor : UnityEditor.Editor
+    public class ReadmeEditor : Editor
     {
         const string k_ShowedReadmeSessionStateName = "ReadmeEditor.showedReadme";
 
@@ -23,34 +23,22 @@ namespace Unity.BossRoom.Editor
         [SerializeField]
         GUIStyle m_LinkStyle;
 
-        GUIStyle LinkStyle
-        {
-            get { return m_LinkStyle; }
-        }
+        GUIStyle LinkStyle => m_LinkStyle;
 
         [SerializeField]
         GUIStyle m_TitleStyle;
 
-        GUIStyle TitleStyle
-        {
-            get { return m_TitleStyle; }
-        }
+        GUIStyle TitleStyle => m_TitleStyle;
 
         [SerializeField]
         GUIStyle m_HeadingStyle;
 
-        GUIStyle HeadingStyle
-        {
-            get { return m_HeadingStyle; }
-        }
+        GUIStyle HeadingStyle => m_HeadingStyle;
 
         [SerializeField]
         GUIStyle m_BodyStyle;
 
-        GUIStyle BodyStyle
-        {
-            get { return m_BodyStyle; }
-        }
+        GUIStyle BodyStyle => m_BodyStyle;
 
         static ReadmeEditor()
         {
@@ -80,7 +68,7 @@ namespace Unity.BossRoom.Editor
             method?.Invoke(null, new object[] { Path.Combine(Application.dataPath, "TutorialInfo/Layout.wlt"), false });
         }
 
-        [MenuItem("Boss Room/Show Sample Instructions")]
+        [MenuItem("Sample/Show Sample Instructions")]
         static Readme SelectReadme()
         {
             var ids = AssetDatabase.FindAssets("Readme t:Readme");
@@ -142,8 +130,6 @@ namespace Unity.BossRoom.Editor
                 GUILayout.Space(k_Space);
             }
         }
-
-
 
         void Init()
         {

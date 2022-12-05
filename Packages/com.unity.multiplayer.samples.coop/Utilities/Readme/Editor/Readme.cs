@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Unity.BossRoom.Editor
+namespace Unity.Multiplayer.Samples.Utilities
 {
     /// <remarks>
     /// Custom readme class based on the readme created for URP. For more context, see:
