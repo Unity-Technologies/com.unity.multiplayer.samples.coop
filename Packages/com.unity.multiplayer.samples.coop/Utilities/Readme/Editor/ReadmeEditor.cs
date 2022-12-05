@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using UnityEngine;
 using UnityEditor;
 using System;
@@ -171,3 +173,4 @@ namespace Unity.Multiplayer.Samples.Utilities
         }
     }
 }
+#endif
