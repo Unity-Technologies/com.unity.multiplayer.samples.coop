@@ -91,9 +91,18 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             {
                 CurrentUnityLobby = null;
 
-                if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
+                var lobbyId = m_LocalLobby?.LobbyID;
+
+                if (!string.IsNullOrEmpty(lobbyId))
                 {
-                    task = LeaveLobbyAsync(m_LocalLobby?.LobbyID);
+                    if (m_LocalUser.IsHost)
+                    {
+                        task = DeleteLobbyAsync(lobbyId);
+                    }
+                    else
+                    {
+                        task = LeaveLobbyAsync(lobbyId);
+                    }
                 }
 
                 m_LocalUser.ResetState();
@@ -146,6 +155,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_RateLimitQuery.PutOnCooldown();
                 }
+                else if (e.Reason != LobbyExceptionReason.LobbyNotFound && !m_LocalUser.IsHost) // If Lobby is not found and if we are not the host, it has already been deleted. No need to publish the error here.
+                {
+                    PublishError(e);
+                }
             }
         }
 
@@ -170,6 +183,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 if (e.Reason == LobbyExceptionReason.RateLimited)
                 {
                     m_RateLimitHost.PutOnCooldown();
+                }
+                else
+                {
+                    PublishError(e);
                 }
             }
 
@@ -207,6 +224,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_RateLimitJoin.PutOnCooldown();
                 }
+                else
+                {
+                    PublishError(e);
+                }
             }
 
             return (false, null);
@@ -233,6 +254,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 if (e.Reason == LobbyExceptionReason.RateLimited)
                 {
                     m_RateLimitQuickJoin.PutOnCooldown();
+                }
+                else
+                {
+                    PublishError(e);
                 }
             }
 
@@ -261,12 +286,29 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_RateLimitQuery.PutOnCooldown();
                 }
+                else
+                {
+                    PublishError(e);
+                }
             }
         }
 
         public async Task<Lobby> ReconnectToLobbyAsync(string lobbyId)
         {
-            return await m_LobbyApiInterface.ReconnectToLobby(lobbyId);
+            try
+            {
+                return await m_LobbyApiInterface.ReconnectToLobby(lobbyId);
+            }
+            catch (LobbyServiceException e)
+            {
+                // If Lobby is not found and if we are not the host, it has already been deleted. No need to publish the error here.
+                if (e.Reason != LobbyExceptionReason.LobbyNotFound && !m_LocalUser.IsHost)
+                {
+                    PublishError(e);
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -280,9 +322,12 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
             }
             catch (LobbyServiceException e)
-                when (e is { Reason: LobbyExceptionReason.LobbyNotFound })
             {
-                // If Lobby is not found, it has already been deleted. No need to throw here.
+                // If Lobby is not found and if we are not the host, it has already been deleted. No need to publish the error here.
+                if (e.Reason != LobbyExceptionReason.LobbyNotFound && !m_LocalUser.IsHost)
+                {
+                    PublishError(e);
+                }
             }
 
         }
@@ -291,7 +336,14 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         {
             if (m_LocalUser.IsHost)
             {
-                await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
+                try
+                {
+                    await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
+                }
+                catch (LobbyServiceException e)
+                {
+                    PublishError(e);
+                }
             }
             else
             {
@@ -299,11 +351,18 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
-        public async void DeleteLobbyAsync(string lobbyId)
+        public async Task DeleteLobbyAsync(string lobbyId)
         {
             if (m_LocalUser.IsHost)
             {
-                await m_LobbyApiInterface.DeleteLobby(lobbyId);
+                try
+                {
+                    await m_LobbyApiInterface.DeleteLobby(lobbyId);
+                }
+                catch (LobbyServiceException e)
+                {
+                    PublishError(e);
+                }
             }
             else
             {
@@ -336,6 +395,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_RateLimitQuery.PutOnCooldown();
                 }
+                else if (e.Reason != LobbyExceptionReason.LobbyNotFound && !m_LocalUser.IsHost) // If Lobby is not found and if we are not the host, it has already been deleted. No need to publish the error here.
+                {
+                    PublishError(e);
+                }
             }
         }
 
@@ -358,6 +421,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 if (e.Reason == LobbyExceptionReason.RateLimited)
                 {
                     m_RateLimitQuery.PutOnCooldown();
+                }
+                else
+                {
+                    PublishError(e);
                 }
 
                 //todo - retry logic? SDK is supposed to handle this eventually
@@ -406,6 +473,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_RateLimitQuery.PutOnCooldown();
                 }
+                else
+                {
+                    PublishError(e);
+                }
             }
         }
 
@@ -418,8 +489,25 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             if (m_HeartbeatTime > k_HeartbeatPeriod)
             {
                 m_HeartbeatTime -= k_HeartbeatPeriod;
-                m_LobbyApiInterface.SendHeartbeatPing(CurrentUnityLobby.Id);
+                try
+                {
+                    m_LobbyApiInterface.SendHeartbeatPing(CurrentUnityLobby.Id);
+                }
+                catch (LobbyServiceException e)
+                {
+                    // If Lobby is not found and if we are not the host, it has already been deleted. No need to publish the error here.
+                    if (e.Reason != LobbyExceptionReason.LobbyNotFound && !m_LocalUser.IsHost)
+                    {
+                        PublishError(e);
+                    }
+                }
             }
+        }
+
+        void PublishError(LobbyServiceException e)
+        {
+            var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
+            m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Lobby Error", reason, UnityServiceErrorMessage.Service.Lobby, e));
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -47,14 +48,22 @@ namespace Unity.BossRoom.VisualEffects
         [Tooltip("After Shutdown, how long before we self-destruct? 0 means no self destruct. -1 means self-destruct after ALL particles have disappeared")]
         private float m_PostShutdownSelfDestructTime = -1;
 
+        [SerializeField]
+        [Tooltip("If this graphic should keep its spawn rotation during its lifetime.")]
+        bool m_StayAtSpawnRotation;
+
         // track when Shutdown() is called so we don't try to do it twice
         private bool m_IsShutdown = false;
 
         // we keep a reference to our self-destruction coroutine in case we need to abort it prematurely
         private Coroutine coroWaitForSelfDestruct = null;
 
+        Quaternion m_StartRotation;
+
         private void Start()
         {
+            m_StartRotation = transform.rotation;
+
             if (m_AutoShutdownTime != -1)
             {
                 coroWaitForSelfDestruct = StartCoroutine(CoroWaitForSelfDestruct());
@@ -124,6 +133,13 @@ namespace Unity.BossRoom.VisualEffects
             }
         }
 
+        void Update()
+        {
+            if (m_StayAtSpawnRotation)
+            {
+                transform.rotation = m_StartRotation;
+            }
+        }
     }
 
 
