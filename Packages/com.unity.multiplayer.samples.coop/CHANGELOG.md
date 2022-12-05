@@ -4,7 +4,7 @@
 ### Changed
 * 
 
-## [1.5.0] - 2022-11-07
+## [1.5.0] - 2022-12-05
 
 ### Changed
 * ClientNetworkAnimator component has been added to the Samples Utilities Package. This allows for authority on Animators to be passed onto clients, meaning animations will be client-driven.
