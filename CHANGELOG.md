@@ -12,7 +12,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 *
 ### Changed
 * Hosts now delete their lobby when shutting down instead of only leaving it (#772) Since Boss Room doesn't support host migration, there is no need to keep the lobby alive after the host shuts down. This also changes how LobbyServiceExceptions are handled to prevent popup messages on clients trying to leave a lobby that is already deleted, following the best practices outlined in this doc : https://docs.unity.com/lobby/delete-a-lobby.html
-* Bumped RNSM to 1.1.0: Switched x axis units to seconds instead of frames now that it's available. This means adjusting the sample count to a lower value as well to 30 seconds, since the x axis was moving too slowly. (#788)
+* 
 ### Cleanup
 *
 ### Fixed
