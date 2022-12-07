@@ -1,6 +1,7 @@
 using System;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Infrastructure;
+using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
@@ -39,23 +40,17 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 case ConnectStatus.Undefined:
                 case ConnectStatus.UserRequestedDisconnect:
-                    break;
-                case ConnectStatus.ServerFull:
-                    PopupManager.ShowPopupPanel("Connection Failed", "The Host is full and cannot accept any additional connections.");
-                    break;
                 case ConnectStatus.Success:
                     break;
-                case ConnectStatus.LoggedInAgain:
-                    PopupManager.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account. If you still want to connect, select a different profile by using the 'Change Profile' button.");
-                    break;
-                case ConnectStatus.IncompatibleBuildType:
-                    PopupManager.ShowPopupPanel("Connection Failed", "Server and client builds are not compatible. You cannot connect a release build to a development build or an in-editor session.");
-                    break;
-                case ConnectStatus.GenericDisconnect:
-                    PopupManager.ShowPopupPanel("Disconnected From Host", "The connection to the host was lost.");
-                    break;
-                case ConnectStatus.HostEndedSession:
-                    PopupManager.ShowPopupPanel("Disconnected From Host", "The host has ended the game session.");
+                case ConnectStatus.Disconnected:
+                    if (!string.IsNullOrEmpty(NetworkManager.Singleton.DisconnectReason))
+                    {
+                        PopupManager.ShowPopupPanel("Disconnected From Host", NetworkManager.Singleton.DisconnectReason);
+                    }
+                    else
+                    {
+                        PopupManager.ShowPopupPanel("Disconnected From Host", "The connection to the host was lost.");
+                    }
                     break;
                 case ConnectStatus.Reconnecting:
                     break;
@@ -64,6 +59,9 @@ namespace Unity.BossRoom.Gameplay.UI
                     break;
                 case ConnectStatus.StartClientFailed:
                     PopupManager.ShowPopupPanel("Connection Failed", "Starting client failed.");
+                    break;
+                case ConnectStatus.ConnectionDenied:
+                    PopupManager.ShowPopupPanel("Connection Denied", NetworkManager.Singleton.DisconnectReason);
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");

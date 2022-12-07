@@ -26,8 +26,16 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnClientDisconnect(ulong _)
         {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.Reconnecting);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientReconnecting);
+            if (string.IsNullOrEmpty(m_ConnectionManager.NetworkManager.DisconnectReason))
+            {
+                m_ConnectStatusPublisher.Publish(ConnectStatus.Reconnecting);
+                m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientReconnecting);
+            }
+            else
+            {
+                m_ConnectStatusPublisher.Publish(ConnectStatus.Disconnected);
+                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
+            }
         }
 
         public override void OnUserRequestedShutdown()

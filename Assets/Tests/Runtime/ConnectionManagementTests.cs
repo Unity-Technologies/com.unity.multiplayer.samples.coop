@@ -235,7 +235,7 @@ namespace Unity.BossRoom.Tests.Runtime
                     // ignoring the first success message that is in the buffer
                     if (message != ConnectStatus.Success)
                     {
-                        Assert.AreEqual(ConnectStatus.HostEndedSession, message, "Received unexpected ConnectStatus message.");
+                        Assert.AreEqual(ConnectStatus.Disconnected, message, "Received unexpected ConnectStatus message.");
                         nbHostEndedSessionMsgsReceived++;
                     }
                 });
@@ -276,7 +276,7 @@ namespace Unity.BossRoom.Tests.Runtime
                 {
                     subscriptions.Add(m_ClientScopes[i].Container.Resolve<ISubscriber<ConnectStatus>>().Subscribe(message =>
                     {
-                        Assert.AreEqual(ConnectStatus.LoggedInAgain, message, "Received unexpected ConnectStatus message.");
+                        Assert.AreEqual(ConnectStatus.ConnectionDenied, message, "Received unexpected ConnectStatus message.");
                         nbLoggedInAgainMsgsReceived++;
                     }));
                 }

@@ -62,7 +62,7 @@ namespace Unity.BossRoom.ConnectionManagement
                     var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
                     if (sessionData.HasValue)
                     {
-                        m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.GenericDisconnect, PlayerName = sessionData.Value.PlayerName });
+                        m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.Disconnected, PlayerName = sessionData.Value.PlayerName });
                     }
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
@@ -71,9 +71,19 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnUserRequestedShutdown()
         {
-            m_ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
-            // Wait before shutting down to make sure clients receive that message before they are disconnected
-            m_ConnectionManager.StartCoroutine(WaitToShutdown());
+            ulong[] clientIds = new ulong[m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count];
+            var i = 0;
+            foreach (var id in m_ConnectionManager.NetworkManager.ConnectedClientsIds)
+            {
+                clientIds[i] = id;
+                i++;
+            }
+
+            foreach (var id in clientIds)
+            {
+                m_ConnectionManager.NetworkManager.DisconnectClient(id, "Host has ended game session.");
+            }
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
         /// <summary>
@@ -104,62 +114,41 @@ namespace Unity.BossRoom.ConnectionManagement
 
             var payload = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
-            var gameReturnStatus = GetConnectStatus(connectionPayload);
 
-            if (gameReturnStatus == ConnectStatus.Success)
+            if (m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count >= m_ConnectionManager.MaxConnectedPlayers)
+            {
+                response.Reason = "The Host is full and cannot accept any additional connections.";
+                response.Approved = false;
+            }
+            else if (connectionPayload.isDebug != Debug.isDebugBuild)
+            {
+                response.Reason = "Server and client builds are not compatible. You cannot connect a release build to a development build or an in-editor session.";
+                response.Approved = false;
+            }
+            else if (SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId))
+            {
+                response.Reason = "You have logged in elsewhere using the same account. If you still want to connect, select a different profile by using the 'Change Profile' button.";
+                response.Approved = false;
+            }
+            else
             {
                 SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
                     new SessionPlayerData(clientId, connectionPayload.playerName, new NetworkGuid(), 0, true));
 
                 // connection approval will create a player object for you
-                response.Approved = true;
                 response.CreatePlayerObject = true;
                 response.Position = Vector3.zero;
                 response.Rotation = Quaternion.identity;
-                return;
+                response.Approved = true;
             }
 
-            // In order for clients to not just get disconnected with no feedback, the server needs to tell the client why it disconnected it.
-            // This could happen after an auth check on a service or because of gameplay reasons (server full, wrong build version, etc)
-            // Since network objects haven't synced yet (still in the approval process), we need to send a custom message to clients, wait for
-            // UTP to update a frame and flush that message, then give our response to NetworkManager's connection approval process, with a denied approval.
-            IEnumerator WaitToDenyApproval()
+            if (!response.Approved)
             {
-                response.Pending = true; // give some time for server to send connection status message to clients
-                response.Approved = false;
-                m_ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-                yield return null; // wait a frame so UTP can flush it's messages on next update
-                response.Pending = false; // connection approval process can be finished.
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
+                }
             }
-
-            m_ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-            m_ConnectionManager.StartCoroutine(WaitToDenyApproval());
-            if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-            {
-                m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
-            }
-        }
-
-        ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
-        {
-            if (m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count >= m_ConnectionManager.MaxConnectedPlayers)
-            {
-                return ConnectStatus.ServerFull;
-            }
-
-            if (connectionPayload.isDebug != Debug.isDebugBuild)
-            {
-                return ConnectStatus.IncompatibleBuildType;
-            }
-
-            return SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId) ?
-                ConnectStatus.LoggedInAgain : ConnectStatus.Success;
-        }
-
-        IEnumerator WaitToShutdown()
-        {
-            yield return null;
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
     }
 }

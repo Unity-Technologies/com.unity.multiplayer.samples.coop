@@ -13,15 +13,12 @@ namespace Unity.BossRoom.ConnectionManagement
     {
         Undefined,
         Success,                  //client successfully connected. This may also be a successful reconnect.
-        ServerFull,               //can't join, server is already at capacity.
-        LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
+        Disconnected,
         UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
-        GenericDisconnect,        //server disconnected, but no specific reason given.
         Reconnecting,             //client lost connection and is attempting to reconnect.
-        IncompatibleBuildType,    //client build type is incompatible with server.
-        HostEndedSession,         //host intentionally ended the session.
         StartHostFailed,          // server failed to bind
-        StartClientFailed         // failed to connect to server and/or invalid network endpoint
+        StartClientFailed,         // failed to connect to server and/or invalid network endpoint
+        ConnectionDenied
     }
 
     public struct ReconnectMessage
@@ -125,6 +122,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
         void OnClientDisconnectCallback(ulong clientId)
         {
+            Debug.Log(NetworkManager.DisconnectReason);
             m_CurrentState.OnClientDisconnect(clientId);
         }
 

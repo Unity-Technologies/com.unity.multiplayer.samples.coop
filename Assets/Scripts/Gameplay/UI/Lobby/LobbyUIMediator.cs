@@ -58,7 +58,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void OnConnectStatus(ConnectStatus status)
         {
-            if (status is ConnectStatus.GenericDisconnect or ConnectStatus.StartClientFailed)
+            if (status is ConnectStatus.Disconnected or ConnectStatus.StartClientFailed)
             {
                 UnblockUIAfterLoadingIsComplete();
             }

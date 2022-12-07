@@ -53,7 +53,7 @@ namespace Unity.BossRoom.ConnectionManagement
             }
             else
             {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
+                m_ConnectStatusPublisher.Publish(ConnectStatus.Disconnected);
                 m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
             }
         }
@@ -64,8 +64,7 @@ namespace Unity.BossRoom.ConnectionManagement
             switch (disconnectReason)
             {
                 case ConnectStatus.UserRequestedDisconnect:
-                case ConnectStatus.HostEndedSession:
-                case ConnectStatus.ServerFull:
+                case ConnectStatus.ConnectionDenied:
                     m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
                     break;
             }
