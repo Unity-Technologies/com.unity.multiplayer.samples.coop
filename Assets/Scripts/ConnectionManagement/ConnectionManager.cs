@@ -76,7 +76,6 @@ namespace Unity.BossRoom.ConnectionManagement
         internal readonly ClientConnectingState m_ClientConnecting = new ClientConnectingState();
         internal readonly ClientConnectedState m_ClientConnected = new ClientConnectedState();
         internal readonly ClientReconnectingState m_ClientReconnecting = new ClientReconnectingState();
-        internal readonly DisconnectingWithReasonState m_DisconnectingWithReason = new DisconnectingWithReasonState();
         internal readonly StartingHostState m_StartingHost = new StartingHostState();
         internal readonly HostingState m_Hosting = new HostingState();
 
@@ -87,7 +86,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
         void Start()
         {
-            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_StartingHost, m_Hosting };
+            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_StartingHost, m_Hosting };
             foreach (var connectionState in states)
             {
                 m_Resolver.Inject(connectionState);
