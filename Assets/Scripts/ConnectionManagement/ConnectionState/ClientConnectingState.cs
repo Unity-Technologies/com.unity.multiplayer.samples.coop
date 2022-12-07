@@ -49,14 +49,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
         protected void StartingClientFailedAsync()
         {
-            if (string.IsNullOrEmpty(m_ConnectionManager.NetworkManager.DisconnectReason))
-            {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
-            }
-            else
-            {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.ConnectionDenied);
-            }
+            m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
