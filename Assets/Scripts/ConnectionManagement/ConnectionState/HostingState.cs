@@ -79,9 +79,11 @@ namespace Unity.BossRoom.ConnectionManagement
                 i++;
             }
 
+            var reason = JsonUtility.ToJson(ConnectStatus.HostEndedSession);
+
             foreach (var id in clientIds)
             {
-                m_ConnectionManager.NetworkManager.DisconnectClient(id, JsonUtility.ToJson(ConnectStatus.HostEndedSession));
+                m_ConnectionManager.NetworkManager.DisconnectClient(id, reason);
             }
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
