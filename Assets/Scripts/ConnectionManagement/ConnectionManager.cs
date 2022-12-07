@@ -172,43 +172,5 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             m_CurrentState.OnUserRequestedShutdown();
         }
-
-        /// <summary>
-        /// Registers the message handler for custom named messages. This should only be done once StartClient has been
-        /// called (start client will initialize NetworkSceneManager and CustomMessagingManager)
-        /// </summary>
-        public void RegisterCustomMessages()
-        {
-            NetworkManager.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), ReceiveServerToClientSetDisconnectReason_CustomMessage);
-        }
-
-        void ReceiveServerToClientSetDisconnectReason_CustomMessage(ulong clientID, FastBufferReader reader)
-        {
-            reader.ReadValueSafe(out ConnectStatus status);
-            m_CurrentState.OnDisconnectReasonReceived(status);
-        }
-
-        /// <summary>
-        /// Sends a DisconnectReason to all connected clients. This should only be done on the server, prior to disconnecting the clients.
-        /// </summary>
-        /// <param name="status"> The reason for the upcoming disconnect.</param>
-        public void SendServerToAllClientsSetDisconnectReason(ConnectStatus status)
-        {
-            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
-            writer.WriteValueSafe(status);
-            NetworkManager.CustomMessagingManager.SendNamedMessageToAll(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), writer);
-        }
-
-        /// <summary>
-        /// Sends a DisconnectReason to the indicated client. This should only be done on the server, prior to disconnecting the client.
-        /// </summary>
-        /// <param name="clientID"> id of the client to send to </param>
-        /// <param name="status"> The reason for the upcoming disconnect.</param>
-        public void SendServerToClientSetDisconnectReason(ulong clientID, ConnectStatus status)
-        {
-            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
-            writer.WriteValueSafe(status);
-            NetworkManager.CustomMessagingManager.SendNamedMessage(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
-        }
     }
 }

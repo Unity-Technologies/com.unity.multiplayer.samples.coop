@@ -47,27 +47,35 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnClientDisconnect(ulong _)
         {
-            if (m_NbAttempts < m_ConnectionManager.NbReconnectAttempts)
+            var disconnectReason = m_ConnectionManager.NetworkManager.DisconnectReason;
+            if (string.IsNullOrEmpty(disconnectReason))
             {
-                m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                if (m_NbAttempts < m_ConnectionManager.NbReconnectAttempts)
+                {
+                    m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                }
+                else
+                {
+                    m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
+                    m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
+                }
             }
             else
             {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
-                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-            }
-        }
-
-        public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
-        {
-            m_ConnectStatusPublisher.Publish(disconnectReason);
-            switch (disconnectReason)
-            {
-                case ConnectStatus.UserRequestedDisconnect:
-                case ConnectStatus.HostEndedSession:
-                case ConnectStatus.ServerFull:
-                    m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
-                    break;
+                var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
+                m_ConnectStatusPublisher.Publish(connectStatus);
+                switch (connectStatus)
+                {
+                    case ConnectStatus.UserRequestedDisconnect:
+                    case ConnectStatus.HostEndedSession:
+                    case ConnectStatus.ServerFull:
+                    case ConnectStatus.IncompatibleBuildType:
+                        m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
+                        break;
+                    default:
+                        m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                        break;
+                }
             }
         }
 
