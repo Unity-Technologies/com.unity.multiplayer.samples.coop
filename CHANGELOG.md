@@ -6,19 +6,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [Unreleased] - yyyy-mm-dd
+## [unreleased] - yyyy-mm-dd
+### Changed
+* Bumped RNSM to 1.1.0: Switched x axis units to seconds instead of frames now that it's available. This means adjusting the sample count to a lower value as well to 30 seconds, since the x axis was moving too slowly. (#788)
 
-### Added
-* 
+## [2.0.3] - 2022-12-05
 
 ### Changed
-* 
+* Hosts now delete their lobby when shutting down instead of only leaving it (#772) Since Boss Room doesn't support host migration, there is no need to keep the lobby alive after the host shuts down. This also changes how LobbyServiceExceptions are handled to prevent popup messages on clients trying to leave a lobby that is already deleted, following the best practices outlined in this doc : https://docs.unity.com/lobby/delete-a-lobby.html
+
+### Fixed
+* Mage's heal FX plays out on itself and on targets. Added ability for SpecialFXGraphic components to remain at spawn rotation (#771)
+
+## [2.0.2] - 2022-11-01
+### Fixed
+* Bumped Unity editor version to fix android build error (#779)
+
+## [2.0.1] - 2022-10-25
+
+### Changed
+* Updated Boss Room to NGO 1.1.0 (#708)
+  *  Now uses managed types for custom INetworkSerializable in NetworkVariables. NetworkGUID is now a class instead of a struct.
+  * Cleanup Relay and UTP setup. Flow is now simpler, no need for the RelayUtilities anymore.
+    * This cleansup various setup steps and puts them all in a new "ConnectionMethod.cs".
+  * MaxSendQueueSize value is removed, reserialized NetworkManager to remove that now useless value.
+  * Reverted the default value for max payload size, this is no longer useful as NGO is mostly reliable.
+  * Set connection approval timeout higher, 1 sec is pretty short. If there's a packet drop, some hangups on the network, clients would get timedout too easily.
 
 ### Cleanup
 * Removed unnecessary FindObjectOfType usage inside of ClientCharSelectState (#754)
 
 ### Fixed
-* 
+* Reenabled depth buffer in the URP settings to enable the use of soft particles (#762)
+* Moved a torch out of a corner so that the flame VFX don't clip (#768)
+* Fixed issue where pressing 1 on keyboard would not invoke Revive or Pickup/Drop Actions (#770) Authority on modification of displayed Action now comes from a single spot, ClientInputSender.
 
 ## [2.0.0] - 2022-10-06
 

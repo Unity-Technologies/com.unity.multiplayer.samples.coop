@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.BossRoom.Infrastructure;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
-using VContainer;
 
 namespace Unity.BossRoom.UnityServices.Lobbies
 {
@@ -16,15 +14,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
     {
         const int k_MaxLobbiesToShow = 16; // If more are necessary, consider retrieving paginated results or using filters.
 
-        readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
         readonly List<QueryFilter> m_Filters;
         readonly List<QueryOrder> m_Order;
 
-        [Inject]
-        public LobbyAPIInterface(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)
+        public LobbyAPIInterface()
         {
-            m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
-
             // Filter for open lobbies only
             m_Filters = new List<QueryFilter>()
             {
@@ -43,34 +37,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             };
         }
 
-        async Task<T> ExceptionHandling<T>(Task<T> task)
-        {
-            try
-            {
-                return await task;
-            }
-            catch (Exception e)
-            {
-                var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
-                m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason, UnityServiceErrorMessage.Service.Lobby, e));
-                throw;
-            }
-        }
-
-        async Task ExceptionHandling(Task task)
-        {
-            try
-            {
-                await task;
-            }
-            catch (Exception e)
-            {
-                var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
-                m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason, UnityServiceErrorMessage.Service.Lobby, e));
-                throw;
-            }
-        }
-
         public async Task<Lobby> CreateLobby(string requesterUasId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> hostUserData, Dictionary<string, DataObject> lobbyData)
         {
             CreateLobbyOptions createOptions = new CreateLobbyOptions
@@ -80,24 +46,24 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 Data = lobbyData
             };
 
-            return await ExceptionHandling(LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, createOptions));
+            return await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, createOptions);
         }
 
         public async Task DeleteLobby(string lobbyId)
         {
-            await ExceptionHandling(LobbyService.Instance.DeleteLobbyAsync(lobbyId));
+            await LobbyService.Instance.DeleteLobbyAsync(lobbyId);
         }
 
         public async Task<Lobby> JoinLobbyByCode(string requesterUasId, string lobbyCode, Dictionary<string, PlayerDataObject> localUserData)
         {
             JoinLobbyByCodeOptions joinOptions = new JoinLobbyByCodeOptions { Player = new Player(id: requesterUasId, data: localUserData) };
-            return await ExceptionHandling(LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode, joinOptions));
+            return await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode, joinOptions);
         }
 
         public async Task<Lobby> JoinLobbyById(string requesterUasId, string lobbyId, Dictionary<string, PlayerDataObject> localUserData)
         {
             JoinLobbyByIdOptions joinOptions = new JoinLobbyByIdOptions { Player = new Player(id: requesterUasId, data: localUserData) };
-            return await ExceptionHandling(LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, joinOptions));
+            return await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, joinOptions);
         }
 
         public async Task<Lobby> QuickJoinLobby(string requesterUasId, Dictionary<string, PlayerDataObject> localUserData)
@@ -108,19 +74,19 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 Player = new Player(id: requesterUasId, data: localUserData)
             };
 
-            return await ExceptionHandling(LobbyService.Instance.QuickJoinLobbyAsync(joinRequest));
+            return await LobbyService.Instance.QuickJoinLobbyAsync(joinRequest);
         }
 
         public async Task<Lobby> ReconnectToLobby(string lobbyId)
         {
-            return await ExceptionHandling(LobbyService.Instance.ReconnectToLobbyAsync(lobbyId));
+            return await LobbyService.Instance.ReconnectToLobbyAsync(lobbyId);
         }
 
         public async Task RemovePlayerFromLobby(string requesterUasId, string lobbyId)
         {
             try
             {
-                await ExceptionHandling(LobbyService.Instance.RemovePlayerAsync(lobbyId, requesterUasId));
+                await LobbyService.Instance.RemovePlayerAsync(lobbyId, requesterUasId);
             }
             catch (LobbyServiceException e)
                 when (e is { Reason: LobbyExceptionReason.PlayerNotFound })
@@ -138,18 +104,18 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 Order = m_Order
             };
 
-            return await ExceptionHandling(LobbyService.Instance.QueryLobbiesAsync(queryOptions));
+            return await LobbyService.Instance.QueryLobbiesAsync(queryOptions);
         }
 
         public async Task<Lobby> GetLobby(string lobbyId)
         {
-            return await ExceptionHandling(LobbyService.Instance.GetLobbyAsync(lobbyId));
+            return await LobbyService.Instance.GetLobbyAsync(lobbyId);
         }
 
         public async Task<Lobby> UpdateLobby(string lobbyId, Dictionary<string, DataObject> data, bool shouldLock)
         {
             UpdateLobbyOptions updateOptions = new UpdateLobbyOptions { Data = data, IsLocked = shouldLock };
-            return await ExceptionHandling(LobbyService.Instance.UpdateLobbyAsync(lobbyId, updateOptions));
+            return await LobbyService.Instance.UpdateLobbyAsync(lobbyId, updateOptions);
         }
 
         public async Task<Lobby> UpdatePlayer(string lobbyId, string playerId, Dictionary<string, PlayerDataObject> data, string allocationId, string connectionInfo)
@@ -160,12 +126,12 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 AllocationId = allocationId,
                 ConnectionInfo = connectionInfo
             };
-            return await ExceptionHandling(LobbyService.Instance.UpdatePlayerAsync(lobbyId, playerId, updateOptions));
+            return await LobbyService.Instance.UpdatePlayerAsync(lobbyId, playerId, updateOptions);
         }
 
         public async void SendHeartbeatPing(string lobbyId)
         {
-            await ExceptionHandling(LobbyService.Instance.SendHeartbeatPingAsync(lobbyId));
+            await LobbyService.Instance.SendHeartbeatPingAsync(lobbyId);
         }
     }
 }

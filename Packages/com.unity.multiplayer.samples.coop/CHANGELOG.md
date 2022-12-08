@@ -1,15 +1,21 @@
 # Multiplayer Samples Co-op Changelog
 
-## [Unreleased] - yyyy-mm-dd
-
-### Added
-* ClientLoadingScreen now sets raycast blocking to true when the loading screen is visible (#760)
+## [unreleased] - yyyy-mm-dd
 ### Changed
-*
+* 
+
+## [1.5.0] - 2022-12-05
+
+### Changed
+* ClientNetworkAnimator component has been added to the Samples Utilities Package. This allows for authority on Animators to be passed onto clients, meaning animations will be client-driven.
+
+## [1.4.1] - 2022-10-25
+
+### Changed
+* ClientLoadingScreen now sets raycast blocking to true when the loading screen is visible (#760)
+
 ### Removed
-*
-### Fixed
-*
+* Deprecated Unity Relay Utilities, it should no longer be needed with NGO 1.1.0's new API for setting up Relay (#708)
 
 ## [1.4.0] - 2022-10-06
 
