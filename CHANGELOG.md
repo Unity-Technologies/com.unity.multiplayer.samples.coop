@@ -9,6 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [unreleased] - yyyy-mm-dd
 ### Changed
 * Bumped RNSM to 1.1.0: Switched x axis units to seconds instead of frames now that it's available. This means adjusting the sample count to a lower value as well to 30 seconds, since the x axis was moving too slowly. (#788)
+* Updated Boss Room to NGO 1.2.0 (#791)
 
 ## [2.0.3] - 2022-12-05
 
