@@ -71,21 +71,14 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnUserRequestedShutdown()
         {
-            ulong[] clientIds = new ulong[m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count - 1];
-            var i = 0;
-            foreach (var id in m_ConnectionManager.NetworkManager.ConnectedClientsIds)
+            var reason = JsonUtility.ToJson(ConnectStatus.HostEndedSession);
+            for (var i = m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count - 1; i >= 0; i--)
             {
+                var id = m_ConnectionManager.NetworkManager.ConnectedClientsIds[i];
                 if (id != m_ConnectionManager.NetworkManager.LocalClientId)
                 {
-                    clientIds[i++] = id;
+                    m_ConnectionManager.NetworkManager.DisconnectClient(id, reason);
                 }
-            }
-
-            var reason = JsonUtility.ToJson(ConnectStatus.HostEndedSession);
-
-            foreach (var id in clientIds)
-            {
-                m_ConnectionManager.NetworkManager.DisconnectClient(id, reason);
             }
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
