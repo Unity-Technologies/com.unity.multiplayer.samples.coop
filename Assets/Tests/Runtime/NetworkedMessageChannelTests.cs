@@ -149,6 +149,7 @@ namespace Unity.BossRoom.Tests.Runtime
 
             m_NbMessagesReceived = 0;
 
+            m_PlayerPrefab.SetActive(false); // to prevent NM from destroying the prefab on shutdown. This flow isn't great and is hackish, should be reworked
             // Shutdown the server and clients
             m_ServerNetworkManager.Shutdown();
             m_ClientNetworkManagers[0].Shutdown();
@@ -157,6 +158,8 @@ namespace Unity.BossRoom.Tests.Runtime
             yield return new WaitWhile(() => m_ServerNetworkManager.ShutdownInProgress);
             yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
             yield return new WaitWhile(() => m_ClientNetworkManagers[1].ShutdownInProgress);
+
+            m_PlayerPrefab.SetActive(true); // reactivating after destroy prevention
 
             // Restart the server and clients
             m_ServerNetworkManager.StartHost();
