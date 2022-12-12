@@ -7,7 +7,7 @@ namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to a connected client. When being disconnected, transitions to the
-    /// ClientReconnecting state. When receiving a disconnect reason, transitions to the DisconnectingWithReason state.
+    /// ClientReconnecting state if no reason is given, or to the Offline state.
     /// </summary>
     class ClientConnectedState : ConnectionState
     {
