@@ -77,9 +77,8 @@ namespace Unity.BossRoom.ConnectionManagement
             {
                 if (id != m_ConnectionManager.NetworkManager.LocalClientId)
                 {
-                    clientIds[i] = id;
+                    clientIds[i++] = id;
                 }
-                i++;
             }
 
             var reason = JsonUtility.ToJson(ConnectStatus.HostEndedSession);
