@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
 ## [unreleased] - yyyy-mm-dd
+
+## [2.0.4] - 2022-12-13
 ### Changed
 * Bumped RNSM to 1.1.0: Switched x axis units to seconds instead of frames now that it's available. This means adjusting the sample count to a lower value as well to 30 seconds, since the x axis was moving too slowly. (#788)
 * Updated Boss Room to NGO 1.2.0 (#791).
