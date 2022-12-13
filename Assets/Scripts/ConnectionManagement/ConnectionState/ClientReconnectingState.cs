@@ -8,9 +8,10 @@ namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to a client attempting to reconnect to a server. It will try to reconnect a
-    /// number of times defined by k_NbReconnectAttempts. If it succeeds, it will transition to the ClientConnected
-    /// state. If not, it will transition to the Offline state. If given a disconnect reason first, depending on the
-    /// reason given, may transition to the DisconnectingWithReason state.
+    /// number of times defined by the ConnectionManager's NbReconnectAttempts property. If it succeeds, it will
+    /// transition to the ClientConnected state. If not, it will transition to the Offline state. If given a disconnect
+    /// reason first, depending on the reason given, may not try to reconnect again and transition directly to the
+    /// Offline state.
     /// </summary>
     class ClientReconnectingState : ClientConnectingState
     {
@@ -47,27 +48,44 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnClientDisconnect(ulong _)
         {
+            var disconnectReason = m_ConnectionManager.NetworkManager.DisconnectReason;
             if (m_NbAttempts < m_ConnectionManager.NbReconnectAttempts)
             {
-                m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                if (string.IsNullOrEmpty(disconnectReason))
+                {
+                    m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                }
+                else
+                {
+                    var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
+                    m_ConnectStatusPublisher.Publish(connectStatus);
+                    switch (connectStatus)
+                    {
+                        case ConnectStatus.UserRequestedDisconnect:
+                        case ConnectStatus.HostEndedSession:
+                        case ConnectStatus.ServerFull:
+                        case ConnectStatus.IncompatibleBuildType:
+                            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
+                            break;
+                        default:
+                            m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                            break;
+                    }
+                }
             }
             else
             {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
-                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-            }
-        }
+                if (string.IsNullOrEmpty(disconnectReason))
+                {
+                    m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
+                }
+                else
+                {
+                    var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
+                    m_ConnectStatusPublisher.Publish(connectStatus);
+                }
 
-        public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
-        {
-            m_ConnectStatusPublisher.Publish(disconnectReason);
-            switch (disconnectReason)
-            {
-                case ConnectStatus.UserRequestedDisconnect:
-                case ConnectStatus.HostEndedSession:
-                case ConnectStatus.ServerFull:
-                    m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
-                    break;
+                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
             }
         }
 
