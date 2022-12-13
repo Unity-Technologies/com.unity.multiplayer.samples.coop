@@ -179,7 +179,8 @@ Running the game over internet currently requires setting up a relay.
 * Win state - [Assets/Scripts/Gameplay/GameState/PersistentGameState.cs](Assets/Scripts/Gameplay/GameState/PersistentGameState.cs)
 
 ### Connectivity
-* Connection approval return value with custom messaging - WaitToDenyApproval() in [Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs)
+* Disconnecting every client with reason - OnUserRequestedShutdown() in [Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs)
+* Connection approval with reason sent to the client when denied - ApprovalCheck() in [Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs)
 * Connection state machine with error handling - [Assets/Scripts/ConnectionManagement/ConnectionManager.cs ](Assets/Scripts/ConnectionManagement/ConnectionManager.cs) <br> [Assets/Scripts/ConnectionManagement/ConnectionState/](Assets/Scripts/ConnectionManagement/ConnectionState/)
 * UTP setup for IP - ConnectionMethodIP in [Assets/Scripts/ConnectionManagement/ConnectionMethod.cs](Assets/Scripts/ConnectionManagement/ConnectionMethod.cs)
 * UTP setup for Relay - ConnectionMethodRelay in [Assets/Scripts/ConnectionManagement/ConnectionMethod.cs](Assets/Scripts/ConnectionManagement/ConnectionMethod.cs)
