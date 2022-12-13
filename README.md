@@ -168,6 +168,7 @@ Running the game over internet currently requires setting up a relay.
 * Character movements - [Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacterMovement.cs](Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacterMovement.cs)
 * Client driven movements - Boss Room is server driven with anticipation animation. See [Client Driven bitesize](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.bitesize/tree/main/Basic/ClientDriven) for client driven gameplay
 * Player spawn - SpawnPlayer() in [Assets/Scripts/Gameplay/GameState/ServerBossRoomState.cs](Assets/Scripts/Gameplay/GameState/ServerBossRoomState.cs)
+* Player camera setup (with cinemachine) - OnNetworkSpawn() in [Assets/Scripts/Gameplay/GameplayObjects/Character/ClientCharacter.cs](Assets/Scripts/Gameplay/GameplayObjects/Character/ClientCharacter.cs)
 
 ### Game Flow
 * Application Controller - [Assets/Scripts/ApplicationLifecycle/ApplicationController.cs ](Assets/Scripts/ApplicationLifecycle/ApplicationController.cs)
@@ -180,7 +181,9 @@ Running the game over internet currently requires setting up a relay.
 ### Connectivity
 * Disconnecting every client with reason - OnUserRequestedShutdown() in [Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs)
 * Connection approval with reason sent to the client when denied - ApprovalCheck() in [Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs)
-* Connection state machine - [Assets/Scripts/ConnectionManagement/ConnectionManager.cs ](Assets/Scripts/ConnectionManagement/ConnectionManager.cs) <br> [Assets/Scripts/ConnectionManagement/ConnectionState/](Assets/Scripts/ConnectionManagement/ConnectionState/)
+* Connection state machine with error handling - [Assets/Scripts/ConnectionManagement/ConnectionManager.cs ](Assets/Scripts/ConnectionManagement/ConnectionManager.cs) <br> [Assets/Scripts/ConnectionManagement/ConnectionState/](Assets/Scripts/ConnectionManagement/ConnectionState/)
+* UTP setup for IP - ConnectionMethodIP in [Assets/Scripts/ConnectionManagement/ConnectionMethod.cs](Assets/Scripts/ConnectionManagement/ConnectionMethod.cs)
+* UTP setup for Relay - ConnectionMethodRelay in [Assets/Scripts/ConnectionManagement/ConnectionMethod.cs](Assets/Scripts/ConnectionManagement/ConnectionMethod.cs)
 * Session manager - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/SessionManager.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/SessionManager.cs)
 * RTT stats - [Assets/Scripts/Utils/NetworkOverlay/NetworkStats.cs](Assets/Scripts/Utils/NetworkOverlay/NetworkStats.cs)
 
@@ -190,6 +193,7 @@ Running the game over internet currently requires setting up a relay.
 * Relay Join - StartClientLobby() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
 * Relay Create - StartHostLobby() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
 * Authentication - EnsurePlayerIsAuthorized() in [Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs ](Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs)
+* Profile manager for ParrelSync and local play [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
 
 ### Tools and Utilities
 * Networked message channel (inter-class and networked messaging) - [Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs](Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs)
