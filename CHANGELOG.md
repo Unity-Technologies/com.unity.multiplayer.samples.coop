@@ -14,6 +14,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Updated Boss Room to NGO 1.2.0 (#791).
   * Removed a workaround in our tests waiting for two frames before shutting down a client that is attempting to connect to a server. (see https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/pull/2261)
 * Replaced the workaround using custom messages to send a disconnect reason to clients with the new DisconnectReason feature in NGO. (#790)
+* Updating editor version to 2021.3.15f1 (#795)
 
 ## [2.0.3] - 2022-12-05
 
