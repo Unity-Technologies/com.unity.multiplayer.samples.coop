@@ -104,7 +104,7 @@ One of the eight clients acts as the host/server. That client will use a composi
 - The game is server-authoritative, with latency-masking animations. 
 - Position updates are carried out through NetworkTransform that sync position and rotation. 
 
-Code is organized in domain-based assemblies. See our [ARCHITECTURE.md](ARCHITECTURE.md) file for more details.
+Code is organized in domain-based assemblies. See the [Boss Room architecture documentation](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom-architecture) file for more details.
   
 ## Testing multiplayer
 
