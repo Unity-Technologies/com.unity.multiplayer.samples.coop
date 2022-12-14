@@ -177,11 +177,6 @@ internal static class BuildHelpers
 
         await Task.Delay(100); // skipping some time to make sure debug logs are flushed before we build
 
-        // Debug.Log("sleeping");
-        // Thread.Sleep(5000);
-        // Debug.Log("done sleeping");
-        // return;
-
         var buildPathToUse = BuildPath(buildTarget.ToString());
         buildPathToUse += buildPathExtension;
 
