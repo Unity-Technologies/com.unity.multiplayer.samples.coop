@@ -31,6 +31,7 @@ internal static class BuildHelpers
     const int k_MenuGroupingOtherToggles = 22;
 
     static BuildTarget s_CurrentEditorBuildTarget;
+    static BuildTargetGroup s_CurrentEditorBuildTargetGroup;
     static int s_NbBuildsDone;
 
     static string BuildPathRootDirectory => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Builds", "Playtest");
@@ -86,12 +87,13 @@ internal static class BuildHelpers
     static void RestoreBuildTarget()
     {
         Debug.Log($"restoring editor to initial build target {s_CurrentEditorBuildTarget}");
-        EditorUserBuildSettings.SwitchActiveBuildTarget(s_CurrentEditorBuildTarget);
+        EditorUserBuildSettings.SwitchActiveBuildTarget(s_CurrentEditorBuildTargetGroup, s_CurrentEditorBuildTarget);
     }
 
     static void SaveCurrentBuildTarget()
     {
         s_CurrentEditorBuildTarget = EditorUserBuildSettings.activeBuildTarget;
+        s_CurrentEditorBuildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
     }
 
     [MenuItem(k_AllToggleName, false, k_MenuGroupingPlatforms)]
