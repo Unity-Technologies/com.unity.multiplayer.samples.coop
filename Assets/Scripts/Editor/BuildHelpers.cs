@@ -168,7 +168,7 @@ internal static class BuildHelpers
         ToggleMenu(k_SkipAutoDeleteToggleName);
     }
 
-    static bool ToggleMenu(string menuName, bool? valueToSet=null)
+    static bool ToggleMenu(string menuName, bool? valueToSet = null)
     {
         bool toSet = !Menu.GetChecked(menuName);
         if (valueToSet != null)
