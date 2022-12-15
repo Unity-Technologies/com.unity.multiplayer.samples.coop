@@ -163,7 +163,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                     if (m_ServerCharacter.TryGetComponent(out ClientInputSender inputSender))
                     {
                         // anticipated actions will only be played on non-host, owning clients
-                        if (!m_IsHost)
+                        if (!IsServer)
                         {
                             inputSender.ActionInputEvent += OnActionInput;
                         }
