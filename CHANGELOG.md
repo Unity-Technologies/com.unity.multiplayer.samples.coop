@@ -10,6 +10,9 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Cleanup
 * Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
 
+### Fixed
+* EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
+
 ## [2.0.4] - 2022-12-13
 ### Changed
 * Updated Boss Room to NGO 1.2.0 (#791).
