@@ -9,8 +9,7 @@ namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to when a client is attempting to connect to a server. Starts the client when
-    /// entering. If successful, transitions to the ClientConnected state. If not, transitions to the Offline state. If
-    /// given a disconnect reason first, transitions to the DisconnectingWithReason state.
+    /// entering. If successful, transitions to the ClientConnected state. If not, transitions to the Offline state.
     /// </summary>
     class ClientConnectingState : OnlineState
     {
@@ -49,14 +48,17 @@ namespace Unity.BossRoom.ConnectionManagement
 
         protected void StartingClientFailedAsync()
         {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
+            var disconnectReason = m_ConnectionManager.NetworkManager.DisconnectReason;
+            if (string.IsNullOrEmpty(disconnectReason))
+            {
+                m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
+            }
+            else
+            {
+                var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
+                m_ConnectStatusPublisher.Publish(connectStatus);
+            }
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-        }
-
-        public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
-        {
-            m_ConnectStatusPublisher.Publish(disconnectReason);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
         }
 
 
@@ -74,7 +76,6 @@ namespace Unity.BossRoom.ConnectionManagement
                 }
 
                 SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-                m_ConnectionManager.RegisterCustomMessages();
             }
             catch (Exception e)
             {

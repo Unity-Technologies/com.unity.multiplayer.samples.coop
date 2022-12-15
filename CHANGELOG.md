@@ -6,17 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [unreleased] - aaaa-mm-dd
+## [unreleased] - yyyy-mm-dd
+### Cleanup
+* Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
 
-### Added
-*
+## [2.0.4] - 2022-12-13
+### Changed
+* Updated Boss Room to NGO 1.2.0 (#791).
+  * Removed a workaround in our tests waiting for two frames before shutting down a client that is attempting to connect to a server. (see https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/pull/2261)
+* Replaced the workaround using custom messages to send a disconnect reason to clients with the new DisconnectReason feature in NGO. (#790)
+* Updating editor version to 2021.3.15f1 (#795)
+
+## [2.0.3] - 2022-12-05
+
 ### Changed
 * Hosts now delete their lobby when shutting down instead of only leaving it (#772) Since Boss Room doesn't support host migration, there is no need to keep the lobby alive after the host shuts down. This also changes how LobbyServiceExceptions are handled to prevent popup messages on clients trying to leave a lobby that is already deleted, following the best practices outlined in this doc : https://docs.unity.com/lobby/delete-a-lobby.html
-* 
-### Cleanup
-* Clarified a TODO inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
+
 ### Fixed
-*
+* Mage's heal FX plays out on itself and on targets. Added ability for SpecialFXGraphic components to remain at spawn rotation (#771)
 
 ## [2.0.2] - 2022-11-01
 ### Fixed
@@ -40,7 +47,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Reenabled depth buffer in the URP settings to enable the use of soft particles (#762)
 * Moved a torch out of a corner so that the flame VFX don't clip (#768)
 * Fixed issue where pressing 1 on keyboard would not invoke Revive or Pickup/Drop Actions (#770) Authority on modification of displayed Action now comes from a single spot, ClientInputSender.
-* Mage's heal FX plays out on itself and on targets. Added ability for SpecialFXGraphic components to remain at spawn rotation (#771)
 
 ## [2.0.0] - 2022-10-06
 

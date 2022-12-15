@@ -71,9 +71,16 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnUserRequestedShutdown()
         {
-            m_ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
-            // Wait before shutting down to make sure clients receive that message before they are disconnected
-            m_ConnectionManager.StartCoroutine(WaitToShutdown());
+            var reason = JsonUtility.ToJson(ConnectStatus.HostEndedSession);
+            for (var i = m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count - 1; i >= 0; i--)
+            {
+                var id = m_ConnectionManager.NetworkManager.ConnectedClientsIds[i];
+                if (id != m_ConnectionManager.NetworkManager.LocalClientId)
+                {
+                    m_ConnectionManager.NetworkManager.DisconnectClient(id, reason);
+                }
+            }
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
         /// <summary>
@@ -119,21 +126,8 @@ namespace Unity.BossRoom.ConnectionManagement
                 return;
             }
 
-            // In order for clients to not just get disconnected with no feedback, the server needs to tell the client why it disconnected it.
-            // This could happen after an auth check on a service or because of gameplay reasons (server full, wrong build version, etc)
-            // Since network objects haven't synced yet (still in the approval process), we need to send a custom message to clients, wait for
-            // UTP to update a frame and flush that message, then give our response to NetworkManager's connection approval process, with a denied approval.
-            IEnumerator WaitToDenyApproval()
-            {
-                response.Pending = true; // give some time for server to send connection status message to clients
-                response.Approved = false;
-                m_ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-                yield return null; // wait a frame so UTP can flush it's messages on next update
-                response.Pending = false; // connection approval process can be finished.
-            }
-
-            m_ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-            m_ConnectionManager.StartCoroutine(WaitToDenyApproval());
+            response.Approved = false;
+            response.Reason = JsonUtility.ToJson(gameReturnStatus);
             if (m_LobbyServiceFacade.CurrentUnityLobby != null)
             {
                 m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
@@ -154,12 +148,6 @@ namespace Unity.BossRoom.ConnectionManagement
 
             return SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId) ?
                 ConnectStatus.LoggedInAgain : ConnectStatus.Success;
-        }
-
-        IEnumerator WaitToShutdown()
-        {
-            yield return null;
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
     }
 }
