@@ -1,14 +1,14 @@
 {
   "name": "com.unity.multiplayer.samples.coop",
   "displayName": "Multiplayer Samples Utilities",
-  "version": "1.4.1",
+  "version": "1.5.1",
   "type": "template",
   "host": "hub",
   "unity": "2020.3",
   "description": "Utilities package built on top of Netcode for GameObjects, providing useful scripts and tools.",
   "dependencies": {
     "com.unity.learn.iet-framework": "1.2.1",
-    "com.unity.multiplayer.tools": "1.0.0",
+    "com.unity.multiplayer.tools": "1.1.0",
     "com.unity.netcode.gameobjects": "1.1.0",
     "com.unity.services.relay": "1.0.3"
   }
