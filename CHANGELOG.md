@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
 ## [unreleased] - yyyy-mm-dd
+### Fixed
+* EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
 
 ## [2.0.4] - 2022-12-13
 ### Changed
