@@ -12,6 +12,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ### Fixed
 * EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
+* Elements inside the Tank's and Rogue's AnimatorTriggeredSpecialFX list have been revised to not loop AudioSource clips, ending the logging of multiple warnings to the console (#785)
 
 ## [2.0.4] - 2022-12-13
 ### Changed
