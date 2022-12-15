@@ -52,7 +52,9 @@ internal static class BuildHelpers
         Debug.Log($"Starting build: buildiOS?:{buildiOS} buildAndroid?:{buildAndroid} buildMacOS?:{buildMacOS} buildWindows?:{buildWindows}");
         if (string.IsNullOrEmpty(CloudProjectSettings.projectId) && !Menu.GetChecked(k_DisableProjectIDToggleName))
         {
-            throw new Exception($"Project ID was supposed to be setup and wasn't, make sure to set it up or disable project ID check with the [{k_DisableProjectIDToggleName}] menu");
+            string errorMessage = $"Project ID was supposed to be setup and wasn't, make sure to set it up or disable project ID check with the [{k_DisableProjectIDToggleName}] menu";
+            EditorUtility.DisplayDialog("Error Custom Build", errorMessage, "ok");
+            throw new Exception(errorMessage);
         }
 
         SaveCurrentBuildTarget();
@@ -64,9 +66,15 @@ internal static class BuildHelpers
 
             if (buildiOS) await BuildPlayerUtilityAsync(BuildTarget.iOS, "", true);
             if (buildAndroid) await BuildPlayerUtilityAsync(BuildTarget.Android, ".apk", true); // there's the possibility of an error where it
+
             // complains about NDK missing. Building manually on android then trying again seems to work? Can't find anything on this.
             if (buildMacOS) await BuildPlayerUtilityAsync(BuildTarget.StandaloneOSX, ".app", true);
             if (buildWindows) await BuildPlayerUtilityAsync(BuildTarget.StandaloneWindows64, ".exe", true);
+        }
+        catch
+        {
+            EditorUtility.DisplayDialog("Exception while building", "See console for details", "ok");
+            throw;
         }
         finally
         {
