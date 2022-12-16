@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
 ## [unreleased] - yyyy-mm-dd
+### Cleanup
+* Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
+
 ### Fixed
 * EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
 * Elements inside the Tank's and Rogue's AnimatorTriggeredSpecialFX list have been revised to not loop AudioSource clips, ending the logging of multiple warnings to the console (#785)
