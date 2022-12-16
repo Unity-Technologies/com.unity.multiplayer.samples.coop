@@ -63,8 +63,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         Quaternion m_LerpedRotation;
 
-        bool m_IsHost;
-
         float m_CurrentSpeed;
 
         /// <summary>
@@ -119,8 +117,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             }
 
             enabled = true;
-
-            m_IsHost = IsHost;
 
             m_ClientActionViz = new ClientActionPlayer(this);
 
@@ -268,7 +264,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             // the game camera tracks a GameObject moving in the Update loop and therefore eliminate any camera jitter,
             // this graphics GameObject's position is smoothed over time on the host. Clients do not need to perform any
             // positional smoothing since NetworkTransform will interpolate position updates on the root GameObject.
-            if (m_IsHost)
+            if (IsHost)
             {
                 // Note: a cached position (m_LerpedPosition) and rotation (m_LerpedRotation) are created and used as
                 // the starting point for each interpolation since the root's position and rotation are modified in
