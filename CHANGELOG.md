@@ -9,6 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [unreleased] - yyyy-mm-dd
 ### Cleanup
 * Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
+* Removed now unnecessary cached NetworkBehaviour status on some components, since they now do not allocate memory (#799)
 
 ### Fixed
 * EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
