@@ -21,6 +21,7 @@ namespace Unity.BossRoom.ConnectionManagement
         protected ConnectionManager m_ConnectionManager;
         readonly ProfileManager m_ProfileManager;
         protected readonly string m_PlayerName;
+        protected const string k_DtlsConnType = "dtls";
 
         public abstract Task SetupHostConnectionAsync();
 
@@ -128,7 +129,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
             // Configure UTP with allocation
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(joinedAllocation, OnlineState.k_DtlsConnType));
+            utp.SetRelayServerData(new RelayServerData(joinedAllocation, k_DtlsConnType));
         }
 
         public override async Task SetupHostConnectionAsync()
@@ -152,7 +153,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
             // Setup UTP with relay connection info
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(hostAllocation, OnlineState.k_DtlsConnType)); // This is with DTLS enabled for a secure connection
+            utp.SetRelayServerData(new RelayServerData(hostAllocation, k_DtlsConnType)); // This is with DTLS enabled for a secure connection
         }
     }
 }
