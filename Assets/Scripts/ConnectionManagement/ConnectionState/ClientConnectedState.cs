@@ -9,7 +9,7 @@ namespace Unity.BossRoom.ConnectionManagement
     /// Connection state corresponding to a connected client. When being disconnected, transitions to the
     /// ClientReconnecting state if no reason is given, or to the Offline state.
     /// </summary>
-    class ClientConnectedState : ConnectionState
+    class ClientConnectedState : OnlineState
     {
         [Inject]
         protected LobbyServiceFacade m_LobbyServiceFacade;
@@ -38,12 +38,6 @@ namespace Unity.BossRoom.ConnectionManagement
                 m_ConnectStatusPublisher.Publish(connectStatus);
                 m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
             }
-        }
-
-        public override void OnUserRequestedShutdown()
-        {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
     }
 }
