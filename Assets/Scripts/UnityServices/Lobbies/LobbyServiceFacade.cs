@@ -37,7 +37,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
         public Lobby CurrentUnityLobby { get; private set; }
 
-        LobbyEventCallbacks m_LobbyEventCallbacks;
         ILobbyEvents m_LobbyEvents;
 
         bool m_IsTracking = false;
@@ -90,8 +89,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             var task = Task.CompletedTask;
             if (CurrentUnityLobby != null)
             {
-                CurrentUnityLobby = null;
-
                 var lobbyId = m_LocalLobby?.LobbyID;
 
                 if (!string.IsNullOrEmpty(lobbyId))
@@ -105,9 +102,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                         task = LeaveLobbyAsync(lobbyId);
                     }
                 }
-
-                m_LocalUser.ResetState();
-                m_LocalLobby?.Reset(m_LocalUser);
             }
 
             m_LobbyEvents?.UnsubscribeAsync();
@@ -222,27 +216,44 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             return (false, null);
         }
 
+        void ResetLobby()
+        {
+            CurrentUnityLobby = null;
+            m_LocalUser.ResetState();
+            m_LocalLobby?.Reset(m_LocalUser);
+
+            // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
+        }
+
         async void OnLobbyChanges(ILobbyChanges changes)
         {
-            Debug.Log("Lobby updated");
-            changes.ApplyToLobby(CurrentUnityLobby);
-            m_LocalLobby.ApplyRemoteData(CurrentUnityLobby);
-
-            // as client, check if host is still in lobby
-            if (!m_LocalUser.IsHost)
+            if (changes.LobbyDeleted)
             {
-                foreach (var lobbyUser in m_LocalLobby.LobbyUsers)
+                Debug.Log("Lobby deleted");
+                ResetLobby();
+            }
+            else
+            {
+                Debug.Log("Lobby updated");
+                changes.ApplyToLobby(CurrentUnityLobby);
+                m_LocalLobby.ApplyRemoteData(CurrentUnityLobby);
+
+                // as client, check if host is still in lobby
+                if (!m_LocalUser.IsHost)
                 {
-                    if (lobbyUser.Value.IsHost)
+                    foreach (var lobbyUser in m_LocalLobby.LobbyUsers)
                     {
-                        return;
+                        if (lobbyUser.Value.IsHost)
+                        {
+                            return;
+                        }
                     }
+
+                    m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby", "Disconnecting.", UnityServiceErrorMessage.Service.Lobby));
+                    await EndTracking();
+
+                    // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
                 }
-
-                m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby", "Disconnecting.", UnityServiceErrorMessage.Service.Lobby));
-                await EndTracking();
-
-                // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
             }
         }
 
@@ -278,7 +289,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             lobbyEventCallbacks.LobbyChanged += OnLobbyChanges;
             lobbyEventCallbacks.KickedFromLobby += OnKickedFromLobby;
             lobbyEventCallbacks.LobbyEventConnectionStateChanged += OnLobbyEventConnectionStateChanged;
-            m_LobbyEvents = await m_LobbyApiInterface.SubscribeToLobby(m_LocalLobby.LobbyID, m_LobbyEventCallbacks);
+            m_LobbyEvents = await m_LobbyApiInterface.SubscribeToLobby(m_LocalLobby.LobbyID, lobbyEventCallbacks);
             m_JoinedLobbyContentHeartbeat.BeginTracking();
         }
 
@@ -338,6 +349,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             try
             {
                 await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
+                ResetLobby();
             }
             catch (LobbyServiceException e)
             {
@@ -376,6 +388,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 try
                 {
                     await m_LobbyApiInterface.DeleteLobby(lobbyId);
+                    ResetLobby();
                 }
                 catch (LobbyServiceException e)
                 {
