@@ -133,5 +133,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         {
             await LobbyService.Instance.SendHeartbeatPingAsync(lobbyId);
         }
+
+        public async Task<ILobbyEvents> SubscribeToLobby(string lobbyId, LobbyEventCallbacks eventCallbacks)
+        {
+            return await LobbyService.Instance.SubscribeToLobbyEventsAsync(lobbyId, eventCallbacks);
+        }
     }
 }
