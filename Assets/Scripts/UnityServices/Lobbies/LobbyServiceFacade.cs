@@ -264,23 +264,8 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
         void OnLobbyEventConnectionStateChanged(LobbyEventConnectionState lobbyEventConnectionState)
         {
-            switch (lobbyEventConnectionState)
-            {
-                case LobbyEventConnectionState.Unknown:
-                    break;
-                case LobbyEventConnectionState.Unsubscribed:
-                    break;
-                case LobbyEventConnectionState.Subscribing:
-                    break;
-                case LobbyEventConnectionState.Subscribed:
-                    break;
-                case LobbyEventConnectionState.Unsynced:
-                    break;
-                case LobbyEventConnectionState.Error:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(lobbyEventConnectionState), lobbyEventConnectionState, null);
-            }
+
+            Debug.Log($"LobbyEventConnectionState changed to {lobbyEventConnectionState}");
         }
 
         async void SubscribeToJoinedLobby()
