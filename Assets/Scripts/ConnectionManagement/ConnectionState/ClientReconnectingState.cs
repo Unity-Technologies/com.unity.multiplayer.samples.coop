@@ -18,11 +18,8 @@ namespace Unity.BossRoom.ConnectionManagement
     {
         [Inject]
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
-        [Inject]
-        LobbyServiceFacade m_LobbyServiceFacade;
 
         Coroutine m_ReconnectCoroutine;
-        string m_LobbyCode = "";
         int m_NbAttempts;
 
         const float k_TimeBetweenAttempts = 5;
@@ -30,7 +27,6 @@ namespace Unity.BossRoom.ConnectionManagement
         public override void Enter()
         {
             m_NbAttempts = 0;
-            m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
             m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
         }
 
@@ -114,7 +110,9 @@ namespace Unity.BossRoom.ConnectionManagement
             var reconnectingSetupTask = m_ConnectionMethod.SetupClientReconnectionAsync();
             yield return new WaitUntil(() => reconnectingSetupTask.IsCompleted);
 
-            if (!reconnectingSetupTask.IsFaulted && reconnectingSetupTask.Result)
+            var (success, shouldRetry) = reconnectingSetupTask.Result;
+
+            if (!reconnectingSetupTask.IsFaulted && success)
             {
                 // If this fails, the OnClientDisconnect callback will be invoked by Netcode
                 var connectingToRelay = ConnectClientAsync();
@@ -122,7 +120,12 @@ namespace Unity.BossRoom.ConnectionManagement
             }
             else
             {
-                Debug.Log("Failed reconnecting to lobby.");
+                if (!shouldRetry)
+                {
+                    // setting number of attempts to max so no new attempts are made
+                    m_NbAttempts = m_ConnectionManager.NbReconnectAttempts;
+                }
+                Debug.Log("Failed setting up reconnection.");
                 // Calling OnClientDisconnect to mark this attempt as failed and either start a new one or give up
                 // and return to the Offline state
                 OnClientDisconnect(0);
