@@ -27,8 +27,6 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public abstract Task SetupClientConnectionAsync();
 
-        public abstract Task<bool> SetupClientReconnectionAsync();
-
         public ConnectionMethodBase(ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
         {
             m_ConnectionManager = connectionManager;
@@ -84,12 +82,6 @@ namespace Unity.BossRoom.ConnectionManagement
             utp.SetConnectionData(m_Ipaddress, m_Port);
         }
 
-        public override Task<bool> SetupClientReconnectionAsync()
-        {
-            // Nothing to do here
-            return Task.FromResult(true);
-        }
-
         public override async Task SetupHostConnectionAsync()
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
@@ -138,16 +130,6 @@ namespace Unity.BossRoom.ConnectionManagement
             // Configure UTP with allocation
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetRelayServerData(new RelayServerData(joinedAllocation, k_DtlsConnType));
-        }
-
-        public override async Task<bool> SetupClientReconnectionAsync()
-        {
-            // When using Lobby with Relay, if a user is disconnected from the Relay server, the server will notify the
-            // Lobby service and mark the user as disconnected, but will not remove them from the lobby. They then have
-            // some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on the dashboard),
-            // after which they will be removed from the lobby completely.
-            // See https://docs.unity.com/lobby/reconnect-to-lobby.html
-            return await m_LobbyServiceFacade.ReconnectToLobbyAsync() != null; // return a success if reconnecting to lobby returns a lobby
         }
 
         public override async Task SetupHostConnectionAsync()

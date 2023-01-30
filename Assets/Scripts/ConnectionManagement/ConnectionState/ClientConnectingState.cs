@@ -11,7 +11,7 @@ namespace Unity.BossRoom.ConnectionManagement
     /// </summary>
     class ClientConnectingState : OnlineState
     {
-        protected ConnectionMethodBase m_ConnectionMethod;
+        ConnectionMethodBase m_ConnectionMethod;
 
         public ClientConnectingState Configure(ConnectionMethodBase baseConnectionMethod)
         {
