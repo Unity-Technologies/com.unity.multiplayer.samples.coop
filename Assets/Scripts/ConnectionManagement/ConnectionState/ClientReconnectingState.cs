@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices.Lobbies;
 using UnityEngine;
 using VContainer;
 
@@ -17,6 +18,8 @@ namespace Unity.BossRoom.ConnectionManagement
     {
         [Inject]
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
+        [Inject]
+        LobbyServiceFacade m_LobbyServiceFacade;
 
         Coroutine m_ReconnectCoroutine;
         string m_LobbyCode = "";
@@ -108,36 +111,21 @@ namespace Unity.BossRoom.ConnectionManagement
             Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{m_ConnectionManager.NbReconnectAttempts}...");
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, m_ConnectionManager.NbReconnectAttempts));
             m_NbAttempts++;
-            if (!string.IsNullOrEmpty(m_LobbyCode)) // Attempting to reconnect to lobby.
-            {
-                // When using Lobby with Relay, if a user is disconnected from the Relay server, the server will notify
-                // the Lobby service and mark the user as disconnected, but will not remove them from the lobby. They
-                // then have some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on
-                // the dashboard), after which they will be removed from the lobby completely.
-                // See https://docs.unity.com/lobby/reconnect-to-lobby.html
-                var reconnectingToLobby = m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby?.LobbyID);
-                yield return new WaitUntil(() => reconnectingToLobby.IsCompleted);
+            var reconnectingSetupTask = m_ConnectionMethod.SetupClientReconnectionAsync();
+            yield return new WaitUntil(() => reconnectingSetupTask.IsCompleted);
 
-                // If succeeded, attempt to connect to Relay
-                if (!reconnectingToLobby.IsFaulted && reconnectingToLobby.Result != null)
-                {
-                    // If this fails, the OnClientDisconnect callback will be invoked by Netcode
-                    var connectingToRelay = ConnectClientAsync();
-                    yield return new WaitUntil(() => connectingToRelay.IsCompleted);
-                }
-                else
-                {
-                    Debug.Log("Failed reconnecting to lobby.");
-                    // Calling OnClientDisconnect to mark this attempt as failed and either start a new one or give up
-                    // and return to the Offline state
-                    OnClientDisconnect(0);
-                }
-            }
-            else // If not using Lobby, simply try to reconnect to the server directly
+            if (!reconnectingSetupTask.IsFaulted && reconnectingSetupTask.Result)
             {
                 // If this fails, the OnClientDisconnect callback will be invoked by Netcode
-                var connectingClient = ConnectClientAsync();
-                yield return new WaitUntil(() => connectingClient.IsCompleted);
+                var connectingToRelay = ConnectClientAsync();
+                yield return new WaitUntil(() => connectingToRelay.IsCompleted);
+            }
+            else
+            {
+                Debug.Log("Failed reconnecting to lobby.");
+                // Calling OnClientDisconnect to mark this attempt as failed and either start a new one or give up
+                // and return to the Offline state
+                OnClientDisconnect(0);
             }
         }
     }

@@ -13,11 +13,7 @@ namespace Unity.BossRoom.ConnectionManagement
     /// </summary>
     class ClientConnectingState : OnlineState
     {
-        [Inject]
-        protected LobbyServiceFacade m_LobbyServiceFacade;
-        [Inject]
-        protected LocalLobby m_LocalLobby;
-        ConnectionMethodBase m_ConnectionMethod;
+        protected ConnectionMethodBase m_ConnectionMethod;
 
         public ClientConnectingState Configure(ConnectionMethodBase baseConnectionMethod)
         {
