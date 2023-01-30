@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices.Lobbies;
 using UnityEngine;
 using VContainer;
 
@@ -16,10 +17,11 @@ namespace Unity.BossRoom.ConnectionManagement
     class ClientReconnectingState : ClientConnectingState
     {
         [Inject]
+        LobbyServiceFacade m_LobbyServiceFacade;
+        [Inject]
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
 
         Coroutine m_ReconnectCoroutine;
-        string m_LobbyCode = "";
         int m_NbAttempts;
 
         const float k_TimeBetweenAttempts = 5;
@@ -27,7 +29,6 @@ namespace Unity.BossRoom.ConnectionManagement
         public override void Enter()
         {
             m_NbAttempts = 0;
-            m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
             m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
         }
 
@@ -108,14 +109,14 @@ namespace Unity.BossRoom.ConnectionManagement
             Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{m_ConnectionManager.NbReconnectAttempts}...");
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, m_ConnectionManager.NbReconnectAttempts));
             m_NbAttempts++;
-            if (!string.IsNullOrEmpty(m_LobbyCode)) // Attempting to reconnect to lobby.
+            if (m_LobbyServiceFacade.CurrentUnityLobby != null) // Attempting to reconnect to lobby.
             {
                 // When using Lobby with Relay, if a user is disconnected from the Relay server, the server will notify
                 // the Lobby service and mark the user as disconnected, but will not remove them from the lobby. They
                 // then have some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on
                 // the dashboard), after which they will be removed from the lobby completely.
                 // See https://docs.unity.com/lobby/reconnect-to-lobby.html
-                var reconnectingToLobby = m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby?.LobbyID);
+                var reconnectingToLobby = m_LobbyServiceFacade.ReconnectToLobbyAsync();
                 yield return new WaitUntil(() => reconnectingToLobby.IsCompleted);
 
                 // If succeeded, attempt to connect to Relay

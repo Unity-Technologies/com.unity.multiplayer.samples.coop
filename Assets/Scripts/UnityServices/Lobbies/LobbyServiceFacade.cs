@@ -84,34 +84,31 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
-        public Task EndTracking()
+        public async void EndTracking()
         {
-            var task = Task.CompletedTask;
             if (CurrentUnityLobby != null)
             {
-                var lobbyId = m_LocalLobby?.LobbyID;
-
-                if (!string.IsNullOrEmpty(lobbyId))
+                if (m_LocalUser.IsHost)
                 {
-                    if (m_LocalUser.IsHost)
-                    {
-                        task = DeleteLobbyAsync(lobbyId);
-                    }
-                    else
-                    {
-                        task = LeaveLobbyAsync(lobbyId);
-                    }
+                    await DeleteLobbyAsync();
+                }
+                else
+                {
+                    await LeaveLobbyAsync();
                 }
             }
 
-            m_LobbyEvents?.UnsubscribeAsync();
+            if (m_LobbyEvents != null)
+            {
+                await m_LobbyEvents.UnsubscribeAsync();
+            }
+
             if (m_IsTracking)
             {
                 m_IsTracking = false;
                 m_HeartbeatTime = 0;
                 m_JoinedLobbyContentHeartbeat.EndTracking();
             }
-            return task;
         }
 
         /// <summary>
@@ -225,7 +222,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
         }
 
-        async void OnLobbyChanges(ILobbyChanges changes)
+        void OnLobbyChanges(ILobbyChanges changes)
         {
             if (changes.LobbyDeleted)
             {
@@ -250,8 +247,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                     }
 
                     m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby", "Disconnecting.", UnityServiceErrorMessage.Service.Lobby));
-                    await EndTracking();
-
+                    EndTracking();
                     // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
                 }
             }
@@ -259,12 +255,12 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
         void OnKickedFromLobby()
         {
-            throw new NotImplementedException();
+            Debug.Log("Kicked from Lobby");
+            ResetLobby();
         }
 
         void OnLobbyEventConnectionStateChanged(LobbyEventConnectionState lobbyEventConnectionState)
         {
-
             Debug.Log($"LobbyEventConnectionState changed to {lobbyEventConnectionState}");
         }
 
@@ -307,11 +303,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
-        public async Task<Lobby> ReconnectToLobbyAsync(string lobbyId)
+        public async Task<Lobby> ReconnectToLobbyAsync()
         {
             try
             {
-                return await m_LobbyApiInterface.ReconnectToLobby(lobbyId);
+                return await m_LobbyApiInterface.ReconnectToLobby(m_LocalLobby.LobbyID);
             }
             catch (LobbyServiceException e)
             {
@@ -328,12 +324,12 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         /// <summary>
         /// Attempt to leave a lobby
         /// </summary>
-        public async Task LeaveLobbyAsync(string lobbyId)
+        public async Task LeaveLobbyAsync()
         {
             string uasId = AuthenticationService.Instance.PlayerId;
             try
             {
-                await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
+                await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, m_LocalLobby.LobbyID);
                 ResetLobby();
             }
             catch (LobbyServiceException e)
@@ -366,13 +362,13 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
-        public async Task DeleteLobbyAsync(string lobbyId)
+        public async Task DeleteLobbyAsync()
         {
             if (m_LocalUser.IsHost)
             {
                 try
                 {
-                    await m_LobbyApiInterface.DeleteLobby(lobbyId);
+                    await m_LobbyApiInterface.DeleteLobby(m_LocalLobby.LobbyID);
                     ResetLobby();
                 }
                 catch (LobbyServiceException e)
