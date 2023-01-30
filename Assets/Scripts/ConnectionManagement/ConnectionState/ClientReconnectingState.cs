@@ -110,12 +110,20 @@ namespace Unity.BossRoom.ConnectionManagement
             m_NbAttempts++;
             if (!string.IsNullOrEmpty(m_LobbyCode)) // Attempting to reconnect to lobby.
             {
+                if (m_LobbyServiceFacade.CurrentUnityLobby == null)
+                {
+                    Debug.Log("Lobby no longer exists, stopping reconnection attempts.");
+                    m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
+                    m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
+                    yield break;
+                }
+
                 // When using Lobby with Relay, if a user is disconnected from the Relay server, the server will notify
                 // the Lobby service and mark the user as disconnected, but will not remove them from the lobby. They
                 // then have some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on
                 // the dashboard), after which they will be removed from the lobby completely.
                 // See https://docs.unity.com/lobby/reconnect-to-lobby.html
-                var reconnectingToLobby = m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby?.LobbyID);
+                var reconnectingToLobby = m_LobbyServiceFacade.ReconnectToLobbyAsync();
                 yield return new WaitUntil(() => reconnectingToLobby.IsCompleted);
 
                 // If succeeded, attempt to connect to Relay
