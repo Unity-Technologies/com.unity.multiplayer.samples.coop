@@ -103,7 +103,7 @@ namespace Unity.BossRoom.ConnectionManagement
         public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
         {
             // Nothing to do here
-            return (true,true);
+            return (true, true);
         }
 
         public override async Task SetupHostConnectionAsync()
