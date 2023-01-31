@@ -110,9 +110,7 @@ namespace Unity.BossRoom.ConnectionManagement
             var reconnectingSetupTask = m_ConnectionMethod.SetupClientReconnectionAsync();
             yield return new WaitUntil(() => reconnectingSetupTask.IsCompleted);
 
-            var (success, shouldRetry) = reconnectingSetupTask.Result;
-
-            if (!reconnectingSetupTask.IsFaulted && success)
+            if (!reconnectingSetupTask.IsFaulted && reconnectingSetupTask.Result.success)
             {
                 // If this fails, the OnClientDisconnect callback will be invoked by Netcode
                 var connectingToRelay = ConnectClientAsync();
@@ -120,12 +118,11 @@ namespace Unity.BossRoom.ConnectionManagement
             }
             else
             {
-                if (!shouldRetry)
+                if (!reconnectingSetupTask.Result.shouldTryAgain)
                 {
                     // setting number of attempts to max so no new attempts are made
                     m_NbAttempts = m_ConnectionManager.NbReconnectAttempts;
                 }
-                Debug.Log("Failed setting up reconnection.");
                 // Calling OnClientDisconnect to mark this attempt as failed and either start a new one or give up
                 // and return to the Offline state
                 OnClientDisconnect(0);
