@@ -41,6 +41,8 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
         bool m_IsTracking = false;
 
+        LobbyEventConnectionState m_LobbyEventConnectionState = LobbyEventConnectionState.Unknown;
+
         public void Start()
         {
             m_ServiceScope = m_ParentScope.CreateChild(builder =>
@@ -76,10 +78,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
         public void BeginTracking()
         {
-            SubscribeToJoinedLobby();
             if (!m_IsTracking)
             {
                 m_IsTracking = true;
+                SubscribeToJoinedLobby();
                 m_JoinedLobbyContentHeartbeat.BeginTracking();
             }
         }
@@ -98,14 +100,24 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 }
             }
 
-            if (m_LobbyEvents != null)
-            {
-                await m_LobbyEvents.UnsubscribeAsync();
-            }
-
             if (m_IsTracking)
             {
                 m_IsTracking = false;
+                if (m_LobbyEvents != null && m_LobbyEventConnectionState != LobbyEventConnectionState.Unsubscribed)
+                {
+                    try
+                    {
+                        await m_LobbyEvents.UnsubscribeAsync();
+                    }
+                    catch (ObjectDisposedException e)
+                    {
+                        // This exception occurs in the editor when exiting play mode without first leaving the lobby.
+                        // This is because Wire disposes of subscriptions internally when exiting play mode in the editor.
+                        Debug.Log("Subscription is already disposed of, cannot unsubscribe.");
+                        Debug.Log(e.Message);
+                    }
+
+                }
                 m_HeartbeatTime = 0;
                 m_JoinedLobbyContentHeartbeat.EndTracking();
             }
@@ -261,6 +273,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
         void OnLobbyEventConnectionStateChanged(LobbyEventConnectionState lobbyEventConnectionState)
         {
+            m_LobbyEventConnectionState = lobbyEventConnectionState;
             Debug.Log($"LobbyEventConnectionState changed to {lobbyEventConnectionState}");
         }
 
