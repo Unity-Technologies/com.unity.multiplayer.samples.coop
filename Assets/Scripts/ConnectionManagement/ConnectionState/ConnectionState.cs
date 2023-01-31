@@ -26,13 +26,9 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public virtual void OnServerStarted() { }
 
-        public virtual void StartClientIP(string playerName, string ipaddress, int port) { }
+        public virtual void StartClient() { }
 
-        public virtual void StartClientLobby(string playerName) { }
-
-        public virtual void StartHostIP(string playerName, string ipaddress, int port) { }
-
-        public virtual void StartHostLobby(string playerName) { }
+        public virtual void StartHost() { }
 
         public virtual void OnUserRequestedShutdown() { }
 

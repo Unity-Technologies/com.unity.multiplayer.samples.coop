@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.BossRoom.Utils;
 using Unity.Collections;
 using Unity.Netcode;
@@ -69,6 +70,12 @@ namespace Unity.BossRoom.ConnectionManagement
 
         [Inject]
         IObjectResolver m_Resolver;
+        [Inject]
+        LobbyServiceFacade m_LobbyServiceFacade;
+        [Inject]
+        ProfileManager m_ProfileManager;
+        [Inject]
+        LocalLobby m_LocalLobby;
 
         public int MaxConnectedPlayers = 8;
 
@@ -78,6 +85,9 @@ namespace Unity.BossRoom.ConnectionManagement
         internal readonly ClientReconnectingState m_ClientReconnecting = new ClientReconnectingState();
         internal readonly StartingHostState m_StartingHost = new StartingHostState();
         internal readonly HostingState m_Hosting = new HostingState();
+
+        ConnectionMethodBase m_ConnectionMethod;
+        public ConnectionMethodBase ConnectionMethod => m_ConnectionMethod;
 
         void Awake()
         {
@@ -149,22 +159,26 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public void StartClientLobby(string playerName)
         {
-            m_CurrentState.StartClientLobby(playerName);
+            m_ConnectionMethod = new ConnectionMethodRelay(m_LobbyServiceFacade, m_LocalLobby, this, m_ProfileManager, playerName);
+            m_CurrentState.StartClient();
         }
 
         public void StartClientIp(string playerName, string ipaddress, int port)
         {
-            m_CurrentState.StartClientIP(playerName, ipaddress, port);
+            m_ConnectionMethod = new ConnectionMethodIP(ipaddress, (ushort)port, this, m_ProfileManager, playerName);
+            m_CurrentState.StartClient();
         }
 
         public void StartHostLobby(string playerName)
         {
-            m_CurrentState.StartHostLobby(playerName);
+            m_ConnectionMethod = new ConnectionMethodRelay(m_LobbyServiceFacade, m_LocalLobby, this, m_ProfileManager, playerName);
+            m_CurrentState.StartHost();
         }
 
         public void StartHostIp(string playerName, string ipaddress, int port)
         {
-            m_CurrentState.StartHostIP(playerName, ipaddress, port);
+            m_ConnectionMethod = new ConnectionMethodIP(ipaddress, (ushort)port, this, m_ProfileManager, playerName);
+            m_CurrentState.StartHost();
         }
 
         public void RequestShutdown()

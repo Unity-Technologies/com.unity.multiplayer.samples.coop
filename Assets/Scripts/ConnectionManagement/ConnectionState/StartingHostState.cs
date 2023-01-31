@@ -18,13 +18,6 @@ namespace Unity.BossRoom.ConnectionManagement
         LobbyServiceFacade m_LobbyServiceFacade;
         [Inject]
         LocalLobby m_LocalLobby;
-        ConnectionMethodBase m_ConnectionMethod;
-
-        public StartingHostState Configure(ConnectionMethodBase baseConnectionMethod)
-        {
-            m_ConnectionMethod = baseConnectionMethod;
-            return this;
-        }
 
         public override void Enter()
         {
@@ -76,7 +69,7 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             try
             {
-                await m_ConnectionMethod.SetupHostConnectionAsync();
+                await m_ConnectionManager.ConnectionMethod.SetupHostConnectionAsync();
                 Debug.Log($"Created relay allocation with join code {m_LocalLobby.RelayJoinCode}");
 
                 // NGO's StartHost launches everything
