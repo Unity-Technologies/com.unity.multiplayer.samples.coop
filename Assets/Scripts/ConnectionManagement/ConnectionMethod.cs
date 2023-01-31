@@ -171,7 +171,11 @@ namespace Unity.BossRoom.ConnectionManagement
             // See https://docs.unity.com/lobby/reconnect-to-lobby.html
             var lobby = await m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby.LobbyID);
             var success = lobby != null;
-            if (!success)
+            if (success)
+            {
+                Debug.Log("Successfully reconnected to Lobby.");
+            }
+            else
             {
                 Debug.Log("Failed to reconnect to Lobby.");
             }
