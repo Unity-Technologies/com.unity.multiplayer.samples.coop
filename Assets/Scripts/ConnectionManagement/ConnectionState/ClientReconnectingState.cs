@@ -106,7 +106,7 @@ namespace Unity.BossRoom.ConnectionManagement
             Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{m_ConnectionManager.NbReconnectAttempts}...");
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, m_ConnectionManager.NbReconnectAttempts));
             m_NbAttempts++;
-            var reconnectingSetupTask = m_ConnectionManager.ConnectionMethod.SetupClientReconnectionAsync();
+            var reconnectingSetupTask = m_ConnectionMethod.SetupClientReconnectionAsync();
             yield return new WaitUntil(() => reconnectingSetupTask.IsCompleted);
 
             if (!reconnectingSetupTask.IsFaulted && reconnectingSetupTask.Result.success)

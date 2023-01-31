@@ -11,6 +11,14 @@ namespace Unity.BossRoom.ConnectionManagement
     /// </summary>
     class ClientConnectingState : OnlineState
     {
+        protected ConnectionMethodBase m_ConnectionMethod;
+
+        public ClientConnectingState Configure(ConnectionMethodBase baseConnectionMethod)
+        {
+            m_ConnectionMethod = baseConnectionMethod;
+            return this;
+        }
+
         public override void Enter()
         {
 #pragma warning disable 4014
@@ -53,7 +61,7 @@ namespace Unity.BossRoom.ConnectionManagement
             try
             {
                 // Setup NGO with current connection method
-                await m_ConnectionManager.ConnectionMethod.SetupClientConnectionAsync();
+                await m_ConnectionMethod.SetupClientConnectionAsync();
 
                 // NGO's StartClient launches everything
                 if (!m_ConnectionManager.NetworkManager.StartClient())

@@ -1,6 +1,7 @@
 using System;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.Utils;
 using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,10 @@ namespace UUnity.BossRoom.ConnectionManagement
     {
         [Inject]
         LobbyServiceFacade m_LobbyServiceFacade;
+        [Inject]
+        ProfileManager m_ProfileManager;
+        [Inject]
+        LocalLobby m_LocalLobby;
 
         const string k_MainMenuSceneName = "MainMenu";
 
@@ -31,14 +36,30 @@ namespace UUnity.BossRoom.ConnectionManagement
 
         public override void Exit() { }
 
-        public override void StartClient()
+        public override void StartClientIP(string playerName, string ipaddress, int port)
         {
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting);
+            var connectionMethod = new ConnectionMethodIP(ipaddress, (ushort)port, m_ConnectionManager, m_ProfileManager, playerName);
+            m_ConnectionManager.m_ClientReconnecting.Configure(connectionMethod);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting.Configure(connectionMethod));
         }
 
-        public override void StartHost()
+        public override void StartClientLobby(string playerName)
         {
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost);
+            var connectionMethod = new ConnectionMethodRelay(m_LobbyServiceFacade, m_LocalLobby, m_ConnectionManager, m_ProfileManager, playerName);
+            m_ConnectionManager.m_ClientReconnecting.Configure(connectionMethod);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting.Configure(connectionMethod));
+        }
+
+        public override void StartHostIP(string playerName, string ipaddress, int port)
+        {
+            var connectionMethod = new ConnectionMethodIP(ipaddress, (ushort)port, m_ConnectionManager, m_ProfileManager, playerName);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost.Configure(connectionMethod));
+        }
+
+        public override void StartHostLobby(string playerName)
+        {
+            var connectionMethod = new ConnectionMethodRelay(m_LobbyServiceFacade, m_LocalLobby, m_ConnectionManager, m_ProfileManager, playerName);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost.Configure(connectionMethod));
         }
     }
 }
