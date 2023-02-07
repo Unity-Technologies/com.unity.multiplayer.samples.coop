@@ -9,7 +9,7 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
     name: build {{ project.name }} - {{ editor }} on iOS
     agent:
         type: Unity::VM::osx
-        image: mobile/ios-macos-11:stable
+        image: mobile/macos-10.15-testing:stable
         flavor: b1.large
 
     commands:
@@ -70,7 +70,7 @@ mobile_test_ios_{{ project.name }}_{{ editor }}:
     name: {{ project.name }} mobile project tests - {{ editor }} on iOS
     agent:
         type: Unity::mobile::iPhone
-        image: mobile/ios-macos-11:stable
+        image: mobile/macos-10.15-testing:latest
         flavor: b1.medium
 
     # Skip repository cloning
