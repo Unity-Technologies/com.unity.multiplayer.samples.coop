@@ -37,7 +37,7 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         type: Unity::VM
         # Any generic image can be used, no need to have Android tools in the image for building
         # All Android tools will be downloaded by unity-downloader-cli
-        image: package-ci/win10:stable
+        image: mobile/android-execution-base:stable
         flavor: b1.xlarge
 
     commands:
