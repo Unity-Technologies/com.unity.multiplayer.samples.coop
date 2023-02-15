@@ -20,11 +20,15 @@ Boss Room is designed to be used in its entirety to help you explore the concept
 You can use the project as a reference starting point for your own Unity game or use elements individually.
 <br><br>
 
+---
 
-### Utilities Package
+### 💡 Utilities Package
 This repository also contains a [Utilities](Packages/com.unity.multiplayer.samples.coop) package, containing reusable sample scripts. You can install it using the following manifest file entry:
+<br>
 `"com.unity.multiplayer.samples.coop": "https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop.git?path=/Packages/com.unity.multiplayer.samples.coop",`
-|:---|
+
+---
+
 
 <br>
 
@@ -78,7 +82,7 @@ For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/A
  - You can download the latest version of Boss Room from our [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
  - __Alternatively:__ click the green `Code` button and then select the 'Download Zip' option.  Please note that this will download the branch that you are currently viewing on Github.  
  - __Windows users:__ Using Windows' built-in extraction tool may generate an "Error 0x80010135: Path too long" error window which can invalidate the extraction process. A workaround for this is to shorten the zip file to a single character (eg. "c.zip") and move it to the shortest path on your computer (most often right at C:\\) and retry. If that solution fails, another workaround is to extract the downloaded zip file using [7zip](https://www.7-zip.org/).
-
+<br><br>
 
 ## Requirements
 
