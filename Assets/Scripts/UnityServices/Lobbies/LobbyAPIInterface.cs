@@ -107,11 +107,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             return await LobbyService.Instance.QueryLobbiesAsync(queryOptions);
         }
 
-        public async Task<Lobby> GetLobby(string lobbyId)
-        {
-            return await LobbyService.Instance.GetLobbyAsync(lobbyId);
-        }
-
         public async Task<Lobby> UpdateLobby(string lobbyId, Dictionary<string, DataObject> data, bool shouldLock)
         {
             UpdateLobbyOptions updateOptions = new UpdateLobbyOptions { Data = data, IsLocked = shouldLock };
