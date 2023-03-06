@@ -1,9 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
-using VContainer;
 
 namespace Unity.BossRoom.ConnectionManagement
 {
@@ -13,11 +11,7 @@ namespace Unity.BossRoom.ConnectionManagement
     /// </summary>
     class ClientConnectingState : OnlineState
     {
-        [Inject]
-        protected LobbyServiceFacade m_LobbyServiceFacade;
-        [Inject]
-        protected LocalLobby m_LocalLobby;
-        ConnectionMethodBase m_ConnectionMethod;
+        protected ConnectionMethodBase m_ConnectionMethod;
 
         public ClientConnectingState Configure(ConnectionMethodBase baseConnectionMethod)
         {
