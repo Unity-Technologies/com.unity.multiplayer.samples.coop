@@ -23,9 +23,27 @@ namespace Unity.BossRoom.ConnectionManagement
         protected readonly string m_PlayerName;
         protected const string k_DtlsConnType = "dtls";
 
+        /// <summary>
+        /// Setup the host connection prior to starting the NetworkManager
+        /// </summary>
+        /// <returns></returns>
         public abstract Task SetupHostConnectionAsync();
 
+
+        /// <summary>
+        /// Setup the client connection prior to starting the NetworkManager
+        /// </summary>
+        /// <returns></returns>
         public abstract Task SetupClientConnectionAsync();
+
+        /// <summary>
+        /// Setup the client for reconnection prior to reconnecting
+        /// </summary>
+        /// <returns>
+        /// success = true if succeeded in setting up reconnection, false if failed.
+        /// shouldTryAgain = true if we should try again after failing, false if not.
+        /// </returns>
+        public abstract Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync();
 
         public ConnectionMethodBase(ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
         {
@@ -82,6 +100,12 @@ namespace Unity.BossRoom.ConnectionManagement
             utp.SetConnectionData(m_Ipaddress, m_Port);
         }
 
+        public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
+        {
+            // Nothing to do here
+            return (true, true);
+        }
+
         public override async Task SetupHostConnectionAsync()
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
@@ -91,7 +115,7 @@ namespace Unity.BossRoom.ConnectionManagement
     }
 
     /// <summary>
-    /// UTP's Relay connection setup
+    /// UTP's Relay connection setup using the Lobby integration
     /// </summary>
     class ConnectionMethodRelay : ConnectionMethodBase
     {
@@ -130,6 +154,32 @@ namespace Unity.BossRoom.ConnectionManagement
             // Configure UTP with allocation
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetRelayServerData(new RelayServerData(joinedAllocation, k_DtlsConnType));
+        }
+
+        public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
+        {
+            if (m_LobbyServiceFacade.CurrentUnityLobby == null)
+            {
+                Debug.Log("Lobby does not exist anymore, stopping reconnection attempts.");
+                return (false, false);
+            }
+
+            // When using Lobby with Relay, if a user is disconnected from the Relay server, the server will notify the
+            // Lobby service and mark the user as disconnected, but will not remove them from the lobby. They then have
+            // some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on the dashboard),
+            // after which they will be removed from the lobby completely.
+            // See https://docs.unity.com/lobby/reconnect-to-lobby.html
+            var lobby = await m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby.LobbyID);
+            var success = lobby != null;
+            if (success)
+            {
+                Debug.Log("Successfully reconnected to Lobby.");
+            }
+            else
+            {
+                Debug.Log("Failed to reconnect to Lobby.");
+            }
+            return (success, true); // return a success if reconnecting to lobby returns a lobby
         }
 
         public override async Task SetupHostConnectionAsync()

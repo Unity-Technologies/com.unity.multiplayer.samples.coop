@@ -11,6 +11,9 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
 * Removed now unnecessary cached NetworkBehaviour status on some components, since they now do not allocate memory (#799)
 
+### Changed
+* Simplified reconnection flow by offloading responsibility to ConnectionMethod (#804). Now the ClientReconnectingState uses the ConnectionMethod it is configured with to handle setting up reconnection (i.e. reconnecting to the Lobby before trying to reconnect to the Relay server if it is using Relay and Lobby). It can now also fail early and stop retrying if the lobby doesn't exist anymore.
+
 ### Fixed
 * EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
 * Elements inside the Tank's and Rogue's AnimatorTriggeredSpecialFX list have been revised to not loop AudioSource clips, ending the logging of multiple warnings to the console (#785)
