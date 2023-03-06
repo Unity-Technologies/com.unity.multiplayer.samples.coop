@@ -169,16 +169,9 @@ namespace Unity.BossRoom.ConnectionManagement
             // some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on the dashboard),
             // after which they will be removed from the lobby completely.
             // See https://docs.unity.com/lobby/reconnect-to-lobby.html
-            var lobby = await m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby.LobbyID);
+            var lobby = await m_LobbyServiceFacade.ReconnectToLobbyAsync();
             var success = lobby != null;
-            if (success)
-            {
-                Debug.Log("Successfully reconnected to Lobby.");
-            }
-            else
-            {
-                Debug.Log("Failed to reconnect to Lobby.");
-            }
+            Debug.Log(success ? "Successfully reconnected to Lobby." : "Failed to reconnect to Lobby.");
             return (success, true); // return a success if reconnecting to lobby returns a lobby
         }
 
