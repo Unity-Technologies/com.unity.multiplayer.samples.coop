@@ -9,7 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [unreleased] - yyyy-mm-dd
 
 ### Changed
-* Replaced our polling to obtain updates to the lobby that a client or host has joined with a subscrition to LobbyEvents (#805). This saves up a significant amount of bandwidth usage to and from the service, since updates are infrequent in this game. Now clients and hosts only use up bandwidth on the Lobby service when it is needed.
+* Replaced our polling for lobby updates with a subscription to the new Websocket based LobbyEvents (#805). This saves up a significant amount of bandwidth usage to and from the service, since updates are infrequent in this game. Now clients and hosts only use up bandwidth on the Lobby service when it is needed.
 * 
 ### Cleanup
 * Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
