@@ -81,45 +81,29 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             if (!m_IsTracking)
             {
                 m_IsTracking = true;
-                SubscribeToJoinedLobby();
+                SubscribeToJoinedLobbyAsync();
                 m_JoinedLobbyContentHeartbeat.BeginTracking();
             }
         }
 
-        public async void EndTracking()
+        public void EndTracking()
         {
             if (CurrentUnityLobby != null)
             {
                 if (m_LocalUser.IsHost)
                 {
-                    await DeleteLobbyAsync();
+                    DeleteLobbyAsync();
                 }
                 else
                 {
-                    await LeaveLobbyAsync();
+                    LeaveLobbyAsync();
                 }
             }
 
             if (m_IsTracking)
             {
                 m_IsTracking = false;
-                if (m_LobbyEvents != null && m_LobbyEventConnectionState != LobbyEventConnectionState.Unsubscribed)
-                {
-                    try
-                    {
-                        await m_LobbyEvents.UnsubscribeAsync();
-                    }
-                    catch (ObjectDisposedException e)
-                    {
-                        // This exception occurs in the editor when exiting play mode without first leaving the lobby.
-                        // This is because Wire disposes of subscriptions internally when exiting play mode in the editor.
-                        Debug.Log("Subscription is already disposed of, cannot unsubscribe.");
-                        Debug.Log(e.Message);
-                    }
-
-                }
-                m_HeartbeatTime = 0;
-                m_JoinedLobbyContentHeartbeat.EndTracking();
+                UnsubscribeToJoinedLobbyAsync();
             }
         }
 
@@ -277,7 +261,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             Debug.Log($"LobbyEventConnectionState changed to {lobbyEventConnectionState}");
         }
 
-        async void SubscribeToJoinedLobby()
+        async void SubscribeToJoinedLobbyAsync()
         {
             var lobbyEventCallbacks = new LobbyEventCallbacks();
             lobbyEventCallbacks.LobbyChanged += OnLobbyChanges;
@@ -285,6 +269,27 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             lobbyEventCallbacks.LobbyEventConnectionStateChanged += OnLobbyEventConnectionStateChanged;
             m_LobbyEvents = await m_LobbyApiInterface.SubscribeToLobby(m_LocalLobby.LobbyID, lobbyEventCallbacks);
             m_JoinedLobbyContentHeartbeat.BeginTracking();
+        }
+
+        async void UnsubscribeToJoinedLobbyAsync()
+        {
+            if (m_LobbyEvents != null && m_LobbyEventConnectionState != LobbyEventConnectionState.Unsubscribed)
+            {
+                try
+                {
+                    await m_LobbyEvents.UnsubscribeAsync();
+                }
+                catch (ObjectDisposedException e)
+                {
+                    // This exception occurs in the editor when exiting play mode without first leaving the lobby.
+                    // This is because Wire disposes of subscriptions internally when exiting play mode in the editor.
+                    Debug.Log("Subscription is already disposed of, cannot unsubscribe.");
+                    Debug.Log(e.Message);
+                }
+
+            }
+            m_HeartbeatTime = 0;
+            m_JoinedLobbyContentHeartbeat.EndTracking();
         }
 
         /// <summary>
@@ -337,7 +342,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         /// <summary>
         /// Attempt to leave a lobby
         /// </summary>
-        public async Task LeaveLobbyAsync()
+        public async void LeaveLobbyAsync()
         {
             string uasId = AuthenticationService.Instance.PlayerId;
             try
@@ -375,7 +380,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
-        public async Task DeleteLobbyAsync()
+        public async void DeleteLobbyAsync()
         {
             if (m_LocalUser.IsHost)
             {
