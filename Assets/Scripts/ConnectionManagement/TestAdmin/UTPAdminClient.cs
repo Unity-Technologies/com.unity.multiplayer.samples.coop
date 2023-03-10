@@ -118,6 +118,7 @@ public struct MessageToSend : INetworkSerializable
 {
     public enum Command
     {
+        Invalid, // shouldn't be here
         GetPlayerCount,
         GetPlayerCountResponse,
         Handshake
@@ -158,10 +159,10 @@ public class UTPAdminClient : MonoBehaviour
     public void OnDestroy()
     {
         ClientJobHandle.Complete();
-        m_Connection.Dispose();
-        m_MessagesToSend.Dispose();
+        if (m_Connection.IsCreated) m_Connection.Dispose();
+        if (m_MessagesToSend.IsCreated) m_MessagesToSend.Dispose();
         m_Driver.Dispose();
-        m_Done.Dispose();
+        if (m_Done.IsCreated) m_Done.Dispose();
     }
 
     private ClientUpdateJob m_CurrentJob;
