@@ -83,6 +83,8 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
+        private NetworkObject m_AdminNetworkObject;
+
         /// <summary>
         /// This logic plugs into the "ConnectionApprovalResponse" exposed by Netcode.NetworkManager. It is run every time a client connects to us.
         /// The complementary logic that runs when the client starts its connection can be found in ClientConnectingState.
@@ -115,14 +117,58 @@ namespace Unity.BossRoom.ConnectionManagement
 
             if (gameReturnStatus == ConnectStatus.Success)
             {
-                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
-                    new SessionPlayerData(clientId, connectionPayload.playerName, new NetworkGuid(), 0, true));
+                if (connectionPayload.isAdminConnection)
+                {
+                    // TODO this doesn't hide newly spawned objects though :(
+                    // TODO aaaaand this doesn't work because objects are marked as visible automatically after the connection approval process...
+                    void HideAllObjectsToClientID(ulong clientId)
+                    {
+                        foreach (var networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
+                        {
+                            if (networkObject.IsNetworkVisibleTo(clientId)) // TODO come on, we should be able to call hide twice on the same object... this should be idempotent
+                            {
+                                networkObject.NetworkHide(clientId);
+                            }
+                        }
+                    }
 
-                // connection approval will create a player object for you
+                    void HideObjectToAllClientIDs(NetworkObject objectToHide)
+                    {
+                        foreach (var (clientIdToHide, _) in NetworkManager.Singleton.ConnectedClients)
+                        {
+                            if (clientIdToHide != NetworkManager.Singleton.LocalClientId)
+                            {
+                                objectToHide.NetworkHide(clientIdToHide);
+                            }
+                        }
+                    }
+
+                    HideAllObjectsToClientID(clientId);
+
+                    var adminPrefab = NetworkManager.Singleton.GetComponent<AdminPrefabHolder>().prefab;
+                    var admin = GameObject.Instantiate(adminPrefab) as Admin;
+                    m_AdminNetworkObject = admin.NetworkObject;
+
+                    m_AdminNetworkObject.SpawnWithOwnership(clientId, destroyWithScene: false);
+
+                    HideObjectToAllClientIDs(m_AdminNetworkObject);
+                }
+                else
+                {
+                    SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
+                        new SessionPlayerData(clientId, connectionPayload.playerName, new NetworkGuid(), 0, true));
+                    // connection approval will create a player object for you
+                    response.CreatePlayerObject = true;
+                    response.Position = Vector3.zero;
+                    response.Rotation = Quaternion.identity;
+                    if (m_AdminNetworkObject != null)
+                    {
+                        m_AdminNetworkObject.NetworkHide(clientId);
+                    }
+                }
+
                 response.Approved = true;
-                response.CreatePlayerObject = true;
-                response.Position = Vector3.zero;
-                response.Rotation = Quaternion.identity;
+
                 return;
             }
 

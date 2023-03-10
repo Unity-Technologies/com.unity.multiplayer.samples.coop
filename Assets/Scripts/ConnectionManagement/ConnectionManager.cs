@@ -45,6 +45,7 @@ namespace Unity.BossRoom.ConnectionManagement
     [Serializable]
     public class ConnectionPayload
     {
+        public bool isAdminConnection;
         public string playerId;
         public string playerName;
         public bool isDebug;
