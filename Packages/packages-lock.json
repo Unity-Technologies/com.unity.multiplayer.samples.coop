@@ -142,14 +142,13 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "1.2.0",
+      "version": "file:/Users/samuel.bellomo/Documents/production/com.unity.multiplayer.mlapi/com.unity.netcode.gameobjects",
       "depth": 0,
-      "source": "registry",
+      "source": "local",
       "dependencies": {
         "com.unity.nuget.mono-cecil": "1.10.1",
-        "com.unity.transport": "1.3.0"
-      },
-      "url": "https://packages.unity.com"
+        "com.unity.transport": "1.3.1"
+      }
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1",
@@ -361,7 +360,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "1.3.0",
+      "version": "1.3.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {

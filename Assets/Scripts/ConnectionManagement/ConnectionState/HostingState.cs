@@ -121,15 +121,21 @@ namespace Unity.BossRoom.ConnectionManagement
                 {
                     // TODO this doesn't hide newly spawned objects though :(
                     // TODO aaaaand this doesn't work because objects are marked as visible automatically after the connection approval process...
-                    void HideAllObjectsToClientID(ulong clientId)
+                    void HideAllObjectsToClientID(ulong clientId, NetworkObject stillVisibleToClient)
                     {
-                        foreach (var networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
-                        {
-                            if (networkObject.IsNetworkVisibleTo(clientId)) // TODO come on, we should be able to call hide twice on the same object... this should be idempotent
-                            {
-                                networkObject.NetworkHide(clientId);
-                            }
-                        }
+                        NetworkObject.CheckGlobalObjectVisibility = (clientIdToTest, networkObject) => clientIdToTest != clientId || networkObject == stillVisibleToClient; // todo unsubscribe
+                        // TODO this means we can only have one global callback for the whole game... should not be a delegate, should be something else
+
+                        // I'm still receiving custom messages? I see some bytes received when calling cheats. But it's weird, I don't see where they come from in the profiler.
+                        // seems like a bug
+
+                        // foreach (var networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
+                        // {
+                        //     if (networkObject.IsNetworkVisibleTo(clientId)) // TODO come on, we should be able to call hide twice on the same object... this should be idempotent
+                        //     {
+                        //         networkObject.NetworkHide(clientId);
+                        //     }
+                        // }
                     }
 
                     void HideObjectToAllClientIDs(NetworkObject objectToHide)
@@ -143,11 +149,12 @@ namespace Unity.BossRoom.ConnectionManagement
                         }
                     }
 
-                    HideAllObjectsToClientID(clientId);
 
                     var adminPrefab = NetworkManager.Singleton.GetComponent<AdminPrefabHolder>().prefab;
                     var admin = GameObject.Instantiate(adminPrefab) as Admin;
                     m_AdminNetworkObject = admin.NetworkObject;
+
+                    HideAllObjectsToClientID(clientId, m_AdminNetworkObject);
 
                     m_AdminNetworkObject.SpawnWithOwnership(clientId, destroyWithScene: false);
 
