@@ -5,7 +5,7 @@
 ###  Made with and Including Utilities for Netcode for GameObjects
 <br>
 
-[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-2021.3%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/qa/lts-releases#:~:text=February%2014%2C%202023-,LTS%20Release,2021.3.18f1,-Released%3A%20February)
+[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-2021.3%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/qa/lts-releases?version=2021.3#:~:text=December%2015%2C%202022-,LTS%20Release,2021.3.15f1,-Released%3A%20December)
 [![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-1.2.0-57b9d3.svg?logo=unity&color=2196F3)](https://docs-multiplayer.unity3d.com/netcode/current/about)
 [![LatestRelease](https://img.shields.io/badge/Latest%20Github%20Release:-v2.0.4-57b9d3.svg?logo=github&color=brightgreen)](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases/tag/v2.0.4)
 <br><br>
@@ -45,32 +45,32 @@ For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/A
 <details open>
 <summary> <b>Click to expand/collapse contents</b> </summary>
 
-- ### [Getting the project](#getting-the-project)
+- ### [Getting the project](#getting-the-project-1)
   - [Direct download](#direct-download)
   - [Installing Git LFS to clone locally](#installing-git-lfs-to-clone-locally)
-- ### [Requirements](#requirements)
+- ### [Requirements](#requirements-1)
   - [Min Spec Devices](#boss-rooms-min-spec-devices-are)
-- ### [Opening the project for the first time](#opening-the-project-for-the-first-time) >
-- ### [Exploring the project](#exploring-the-project)
+- ### [Opening the project for the first time](#opening-the-project-for-the-first-time-1) 
+- ### [Exploring the project](#exploring-the-project-1)
   - [Registering with Unity Gaming Services (UGS)](#registering-the-project-with-unity-gaming-services-ugs)
-- ### [Testing multiplayer](#testing-multiplayer) 
+- ### [Testing multiplayer](#testing-multiplayer-1) 
   - [Local Multiplayer Setup](#local-multiplayer-setup)
   - [Multiplayer over Internet](#multiplayer-over-internet)
   - [Relay Setup](#relay-setup) 
-- ### [Index of resources in this project](#index-of-resources-in-this-project)
+- ### [Index of resources in this project](#index-of-resources-in-this-project-1)
   - [Gameplay](#gameplay)
   - [Game Flow](#game-flow)
   - [Connectivity](#connectivity)
   - [Services (Lobby, Relay, etc)](#services-lobby-relay-etc)
   - [Tools and Utilities](#tools-and-utilities)
-- ### [Troubleshooting](#troubleshooting)
+- ### [Troubleshooting](#troubleshooting-1)
   - [Bugs](#bugs)
   - [Documentation](#documentation)
-- ### [License](#license)
-- ### [Contributing](#contributing)
-- ### [Community](#community)
-- ### [Feedback Form](#feedback-form)
-- ### [Other samples](#other-samples)
+- ### [License](#license-1)
+- ### [Contributing](#contributing-1)
+- ### [Community](#community-1)
+- ### [Feedback Form](#feedback-form-1)
+- ### [Other samples](#other-samples-1)
   - [Bite-size Samples](#bite-size-samples)
 </details>
 
@@ -88,7 +88,7 @@ For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/A
 
 BossRoom is compatible with the latest Unity Long Term Support (LTS) editor version, currently [2021 LTS](https://unity.com/releases/2021-lts). Please include standalone support for Windows/Mac in your installation.
 
-**PLEASE NOTE:** You will also need Netcode for Game Objects to use these samples. Complete the [Hello World Getting Started](https://docs-multiplayer.unity3d.com/netcode/current/tutorials/helloworld) to prepare your environment.
+**PLEASE NOTE:** You will also need Netcode for Game Objects to use these samples. Complete the [Hello World Tutorial](https://docs-multiplayer.unity3d.com/netcode/current/tutorials/helloworld) to prepare your environment.
 <br><br>
 
 #### Boss Room has been developed and tested on the following platforms:
@@ -179,7 +179,7 @@ Running the game over internet currently requires setting up a relay.
 -----
 <br>
 
-## Full index of resources in this project
+## Index of resources in this project
 
 <details open>
 <summary> <b>Click to expand/collapse contents</b> </summary>
