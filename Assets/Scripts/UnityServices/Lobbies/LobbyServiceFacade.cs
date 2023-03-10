@@ -267,6 +267,8 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             lobbyEventCallbacks.LobbyChanged += OnLobbyChanges;
             lobbyEventCallbacks.KickedFromLobby += OnKickedFromLobby;
             lobbyEventCallbacks.LobbyEventConnectionStateChanged += OnLobbyEventConnectionStateChanged;
+            // The LobbyEventCallbacks object created here will now be managed by the Lobby SDK. The callbacks will be
+            // unsubscribed from when we call UnsubscribeAsync on the ILobbyEvents object we receive and store here.
             m_LobbyEvents = await m_LobbyApiInterface.SubscribeToLobby(m_LocalLobby.LobbyID, lobbyEventCallbacks);
             m_JoinedLobbyContentHeartbeat.BeginTracking();
         }
