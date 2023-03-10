@@ -1,19 +1,19 @@
 using System;
 using Unity.BossRoom.ConnectionManagement;
-using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
-    /// this works because of the following
+    /// this works (ich) because of the following
     /// disable scene management for that client (refuse all scene changes)
     /// have special spawning outside of NGO's. All prefabs removed from NetworkManager and custom instance handler for that particular player
     /// ConnectionApproval has been updated host side to react to this special connection payload to spawn the appropriate player host side.
+    ///
+    /// To call this, use the Connect context menu in the kebab menu in the inspector for Admin
     /// </summary>
     public class Admin : NetworkBehaviour
     {
@@ -65,7 +65,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             // NGO also vomits a LOT of errors when not being able to spawn something
             // admin should be hidden nicely from other clients and admin should be able to tell the host to not send it everything else.
             // There's a static NetworkShow that allows sending a list of NetworkObjects, it's too bad there's no global CheckObjectVisibility
-            // We can hide all objects when a client connects, but this won't hide newly spawned objects after that connection
+            // We can try to hide all objects at connection approval time (this could work with scene management disabled), but this won't hide newly
+            // spawned objects after that connection
             // ServerRPC works though, I'm able to get info from the host without actually swiching to its scene and without other clients seeing me.
 
             m_NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
@@ -94,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_NetworkManager.OnClientDisconnectCallback += UnsubscribeOnDisconnectSelf;
         }
 
-        [ContextMenu("Server RPC")]
+        [ContextMenu("Server RPC")] // to call this from the kebab menu on the Admin component in the inspector
         void DoIt()
         {
             GetInfoFromServerServerRpc();
