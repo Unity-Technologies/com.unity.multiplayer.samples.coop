@@ -4,6 +4,7 @@
     "com.unity.ai.navigation.components": "https://github.com/Unity-Technologies/NavMeshComponents.git#package",
     "com.unity.cinemachine": "2.8.9",
     "com.unity.collab-proxy": "1.17.7",
+    "com.unity.collections": "1.4.0",
     "com.unity.ide.rider": "3.0.16",
     "com.unity.ide.visualstudio": "2.0.16",
     "com.unity.ide.vscode": "1.2.5",
