@@ -25,8 +25,6 @@ struct ClientUpdateJob : IJob
         DataStreamReader stream;
         NetworkEvent.Type cmd;
 
-        // NativeList<MessageToSend> tmpSend = new NativeList<MessageToSend>(Allocator.Temp);
-
         // READ
         while ((cmd = connection[0].PopEvent(driver, out stream)) != NetworkEvent.Type.Empty)
         {
@@ -37,11 +35,6 @@ struct ClientUpdateJob : IJob
                     Debug.Log("We are now connected to the server");
 
                     messagesToSend.Add(new MessageToSend(){connectionIndexDestination = 0, value = 1, CommandType = MessageToSend.Command.Handshake});
-
-                    // uint value = 1;
-                    // driver.BeginSend(connection[0], out var writer);
-                    // writer.WriteUInt(value);
-                    // driver.EndSend(writer);
                     break;
                 }
                 case NetworkEvent.Type.Data:
@@ -56,12 +49,8 @@ struct ClientUpdateJob : IJob
                         switch (messageReceived.CommandType)
                         {
                             case MessageToSend.Command.Handshake:
-                                // uint value = stream.ReadUInt();
                                 Debug.Log("Got the value = " + messageReceived.value + " back from the server");
-                                // And finally change the `done[0]` to `1`
                                 done[0] = 1;
-                                // connection[0].Disconnect(driver);
-                                // connection[0] = default;
                                 break;
                             case MessageToSend.Command.GetPlayerCountResponse:
                                 Debug.Log($"Got player count from server {messageReceived.value}");
@@ -83,27 +72,17 @@ struct ClientUpdateJob : IJob
                 case NetworkEvent.Type.Empty:
                     break;
                 default:
-                    throw new NotImplementedException();
+                    return;
             }
         }
 
         SendAndConsumeMessagesInList(ref messagesToSend, ref driver, ref connection);
-        // var arrayTmp = tmpSend.AsArray();
-        // SendMessagesInList(ref arrayTmp, ref driver, ref connection);
-        // WRITE
-        // foreach (MessageToSend messageToSend in messagesToSend)
-        // {
-        //     driver.BeginSend(connection[0], out var writer);
-        //     using var tmpSerializer = new FastBufferWriter(1300, Allocator.Temp);
-        //     tmpSerializer.WriteValueSafe(messageToSend);
-        //     writer.WriteBytes(tmpSerializer.GetUnsafePtr(), tmpSerializer.Length);
-        //     driver.EndSend(writer);
-        // }
     }
 
     static void SendAndConsumeMessagesInList(ref NativeList<MessageToSend> messagesToSend, ref NetworkDriver driver, ref NativeArray<NetworkConnection> connections)
     {
         if (messagesToSend.Length == 0) return;
+
         driver.BeginSend(connections[0], out var writer);
         foreach (MessageToSend messageToSend in messagesToSend)
         {
@@ -121,7 +100,7 @@ public struct MessageToSend : INetworkSerializable
         Invalid, // shouldn't be here
         GetPlayerCount,
         GetPlayerCountResponse,
-        Handshake
+        Handshake,
     }
 
     public Command CommandType;
@@ -134,62 +113,309 @@ public struct MessageToSend : INetworkSerializable
     }
 }
 
-[DefaultExecutionOrder(2)] // after server for local dev
-public class UTPAdminClient : MonoBehaviour
+public interface IUTPStateMachine // todo should be idisposable?
+{
+    IUTPStateMachine Initialize(UTPWrapper wrapper);
+    IUTPStateMachine StartConnection();
+    IUTPStateMachine Update();
+    IUTPStateMachine Destroy();
+    IUTPStateMachine Disconnect();
+    void SendMessage(ref MessageToSend messageToSend);
+}
+public unsafe class Offline : IUTPStateMachine
+{
+    public UTPWrapper m_UtpWrapper;
+
+    public IUTPStateMachine Initialize(UTPWrapper wrapper)
+    {
+        m_UtpWrapper = wrapper;
+        return this;
+    }
+
+    public IUTPStateMachine StartConnection()
+    {
+        m_UtpWrapper.m_Driver = NetworkDriver.Create();
+
+        m_UtpWrapper.m_Connection = new NativeArray<NetworkConnection>(1, Allocator.Persistent);
+        m_UtpWrapper.m_MessagesToSend = new NativeList<MessageToSend>(Allocator.Persistent);
+        m_UtpWrapper.m_Done = new NativeArray<byte>(1, Allocator.Persistent);
+        var endpoint = NetworkEndPoint.LoopbackIpv4;
+        endpoint.Port = 9000;
+        m_UtpWrapper.m_Connection[0] = m_UtpWrapper.m_Driver.Connect(endpoint);
+
+        m_UtpWrapper.m_CurrentState = new ClientConnecting().Initialize(m_UtpWrapper);
+        return this;
+    }
+
+    public IUTPStateMachine Update()
+    {
+        return this;
+    }
+
+    public IUTPStateMachine Destroy()
+    {
+        m_UtpWrapper.LatestJobHandle.Complete();
+        if (m_UtpWrapper.m_Connection.IsCreated) m_UtpWrapper.m_Connection.Dispose();
+        if (m_UtpWrapper.m_MessagesToSend.IsCreated) m_UtpWrapper.m_MessagesToSend.Dispose();
+        m_UtpWrapper.m_Driver.Dispose();
+        if (m_UtpWrapper.m_Done.IsCreated) m_UtpWrapper.m_Done.Dispose();
+        return this;
+    }
+
+    public IUTPStateMachine Disconnect()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SendMessage(ref MessageToSend messageToSend)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class ClientConnecting : IUTPStateMachine
+{
+    // Monitors for handshake and connection
+
+    public UTPWrapper m_UtpWrapper;
+    private ClientUpdateJob m_CurrentJob;
+
+    public IUTPStateMachine Initialize(UTPWrapper wrapper)
+    {
+        m_UtpWrapper = wrapper;
+        return this;
+    }
+
+    public IUTPStateMachine StartConnection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IUTPStateMachine Update()
+    {
+        m_UtpWrapper.LatestJobHandle.Complete();
+        if (m_CurrentJob.done.Length > 0 && m_CurrentJob.done[0] == 1)
+        {
+            // we're connected, finishing this update with the next state's update
+            m_UtpWrapper.m_CurrentState = new ClientConnected().Initialize(m_UtpWrapper).Update();
+        }
+        else
+        {
+            m_CurrentJob = new ClientUpdateJob()
+            {
+                driver = m_UtpWrapper.m_Driver,
+                connection = m_UtpWrapper.m_Connection,
+                done = m_UtpWrapper.m_Done,
+                messagesToSend = m_UtpWrapper.m_MessagesToSend
+            };
+            m_UtpWrapper.LatestJobHandle = m_UtpWrapper.m_Driver.ScheduleUpdate();
+            m_UtpWrapper.LatestJobHandle = m_CurrentJob.Schedule(m_UtpWrapper.LatestJobHandle);
+        }
+
+        return this;
+    }
+
+    public IUTPStateMachine Destroy()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IUTPStateMachine Disconnect()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SendMessage(ref MessageToSend messageToSend)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class ClientConnected : IUTPStateMachine
+{
+    public UTPWrapper m_UtpWrapper;
+    private ClientUpdateJob m_CurrentJob;
+
+    public IUTPStateMachine Initialize(UTPWrapper wrapper)
+    {
+        m_UtpWrapper = wrapper;
+        return this;
+    }
+
+    public IUTPStateMachine StartConnection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IUTPStateMachine Update()
+    {
+        m_UtpWrapper.LatestJobHandle.Complete();
+
+        m_CurrentJob = new ClientUpdateJob()
+        {
+            driver = m_UtpWrapper.m_Driver,
+            connection = m_UtpWrapper.m_Connection,
+            done = m_UtpWrapper.m_Done,
+            messagesToSend = m_UtpWrapper.m_MessagesToSend
+        };
+        m_UtpWrapper.LatestJobHandle = m_UtpWrapper.m_Driver.ScheduleUpdate();
+        m_UtpWrapper.LatestJobHandle = m_CurrentJob.Schedule(m_UtpWrapper.LatestJobHandle);
+        return this;
+    }
+
+    public IUTPStateMachine Destroy()
+    {
+
+    }
+
+    public IUTPStateMachine Disconnect()
+    {
+        // TODO tell the server before clearing everything here
+        m_UtpWrapper.m_CurrentState = new Offline().Initialize(m_UtpWrapper);
+        return this;
+    }
+
+    public void SendMessage(ref MessageToSend messageToSend)
+    {
+        m_UtpWrapper.LatestJobHandle.Complete();
+        m_UtpWrapper.m_MessagesToSend.Add(new MessageToSend() {CommandType = MessageToSend.Command.GetPlayerCount});
+    }
+}
+public class ServerStarting : IUTPStateMachine
+{
+    public UTPWrapper m_UtpWrapper;
+
+    public IUTPStateMachine Initialize(UTPWrapper wrapper)
+    {
+        m_UtpWrapper = wrapper;
+        return this;
+    }
+
+    public IUTPStateMachine StartConnection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IUTPStateMachine Update()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IUTPStateMachine Destroy()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IUTPStateMachine Disconnect()
+    {
+        // TODO cleanup server
+        m_UtpWrapper.m_CurrentState = new Offline().Initialize(m_UtpWrapper);
+        return this;
+    }
+
+    public void SendMessage(ref MessageToSend messageToSend)
+    {
+        throw new NotImplementedException();
+    }
+}
+public class ServerStarted : IUTPStateMachine
+{
+    public UTPWrapper m_UtpWrapper;
+
+    public IUTPStateMachine Initialize(UTPWrapper wrapper)
+    {
+        m_UtpWrapper = wrapper;
+        return this;
+    }
+
+    public IUTPStateMachine StartConnection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IUTPStateMachine Update()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IUTPStateMachine Destroy()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IUTPStateMachine Disconnect()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SendMessage(ref MessageToSend messageToSend)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+// [BurstCompile] // TODO
+public class UTPWrapper
 {
     public NetworkDriver m_Driver;
     public NativeArray<NetworkConnection> m_Connection;
     public NativeArray<byte> m_Done;
     public NativeList<MessageToSend> m_MessagesToSend;
 
-    public JobHandle ClientJobHandle;
+    public JobHandle LatestJobHandle;
 
+    public IUTPStateMachine m_CurrentState;
+
+    public UTPWrapper Initialize()
+    {
+        m_CurrentState = new Offline().Initialize(this);
+        return this;
+    }
+    public void StartClient()
+    {
+        m_CurrentState.StartConnection();
+    }
+
+    public void Destroy()
+    {
+        m_CurrentState.Disconnect();
+        m_CurrentState.Destroy();
+    }
+    public void Update()
+    {
+        m_CurrentState.Update();
+    }
+
+    public void SendMessage(ref MessageToSend messageToSend)
+    {
+        m_CurrentState.SendMessage(ref messageToSend);
+    }
+}
+
+[DefaultExecutionOrder(2)] // after server for local dev
+public class UTPAdminClient : MonoBehaviour
+{
+    private UTPWrapper m_UtpWrapper;
     void Start()
     {
-        m_Driver = NetworkDriver.Create();
-
-        m_Connection = new NativeArray<NetworkConnection>(1, Allocator.Persistent);
-        m_MessagesToSend = new NativeList<MessageToSend>(Allocator.Persistent);
-        m_Done = new NativeArray<byte>(1, Allocator.Persistent);
-        var endpoint = NetworkEndPoint.LoopbackIpv4;
-        endpoint.Port = 9000;
-        m_Connection[0] = m_Driver.Connect(endpoint);
+        m_UtpWrapper = new UTPWrapper().Initialize();
+        m_UtpWrapper.StartClient();
     }
 
     public void OnDestroy()
     {
-        ClientJobHandle.Complete();
-        if (m_Connection.IsCreated) m_Connection.Dispose();
-        if (m_MessagesToSend.IsCreated) m_MessagesToSend.Dispose();
-        m_Driver.Dispose();
-        if (m_Done.IsCreated) m_Done.Dispose();
+        m_UtpWrapper.Destroy();
     }
-
-    private ClientUpdateJob m_CurrentJob;
 
     [ContextMenu("SendSomethingToServer")]
     private void SendSomething()
     {
-        ClientJobHandle.Complete();
-        m_MessagesToSend.Add(new MessageToSend() {CommandType = MessageToSend.Command.GetPlayerCount});
+        var toSend = new MessageToSend() {CommandType = MessageToSend.Command.GetPlayerCount};
+        m_UtpWrapper.SendMessage(ref toSend);
     }
 
     void Update()
     {
-        ClientJobHandle.Complete();
-        // if (m_CurrentJob.done.Length > 0 && m_CurrentJob.done[0] == 1)
-        // {
-        //     Debug.Log("got an answer from the server, can do things now");
-        // }
-
-        m_CurrentJob = new ClientUpdateJob
-        {
-            driver = m_Driver,
-            connection = m_Connection,
-            done = m_Done,
-            messagesToSend = m_MessagesToSend
-        };
-        ClientJobHandle = m_Driver.ScheduleUpdate();
-        ClientJobHandle = m_CurrentJob.Schedule(ClientJobHandle);
+        m_UtpWrapper.Update();
     }
 }

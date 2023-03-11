@@ -13,7 +13,8 @@
         "Unity.Networking.Transport",
         "VContainer",
         "Unity.Services.Relay",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.Burst"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
