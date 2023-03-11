@@ -265,7 +265,7 @@ public class ClientConnected : IUTPStateMachine
 
     public IUTPStateMachine Destroy()
     {
-
+        return this;
     }
 
     public IUTPStateMachine Disconnect()
