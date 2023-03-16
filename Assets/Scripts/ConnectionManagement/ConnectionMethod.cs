@@ -66,6 +66,11 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ConnectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
         }
 
+        /// Using authentication, this makes sure your session is associated with your account and not your device. This means you could reconnect 
+        /// from a different device for example. A playerId is also a bit more permanent than player prefs. In a browser for example, 
+        /// player prefs can be cleared as easily as cookies.
+        /// The forked flow here is for debug purposes and to make UGS optional in Boss Room. This way you can study the sample without 
+        /// setting up a UGS account.
         protected string GetPlayerId()
         {
             if (Services.Core.UnityServices.State != ServicesInitializationState.Initialized)
