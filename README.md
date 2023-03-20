@@ -177,7 +177,6 @@ Running the game over internet currently requires setting up a relay.
 <br><br><br>
 
 -----
-<br>
 
 ## Index of resources in this project
 
