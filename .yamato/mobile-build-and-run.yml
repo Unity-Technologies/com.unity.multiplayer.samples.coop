@@ -70,8 +70,8 @@ mobile_test_ios_{{ project.name }}_{{ editor }}:
     name: {{ project.name }} mobile project tests - {{ editor }} on iOS
     agent:
         type: Unity::mobile::iPhone
-        image: mobile/macos-10.15-testing:latest
-        flavor: b1.medium
+        image: package-ci/macos-12:v4
+        flavor: b1.large
 
     # Skip repository cloning
     skip_checkout: true
