@@ -70,7 +70,9 @@ namespace Unity.BossRoom.ConnectionManagement
         /// from a different device for example. A playerId is also a bit more permanent than player prefs. In a browser for example, 
         /// player prefs can be cleared as easily as cookies.
         /// The forked flow here is for debug purposes and to make UGS optional in Boss Room. This way you can study the sample without 
-        /// setting up a UGS account.
+        /// setting up a UGS account. It's recommended to investigate your own initialization and IsSigned flows to see if you need 
+        /// those checks on your own and react accordingly. We offer here the option for offline access for debug purposes, but in your own game you
+        /// might want to show an error popup and ask your player to connect to the internet.
         protected string GetPlayerId()
         {
             if (Services.Core.UnityServices.State != ServicesInitializationState.Initialized)
