@@ -5,6 +5,7 @@ using Unity.BossRoom.Gameplay.UI;
 using NUnit.Framework;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -112,6 +113,7 @@ namespace Unity.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator IP_HostAndDisconnect_Valid([ValueSource(nameof(s_PlayerIndices))] int playerIndex)
         {
+            PlayerSettings.stripEngineCode = false;
             yield return WaitUntilMainMenuSceneIsLoaded();
 
             var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
@@ -151,6 +153,7 @@ namespace Unity.BossRoom.Tests.Runtime
             yield return new WaitForSeconds(2f);
 
             yield return WaitUntilDisconnectedAndMainMenuSceneIsLoaded();
+            PlayerSettings.stripEngineCode = true;
         }
 
         [UnityTearDown]
