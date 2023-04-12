@@ -107,11 +107,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             return await LobbyService.Instance.QueryLobbiesAsync(queryOptions);
         }
 
-        public async Task<Lobby> GetLobby(string lobbyId)
-        {
-            return await LobbyService.Instance.GetLobbyAsync(lobbyId);
-        }
-
         public async Task<Lobby> UpdateLobby(string lobbyId, Dictionary<string, DataObject> data, bool shouldLock)
         {
             UpdateLobbyOptions updateOptions = new UpdateLobbyOptions { Data = data, IsLocked = shouldLock };
@@ -132,6 +127,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         public async void SendHeartbeatPing(string lobbyId)
         {
             await LobbyService.Instance.SendHeartbeatPingAsync(lobbyId);
+        }
+
+        public async Task<ILobbyEvents> SubscribeToLobby(string lobbyId, LobbyEventCallbacks eventCallbacks)
+        {
+            return await LobbyService.Instance.SubscribeToLobbyEventsAsync(lobbyId, eventCallbacks);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Unity.BossRoom.Infrastructure
         {
             public float Period;
             public float NextCallTime;
+            public float LastCallTime;
         }
 
         readonly Queue<Action> m_PendingHandlers = new Queue<Action>();
@@ -56,7 +57,7 @@ namespace Unity.BossRoom.Infrastructure
                 {
                     if (m_Subscribers.Add(onUpdate))
                     {
-                        m_SubscriberData.Add(onUpdate, new SubscriberData() { Period = updatePeriod, NextCallTime = 0 });
+                        m_SubscriberData.Add(onUpdate, new SubscriberData() { Period = updatePeriod, NextCallTime = 0, LastCallTime = Time.time });
                     }
                 });
             }
@@ -90,7 +91,8 @@ namespace Unity.BossRoom.Infrastructure
 
                 if (Time.time >= subscriberData.NextCallTime)
                 {
-                    subscriber.Invoke(Time.deltaTime);
+                    subscriber.Invoke(Time.time - subscriberData.LastCallTime);
+                    subscriberData.LastCallTime = Time.time;
                     subscriberData.NextCallTime = Time.time + subscriberData.Period;
                 }
             }
