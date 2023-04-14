@@ -128,7 +128,13 @@ namespace Unity.BossRoom.ConnectionManagement
 
             // Configure UTP with allocation
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(joinedAllocation, OnlineState.k_DtlsConnType));
+            var connType = OnlineState.k_DtlsConnType;
+
+#if UNITY_WEBGL
+            utp.UseWebSockets = true;
+            connType = "wss";
+#endif
+            utp.SetRelayServerData(new RelayServerData(joinedAllocation, connType));
         }
 
         public override async Task SetupHostConnectionAsync()
@@ -152,7 +158,12 @@ namespace Unity.BossRoom.ConnectionManagement
 
             // Setup UTP with relay connection info
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(hostAllocation, OnlineState.k_DtlsConnType)); // This is with DTLS enabled for a secure connection
+            var connType = OnlineState.k_DtlsConnType;
+#if UNITY_WEBGL
+            utp.UseWebSockets = true;
+            connType = "wss";
+#endif
+            utp.SetRelayServerData(new RelayServerData(hostAllocation, connType)); // This is with DTLS enabled for a secure connection
         }
     }
 }
