@@ -12,6 +12,26 @@ namespace Unity.BossRoom.UnityServices.Auth
     {
         [Inject] IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
+        public InitializationOptions GenerateAuthenticationOptions(string profile)
+        {
+            try
+            {
+                var unityAuthenticationInitOptions = new InitializationOptions();
+                if (profile.Length > 0)
+                {
+                    unityAuthenticationInitOptions.SetProfile(profile);
+                }
+
+                return unityAuthenticationInitOptions;
+            }
+            catch (Exception e)
+            {
+                var reason = $"{e.Message} ({e.InnerException?.Message})";
+                m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
+                throw;
+            }
+        }
+        
         public async Task InitializeAndSignInAsync(InitializationOptions initializationOptions)
         {
             try
