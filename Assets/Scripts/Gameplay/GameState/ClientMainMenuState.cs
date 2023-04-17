@@ -66,12 +66,8 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             try
             {
-                var unityAuthenticationInitOptions = new InitializationOptions();
-                var profile = m_ProfileManager.Profile;
-                if (profile.Length > 0)
-                {
-                    unityAuthenticationInitOptions.SetProfile(profile);
-                }
+                var unityAuthenticationInitOptions = 
+                                    m_AuthServiceFacade.GenerateAuthenticationOptions(m_ProfileManager.Profile);
 
                 await m_AuthServiceFacade.InitializeAndSignInAsync(unityAuthenticationInitOptions);
                 OnAuthSignIn();
