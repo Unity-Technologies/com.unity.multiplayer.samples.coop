@@ -172,7 +172,8 @@ namespace Unity.BossRoom.Gameplay.UI
         }
 
         /// <summary>
-        /// Sanitize user IP address InputField box allowing only numbers and '.'
+        /// Sanitize user IP address InputField box allowing only numbers and '.'. This also prevents undesirable
+        /// invisible characters from being copy-pasted accidentally.
         /// </summary>
         /// <param name="dirtyString"> string to sanitize. </param>
         /// <returns> Sanitized text string. </returns>
@@ -182,7 +183,8 @@ namespace Unity.BossRoom.Gameplay.UI
         }
 
         /// <summary>
-        /// Sanitize user port InputField box allowing only numbers
+        /// Sanitize user port InputField box allowing only numbers. This also prevents undesirable invisible characters
+        /// from being copy-pasted accidentally.
         /// </summary>
         /// <param name="dirtyString"> string to sanitize. </param>
         /// <returns> Sanitized text string. </returns>
