@@ -23,6 +23,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Elements inside the Tank's and Rogue's AnimatorTriggeredSpecialFX list have been revised to not loop AudioSource clips, ending the logging of multiple warnings to the console (#785)
 * ClientConnectedState now inherits from OnlineState instead of the base ConnectionState (#801)
 * UpdateRunner now sends the right value for deltaTime when updating its subscribers (#805)
+* Inputs are better sanitized when entering IP address and port (#821). Now all invalid characters are prevented, and UnityTransport's NetworkEndpoint.TryParse is used to verify the validity of the IP address and port that are entered before making the join/host button interactable.
 
 ## [2.0.4] - 2022-12-13
 ### Changed
