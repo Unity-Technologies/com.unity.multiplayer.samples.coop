@@ -173,7 +173,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.3
+  m_fontSize: 33
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -785,7 +785,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32.2
+  m_fontSize: 50
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -935,6 +935,7 @@ MonoBehaviour:
   m_IPInputField: {fileID: 783666621484907260}
   m_PortInputField: {fileID: 3692047279709044436}
   m_CanvasGroup: {fileID: 3432270648822068983}
+  m_HostButton: {fileID: 8503688101831781139}
 --- !u!1 &2513356161705610835
 GameObject:
   m_ObjectHideFlags: 0
@@ -2211,7 +2212,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32.2
+  m_fontSize: 50
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3287,6 +3288,7 @@ MonoBehaviour:
   m_CanvasGroup: {fileID: 6846323567751854231}
   m_IPInputField: {fileID: 2677382141616317261}
   m_PortInputField: {fileID: 7282211495594724544}
+  m_JoinButton: {fileID: 8754602378570439514}
 --- !u!1 &5924530127146065184
 GameObject:
   m_ObjectHideFlags: 0
@@ -3577,7 +3579,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.3
+  m_fontSize: 33
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
