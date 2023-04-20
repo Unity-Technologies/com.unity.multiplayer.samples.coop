@@ -129,14 +129,24 @@ namespace Unity.BossRoom.Infrastructure
                 go.SetActive(false);
             }
 
-            var prefabPool = new ObjectPool<NetworkObject>((CreateFunc), ActionOnGet, ActionOnRelease, defaultCapacity: prewarmCount);
+            void ActionOnDestroy(NetworkObject networkObject)
+            {
+                Destroy(networkObject.gameObject);
+            }
+
+            m_PooledObjects[prefab] = new ObjectPool<NetworkObject>((CreateFunc), ActionOnGet, ActionOnRelease, ActionOnDestroy, defaultCapacity: prewarmCount);
 
             // Populate the pool
+            var prewarmNetworkObjects = new List<NetworkObject>();
             for (var i = 0; i < prewarmCount; i++)
             {
-                ReturnNetworkObject(CreateFunc(), prefab);
+                prewarmNetworkObjects.Add(m_PooledObjects[prefab].Get());
             }
-            m_PooledObjects[prefab] = prefabPool;
+
+            foreach (var networkObject in prewarmNetworkObjects)
+            {
+                m_PooledObjects[prefab].Release(networkObject);
+            }
 
             // Register Netcode Spawn handlers
             NetworkManager.Singleton.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
@@ -185,6 +195,7 @@ namespace Unity.BossRoom.Infrastructure
             {
                 // Unregister Netcode Spawn handlers
                 NetworkManager.Singleton.PrefabHandler.RemoveHandler(prefab);
+                m_PooledObjects[prefab].Clear();
             }
             m_PooledObjects.Clear();
             m_Prefabs.Clear();
