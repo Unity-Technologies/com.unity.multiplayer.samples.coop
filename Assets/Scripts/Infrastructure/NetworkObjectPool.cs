@@ -9,16 +9,15 @@ using UnityEngine.Pool;
 namespace Unity.BossRoom.Infrastructure
 {
     /// <summary>
-    /// Object Pool for networked objects, used for controlling how objects are spawned by Netcode. Netcode by default will allocate new memory when spawning new
-    /// objects. With this Networked Pool, we're using custom spawning to reuse objects.
+    /// Object Pool for networked objects, used for controlling how objects are spawned by Netcode. Netcode by default
+    /// will allocate new memory when spawning new objects. With this Networked Pool, we're using the ObjectPool to
+    /// reuse objects.
     /// Boss Room uses this for projectiles. In theory it should use this for imps too, but we wanted to show vanilla spawning vs pooled spawning.
-    /// Hooks to NetworkManager's prefab handler to intercept object spawning and do custom actions
+    /// Hooks to NetworkManager's prefab handler to intercept object spawning and do custom actions.
     /// </summary>
     public class NetworkObjectPool : NetworkBehaviour
     {
-        static NetworkObjectPool s_Instance;
-
-        public static NetworkObjectPool Singleton { get { return s_Instance; } }
+        public static NetworkObjectPool Singleton { get; private set; }
 
         [SerializeField]
         List<PoolConfigObject> PooledPrefabsList;
@@ -31,13 +30,13 @@ namespace Unity.BossRoom.Infrastructure
 
         public void Awake()
         {
-            if (s_Instance != null && s_Instance != this)
+            if (Singleton != null && Singleton != this)
             {
                 Destroy(gameObject);
             }
             else
             {
-                s_Instance = this;
+                Singleton = this;
             }
         }
 
@@ -113,7 +112,7 @@ namespace Unity.BossRoom.Infrastructure
         /// <summary>
         /// Builds up the cache for a prefab.
         /// </summary>
-        private void RegisterPrefabInternal(GameObject prefab, int prewarmCount)
+        void RegisterPrefabInternal(GameObject prefab, int prewarmCount)
         {
             m_Prefabs.Add(prefab);
 
