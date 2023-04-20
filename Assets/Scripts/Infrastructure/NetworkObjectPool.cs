@@ -89,8 +89,6 @@ namespace Unity.BossRoom.Infrastructure
         /// </summary>
         public void ReturnNetworkObject(NetworkObject networkObject, GameObject prefab)
         {
-            var go = networkObject.gameObject;
-            go.SetActive(false);
             m_PooledObjects[prefab].Release(networkObject);
         }
 
@@ -116,7 +114,30 @@ namespace Unity.BossRoom.Infrastructure
         {
             m_Prefabs.Add(prefab);
 
-            var prefabPool = new ObjectPool<NetworkObject>((() => CreateInstance(prefab).GetComponent<NetworkObject>()), defaultCapacity: prewarmCount);
+            NetworkObject CreateFunc()
+            {
+                return CreateInstance(prefab).GetComponent<NetworkObject>();
+            }
+
+            void ActionOnGet(NetworkObject networkObject)
+            {
+                var go = networkObject.gameObject;
+                go.SetActive(true);
+            }
+
+            void ActionOnRelease(NetworkObject networkObject)
+            {
+                var go = networkObject.gameObject;
+                go.SetActive(false);
+            }
+
+            var prefabPool = new ObjectPool<NetworkObject>((CreateFunc), ActionOnGet, ActionOnRelease, defaultCapacity: prewarmCount);
+
+            // Populate the pool
+            for (var i = 0; i < prewarmCount; i++)
+            {
+                ReturnNetworkObject(CreateFunc(), prefab);
+            }
             m_PooledObjects[prefab] = prefabPool;
 
             // Register Netcode Spawn handlers
@@ -140,12 +161,8 @@ namespace Unity.BossRoom.Infrastructure
         {
             var networkObject = m_PooledObjects[prefab].Get();
 
-            // Here we must reverse the logic in ReturnNetworkObject.
-            var go = networkObject.gameObject;
-            go.SetActive(true);
-
-            go.transform.position = position;
-            go.transform.rotation = rotation;
+            networkObject.transform.position = position;
+            networkObject.transform.rotation = rotation;
 
             return networkObject;
         }
@@ -174,6 +191,8 @@ namespace Unity.BossRoom.Infrastructure
                 NetworkManager.Singleton.PrefabHandler.RemoveHandler(prefab);
             }
             m_PooledObjects.Clear();
+            m_Prefabs.Clear();
+            m_HasInitialized = false;
         }
     }
 
