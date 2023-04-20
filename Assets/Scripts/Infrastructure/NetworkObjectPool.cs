@@ -110,8 +110,6 @@ namespace Unity.BossRoom.Infrastructure
         /// </summary>
         void RegisterPrefabInternal(GameObject prefab, int prewarmCount)
         {
-            m_Prefabs.Add(prefab);
-
             NetworkObject CreateFunc()
             {
                 return CreateInstance(prefab).GetComponent<NetworkObject>();
@@ -134,6 +132,9 @@ namespace Unity.BossRoom.Infrastructure
                 Destroy(networkObject.gameObject);
             }
 
+            m_Prefabs.Add(prefab);
+
+            // Create the pool
             m_PooledObjects[prefab] = new ObjectPool<NetworkObject>((CreateFunc), ActionOnGet, ActionOnRelease, ActionOnDestroy, defaultCapacity: prewarmCount);
 
             // Populate the pool
@@ -142,7 +143,6 @@ namespace Unity.BossRoom.Infrastructure
             {
                 prewarmNetworkObjects.Add(m_PooledObjects[prefab].Get());
             }
-
             foreach (var networkObject in prewarmNetworkObjects)
             {
                 m_PooledObjects[prefab].Release(networkObject);
