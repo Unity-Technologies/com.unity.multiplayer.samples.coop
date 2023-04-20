@@ -13,7 +13,7 @@ Boss Room is compatible with the latest Unity Long Term Support (LTS) editor ver
 - iOS
 - Android <br>
 
-**Boss Room's min spec devices are:**
+**Boss Room's min spec devices are: ewq**
 - iPhone 6S
 - Samsung Galaxy J2 Core <br>
 
