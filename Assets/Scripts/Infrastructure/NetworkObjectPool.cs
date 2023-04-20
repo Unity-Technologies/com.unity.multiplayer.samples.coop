@@ -26,8 +26,6 @@ namespace Unity.BossRoom.Infrastructure
 
         Dictionary<GameObject, ObjectPool<NetworkObject>> m_PooledObjects = new Dictionary<GameObject, ObjectPool<NetworkObject>>();
 
-        bool m_HasInitialized = false;
-
         public void Awake()
         {
             if (Singleton != null && Singleton != this)
@@ -170,20 +168,18 @@ namespace Unity.BossRoom.Infrastructure
         /// <summary>
         /// Registers all objects in <see cref="PooledPrefabsList"/> to the cache.
         /// </summary>
-        public void InitializePool()
+        void InitializePool()
         {
-            if (m_HasInitialized) return;
             foreach (var configObject in PooledPrefabsList)
             {
                 RegisterPrefabInternal(configObject.Prefab, configObject.PrewarmCount);
             }
-            m_HasInitialized = true;
         }
 
         /// <summary>
         /// Unregisters all objects in <see cref="PooledPrefabsList"/> from the cache.
         /// </summary>
-        public void ClearPool()
+        void ClearPool()
         {
             foreach (var prefab in m_Prefabs)
             {
@@ -192,7 +188,6 @@ namespace Unity.BossRoom.Infrastructure
             }
             m_PooledObjects.Clear();
             m_Prefabs.Clear();
-            m_HasInitialized = false;
         }
     }
 
