@@ -169,6 +169,7 @@ Running the game over internet currently requires setting up a relay.
 * Client driven movements - Boss Room is server driven with anticipation animation. See [Client Driven bitesize](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.bitesize/tree/main/Basic/ClientDriven) for client driven gameplay
 * Player spawn - SpawnPlayer() in [Assets/Scripts/Gameplay/GameState/ServerBossRoomState.cs](Assets/Scripts/Gameplay/GameState/ServerBossRoomState.cs)
 * Player camera setup (with cinemachine) - OnNetworkSpawn() in [Assets/Scripts/Gameplay/GameplayObjects/Character/ClientCharacter.cs](Assets/Scripts/Gameplay/GameplayObjects/Character/ClientCharacter.cs)
+* INetworkSerializable (bandwidth optimization) vs INetworkSerializeByMemcpy (performance optimization) usage. See LobbyPlayerState vs ActionID structs [Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs] vs [Assets/Scripts/Gameplay/Action/ActionID.cs]
 
 ### Game Flow
 * Application Controller - [Assets/Scripts/ApplicationLifecycle/ApplicationController.cs ](Assets/Scripts/ApplicationLifecycle/ApplicationController.cs)

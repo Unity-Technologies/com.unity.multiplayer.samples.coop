@@ -15,7 +15,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Cleanup
 * Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
 * Removed now unnecessary cached NetworkBehaviour status on some components, since they now do not allocate memory (#799) 
-* Certain structs converted to implement interface INetworkSerializeByMemcpy instead of INetworkSerializable (#822) INetworkSerializeByMemcpy optimizes for performance at the cost of bandwidth usage and flexibility, however it will only work with structs containing value types.
+* Certain structs converted to implement interface INetworkSerializeByMemcpy instead of INetworkSerializable (#822) INetworkSerializeByMemcpy optimizes for performance at the cost of bandwidth usage and flexibility, however it will only work with structs containing value types. For more details see the official [doc](https://docs-multiplayer.unity3d.com/netcode/current/advanced-topics/serialization/inetworkserializebymemcpy/index.html).
 
 ### Fixed
 * EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
