@@ -10,13 +10,12 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ### Changed
 * Replaced our polling for lobby updates with a subscription to the new Websocket based LobbyEvents (#805). This saves up a significant amount of bandwidth usage to and from the service, since updates are infrequent in this game. Now clients and hosts only use up bandwidth on the Lobby service when it is needed. With polling, we used to send a GET request per client once every 2s. The responses were between ~550 bytes and 900 bytes, so if we suppose an average of 725 bytes and 100 000 concurrent users (CCU), this amounted to around 725B * 30 calls per minute * 100 000 CCU = 2.175 GB per minute. Scaling this to a month would get us 93.96 TB per month. In our case, since the only changes to the lobbies happen when a user connects or disconnects, most of that data was not necessary and can be saved to reduce bandwidth usage. Since the cost of using the Lobby service depends on bandwidth usage, this would also save money on an actual game.
-* 
+* Simplified reconnection flow by offloading responsibility to ConnectionMethod (#804). Now the ClientReconnectingState uses the ConnectionMethod it is configured with to handle setting up reconnection (i.e. reconnecting to the Lobby before trying to reconnect to the Relay server if it is using Relay and Lobby). It can now also fail early and stop retrying if the lobby doesn't exist anymore.
+
 ### Cleanup
 * Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
-* Removed now unnecessary cached NetworkBehaviour status on some components, since they now do not allocate memory (#799)
-
-### Changed
-* Simplified reconnection flow by offloading responsibility to ConnectionMethod (#804). Now the ClientReconnectingState uses the ConnectionMethod it is configured with to handle setting up reconnection (i.e. reconnecting to the Lobby before trying to reconnect to the Relay server if it is using Relay and Lobby). It can now also fail early and stop retrying if the lobby doesn't exist anymore.
+* Removed now unnecessary cached NetworkBehaviour status on some components, since they now do not allocate memory (#799) 
+* Certain structs converted to implement interface INetworkSerializeByMemcpy instead of INetworkSerializable (#822) INetworkSerializeByMemcpy optimizes for performance at the cost of bandwidth usage and flexibility, however it will only work with structs containing value types. For more details see the official [doc](https://docs-multiplayer.unity3d.com/netcode/current/advanced-topics/serialization/inetworkserializebymemcpy/index.html).
 
 ### Fixed
 * EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
