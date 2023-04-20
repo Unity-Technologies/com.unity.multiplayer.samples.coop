@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Pool;
 
 namespace Unity.BossRoom.Infrastructure
 {
@@ -15,28 +16,28 @@ namespace Unity.BossRoom.Infrastructure
     /// </summary>
     public class NetworkObjectPool : NetworkBehaviour
     {
-        private static NetworkObjectPool _instance;
+        static NetworkObjectPool s_Instance;
 
-        public static NetworkObjectPool Singleton { get { return _instance; } }
+        public static NetworkObjectPool Singleton { get { return s_Instance; } }
 
         [SerializeField]
         List<PoolConfigObject> PooledPrefabsList;
 
-        HashSet<GameObject> prefabs = new HashSet<GameObject>();
+        HashSet<GameObject> m_Prefabs = new HashSet<GameObject>();
 
-        Dictionary<GameObject, Queue<NetworkObject>> pooledObjects = new Dictionary<GameObject, Queue<NetworkObject>>();
+        Dictionary<GameObject, ObjectPool<NetworkObject>> m_PooledObjects = new Dictionary<GameObject, ObjectPool<NetworkObject>>();
 
-        private bool m_HasInitialized = false;
+        bool m_HasInitialized = false;
 
         public void Awake()
         {
-            if (_instance != null && _instance != this)
+            if (s_Instance != null && s_Instance != this)
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
             else
             {
-                _instance = this;
+                s_Instance = this;
             }
         }
 
@@ -91,7 +92,7 @@ namespace Unity.BossRoom.Infrastructure
         {
             var go = networkObject.gameObject;
             go.SetActive(false);
-            pooledObjects[prefab].Enqueue(networkObject);
+            m_PooledObjects[prefab].Release(networkObject);
         }
 
         /// <summary>
@@ -104,7 +105,7 @@ namespace Unity.BossRoom.Infrastructure
             var networkObject = prefab.GetComponent<NetworkObject>();
 
             Assert.IsNotNull(networkObject, $"{nameof(prefab)} must have {nameof(networkObject)} component.");
-            Assert.IsFalse(prefabs.Contains(prefab), $"Prefab {prefab.name} is already registered in the pool.");
+            Assert.IsFalse(m_Prefabs.Contains(prefab), $"Prefab {prefab.name} is already registered in the pool.");
 
             RegisterPrefabInternal(prefab, prewarmCount);
         }
@@ -114,22 +115,17 @@ namespace Unity.BossRoom.Infrastructure
         /// </summary>
         private void RegisterPrefabInternal(GameObject prefab, int prewarmCount)
         {
-            prefabs.Add(prefab);
+            m_Prefabs.Add(prefab);
 
-            var prefabQueue = new Queue<NetworkObject>();
-            pooledObjects[prefab] = prefabQueue;
-            for (int i = 0; i < prewarmCount; i++)
-            {
-                var go = CreateInstance(prefab);
-                ReturnNetworkObject(go.GetComponent<NetworkObject>(), prefab);
-            }
+            var prefabPool = new ObjectPool<NetworkObject>((() => CreateInstance(prefab).GetComponent<NetworkObject>()), defaultCapacity: prewarmCount);
+            m_PooledObjects[prefab] = prefabPool;
 
             // Register Netcode Spawn handlers
             NetworkManager.Singleton.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private GameObject CreateInstance(GameObject prefab)
+        GameObject CreateInstance(GameObject prefab)
         {
             return Instantiate(prefab);
         }
@@ -141,19 +137,9 @@ namespace Unity.BossRoom.Infrastructure
         /// <param name="position"></param>
         /// <param name="rotation"></param>
         /// <returns></returns>
-        private NetworkObject GetNetworkObjectInternal(GameObject prefab, Vector3 position, Quaternion rotation)
+        NetworkObject GetNetworkObjectInternal(GameObject prefab, Vector3 position, Quaternion rotation)
         {
-            var queue = pooledObjects[prefab];
-
-            NetworkObject networkObject;
-            if (queue.Count > 0)
-            {
-                networkObject = queue.Dequeue();
-            }
-            else
-            {
-                networkObject = CreateInstance(prefab).GetComponent<NetworkObject>();
-            }
+            var networkObject = m_PooledObjects[prefab].Get();
 
             // Here we must reverse the logic in ReturnNetworkObject.
             var go = networkObject.gameObject;
@@ -183,12 +169,12 @@ namespace Unity.BossRoom.Infrastructure
         /// </summary>
         public void ClearPool()
         {
-            foreach (var prefab in prefabs)
+            foreach (var prefab in m_Prefabs)
             {
                 // Unregister Netcode Spawn handlers
                 NetworkManager.Singleton.PrefabHandler.RemoveHandler(prefab);
             }
-            pooledObjects.Clear();
+            m_PooledObjects.Clear();
         }
     }
 
