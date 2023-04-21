@@ -103,14 +103,12 @@ namespace Unity.BossRoom.Infrastructure
 
             void ActionOnGet(NetworkObject networkObject)
             {
-                var go = networkObject.gameObject;
-                go.SetActive(true);
+                networkObject.gameObject.SetActive(true);
             }
 
             void ActionOnRelease(NetworkObject networkObject)
             {
-                var go = networkObject.gameObject;
-                go.SetActive(false);
+                networkObject.gameObject.SetActive(false);
             }
 
             void ActionOnDestroy(NetworkObject networkObject)
@@ -149,8 +147,9 @@ namespace Unity.BossRoom.Infrastructure
         {
             var networkObject = m_PooledObjects[prefab].Get();
 
-            networkObject.transform.position = position;
-            networkObject.transform.rotation = rotation;
+            var noTransform = networkObject.transform;
+            noTransform.position = position;
+            noTransform.rotation = rotation;
 
             return networkObject;
         }
@@ -176,8 +175,7 @@ namespace Unity.BossRoom.Infrastructure
 
         NetworkObject INetworkPrefabInstanceHandler.Instantiate(ulong ownerClientId, Vector3 position, Quaternion rotation)
         {
-            var netObject = m_Pool.GetNetworkObject(m_Prefab, position, rotation);
-            return netObject;
+            return m_Pool.GetNetworkObject(m_Prefab, position, rotation);
         }
 
         void INetworkPrefabInstanceHandler.Destroy(NetworkObject networkObject)
