@@ -64,16 +64,6 @@ namespace Unity.BossRoom.Infrastructure
         /// Gets an instance of the given prefab from the pool. The prefab must be registered to the pool.
         /// </summary>
         /// <param name="prefab"></param>
-        /// <returns></returns>
-        public NetworkObject GetNetworkObject(GameObject prefab)
-        {
-            return GetNetworkObjectInternal(prefab, Vector3.zero, Quaternion.identity);
-        }
-
-        /// <summary>
-        /// Gets an instance of the given prefab from the pool. The prefab must be registered to the pool.
-        /// </summary>
-        /// <param name="prefab"></param>
         /// <param name="position">The position to spawn the object at.</param>
         /// <param name="rotation">The rotation to spawn the object with.</param>
         /// <returns></returns>
@@ -91,28 +81,13 @@ namespace Unity.BossRoom.Infrastructure
         }
 
         /// <summary>
-        /// Adds a prefab to the list of spawnable prefabs.
-        /// </summary>
-        /// <param name="prefab">The prefab to add.</param>
-        /// <param name="prewarmCount"></param>
-        public void AddPrefab(GameObject prefab, int prewarmCount = 0)
-        {
-            var networkObject = prefab.GetComponent<NetworkObject>();
-
-            Assert.IsNotNull(networkObject, $"{nameof(prefab)} must have {nameof(networkObject)} component.");
-            Assert.IsFalse(m_Prefabs.Contains(prefab), $"Prefab {prefab.name} is already registered in the pool.");
-
-            RegisterPrefabInternal(prefab, prewarmCount);
-        }
-
-        /// <summary>
         /// Builds up the cache for a prefab.
         /// </summary>
         void RegisterPrefabInternal(GameObject prefab, int prewarmCount)
         {
             NetworkObject CreateFunc()
             {
-                return CreateInstance(prefab).GetComponent<NetworkObject>();
+                return Instantiate(prefab).GetComponent<NetworkObject>();
             }
 
             void ActionOnGet(NetworkObject networkObject)
@@ -150,12 +125,6 @@ namespace Unity.BossRoom.Infrastructure
 
             // Register Netcode Spawn handlers
             NetworkManager.Singleton.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        GameObject CreateInstance(GameObject prefab)
-        {
-            return Instantiate(prefab);
         }
 
         /// <summary>
