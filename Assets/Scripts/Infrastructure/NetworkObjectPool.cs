@@ -74,6 +74,12 @@ namespace Unity.BossRoom.Infrastructure
         /// <summary>
         /// Gets an instance of the given prefab from the pool. The prefab must be registered to the pool.
         /// </summary>
+        /// <remarks>
+        /// To spawn a NetworkObject from one of the pools, this must be called on the server, then the instance
+        /// returned from it must be spawned on the server. This method will then also be called on the client by the
+        /// PooledPrefabInstanceHandler when the client receives a spawn message for a prefab that has been registered
+        /// here.
+        /// </remarks>
         /// <param name="prefab"></param>
         /// <param name="position">The position to spawn the object at.</param>
         /// <param name="rotation">The rotation to spawn the object with.</param>
