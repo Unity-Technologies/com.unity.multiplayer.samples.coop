@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -40,12 +39,24 @@ namespace Unity.BossRoom.Infrastructure
 
         public override void OnNetworkSpawn()
         {
-            InitializePool();
+            // Registers all objects in PooledPrefabsList to the cache.
+            foreach (var configObject in PooledPrefabsList)
+            {
+                RegisterPrefabInternal(configObject.Prefab, configObject.PrewarmCount);
+            }
         }
 
         public override void OnNetworkDespawn()
         {
-            ClearPool();
+            // Unregisters all objects in PooledPrefabsList from the cache.
+            foreach (var prefab in m_Prefabs)
+            {
+                // Unregister Netcode Spawn handlers
+                NetworkManager.Singleton.PrefabHandler.RemoveHandler(prefab);
+                m_PooledObjects[prefab].Clear();
+            }
+            m_PooledObjects.Clear();
+            m_Prefabs.Clear();
         }
 
         public void OnValidate()
@@ -110,7 +121,7 @@ namespace Unity.BossRoom.Infrastructure
             m_Prefabs.Add(prefab);
 
             // Create the pool
-            m_PooledObjects[prefab] = new ObjectPool<NetworkObject>((CreateFunc), ActionOnGet, ActionOnRelease, ActionOnDestroy, defaultCapacity: prewarmCount);
+            m_PooledObjects[prefab] = new ObjectPool<NetworkObject>(CreateFunc, ActionOnGet, ActionOnRelease, ActionOnDestroy, defaultCapacity: prewarmCount);
 
             // Populate the pool
             var prewarmNetworkObjects = new List<NetworkObject>();
@@ -142,32 +153,6 @@ namespace Unity.BossRoom.Infrastructure
             networkObject.transform.rotation = rotation;
 
             return networkObject;
-        }
-
-        /// <summary>
-        /// Registers all objects in <see cref="PooledPrefabsList"/> to the cache.
-        /// </summary>
-        void InitializePool()
-        {
-            foreach (var configObject in PooledPrefabsList)
-            {
-                RegisterPrefabInternal(configObject.Prefab, configObject.PrewarmCount);
-            }
-        }
-
-        /// <summary>
-        /// Unregisters all objects in <see cref="PooledPrefabsList"/> from the cache.
-        /// </summary>
-        void ClearPool()
-        {
-            foreach (var prefab in m_Prefabs)
-            {
-                // Unregister Netcode Spawn handlers
-                NetworkManager.Singleton.PrefabHandler.RemoveHandler(prefab);
-                m_PooledObjects[prefab].Clear();
-            }
-            m_PooledObjects.Clear();
-            m_Prefabs.Clear();
         }
     }
 
