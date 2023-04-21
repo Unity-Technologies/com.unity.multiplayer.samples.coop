@@ -23,6 +23,8 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         public static SceneLoaderWrapper Instance { get; protected set; }
 
+        bool m_IsInitialized;
+
         public virtual void Awake()
         {
             if (Instance != null && Instance != this)
@@ -39,33 +41,40 @@ namespace Unity.Multiplayer.Samples.Utilities
         public virtual void Start()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
+            NetworkManager.OnServerStarted += OnNetworkingSessionStarted;
+            NetworkManager.OnClientStarted += OnNetworkingSessionStarted;
         }
+
+
 
         public override void OnDestroy()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            NetworkManager.OnServerStarted -= OnNetworkingSessionStarted;
+            NetworkManager.OnClientStarted -= OnNetworkingSessionStarted;
             base.OnDestroy();
         }
 
         public override void OnNetworkDespawn()
         {
-            if (NetworkManager != null && NetworkManager.SceneManager != null)
+            if (IsNetworkSceneManagementEnabled)
             {
                 NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
         }
 
-        /// <summary>
-        /// Initializes the callback on scene events. This needs to be called right after initializing NetworkManager
-        /// (after StartHost, StartClient or StartServer)
-        /// </summary>
-        public virtual void AddOnSceneEventCallback()
+        void OnNetworkingSessionStarted()
         {
-            if (IsNetworkSceneManagementEnabled)
+            if (IsNetworkSceneManagementEnabled && !m_IsInitialized)
             {
+                m_IsInitialized = true; // to prevent hosts from initializing twice, since OnServerStarted and OnClientStarted both get called on hosts
                 NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
-                NetworkManager.SceneManager.SetClientSynchronizationMode(LoadSceneMode.Additive);
                 NetworkManager.SceneManager.PostSynchronizationSceneUnloading = true;
+                if (IsServer)
+                {
+                    // no need to set this up on clients, since this will be synchronized when connecting
+                    NetworkManager.SceneManager.SetClientSynchronizationMode(LoadSceneMode.Additive);
+                }
             }
         }
 

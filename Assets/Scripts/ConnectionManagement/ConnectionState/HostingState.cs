@@ -26,8 +26,6 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void Enter()
         {
-            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-
             //The "BossRoom" server always advances to CharSelect immediately on start. Different games
             //may do this differently.
             SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);

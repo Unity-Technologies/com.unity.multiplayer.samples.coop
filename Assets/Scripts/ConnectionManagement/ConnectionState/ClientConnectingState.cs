@@ -68,8 +68,6 @@ namespace Unity.BossRoom.ConnectionManagement
                 {
                     throw new Exception("NetworkManager StartClient failed");
                 }
-
-                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
             }
             catch (Exception e)
             {
