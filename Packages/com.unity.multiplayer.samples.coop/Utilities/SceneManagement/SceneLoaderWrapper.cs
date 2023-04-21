@@ -150,19 +150,6 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        void UnloadAdditiveScenes()
-        {
-            var activeScene = SceneManager.GetActiveScene();
-            for (var i = 0; i < SceneManager.sceneCount; i++)
-            {
-                var scene = SceneManager.GetSceneAt(i);
-                if (scene.isLoaded && scene != activeScene)
-                {
-                    SceneManager.UnloadSceneAsync(scene);
-                }
-            }
-        }
-
         [ClientRpc]
         void StopLoadingScreenClientRpc(ClientRpcParams clientRpcParams = default)
         {
