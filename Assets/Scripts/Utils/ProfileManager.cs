@@ -80,8 +80,9 @@ namespace Unity.BossRoom.Utils
             var hashedBytes = new MD5CryptoServiceProvider()
                 .ComputeHash(Encoding.UTF8.GetBytes(Application.dataPath));
             Array.Resize(ref hashedBytes, 16);
-            // Authentication service only allows profile names of maximum 30 characters
-            return new Guid(hashedBytes).ToString("N").Substring(2, 30);
+            // Authentication service only allows profile names of maximum 30 characters. We're generating a GUID based
+            // on the project's path. Truncating the first 30 characters of said GUID string suffices for uniqueness.
+            return new Guid(hashedBytes).ToString("N")[..30];
 #else
             return "";
 #endif
