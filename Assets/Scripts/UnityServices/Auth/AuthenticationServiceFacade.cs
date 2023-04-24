@@ -10,7 +10,8 @@ namespace Unity.BossRoom.UnityServices.Auth
 {
     public class AuthenticationServiceFacade
     {
-        [Inject] IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
+        [Inject]
+        IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
         public InitializationOptions GenerateAuthenticationOptions(string profile)
         {
@@ -31,7 +32,7 @@ namespace Unity.BossRoom.UnityServices.Auth
                 throw;
             }
         }
-        
+
         public async Task InitializeAndSignInAsync(InitializationOptions initializationOptions)
         {
             try
@@ -57,6 +58,7 @@ namespace Unity.BossRoom.UnityServices.Auth
             {
                 AuthenticationService.Instance.SignOut();
             }
+
             AuthenticationService.Instance.SwitchProfile(profile);
 
             try
@@ -87,6 +89,7 @@ namespace Unity.BossRoom.UnityServices.Auth
             {
                 var reason = $"{e.Message} ({e.InnerException?.Message})";
                 m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
+
                 //not rethrowing for authentication exceptions - any failure to authenticate is considered "handled failure"
                 return false;
             }
@@ -98,6 +101,5 @@ namespace Unity.BossRoom.UnityServices.Auth
                 throw;
             }
         }
-
     }
 }
