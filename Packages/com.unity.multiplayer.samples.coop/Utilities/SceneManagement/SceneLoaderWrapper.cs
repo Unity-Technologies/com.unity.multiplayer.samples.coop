@@ -43,6 +43,8 @@ namespace Unity.Multiplayer.Samples.Utilities
             SceneManager.sceneLoaded += OnSceneLoaded;
             NetworkManager.OnServerStarted += OnNetworkingSessionStarted;
             NetworkManager.OnClientStarted += OnNetworkingSessionStarted;
+            NetworkManager.OnServerStopped += OnNetworkingSessionEnded;
+            NetworkManager.OnClientStopped += OnNetworkingSessionEnded;
         }
 
 
@@ -50,8 +52,13 @@ namespace Unity.Multiplayer.Samples.Utilities
         public override void OnDestroy()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            NetworkManager.OnServerStarted -= OnNetworkingSessionStarted;
-            NetworkManager.OnClientStarted -= OnNetworkingSessionStarted;
+            if (NetworkManager)
+            {
+                NetworkManager.OnServerStarted -= OnNetworkingSessionStarted;
+                NetworkManager.OnClientStarted -= OnNetworkingSessionStarted;
+                NetworkManager.OnServerStopped -= OnNetworkingSessionEnded;
+                NetworkManager.OnClientStopped -= OnNetworkingSessionEnded;
+            }
             base.OnDestroy();
         }
 
@@ -76,6 +83,11 @@ namespace Unity.Multiplayer.Samples.Utilities
                     NetworkManager.SceneManager.SetClientSynchronizationMode(LoadSceneMode.Additive);
                 }
             }
+        }
+
+        void OnNetworkingSessionEnded(bool _)
+        {
+            m_IsInitialized = false;
         }
 
         /// <summary>
