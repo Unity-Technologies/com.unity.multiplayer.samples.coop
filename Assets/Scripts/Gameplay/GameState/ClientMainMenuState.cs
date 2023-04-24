@@ -5,7 +5,6 @@ using Unity.BossRoom.UnityServices.Auth;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.BossRoom.Utils;
 using Unity.Services.Authentication;
-using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -22,20 +21,31 @@ namespace Unity.BossRoom.Gameplay.GameState
     /// </remarks>
     public class ClientMainMenuState : GameStateBehaviour
     {
-        public override GameState ActiveState { get { return GameState.MainMenu; } }
+        public override GameState ActiveState => GameState.MainMenu;
 
-        [SerializeField] NameGenerationData m_NameGenerationData;
-        [SerializeField] LobbyUIMediator m_LobbyUIMediator;
-        [SerializeField] IPUIMediator m_IPUIMediator;
-        [SerializeField] Button m_LobbyButton;
-        [SerializeField] GameObject m_SignInSpinner;
-        [SerializeField] UIProfileSelector m_UIProfileSelector;
-        [SerializeField] UITooltipDetector m_UGSSetupTooltipDetector;
+        [SerializeField]
+        NameGenerationData m_NameGenerationData;
+        [SerializeField]
+        LobbyUIMediator m_LobbyUIMediator;
+        [SerializeField]
+        IPUIMediator m_IPUIMediator;
+        [SerializeField]
+        Button m_LobbyButton;
+        [SerializeField]
+        GameObject m_SignInSpinner;
+        [SerializeField]
+        UIProfileSelector m_UIProfileSelector;
+        [SerializeField]
+        UITooltipDetector m_UGSSetupTooltipDetector;
 
-        [Inject] AuthenticationServiceFacade m_AuthServiceFacade;
-        [Inject] LocalLobbyUser m_LocalUser;
-        [Inject] LocalLobby m_LocalLobby;
-        [Inject] ProfileManager m_ProfileManager;
+        [Inject]
+        AuthenticationServiceFacade m_AuthServiceFacade;
+        [Inject]
+        LocalLobbyUser m_LocalUser;
+        [Inject]
+        LocalLobby m_LocalLobby;
+        [Inject]
+        ProfileManager m_ProfileManager;
 
         protected override void Awake()
         {
@@ -61,13 +71,12 @@ namespace Unity.BossRoom.Gameplay.GameState
             builder.RegisterComponent(m_IPUIMediator);
         }
 
-
         private async void TrySignIn()
         {
             try
             {
-                var unityAuthenticationInitOptions = 
-                                    m_AuthServiceFacade.GenerateAuthenticationOptions(m_ProfileManager.Profile);
+                var unityAuthenticationInitOptions =
+                    m_AuthServiceFacade.GenerateAuthenticationOptions(m_ProfileManager.Profile);
 
                 await m_AuthServiceFacade.InitializeAndSignInAsync(unityAuthenticationInitOptions);
                 OnAuthSignIn();
@@ -88,6 +97,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
             m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
+
             // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
             m_LocalLobby.AddUser(m_LocalUser);
         }
@@ -99,6 +109,7 @@ namespace Unity.BossRoom.Gameplay.GameState
                 m_LobbyButton.interactable = false;
                 m_UGSSetupTooltipDetector.enabled = true;
             }
+
             if (m_SignInSpinner)
             {
                 m_SignInSpinner.SetActive(false);
