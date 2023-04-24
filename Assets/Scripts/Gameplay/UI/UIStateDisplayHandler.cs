@@ -57,6 +57,23 @@ namespace Unity.BossRoom.Gameplay.UI
 
         Camera m_Camera;
 
+        Camera Camera
+        {
+            get
+            {
+                if (m_Camera == null)
+                {
+                    var cameraGameObject = GameObject.FindWithTag("MainCamera");
+                    if (cameraGameObject)
+                    {
+                        m_Camera = cameraGameObject.GetComponent<Camera>();
+                    }
+                }
+
+                return m_Camera;
+            }
+        }
+
         Transform m_CanvasTransform;
 
         // as soon as any HP goes to 0, we wait this long before removing health bar UI object
@@ -87,13 +104,6 @@ namespace Unity.BossRoom.Gameplay.UI
                 enabled = false;
                 return;
             }
-
-            var cameraGameObject = GameObject.FindWithTag("MainCamera");
-            if (cameraGameObject)
-            {
-                m_Camera = cameraGameObject.GetComponent<Camera>();
-            }
-            Assert.IsNotNull(m_Camera);
 
             var canvasGameObject = GameObject.FindWithTag("GameCanvas");
             if (canvasGameObject)
@@ -230,7 +240,7 @@ namespace Unity.BossRoom.Gameplay.UI
                     m_TransformToTrack.position.y + m_VerticalWorldOffset,
                     m_TransformToTrack.position.z);
 
-                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(m_WorldPos) + m_VerticalOffset;
+                m_UIStateRectTransform.position = Camera.WorldToScreenPoint(m_WorldPos) + m_VerticalOffset;
             }
         }
 
