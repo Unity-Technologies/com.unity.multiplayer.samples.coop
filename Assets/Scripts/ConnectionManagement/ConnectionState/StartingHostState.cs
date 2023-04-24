@@ -58,7 +58,7 @@ namespace Unity.BossRoom.ConnectionManagement
             }
         }
 
-        public override void OnServerShutdown()
+        public override void OnServerStopped()
         {
             StartHostFailed();
         }

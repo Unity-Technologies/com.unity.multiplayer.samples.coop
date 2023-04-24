@@ -79,7 +79,7 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
-        public override void OnServerShutdown()
+        public override void OnServerStopped()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);

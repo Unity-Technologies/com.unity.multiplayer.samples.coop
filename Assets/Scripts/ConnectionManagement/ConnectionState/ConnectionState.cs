@@ -40,6 +40,6 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public virtual void OnTransportFailure() { }
 
-        public virtual void OnServerShutdown() { }
+        public virtual void OnServerStopped() { }
     }
 }
