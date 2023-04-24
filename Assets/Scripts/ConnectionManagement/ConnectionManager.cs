@@ -98,6 +98,7 @@ namespace Unity.BossRoom.ConnectionManagement
             NetworkManager.OnServerStarted += OnServerStarted;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
             NetworkManager.OnTransportFailure += OnTransportFailure;
+            NetworkManager.OnServerStopped += OnServerShutdown;
         }
 
         void OnDestroy()
@@ -107,6 +108,7 @@ namespace Unity.BossRoom.ConnectionManagement
             NetworkManager.OnServerStarted -= OnServerStarted;
             NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
             NetworkManager.OnTransportFailure -= OnTransportFailure;
+            NetworkManager.OnServerStopped -= OnServerShutdown;
         }
 
         internal void ChangeState(ConnectionState nextState)
@@ -144,6 +146,11 @@ namespace Unity.BossRoom.ConnectionManagement
         void OnTransportFailure()
         {
             m_CurrentState.OnTransportFailure();
+        }
+
+        void OnServerShutdown(bool _) // we don't need this parameter as the ConnectionState already carries the relevant information
+        {
+            m_CurrentState.OnServerShutdown();
         }
 
         public void StartClientLobby(string playerName)
