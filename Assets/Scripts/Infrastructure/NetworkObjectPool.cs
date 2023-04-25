@@ -86,7 +86,13 @@ namespace Unity.BossRoom.Infrastructure
         /// <returns></returns>
         public NetworkObject GetNetworkObject(GameObject prefab, Vector3 position, Quaternion rotation)
         {
-            return GetNetworkObjectInternal(prefab, position, rotation);
+            var networkObject = m_PooledObjects[prefab].Get();
+
+            var noTransform = networkObject.transform;
+            noTransform.position = position;
+            noTransform.rotation = rotation;
+
+            return networkObject;
         }
 
         /// <summary>
@@ -140,24 +146,6 @@ namespace Unity.BossRoom.Infrastructure
 
             // Register Netcode Spawn handlers
             NetworkManager.Singleton.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
-        }
-
-        /// <summary>
-        /// This matches the signature of <see cref="NetworkSpawnManager.SpawnHandlerDelegate"/>
-        /// </summary>
-        /// <param name="prefab"></param>
-        /// <param name="position"></param>
-        /// <param name="rotation"></param>
-        /// <returns></returns>
-        NetworkObject GetNetworkObjectInternal(GameObject prefab, Vector3 position, Quaternion rotation)
-        {
-            var networkObject = m_PooledObjects[prefab].Get();
-
-            var noTransform = networkObject.transform;
-            noTransform.position = position;
-            noTransform.rotation = rotation;
-
-            return networkObject;
         }
     }
 
