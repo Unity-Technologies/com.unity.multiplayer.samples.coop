@@ -13,6 +13,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Simplified reconnection flow by offloading responsibility to ConnectionMethod (#804). Now the ClientReconnectingState uses the ConnectionMethod it is configured with to handle setting up reconnection (i.e. reconnecting to the Lobby before trying to reconnect to the Relay server if it is using Relay and Lobby). It can now also fail early and stop retrying if the lobby doesn't exist anymore.
 * Replaced our custom pool implementation using queues with ObjectPool (#824)(#827)
 * Upgraded Boss Room to NGO 1.3.1 (#828) NetworkPrefabs inside NetworkManager's NetworkPrefabs list have been converted to NetworkPrefabsList ScriptableObject. 
+* Upgraded Boss Room to NGO 1.4.0 (#829)
 
 ### Cleanup
 * Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
