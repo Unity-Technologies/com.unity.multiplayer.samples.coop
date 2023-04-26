@@ -411,7 +411,6 @@ namespace Unity.BossRoom.Tests.Runtime
 
             var maxNbReconnectionAttempts = 0;
 
-            // Waiting for clients to fail to automatically reconnect
             for (var i = 0; i < NumberOfClients; i++)
             {
                 var nbReconnectionAttempts = m_ClientConnectionManagers[i].NbReconnectAttempts;
@@ -423,6 +422,7 @@ namespace Unity.BossRoom.Tests.Runtime
                 }
             }
 
+            // Waiting for clients to fail to automatically reconnect. We wait once for each reconnection attempt.
             for (var i = 0; i < maxNbReconnectionAttempts; i++)
             {
                 yield return WaitForClientsConnectedOrTimeOut();
