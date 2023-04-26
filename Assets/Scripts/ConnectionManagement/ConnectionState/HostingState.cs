@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
@@ -26,8 +25,6 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void Enter()
         {
-            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-
             //The "BossRoom" server always advances to CharSelect immediately on start. Different games
             //may do this differently.
             SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
