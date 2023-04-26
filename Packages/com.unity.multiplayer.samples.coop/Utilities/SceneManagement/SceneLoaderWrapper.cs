@@ -21,6 +21,8 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         bool IsNetworkSceneManagementEnabled => NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement;
 
+        bool m_IsInitialized;
+
         public static SceneLoaderWrapper Instance { get; protected set; }
 
         public virtual void Awake()
@@ -39,32 +41,50 @@ namespace Unity.Multiplayer.Samples.Utilities
         public virtual void Start()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
+            NetworkManager.OnServerStarted += OnNetworkingSessionStarted;
+            NetworkManager.OnClientStarted += OnNetworkingSessionStarted;
+            NetworkManager.OnServerStopped += OnNetworkingSessionEnded;
+            NetworkManager.OnClientStopped += OnNetworkingSessionEnded;
+        }
+
+        void OnNetworkingSessionStarted()
+        {
+            // This prevents this to be called twice on a host, which receives both OnServerStarted and OnClientStarted callbacks
+            if (!m_IsInitialized)
+            {
+                if (IsNetworkSceneManagementEnabled)
+                {
+                    NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
+                }
+
+                m_IsInitialized = true;
+            }
+        }
+
+        void OnNetworkingSessionEnded(bool unused)
+        {
+            if (m_IsInitialized)
+            {
+                if (IsNetworkSceneManagementEnabled)
+                {
+                    NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+                }
+
+                m_IsInitialized = false;
+            }
         }
 
         public override void OnDestroy()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            if (NetworkManager != null)
+            {
+                NetworkManager.OnServerStarted -= OnNetworkingSessionStarted;
+                NetworkManager.OnClientStarted -= OnNetworkingSessionStarted;
+                NetworkManager.OnServerStopped -= OnNetworkingSessionEnded;
+                NetworkManager.OnClientStopped -= OnNetworkingSessionEnded;
+            }
             base.OnDestroy();
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            if (NetworkManager != null && NetworkManager.SceneManager != null)
-            {
-                NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
-            }
-        }
-
-        /// <summary>
-        /// Initializes the callback on scene events. This needs to be called right after initializing NetworkManager
-        /// (after StartHost, StartClient or StartServer)
-        /// </summary>
-        public virtual void AddOnSceneEventCallback()
-        {
-            if (IsNetworkSceneManagementEnabled)
-            {
-                NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
-            }
         }
 
         /// <summary>
