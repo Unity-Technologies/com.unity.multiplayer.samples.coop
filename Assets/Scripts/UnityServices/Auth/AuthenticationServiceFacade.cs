@@ -10,7 +10,28 @@ namespace Unity.BossRoom.UnityServices.Auth
 {
     public class AuthenticationServiceFacade
     {
-        [Inject] IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
+        [Inject]
+        IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
+
+        public InitializationOptions GenerateAuthenticationOptions(string profile)
+        {
+            try
+            {
+                var unityAuthenticationInitOptions = new InitializationOptions();
+                if (profile.Length > 0)
+                {
+                    unityAuthenticationInitOptions.SetProfile(profile);
+                }
+
+                return unityAuthenticationInitOptions;
+            }
+            catch (Exception e)
+            {
+                var reason = $"{e.Message} ({e.InnerException?.Message})";
+                m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
+                throw;
+            }
+        }
 
         public async Task InitializeAndSignInAsync(InitializationOptions initializationOptions)
         {
@@ -37,6 +58,7 @@ namespace Unity.BossRoom.UnityServices.Auth
             {
                 AuthenticationService.Instance.SignOut();
             }
+
             AuthenticationService.Instance.SwitchProfile(profile);
 
             try
@@ -67,6 +89,7 @@ namespace Unity.BossRoom.UnityServices.Auth
             {
                 var reason = $"{e.Message} ({e.InnerException?.Message})";
                 m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
+
                 //not rethrowing for authentication exceptions - any failure to authenticate is considered "handled failure"
                 return false;
             }
@@ -78,6 +101,5 @@ namespace Unity.BossRoom.UnityServices.Auth
                 throw;
             }
         }
-
     }
 }
