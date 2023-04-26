@@ -25,6 +25,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * ClientConnectedState now inherits from OnlineState instead of the base ConnectionState (#801)
 * UpdateRunner now sends the right value for deltaTime when updating its subscribers (#805)
 * Inputs are better sanitized when entering IP address and port (#821). Now all invalid characters are prevented, and UnityTransport's NetworkEndpoint.TryParse is used to verify the validity of the IP address and port that are entered before making the join/host button interactable.
+* Decoupled SceneLoaderWrapper and ConnectionStates (#830). The OnServerStarted and OnClientStarted callbacks available in NGO 1.4.0 allows us to remove the need for an external method to initialize the SceneLoaderWrapper after starting a NetworkingSession.
 
 ## [2.0.4] - 2022-12-13
 ### Changed
