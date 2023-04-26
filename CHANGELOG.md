@@ -14,6 +14,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Replaced our custom pool implementation using queues with ObjectPool (#824)(#827)
 * Upgraded Boss Room to NGO 1.3.1 (#828) NetworkPrefabs inside NetworkManager's NetworkPrefabs list have been converted to NetworkPrefabsList ScriptableObject. 
 * Upgraded Boss Room to NGO 1.4.0 (#829)
+* Profile names generated are now only 30 characters or under to fit Authentication Service requirements (#831)
 
 ### Cleanup
 * Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
