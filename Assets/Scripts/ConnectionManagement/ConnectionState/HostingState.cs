@@ -47,11 +47,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
-            {
-                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-            }
-            else
+            if (clientId != m_ConnectionManager.NetworkManager.LocalClientId)
             {
                 var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
                 if (playerId != null)
@@ -77,6 +73,12 @@ namespace Unity.BossRoom.ConnectionManagement
                     m_ConnectionManager.NetworkManager.DisconnectClient(id, reason);
                 }
             }
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
+        }
+
+        public override void OnServerStopped()
+        {
+            m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
