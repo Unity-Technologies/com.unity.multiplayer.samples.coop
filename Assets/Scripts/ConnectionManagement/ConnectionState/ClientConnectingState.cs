@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 
 namespace Unity.BossRoom.ConnectionManagement
@@ -68,8 +67,6 @@ namespace Unity.BossRoom.ConnectionManagement
                 {
                     throw new Exception("NetworkManager StartClient failed");
                 }
-
-                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
             }
             catch (Exception e)
             {

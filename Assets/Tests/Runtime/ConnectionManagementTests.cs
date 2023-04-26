@@ -55,8 +55,6 @@ namespace Unity.BossRoom.Tests.Runtime
 
             public override void Start() { }
 
-            public override void AddOnSceneEventCallback() { }
-
             public override void LoadScene(string sceneName, bool useNetworkSceneManager, LoadSceneMode loadSceneMode = LoadSceneMode.Single) { }
         }
 
