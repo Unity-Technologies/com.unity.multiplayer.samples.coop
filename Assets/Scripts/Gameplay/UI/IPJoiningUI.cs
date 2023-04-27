@@ -14,6 +14,9 @@ namespace Unity.BossRoom.Gameplay.UI
 
         [SerializeField] InputField m_PortInputField;
 
+        [SerializeField]
+        Button m_JoinButton;
+
         [Inject] IPUIMediator m_IPUIMediator;
 
         void Awake()
@@ -44,7 +47,8 @@ namespace Unity.BossRoom.Gameplay.UI
         /// </summary>
         public void SanitizeIPInputText()
         {
-            m_IPInputField.text = IPUIMediator.Sanitize(m_IPInputField.text);
+            m_IPInputField.text = IPUIMediator.SanitizeIP(m_IPInputField.text);
+            m_JoinButton.interactable = IPUIMediator.AreIpAddressAndPortValid(m_IPInputField.text, m_PortInputField.text);
         }
 
         /// <summary>
@@ -52,8 +56,8 @@ namespace Unity.BossRoom.Gameplay.UI
         /// </summary>
         public void SanitizePortText()
         {
-            var inputFieldText = IPUIMediator.Sanitize(m_PortInputField.text);
-            m_PortInputField.text = inputFieldText;
+            m_PortInputField.text = IPUIMediator.SanitizePort(m_PortInputField.text);
+            m_JoinButton.interactable = IPUIMediator.AreIpAddressAndPortValid(m_IPInputField.text, m_PortInputField.text);
         }
     }
 }

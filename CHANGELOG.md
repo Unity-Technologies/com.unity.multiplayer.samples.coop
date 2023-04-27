@@ -8,6 +8,33 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ## [unreleased] - yyyy-mm-dd
 
+## [2.1.0] - 2023-04-27
+
+### Added
+* Added OnServerStopped event to ConnectionManager and ConnectionState (#826). This allows for the detection of an unexpected shutdown on the server side.
+
+### Changed
+* Replaced our polling for lobby updates with a subscription to the new Websocket based LobbyEvents (#805). This saves up a significant amount of bandwidth usage to and from the service, since updates are infrequent in this game. Now clients and hosts only use up bandwidth on the Lobby service when it is needed. With polling, we used to send a GET request per client once every 2s. The responses were between ~550 bytes and 900 bytes, so if we suppose an average of 725 bytes and 100 000 concurrent users (CCU), this amounted to around 725B * 30 calls per minute * 100 000 CCU = 2.175 GB per minute. Scaling this to a month would get us 93.96 TB per month. In our case, since the only changes to the lobbies happen when a user connects or disconnects, most of that data was not necessary and can be saved to reduce bandwidth usage. Since the cost of using the Lobby service depends on bandwidth usage, this would also save money on an actual game.
+* Simplified reconnection flow by offloading responsibility to ConnectionMethod (#804). Now the ClientReconnectingState uses the ConnectionMethod it is configured with to handle setting up reconnection (i.e. reconnecting to the Lobby before trying to reconnect to the Relay server if it is using Relay and Lobby). It can now also fail early and stop retrying if the lobby doesn't exist anymore.
+* Replaced our custom pool implementation using queues with ObjectPool (#824)(#827)
+* Upgraded Boss Room to NGO 1.3.1 (#828) NetworkPrefabs inside NetworkManager's NetworkPrefabs list have been converted to NetworkPrefabsList ScriptableObject. 
+* Upgraded Boss Room to NGO 1.4.0 (#829)
+* Profile names generated are now only 30 characters or under to fit Authentication Service requirements (#831)
+
+### Cleanup
+* Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
+* Removed now unnecessary cached NetworkBehaviour status on some components, since they now do not allocate memory (#799) 
+* Certain structs converted to implement interface INetworkSerializeByMemcpy instead of INetworkSerializable (#822) INetworkSerializeByMemcpy optimizes for performance at the cost of bandwidth usage and flexibility, however it will only work with structs containing value types. For more details see the official [doc](https://docs-multiplayer.unity3d.com/netcode/current/advanced-topics/serialization/inetworkserializebymemcpy/index.html).
+
+### Fixed
+* EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
+* Elements inside the Tank's and Rogue's AnimatorTriggeredSpecialFX list have been revised to not loop AudioSource clips, ending the logging of multiple warnings to the console (#785)
+* ClientConnectedState now inherits from OnlineState instead of the base ConnectionState (#801)
+* UpdateRunner now sends the right value for deltaTime when updating its subscribers (#805)
+* Inputs are better sanitized when entering IP address and port (#821). Now all invalid characters are prevented, and UnityTransport's NetworkEndpoint.TryParse is used to verify the validity of the IP address and port that are entered before making the join/host button interactable.
+* Fixed failing connection management test (#826). This test had to be ignored previously because there was no mechanism to detect unexpected server shutdowns. With the OnServerStopped callback introduced in NGO 1.4.0, this is no longer an issue. 
+* Decoupled SceneLoaderWrapper and ConnectionStates (#830). The OnServerStarted and OnClientStarted callbacks available in NGO 1.4.0 allows us to remove the need for an external method to initialize the SceneLoaderWrapper after starting a NetworkingSession.
+
 ## [2.0.4] - 2022-12-13
 ### Changed
 * Updated Boss Room to NGO 1.2.0 (#791).

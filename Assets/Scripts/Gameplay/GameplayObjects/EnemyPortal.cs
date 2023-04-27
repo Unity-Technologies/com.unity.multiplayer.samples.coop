@@ -30,26 +30,19 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         [Tooltip("When all breakable elements are broken, wait this long before respawning them (and reactivating)")]
         float m_DormantCooldown;
 
-
-        /// <summary>
-        /// Is the item broken or not?
-        /// </summary>
-        public NetworkVariable<bool> IsBroken;
+        [SerializeField]
+        Breakable m_Breakable;
 
         public bool IsNpc { get { return true; } }
 
-        public bool IsValidTarget { get { return !IsBroken.Value; } }
+        public bool IsValidTarget { get { return !m_Breakable.IsBroken.Value; } }
 
         // cached reference to our components
+        [SerializeField]
         ServerWaveSpawner m_WaveSpawner;
 
         // currently active "wait X seconds and then restart" coroutine
         Coroutine m_CoroDormant;
-
-        private void Awake()
-        {
-            m_WaveSpawner = GetComponent<ServerWaveSpawner>();
-        }
 
         public override void OnNetworkSpawn()
         {
@@ -97,7 +90,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 }
             }
 
-            IsBroken.Value = !hasUnbrokenBreakables;
+            m_Breakable.IsBroken.Value = !hasUnbrokenBreakables;
             m_WaveSpawner.SetSpawnerEnabled(hasUnbrokenBreakables);
             if (!hasUnbrokenBreakables && m_CoroDormant == null)
             {
@@ -124,7 +117,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 }
             }
 
-            IsBroken.Value = false;
+            m_Breakable.IsBroken.Value = false;
             m_WaveSpawner.SetSpawnerEnabled(true);
             m_CoroDormant = null;
         }

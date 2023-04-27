@@ -37,7 +37,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
         public Lobby CurrentUnityLobby { get; private set; }
 
+        ILobbyEvents m_LobbyEvents;
+
         bool m_IsTracking = false;
+
+        LobbyEventConnectionState m_LobbyEventConnectionState = LobbyEventConnectionState.Unknown;
 
         public void Start()
         {
@@ -77,88 +81,29 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             if (!m_IsTracking)
             {
                 m_IsTracking = true;
-                // 2s update cadence is arbitrary and is here to demonstrate the fact that this update can be rather infrequent
-                // the actual rate limits are tracked via the RateLimitCooldown objects defined above
-                m_UpdateRunner.Subscribe(UpdateLobby, 2f);
+                SubscribeToJoinedLobbyAsync();
                 m_JoinedLobbyContentHeartbeat.BeginTracking();
             }
         }
 
-        public Task EndTracking()
+        public void EndTracking()
         {
-            var task = Task.CompletedTask;
             if (CurrentUnityLobby != null)
             {
-                CurrentUnityLobby = null;
-
-                var lobbyId = m_LocalLobby?.LobbyID;
-
-                if (!string.IsNullOrEmpty(lobbyId))
+                if (m_LocalUser.IsHost)
                 {
-                    if (m_LocalUser.IsHost)
-                    {
-                        task = DeleteLobbyAsync(lobbyId);
-                    }
-                    else
-                    {
-                        task = LeaveLobbyAsync(lobbyId);
-                    }
+                    DeleteLobbyAsync();
                 }
-
-                m_LocalUser.ResetState();
-                m_LocalLobby?.Reset(m_LocalUser);
+                else
+                {
+                    LeaveLobbyAsync();
+                }
             }
 
             if (m_IsTracking)
             {
-                m_UpdateRunner.Unsubscribe(UpdateLobby);
                 m_IsTracking = false;
-                m_HeartbeatTime = 0;
-                m_JoinedLobbyContentHeartbeat.EndTracking();
-            }
-
-            return task;
-        }
-
-        async void UpdateLobby(float unused)
-        {
-            if (!m_RateLimitQuery.CanCall)
-            {
-                return;
-            }
-
-            try
-            {
-                var lobby = await m_LobbyApiInterface.GetLobby(m_LocalLobby.LobbyID);
-
-                CurrentUnityLobby = lobby;
-                m_LocalLobby.ApplyRemoteData(lobby);
-
-                // as client, check if host is still in lobby
-                if (!m_LocalUser.IsHost)
-                {
-                    foreach (var lobbyUser in m_LocalLobby.LobbyUsers)
-                    {
-                        if (lobbyUser.Value.IsHost)
-                        {
-                            return;
-                        }
-                    }
-                    m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby", "Disconnecting.", UnityServiceErrorMessage.Service.Lobby));
-                    await EndTracking();
-                    // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
-                }
-            }
-            catch (LobbyServiceException e)
-            {
-                if (e.Reason == LobbyExceptionReason.RateLimited)
-                {
-                    m_RateLimitQuery.PutOnCooldown();
-                }
-                else if (e.Reason != LobbyExceptionReason.LobbyNotFound && !m_LocalUser.IsHost) // If Lobby is not found and if we are not the host, it has already been deleted. No need to publish the error here.
-                {
-                    PublishError(e);
-                }
+                UnsubscribeToJoinedLobbyAsync();
             }
         }
 
@@ -264,6 +209,91 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             return (false, null);
         }
 
+        void ResetLobby()
+        {
+            CurrentUnityLobby = null;
+            m_LocalUser.ResetState();
+            m_LocalLobby?.Reset(m_LocalUser);
+
+            // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
+        }
+
+        void OnLobbyChanges(ILobbyChanges changes)
+        {
+            if (changes.LobbyDeleted)
+            {
+                Debug.Log("Lobby deleted");
+                ResetLobby();
+            }
+            else
+            {
+                Debug.Log("Lobby updated");
+                changes.ApplyToLobby(CurrentUnityLobby);
+                m_LocalLobby.ApplyRemoteData(CurrentUnityLobby);
+
+                // as client, check if host is still in lobby
+                if (!m_LocalUser.IsHost)
+                {
+                    foreach (var lobbyUser in m_LocalLobby.LobbyUsers)
+                    {
+                        if (lobbyUser.Value.IsHost)
+                        {
+                            return;
+                        }
+                    }
+
+                    m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby", "Disconnecting.", UnityServiceErrorMessage.Service.Lobby));
+                    EndTracking();
+                    // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
+                }
+            }
+        }
+
+        void OnKickedFromLobby()
+        {
+            Debug.Log("Kicked from Lobby");
+            ResetLobby();
+        }
+
+        void OnLobbyEventConnectionStateChanged(LobbyEventConnectionState lobbyEventConnectionState)
+        {
+            m_LobbyEventConnectionState = lobbyEventConnectionState;
+            Debug.Log($"LobbyEventConnectionState changed to {lobbyEventConnectionState}");
+        }
+
+        async void SubscribeToJoinedLobbyAsync()
+        {
+            var lobbyEventCallbacks = new LobbyEventCallbacks();
+            lobbyEventCallbacks.LobbyChanged += OnLobbyChanges;
+            lobbyEventCallbacks.KickedFromLobby += OnKickedFromLobby;
+            lobbyEventCallbacks.LobbyEventConnectionStateChanged += OnLobbyEventConnectionStateChanged;
+            // The LobbyEventCallbacks object created here will now be managed by the Lobby SDK. The callbacks will be
+            // unsubscribed from when we call UnsubscribeAsync on the ILobbyEvents object we receive and store here.
+            m_LobbyEvents = await m_LobbyApiInterface.SubscribeToLobby(m_LocalLobby.LobbyID, lobbyEventCallbacks);
+            m_JoinedLobbyContentHeartbeat.BeginTracking();
+        }
+
+        async void UnsubscribeToJoinedLobbyAsync()
+        {
+            if (m_LobbyEvents != null && m_LobbyEventConnectionState != LobbyEventConnectionState.Unsubscribed)
+            {
+                try
+                {
+                    await m_LobbyEvents.UnsubscribeAsync();
+                }
+                catch (ObjectDisposedException e)
+                {
+                    // This exception occurs in the editor when exiting play mode without first leaving the lobby.
+                    // This is because Wire disposes of subscriptions internally when exiting play mode in the editor.
+                    Debug.Log("Subscription is already disposed of, cannot unsubscribe.");
+                    Debug.Log(e.Message);
+                }
+
+            }
+            m_HeartbeatTime = 0;
+            m_JoinedLobbyContentHeartbeat.EndTracking();
+        }
+
         /// <summary>
         /// Used for getting the list of all active lobbies, without needing full info for each.
         /// </summary>
@@ -293,11 +323,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
-        public async Task<Lobby> ReconnectToLobbyAsync(string lobbyId)
+        public async Task<Lobby> ReconnectToLobbyAsync()
         {
             try
             {
-                return await m_LobbyApiInterface.ReconnectToLobby(lobbyId);
+                return await m_LobbyApiInterface.ReconnectToLobby(m_LocalLobby.LobbyID);
             }
             catch (LobbyServiceException e)
             {
@@ -314,12 +344,13 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         /// <summary>
         /// Attempt to leave a lobby
         /// </summary>
-        public async Task LeaveLobbyAsync(string lobbyId)
+        public async void LeaveLobbyAsync()
         {
             string uasId = AuthenticationService.Instance.PlayerId;
             try
             {
-                await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
+                await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, m_LocalLobby.LobbyID);
+                ResetLobby();
             }
             catch (LobbyServiceException e)
             {
@@ -351,13 +382,14 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
-        public async Task DeleteLobbyAsync(string lobbyId)
+        public async void DeleteLobbyAsync()
         {
             if (m_LocalUser.IsHost)
             {
                 try
                 {
-                    await m_LobbyApiInterface.DeleteLobby(lobbyId);
+                    await m_LobbyApiInterface.DeleteLobby(m_LocalLobby.LobbyID);
+                    ResetLobby();
                 }
                 catch (LobbyServiceException e)
                 {

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Unity.BossRoom.Utils;
-using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UUnity.BossRoom.ConnectionManagement;
@@ -99,6 +98,7 @@ namespace Unity.BossRoom.ConnectionManagement
             NetworkManager.OnServerStarted += OnServerStarted;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
             NetworkManager.OnTransportFailure += OnTransportFailure;
+            NetworkManager.OnServerStopped += OnServerStopped;
         }
 
         void OnDestroy()
@@ -108,6 +108,7 @@ namespace Unity.BossRoom.ConnectionManagement
             NetworkManager.OnServerStarted -= OnServerStarted;
             NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
             NetworkManager.OnTransportFailure -= OnTransportFailure;
+            NetworkManager.OnServerStopped -= OnServerStopped;
         }
 
         internal void ChangeState(ConnectionState nextState)
@@ -145,6 +146,11 @@ namespace Unity.BossRoom.ConnectionManagement
         void OnTransportFailure()
         {
             m_CurrentState.OnTransportFailure();
+        }
+
+        void OnServerStopped(bool _) // we don't need this parameter as the ConnectionState already carries the relevant information
+        {
+            m_CurrentState.OnServerStopped();
         }
 
         public void StartClientLobby(string playerName)

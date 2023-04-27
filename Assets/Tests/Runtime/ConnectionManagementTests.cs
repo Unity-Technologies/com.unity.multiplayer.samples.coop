@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Infrastructure;
@@ -54,8 +55,6 @@ namespace Unity.BossRoom.Tests.Runtime
             }
 
             public override void Start() { }
-
-            public override void AddOnSceneEventCallback() { }
 
             public override void LoadScene(string sceneName, bool useNetworkSceneManager, LoadSceneMode loadSceneMode = LoadSceneMode.Single) { }
         }
@@ -357,8 +356,7 @@ namespace Unity.BossRoom.Tests.Runtime
             subscriptions.Dispose();
         }
 
-
-        [UnityTest, Ignore("Test fails because shutdowns do not invoke OnClientDisconnect on the host, so the ConnectionManager doesn't properly transition to the Offline state")]
+        [UnityTest]
         public IEnumerator UnexpectedServerShutdown_ClientsFailToReconnect()
         {
             StartHost();
@@ -370,6 +368,7 @@ namespace Unity.BossRoom.Tests.Runtime
             AssertAllClientsAreConnected();
 
             var nbReconnectingMsgsReceived = 0;
+            var nbGenericDisconnectMsgReceived = 0;
             var subscriptions = new DisposableGroup();
 
             for (int i = 0; i < NumberOfClients; i++)
@@ -379,8 +378,18 @@ namespace Unity.BossRoom.Tests.Runtime
                     // ignoring the first success message that is in the buffer
                     if (message != ConnectStatus.Success)
                     {
-                        Assert.AreEqual(ConnectStatus.Reconnecting, message, "Received unexpected ConnectStatus message.");
-                        nbReconnectingMsgsReceived++;
+                        var possibleMessages = new List<ConnectStatus>();
+                        possibleMessages.Add(ConnectStatus.Reconnecting);
+                        possibleMessages.Add(ConnectStatus.GenericDisconnect);
+                        Assert.Contains(message, possibleMessages, "Received unexpected ConnectStatus message.");
+                        if (message == ConnectStatus.Reconnecting)
+                        {
+                            nbReconnectingMsgsReceived++;
+                        }
+                        else if (message == ConnectStatus.GenericDisconnect)
+                        {
+                            nbGenericDisconnectMsgReceived++;
+                        }
                     }
                 }));
             }
@@ -398,22 +407,32 @@ namespace Unity.BossRoom.Tests.Runtime
                 Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient, $"Client{clientId} has not shut down properly after losing connection.");
             }
 
-            // Waiting for clients to fail to automatically reconnect
+            var maxNbReconnectionAttempts = 0;
+
             for (var i = 0; i < NumberOfClients; i++)
             {
-                for (var j = 0; j < m_ClientConnectionManagers[i].NbReconnectAttempts; j++)
+                var nbReconnectionAttempts = m_ClientConnectionManagers[i].NbReconnectAttempts;
+                maxNbReconnectionAttempts = Math.Max(maxNbReconnectionAttempts, nbReconnectionAttempts);
+                for (var j = 0; j < nbReconnectionAttempts; j++)
                 {
                     // Expecting this error for each reconnection attempt for each client
                     LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
                 }
             }
-            yield return WaitForClientsConnectedOrTimeOut();
-            for (var i = 0; i < NumberOfClients; i++)
+
+            // Waiting for clients to fail to automatically reconnect. We wait once for each reconnection attempt.
+            for (var i = 0; i < maxNbReconnectionAttempts; i++)
             {
-                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient, $"Client{i} is connected while no server is running.");
+                yield return WaitForClientsConnectedOrTimeOut();
+                for (var j = 0; j < NumberOfClients; j++)
+                {
+                    Assert.IsFalse(m_ClientNetworkManagers[j].IsConnectedClient, $"Client{j} is connected while no server is running.");
+                }
+
             }
 
             Assert.AreEqual(NumberOfClients, nbReconnectingMsgsReceived, "Not all clients received a Reconnecting message.");
+            Assert.AreEqual(NumberOfClients, nbGenericDisconnectMsgReceived, "Not all clients received a GenericDisconnect message.");
             subscriptions.Dispose();
         }
 

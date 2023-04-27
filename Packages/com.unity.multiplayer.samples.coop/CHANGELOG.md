@@ -2,6 +2,11 @@
 
 ## [unreleased] - yyyy-mm-dd
 
+## [1.6.0] - 2023-04-27
+
+### Changed
+* Removed need for SceneLoaderWrapper.AddOnSceneEventCallback (#830). The OnServerStarted and OnClientStarted callbacks available in NGO 1.4.0 allows us to remove the need for an external method to initialize the SceneLoaderWrapper after starting a NetworkingSession.
+
 ## [1.5.1] - 2022-12-13
 ### Changed
 * Bumped RNSM to 1.1.0: Switched x axis units to seconds instead of frames now that it's available. This means adjusting the sample count to a lower value as well to 30 seconds, since the x axis was moving too slowly. (#788)

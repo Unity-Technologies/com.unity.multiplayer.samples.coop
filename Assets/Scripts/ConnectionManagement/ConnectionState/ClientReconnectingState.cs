@@ -19,15 +19,14 @@ namespace Unity.BossRoom.ConnectionManagement
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
 
         Coroutine m_ReconnectCoroutine;
-        string m_LobbyCode = "";
         int m_NbAttempts;
 
+        const float k_TimeBeforeFirstAttempt = 1;
         const float k_TimeBetweenAttempts = 5;
 
         public override void Enter()
         {
             m_NbAttempts = 0;
-            m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
             m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
         }
 
@@ -107,37 +106,35 @@ namespace Unity.BossRoom.ConnectionManagement
             yield return new WaitWhile(() => m_ConnectionManager.NetworkManager.ShutdownInProgress); // wait until NetworkManager completes shutting down
             Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{m_ConnectionManager.NbReconnectAttempts}...");
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, m_ConnectionManager.NbReconnectAttempts));
-            m_NbAttempts++;
-            if (!string.IsNullOrEmpty(m_LobbyCode)) // Attempting to reconnect to lobby.
-            {
-                // When using Lobby with Relay, if a user is disconnected from the Relay server, the server will notify
-                // the Lobby service and mark the user as disconnected, but will not remove them from the lobby. They
-                // then have some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on
-                // the dashboard), after which they will be removed from the lobby completely.
-                // See https://docs.unity.com/lobby/reconnect-to-lobby.html
-                var reconnectingToLobby = m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby?.LobbyID);
-                yield return new WaitUntil(() => reconnectingToLobby.IsCompleted);
 
-                // If succeeded, attempt to connect to Relay
-                if (!reconnectingToLobby.IsFaulted && reconnectingToLobby.Result != null)
-                {
-                    // If this fails, the OnClientDisconnect callback will be invoked by Netcode
-                    var connectingToRelay = ConnectClientAsync();
-                    yield return new WaitUntil(() => connectingToRelay.IsCompleted);
-                }
-                else
-                {
-                    Debug.Log("Failed reconnecting to lobby.");
-                    // Calling OnClientDisconnect to mark this attempt as failed and either start a new one or give up
-                    // and return to the Offline state
-                    OnClientDisconnect(0);
-                }
+            // If first attempt, wait some time before attempting to reconnect to give time to services to update
+            // (i.e. if in a Lobby and the host shuts down unexpectedly, this will give enough time for the lobby to be
+            // properly deleted so that we don't reconnect to an empty lobby
+            if (m_NbAttempts == 0)
+            {
+                yield return new WaitForSeconds(k_TimeBeforeFirstAttempt);
             }
-            else // If not using Lobby, simply try to reconnect to the server directly
+
+            m_NbAttempts++;
+            var reconnectingSetupTask = m_ConnectionMethod.SetupClientReconnectionAsync();
+            yield return new WaitUntil(() => reconnectingSetupTask.IsCompleted);
+
+            if (!reconnectingSetupTask.IsFaulted && reconnectingSetupTask.Result.success)
             {
                 // If this fails, the OnClientDisconnect callback will be invoked by Netcode
-                var connectingClient = ConnectClientAsync();
-                yield return new WaitUntil(() => connectingClient.IsCompleted);
+                var connectingTask = ConnectClientAsync();
+                yield return new WaitUntil(() => connectingTask.IsCompleted);
+            }
+            else
+            {
+                if (!reconnectingSetupTask.Result.shouldTryAgain)
+                {
+                    // setting number of attempts to max so no new attempts are made
+                    m_NbAttempts = m_ConnectionManager.NbReconnectAttempts;
+                }
+                // Calling OnClientDisconnect to mark this attempt as failed and either start a new one or give up
+                // and return to the Offline state
+                OnClientDisconnect(0);
             }
         }
     }

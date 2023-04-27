@@ -26,6 +26,9 @@ namespace Unity.BossRoom.Gameplay.UI
         [Inject] IObjectResolver m_Resolver;
         [Inject] ProfileManager m_ProfileManager;
 
+        // Authentication service only accepts profile names of 30 characters or under 
+        const int k_AuthenticationMaxProfileLength = 30;
+
         void Awake()
         {
             m_ProfileListItemPrototype.gameObject.SetActive(false);
@@ -44,7 +47,8 @@ namespace Unity.BossRoom.Gameplay.UI
 
         string SanitizeProfileName(string dirtyString)
         {
-            return Regex.Replace(dirtyString, "[^a-zA-Z0-9]", "");
+            var output = Regex.Replace(dirtyString, "[^a-zA-Z0-9]", "");
+            return output[..Math.Min(output.Length, k_AuthenticationMaxProfileLength)];
         }
 
         public void OnNewProfileButtonPressed()
