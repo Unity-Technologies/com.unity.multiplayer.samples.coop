@@ -8,6 +8,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ## [unreleased] - yyyy-mm-dd
 
+## [2.1.0] - 2023-04-27
+
 ### Added
 * Added OnServerStopped event to ConnectionManager and ConnectionState (#826). This allows for the detection of an unexpected shutdown on the server side.
 
