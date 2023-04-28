@@ -9,6 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_Circle_Sheet_04
   m_Shader: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _FLIPBOOKBLENDING_ON
   - _SURFACE_TYPE_TRANSPARENT
@@ -22,6 +24,7 @@ Material:
   disabledShaderPasses:
   - DepthOnly
   - SHADOWCASTER
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -86,6 +89,7 @@ Material:
     - Boolean_f3c76e1f79d04ab0a9f91a5dd13e3822: 1
     - _AlphaClip: 0
     - _AlphaCutoff: 0.5
+    - _AlphaToMask: 0
     - _Blend: 0
     - _BlendOp: 0
     - _BumpScale: 1
@@ -102,6 +106,7 @@ Material:
     - _DistortionStrength: 1
     - _DistortionStrengthScaled: 0.1
     - _DstBlend: 10
+    - _DstBlendAlpha: 10
     - _EnvironmentReflections: 1
     - _FlipbookBlending: 1
     - _FlipbookMode: 0
@@ -121,6 +126,7 @@ Material:
     - _SoftParticlesNearFadeDistance: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
     - _Surface: 1
     - _UseAlpha: 0
     - _UseSoftParticles: 0
@@ -154,4 +160,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 5
+  version: 7
