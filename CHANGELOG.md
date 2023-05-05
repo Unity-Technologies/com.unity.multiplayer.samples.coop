@@ -8,6 +8,9 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ## [unreleased] - yyyy-mm-dd
 
+### Changed
+* Updated Unity Transport Package to version 2.0.1 (#835)
+
 ## [2.1.0] - 2023-04-27
 
 ### Added
