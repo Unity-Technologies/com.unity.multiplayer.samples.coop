@@ -197,7 +197,7 @@ namespace Unity.BossRoom.Gameplay.UI
         public static bool AreIpAddressAndPortValid(string ipAddress, string port)
         {
             var portValid = ushort.TryParse(port, out var portNum);
-            return portValid && NetworkEndPoint.TryParse(ipAddress, portNum, out var networkEndPoint);
+            return portValid && NetworkEndpoint.TryParse(ipAddress, portNum, out var networkEndPoint);
         }
     }
 }
