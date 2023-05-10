@@ -8,6 +8,9 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ## [unreleased] - yyyy-mm-dd
 
+### Changed
+* Upgraded editor version to 2022.2.13f1 (#840)
+
 ## [2.1.0] - 2023-04-27
 
 ### Added
