@@ -2,6 +2,9 @@
 
 ## [unreleased] - yyyy-mm-dd
 
+### Fixed
+* Updating package dependency to Netcode for GameObjects version 1.4.0 (#839)
+
 ## [1.6.0] - 2023-04-27
 
 ### Changed
