@@ -38,6 +38,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         UIProfileSelector m_UIProfileSelector;
         [SerializeField]
         UITooltipDetector m_UGSSetupTooltipDetector;
+        [SerializeField] GameObject m_DropDown;
 
         [Inject]
         AuthenticationServiceFacade m_AuthServiceFacade;
@@ -144,12 +145,14 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             m_LobbyUIMediator.ToggleJoinLobbyUI();
             m_LobbyUIMediator.Show();
+            m_DropDown.SetActive(true);
         }
 
         public void OnDirectIPClicked()
         {
             m_LobbyUIMediator.Hide();
             m_IPUIMediator.Show();
+            m_DropDown.SetActive(true);
         }
 
         public void OnChangeProfileClicked()

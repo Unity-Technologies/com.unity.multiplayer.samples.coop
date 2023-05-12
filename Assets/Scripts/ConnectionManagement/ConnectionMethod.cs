@@ -21,7 +21,6 @@ namespace Unity.BossRoom.ConnectionManagement
         protected ConnectionManager m_ConnectionManager;
         readonly ProfileManager m_ProfileManager;
         protected readonly string m_PlayerName;
-        protected const string k_DtlsConnType = "dtls";
 
         /// <summary>
         /// Setup the host connection prior to starting the NetworkManager
@@ -92,6 +91,55 @@ namespace Unity.BossRoom.ConnectionManagement
         string m_Ipaddress;
         ushort m_Port;
 
+        private string CaCertificate =
+@"-----BEGIN CERTIFICATE-----
+MIIDpzCCAo+gAwIBAgIUeyWOu7GQSV0N3dZNwRr2Pl8HXPAwDQYJKoZIhvcNAQEL
+BQAwYjELMAkGA1UEBhMCQ0ExDzANBgNVBAgMBlF1ZWJlYzERMA8GA1UEBwwITW9u
+dHJlYWwxGzAZBgNVBAoMElVuaXR5IFRlY2hub2xvZ2llczESMBAGA1UEAwwJMTI3
+LjAuMC4xMCAXDTIzMDMxNzE4MDk0MloYDzMwMjIwNzE4MTgwOTQyWjBiMQswCQYD
+VQQGEwJDQTEPMA0GA1UECAwGUXVlYmVjMREwDwYDVQQHDAhNb250cmVhbDEbMBkG
+A1UECgwSVW5pdHkgVGVjaG5vbG9naWVzMRIwEAYDVQQDDAkxMjcuMC4wLjEwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQD8ikJud244RTt3tCoBluJxocUw
+QboPkWU6FHGPiqztACk5ergbd3zvd2//daM7HVGy857vDoZZ9PvPSP29AvD3eO8v
+KFoBWfeTzGjXw0L5YXQ3wxq1fhJ1BOI0XLRVPndhLrBLsETz0XUctZASC/EfPiQD
+m5gINh7HcQkwza7z7XfX9+A5ttzFHFntoLOFCL67H6iAEGntj4LX/zlZSnE+1F2L
+wTYrQAja4XXvJH2GLCYhBiqYbYuaigKfOQvDXCQWCNeyfD/Xh2ugzBXkMOl+ngV6
+Ei7qj2sNWWZh49fmTz9DDjh9Jf3gISpcOjabIpE7ZWYuDwhV8YhssK5fnfrdAgMB
+AAGjUzBRMB0GA1UdDgQWBBS1loTCqrnX8gnj/TPUzEwIq8lgWzAfBgNVHSMEGDAW
+gBS1loTCqrnX8gnj/TPUzEwIq8lgWzAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3
+DQEBCwUAA4IBAQCi+A4Fm4HTbL3rjtDM0mXeqjD+XpnxzmsYmSqUXLaDw4OkTQZG
+QcBwWaP8GhbhcCgNdd5wNsF8zi8B8KN2ApuefOy9VJCVzq+ZNVde8ib1BtRRogng
+U81Kv5Cah2la16wj7Vq1B4SAbKA7mBtagyF4kOU52W93RmYrXZw1LETK5fDCXmUA
+/ddDuls7dwbsdoZSGv1UouMe/u/JU5v5M2L9naXj3ajdrPe4MNDSeYc+kMp4qSmd
+02falAMqS4vEdqcems1cLzLNjOnbdz0kjRlC1THNsKbyAC7s3icPC7Sp6eByHI0e
+M4VrSMAGTfD7PRdBxHYRKRCvstrx1SINX10u
+-----END CERTIFICATE-----";
+
+        private string Certificate1 =
+@"-----BEGIN CERTIFICATE-----
+MIIDTTCCAjUCFHcd5ngQA5+I7m+bm4zGTdYPBQ0sMA0GCSqGSIb3DQEBCwUAMGIx
+CzAJBgNVBAYTAkNBMQ8wDQYDVQQIDAZRdWViZWMxETAPBgNVBAcMCE1vbnRyZWFs
+MRswGQYDVQQKDBJVbml0eSBUZWNobm9sb2dpZXMxEjAQBgNVBAMMCTEyNy4wLjAu
+MTAgFw0yMzAzMTcxODE0MzJaGA8zMDIyMDcxODE4MTQzMlowYjELMAkGA1UEBhMC
+Q0ExDzANBgNVBAgMBlF1ZWJlYzERMA8GA1UEBwwITW9udHJlYWwxGzAZBgNVBAoM
+ElVuaXR5IFRlY2hub2xvZ2llczESMBAGA1UEAwwJMTI3LjAuMC4xMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqo5HsOVA9cASv5HIUg3tCLPFCdVdgtL7
+tdY6FXqw4b9u84Xe13yY0D84H8Pon+RYR29d0eQuzYJHG54FjWk6xzPzfHh2eLEc
+1xTL705+4prLbc+DjVLY2HChDN5nJibF1Hpxn1I6fCFW7iK8Fd1hgMJSYKvovExB
+oLdxQSFg9OAe+sqnCl4RykPur3liBcWOHfAkhJYuYaflnghtftCu2jxwlb6viPe+
+Ebnn8hXV/vjvkPNJOabKJx0y5LCpG5YfJQVMujsiIVNRPvYUl0DzJkj2qKRsSXT5
+3Wci9mH4sLuBh42HEUpHW4/xJGtCVk4GCjSsvz7KU7ONRZFHh8kGKQIDAQABMA0G
+CSqGSIb3DQEBCwUAA4IBAQAK6CKtw4E1pssoyP4VmRB0F5CzhrGlvCayWJ0i9iRx
+d3569LmdqKYvjm/lv85zrDlFfYyH/b1OIwPyifBM6OjBI7s4CLAIFAzxhHqWsx5N
+k9A+Xa+xtHFMpPprTokPPfkeizt52plBjP9X09a9KSq8PLMtaLsQGmcAXV6hmG71
+8yHGDARquUPZeAnU+3zvZHXttwn48edbZADhrqNk8yQOz4JO7XBPVNZS/VBxIWe5
+8AuVLZx4R6oBkKTrLlajuCMLySyqGqgi/iRbMSlh616+M0TaXChcv+zEm/pG+X4d
+4BPMuR+OHHfHAP0ypkhO7SB/sSNo2dXkCJrETp/R00D8
+-----END CERTIFICATE-----";
+
+        // this will be required for DTLS and WSS, removed for security purpose, saved locally
+        private string PrivateKey1 = "";
+
         public ConnectionMethodIP(string ip, ushort port, ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
             : base(connectionManager, profileManager, playerName)
         {
@@ -104,7 +152,9 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName);
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetConnectionData(m_Ipaddress, m_Port);
+            SetConnectionType(utp, false);
+            Debug.Log("[Use Encryption]: " + utp.UseEncryption);
+            Debug.Log("[Use WebSockets]: " + utp.UseWebSockets);
         }
 
         public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
@@ -117,7 +167,55 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetConnectionData(m_Ipaddress, m_Port);
+            SetConnectionType(utp, true);
+            Debug.Log("[Use Encryption]: " + utp.UseEncryption);
+            Debug.Log("[Use WebSockets]: " + utp.UseWebSockets);
+        }
+
+        void SetConnectionType(UnityTransport utp, bool isServer)
+        {
+            switch (ConnectionTypeDropdown.connectionType)
+            {
+                case "udp":
+                    utp.UseEncryption = false;
+                    utp.UseWebSockets = false;
+                    break;
+
+                case "dtls":
+                    utp.UseEncryption = true;
+                    utp.UseWebSockets = false;
+
+                    if (isServer)
+                    {
+                        utp.SetServerSecrets(Certificate1, PrivateKey1);
+                    }
+                    else
+                    {
+                        utp.SetClientSecrets("127.0.0.1", CaCertificate);
+                    }
+
+                    break;
+
+                case "ws":
+                    utp.UseEncryption = false;
+                    utp.UseWebSockets = true;
+                    break;
+
+                case "wss":
+                    utp.UseEncryption = true;
+                    utp.UseWebSockets = true;
+
+                    if (isServer)
+                    {
+                        utp.SetServerSecrets(Certificate1, PrivateKey1);
+                    }
+                    else
+                    {
+                        utp.SetClientSecrets("127.0.0.1", CaCertificate);
+                    }
+
+                    break;
+            }
         }
     }
 
@@ -160,7 +258,14 @@ namespace Unity.BossRoom.ConnectionManagement
 
             // Configure UTP with allocation
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(joinedAllocation, k_DtlsConnType));
+            Debug.Log("Connection Type: " + ConnectionTypeDropdown.connectionType);
+
+            if (ConnectionTypeDropdown.connectionType == "wss")
+            {
+                utp.UseWebSockets = true;
+            }
+
+            utp.SetRelayServerData(new RelayServerData(joinedAllocation, ConnectionTypeDropdown.connectionType));
         }
 
         public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
@@ -203,9 +308,14 @@ namespace Unity.BossRoom.ConnectionManagement
 
             // Setup UTP with relay connection info
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(hostAllocation, k_DtlsConnType)); // This is with DTLS enabled for a secure connection
+            Debug.Log("Connection Type: " + ConnectionTypeDropdown.connectionType);
 
-            Debug.Log($"Created relay allocation with join code {m_LocalLobby.RelayJoinCode}");
+            if (ConnectionTypeDropdown.connectionType == "wss")
+            {
+                utp.UseWebSockets = true;
+            }
+
+            utp.SetRelayServerData(new RelayServerData(hostAllocation, ConnectionTypeDropdown.connectionType)); // This is with DTLS enabled for a secure connection
         }
     }
 }
