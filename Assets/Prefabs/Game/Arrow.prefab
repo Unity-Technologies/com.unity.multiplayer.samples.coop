@@ -83,17 +83,17 @@ MonoBehaviour:
   SyncPositionX: 1
   SyncPositionY: 0
   SyncPositionZ: 1
-  SyncRotAngleX: 1
+  SyncRotAngleX: 0
   SyncRotAngleY: 1
-  SyncRotAngleZ: 1
+  SyncRotAngleZ: 0
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 1
-  UseQuaternionCompression: 1
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
   UseHalfFloatPrecision: 1
   InLocalSpace: 0
   Interpolate: 1
