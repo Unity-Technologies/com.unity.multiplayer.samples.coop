@@ -138,7 +138,8 @@ k9A+Xa+xtHFMpPprTokPPfkeizt52plBjP9X09a9KSq8PLMtaLsQGmcAXV6hmG71
 -----END CERTIFICATE-----";
 
         // this will be required for DTLS and WSS, removed for security purpose, saved locally
-        private string PrivateKey1 = "";
+        private string PrivateKey1 =
+            "";
 
         public ConnectionMethodIP(string ip, ushort port, ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
             : base(connectionManager, profileManager, playerName)
@@ -153,6 +154,7 @@ k9A+Xa+xtHFMpPprTokPPfkeizt52plBjP9X09a9KSq8PLMtaLsQGmcAXV6hmG71
             SetConnectionPayload(GetPlayerId(), m_PlayerName);
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             SetConnectionType(utp, false);
+            utp.SetConnectionData(m_Ipaddress, m_Port);
             Debug.Log("[Use Encryption]: " + utp.UseEncryption);
             Debug.Log("[Use WebSockets]: " + utp.UseWebSockets);
         }
@@ -168,6 +170,7 @@ k9A+Xa+xtHFMpPprTokPPfkeizt52plBjP9X09a9KSq8PLMtaLsQGmcAXV6hmG71
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             SetConnectionType(utp, true);
+            utp.SetConnectionData(m_Ipaddress, m_Port);
             Debug.Log("[Use Encryption]: " + utp.UseEncryption);
             Debug.Log("[Use WebSockets]: " + utp.UseWebSockets);
         }
