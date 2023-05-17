@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
 using Unity.Multiplayer.Tools.NetworkSimulator.Runtime;
+using Unity.Multiplayer.Tools.NetworkSimulator.Runtime.BuiltInScenarios;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -36,6 +37,12 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         KeyCode m_OpenWindowKeyCode = KeyCode.Tilde;
 
+        [SerializeField]
+        ConnectionsCycle m_ConnectionsCycleScenario;
+
+        [SerializeField]
+        RandomConnectionsSwap m_RandomConnectionsSwapScenario;
+
         const int k_NbTouchesToOpenWindow = 5;
 
         Dictionary<string, INetworkSimulatorPreset> m_SimulatorPresets = new Dictionary<string, INetworkSimulatorPreset>();
@@ -59,25 +66,26 @@ namespace Unity.BossRoom.Gameplay.UI
             m_PresetsDropdown.AddOptions(optionData);
             m_PresetsDropdown.onValueChanged.AddListener(OnPresetChanged);
 
-            // initialize scenarios dropdown
-            var scenariosTypes = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(x => x.GetTypes())
-                .Where(TypeIsValidNetworkScenario)
-                .ToList();
-
+            // initialize scenario dropdown
             optionData = new List<TMP_Dropdown.OptionData>();
+
+            // Adding empty scenario
             optionData.Add(new TMP_Dropdown.OptionData(k_None));
-            foreach (var scenario in scenariosTypes)
-            {
-                var scenarioName = scenario.Name;
-                m_Scenarios[scenarioName] = (NetworkScenario) Activator.CreateInstance(scenario);
-                optionData.Add(new TMP_Dropdown.OptionData(scenarioName));
-            }
+
+            // Adding ConnectionsCycle scenario
+            var scenarioName = m_ConnectionsCycleScenario.GetType().Name;
+            m_Scenarios[scenarioName] = m_ConnectionsCycleScenario;
+            optionData.Add(new TMP_Dropdown.OptionData(scenarioName));
+
+            // Adding RandomConnectionsSwap scenario
+            scenarioName = m_RandomConnectionsSwapScenario.GetType().Name;
+            m_Scenarios[scenarioName] = m_RandomConnectionsSwapScenario;
+            optionData.Add(new TMP_Dropdown.OptionData(scenarioName));
 
             m_ScenariosDropdown.AddOptions(optionData);
             m_ScenariosDropdown.onValueChanged.AddListener(OnScenarioChanged);
 
-            // Hide UI until
+            // Hide UI until ready
             Hide();
         }
 
