@@ -992,6 +992,64 @@ MonoBehaviour:
   m_ScenariosButtonText: {fileID: 4687414789391785531}
   m_LagSpikeDuration: {fileID: 8516948734797190670}
   m_OpenWindowKeyCode: 9
+  m_ConnectionsCycleScenario:
+    m_Configurations:
+    - m_ClassPreset:
+        rid: 6605000945039310848
+      m_ScriptableObjectPreset: {fileID: 0}
+      ChangeIntervalMilliseconds: 5000
+    - m_ClassPreset:
+        rid: 6605000945039310850
+      m_ScriptableObjectPreset: {fileID: 0}
+      ChangeIntervalMilliseconds: 5000
+    - m_ClassPreset:
+        rid: 6605000945039310851
+      m_ScriptableObjectPreset: {fileID: 0}
+      ChangeIntervalMilliseconds: 5000
+  m_RandomConnectionsSwapScenario:
+    ChangeIntervalMilliseconds: 5000
+    m_Configurations:
+    - m_ClassPreset:
+        rid: 6605000945039310848
+      m_ScriptableObjectPreset: {fileID: 0}
+    - m_ClassPreset:
+        rid: 6605000945039310850
+      m_ScriptableObjectPreset: {fileID: 0}
+    - m_ClassPreset:
+        rid: 6605000945039310851
+      m_ScriptableObjectPreset: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 6605000945039310848
+      type: {class: NetworkSimulatorPreset, ns: Unity.Multiplayer.Tools.NetworkSimulator.Runtime, asm: Unity.Multiplayer.Tools.NetworkSimulator.Runtime}
+      data:
+        <Name>k__BackingField: None
+        <Description>k__BackingField: 
+        <PacketDelayMs>k__BackingField: 0
+        <PacketJitterMs>k__BackingField: 0
+        <PacketLossInterval>k__BackingField: 0
+        <PacketLossPercent>k__BackingField: 0
+    - rid: 6605000945039310850
+      type: {class: NetworkSimulatorPreset, ns: Unity.Multiplayer.Tools.NetworkSimulator.Runtime, asm: Unity.Multiplayer.Tools.NetworkSimulator.Runtime}
+      data:
+        <Name>k__BackingField: Home Broadband [WIFI, Cable, Console, PC]
+        <Description>k__BackingField: Typical of desktop and console platforms (and
+          generally speaking most mobile players too).
+        <PacketDelayMs>k__BackingField: 32
+        <PacketJitterMs>k__BackingField: 12
+        <PacketLossInterval>k__BackingField: 0
+        <PacketLossPercent>k__BackingField: 2
+    - rid: 6605000945039310851
+      type: {class: NetworkSimulatorPreset, ns: Unity.Multiplayer.Tools.NetworkSimulator.Runtime, asm: Unity.Multiplayer.Tools.NetworkSimulator.Runtime}
+      data:
+        <Name>k__BackingField: Mobile 5G ['20]
+        <Description>k__BackingField: In many places, expect this to be 'as good
+          as' or 'better than' home broadband.
+        <PacketDelayMs>k__BackingField: 1
+        <PacketJitterMs>k__BackingField: 10
+        <PacketLossInterval>k__BackingField: 0
+        <PacketLossPercent>k__BackingField: 2
 --- !u!1 &2414270824810977563
 GameObject:
   m_ObjectHideFlags: 0
@@ -3026,7 +3084,7 @@ MonoBehaviour:
   m_Scenario:
     rid: -2
   m_IsScenarioSettingsFolded: 1
-  AutoRunScenario: 0
+  AutoRunScenario: 1
   references:
     version: 2
     RefIds:
