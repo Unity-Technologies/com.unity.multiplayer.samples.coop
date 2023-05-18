@@ -112,11 +112,6 @@ namespace Unity.BossRoom.Gameplay.UI
             }
         }
 
-        static bool TypeIsValidNetworkScenario(Type type)
-        {
-            return type.IsClass && type.IsAbstract == false && typeof(NetworkScenario).IsAssignableFrom(type);
-        }
-
         void OnPresetChanged(int optionIndex)
         {
             m_NetworkSimulator.ChangeConnectionPreset(m_SimulatorPresets[m_PresetsDropdown.options[optionIndex].text]);
