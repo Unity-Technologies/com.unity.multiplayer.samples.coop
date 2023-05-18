@@ -3177,7 +3177,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'To open/close this window, use the ''~'' key,
+  m_text: 'To open/close this window, use the ''Tab'' key,
 
     or on mobile devices
     use 5 fingers at once'
