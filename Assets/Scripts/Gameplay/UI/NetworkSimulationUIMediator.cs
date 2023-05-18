@@ -126,6 +126,7 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             var scenarioName = m_ScenariosDropdown.options[optionIndex].text;
             m_NetworkSimulator.Scenario = m_Scenarios.ContainsKey(scenarioName) ? m_Scenarios[scenarioName] : null;
+            m_NetworkSimulator.Scenario?.Start(m_NetworkSimulator);
             UpdateScenarioButton();
         }
 
