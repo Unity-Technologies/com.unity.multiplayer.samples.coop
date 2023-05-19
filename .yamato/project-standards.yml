@@ -3,9 +3,9 @@
 standards_{{ projects.first.name }}:
   name: Standards Check {{ projects.first.name }}
   agent:
-    type: {{ test_platforms.first.type }}
-    image: {{ test_platforms.first.image }}
-    flavor: {{ test_platforms.first.flavor}}
+    type: {{ test_platforms.last.type }}
+    image: {{ test_platforms.last.image }}
+    flavor: {{ test_platforms.last.flavor}}
   commands:
     - dotnet --version
     - dotnet format --version
