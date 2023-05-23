@@ -211,6 +211,7 @@ Running the game over internet currently requires setting up a relay.
 * Client driven movements - Boss Room is server driven with anticipation animation. See [Client Driven bitesize](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.bitesize/tree/main/Basic/ClientDriven) for client driven gameplay
 * Player spawn - SpawnPlayer() in [Assets/Scripts/Gameplay/GameState/ServerBossRoomState.cs](Assets/Scripts/Gameplay/GameState/ServerBossRoomState.cs)
 * Player camera setup (with cinemachine) - OnNetworkSpawn() in [Assets/Scripts/Gameplay/GameplayObjects/Character/ClientCharacter.cs](Assets/Scripts/Gameplay/GameplayObjects/Character/ClientCharacter.cs)
+* INetworkSerializable (bandwidth optimization) vs INetworkSerializeByMemcpy (performance optimization) usage. See LobbyPlayerState vs ActionID structs [Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs) vs [Assets/Scripts/Gameplay/Action/ActionID.cs](Assets/Scripts/Gameplay/Action/ActionID.cs)
 
 ### Game Flow
 * Application Controller - [Assets/Scripts/ApplicationLifecycle/ApplicationController.cs ](Assets/Scripts/ApplicationLifecycle/ApplicationController.cs)
@@ -234,6 +235,7 @@ Running the game over internet currently requires setting up a relay.
 * Lobby and relay - client join - JoinLobbyRequest() in [Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs ](Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs)
 * Relay Join - StartClientLobby() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
 * Relay Create - StartHostLobby() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
+* Subscribing to LobbyEvents - SubscribeToJoinedLobby() in [Assets/Scripts/UnityServices/Lobbies/LobbyServiceFacade.cs ](Assets/Scripts/UnityServices/Lobbies/LobbyServiceFacade.cs)
 * Authentication - EnsurePlayerIsAuthorized() in [Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs ](Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs)
 * Authentication - Profile management for ParrelSync/local instances - GetProfile() in [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
 * Profile manager for ParrelSync and local play [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)

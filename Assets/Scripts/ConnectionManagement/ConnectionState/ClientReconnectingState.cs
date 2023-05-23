@@ -21,6 +21,7 @@ namespace Unity.BossRoom.ConnectionManagement
         Coroutine m_ReconnectCoroutine;
         int m_NbAttempts;
 
+        const float k_TimeBeforeFirstAttempt = 1;
         const float k_TimeBetweenAttempts = 5;
 
         public override void Enter()
@@ -105,6 +106,15 @@ namespace Unity.BossRoom.ConnectionManagement
             yield return new WaitWhile(() => m_ConnectionManager.NetworkManager.ShutdownInProgress); // wait until NetworkManager completes shutting down
             Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{m_ConnectionManager.NbReconnectAttempts}...");
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, m_ConnectionManager.NbReconnectAttempts));
+
+            // If first attempt, wait some time before attempting to reconnect to give time to services to update
+            // (i.e. if in a Lobby and the host shuts down unexpectedly, this will give enough time for the lobby to be
+            // properly deleted so that we don't reconnect to an empty lobby
+            if (m_NbAttempts == 0)
+            {
+                yield return new WaitForSeconds(k_TimeBeforeFirstAttempt);
+            }
+
             m_NbAttempts++;
             var reconnectingSetupTask = m_ConnectionMethod.SetupClientReconnectionAsync();
             yield return new WaitUntil(() => reconnectingSetupTask.IsCompleted);
@@ -112,8 +122,8 @@ namespace Unity.BossRoom.ConnectionManagement
             if (!reconnectingSetupTask.IsFaulted && reconnectingSetupTask.Result.success)
             {
                 // If this fails, the OnClientDisconnect callback will be invoked by Netcode
-                var connectingToRelay = ConnectClientAsync();
-                yield return new WaitUntil(() => connectingToRelay.IsCompleted);
+                var connectingTask = ConnectClientAsync();
+                yield return new WaitUntil(() => connectingTask.IsCompleted);
             }
             else
             {

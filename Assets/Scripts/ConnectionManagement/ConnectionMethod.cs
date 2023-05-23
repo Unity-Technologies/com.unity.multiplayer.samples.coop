@@ -66,6 +66,13 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ConnectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
         }
 
+        /// Using authentication, this makes sure your session is associated with your account and not your device. This means you could reconnect 
+        /// from a different device for example. A playerId is also a bit more permanent than player prefs. In a browser for example, 
+        /// player prefs can be cleared as easily as cookies.
+        /// The forked flow here is for debug purposes and to make UGS optional in Boss Room. This way you can study the sample without 
+        /// setting up a UGS account. It's recommended to investigate your own initialization and IsSigned flows to see if you need 
+        /// those checks on your own and react accordingly. We offer here the option for offline access for debug purposes, but in your own game you
+        /// might want to show an error popup and ask your player to connect to the internet.
         protected string GetPlayerId()
         {
             if (Services.Core.UnityServices.State != ServicesInitializationState.Initialized)
@@ -169,16 +176,9 @@ namespace Unity.BossRoom.ConnectionManagement
             // some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on the dashboard),
             // after which they will be removed from the lobby completely.
             // See https://docs.unity.com/lobby/reconnect-to-lobby.html
-            var lobby = await m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby.LobbyID);
+            var lobby = await m_LobbyServiceFacade.ReconnectToLobbyAsync();
             var success = lobby != null;
-            if (success)
-            {
-                Debug.Log("Successfully reconnected to Lobby.");
-            }
-            else
-            {
-                Debug.Log("Failed to reconnect to Lobby.");
-            }
+            Debug.Log(success ? "Successfully reconnected to Lobby." : "Failed to reconnect to Lobby.");
             return (success, true); // return a success if reconnecting to lobby returns a lobby
         }
 

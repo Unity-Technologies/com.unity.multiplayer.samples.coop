@@ -22,12 +22,11 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             m_LocalLobby = localLobby;
             m_LocalLobby.changed += UpdateUI;
-            UpdateUI(localLobby);
         }
 
         void Awake()
         {
-            gameObject.SetActive(false);
+            UpdateUI(m_LocalLobby);
         }
 
         private void OnDestroy()
@@ -43,6 +42,10 @@ namespace Unity.BossRoom.Gameplay.UI
                 m_RoomNameText.text = $"Lobby Code: {m_LobbyCode}";
                 gameObject.SetActive(true);
                 m_CopyToClipboardButton.gameObject.SetActive(true);
+            }
+            else
+            {
+                gameObject.SetActive(false);
             }
         }
 

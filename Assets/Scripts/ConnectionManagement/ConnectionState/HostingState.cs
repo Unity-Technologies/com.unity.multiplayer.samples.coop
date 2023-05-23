@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
@@ -26,8 +25,6 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void Enter()
         {
-            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-
             //The "BossRoom" server always advances to CharSelect immediately on start. Different games
             //may do this differently.
             SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
@@ -50,11 +47,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
-            {
-                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-            }
-            else
+            if (clientId != m_ConnectionManager.NetworkManager.LocalClientId)
             {
                 var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
                 if (playerId != null)
@@ -80,6 +73,12 @@ namespace Unity.BossRoom.ConnectionManagement
                     m_ConnectionManager.NetworkManager.DisconnectClient(id, reason);
                 }
             }
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
+        }
+
+        public override void OnServerStopped()
+        {
+            m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 

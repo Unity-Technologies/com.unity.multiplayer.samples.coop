@@ -33,20 +33,6 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void Exit() { }
 
-        public override void OnClientDisconnect(ulong clientId)
-        {
-            if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
-            {
-                StartHostFailed();
-            }
-        }
-
-        void StartHostFailed()
-        {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-        }
-
         public override void OnServerStarted()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Success);
@@ -72,6 +58,11 @@ namespace Unity.BossRoom.ConnectionManagement
             }
         }
 
+        public override void OnServerStopped()
+        {
+            StartHostFailed();
+        }
+
         async void StartHost()
         {
             try
@@ -82,7 +73,7 @@ namespace Unity.BossRoom.ConnectionManagement
                 // NGO's StartHost launches everything
                 if (!m_ConnectionManager.NetworkManager.StartHost())
                 {
-                    OnClientDisconnect(m_ConnectionManager.NetworkManager.LocalClientId);
+                    StartHostFailed();
                 }
             }
             catch (Exception)
@@ -90,6 +81,12 @@ namespace Unity.BossRoom.ConnectionManagement
                 StartHostFailed();
                 throw;
             }
+        }
+
+        void StartHostFailed()
+        {
+            m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
     }
 }
