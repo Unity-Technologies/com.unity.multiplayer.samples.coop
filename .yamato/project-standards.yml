@@ -7,6 +7,7 @@ standards_{{ projects.first.name }}:
     image: desktop/logging-testing-linux:latest
     flavor: b1.large
   commands:
+    - ls
     - dotnet --version
     - dotnet format --version
     - pip install unity-downloader-cli --upgrade --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
