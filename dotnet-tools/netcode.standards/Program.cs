@@ -37,6 +37,7 @@ internal static class Program
             procInfo.Arguments = check
                 ? $"format {file} whitespace --no-restore --verify-no-changes --verbosity {verbosity}"
                 : $"format {file} whitespace --no-restore --verbosity {verbosity}";
+            Console.WriteLine($"File : {file}");
             Console.WriteLine($"######## START -> {(check ? "check" : "fix")} whitespace issues");
             var whitespace = Process.Start(procInfo);
             whitespace.WaitForExit();
