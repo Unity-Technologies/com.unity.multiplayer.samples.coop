@@ -13,4 +13,4 @@ standards_{{ projects.first.name }}:
     - unity-downloader-cli -u {{ projects.first.test_editors.first }} -c editor --wait --fast
     - .Editor/Unity -batchmode -nographics -logFile - -executeMethod Packages.Rider.Editor.RiderScriptEditor.SyncSolution -projectPath {{ projects.first.path }} -quit
     - ls
-    - dotnet run --project dotnet-tools/netcode.standards -- --project={{ projects.first.path }} --check
+    - dotnet run --project dotnet-tools/netcode.standards -- --project={{ projects.first.path }} --check --verbosity=diagnostic
