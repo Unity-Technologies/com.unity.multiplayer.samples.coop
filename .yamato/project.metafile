@@ -8,8 +8,8 @@ test_platforms:
     utr: .\utr.bat
   - name: mac
     type: Unity::VM::osx
-    image: package-ci/mac:stable
-    flavor: b1.large
+    image: package-ci/macos-12:v4
+    flavor: m1.mac
     editorpath: .Editor/Unity.app/Contents/MacOS/Unity
     utr: ./utr
   - name: ubuntu
