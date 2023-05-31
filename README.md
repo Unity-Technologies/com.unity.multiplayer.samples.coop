@@ -5,7 +5,7 @@
 ###  Made with and Including Utilities for Netcode for GameObjects
 <br>
 
-[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-2022.3%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/qa/lts-releases?version=2022.3#:~:text=December%2015%2C%202022-,LTS%20Release,2022.3.15f1,-Released%3A%20December)
+[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-2022.3%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/qa/lts-releases?version=2022.3#:~:text=December%2015%2C%202022-,LTS%20Release,2022.3.0f1,-Released%3A%20December)
 [![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-1.2.0-57b9d3.svg?logo=unity&color=2196F3)](https://docs-multiplayer.unity3d.com/netcode/current/about)
 [![LatestRelease](https://img.shields.io/badge/Latest%20Github%20Release:-v2.0.4-57b9d3.svg?logo=github&color=brightgreen)](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases/tag/v2.0.4)
 <br><br>
