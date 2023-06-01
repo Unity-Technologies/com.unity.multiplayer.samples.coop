@@ -1,86 +1,113 @@
 ![Banner](Documentation/Images/Banner.png)
-## Co-op multiplayer RPG and utilities built with Unity Netcode for GameObjects
+<br><br>
+
+# Boss Room: a Co-op, Multiplayer RPG Sample
+###  Made with and Including Utilities for Netcode for GameObjects
+<br>
+
+[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-2022.3%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/qa/lts-releases?version=2022.3#:~:text=December%2015%2C%202022-,LTS%20Release,2022.3.0f1,-Released%3A%20December)
+[![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-1.2.0-57b9d3.svg?logo=unity&color=2196F3)](https://docs-multiplayer.unity3d.com/netcode/current/about)
+[![LatestRelease](https://img.shields.io/badge/Latest%20Github%20Release:-v2.0.4-57b9d3.svg?logo=github&color=brightgreen)](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases/tag/v2.0.4)
+<br><br>
 
 Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. It is an educational sample designed to showcase typical netcode [patterns](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom-actions/index.html) that are frequently featured in similar multiplayer games.
+<br><br>
+
+# Boss Room Sample Overview
+
+Boss Room is designed to be used in its entirety to help you explore the concepts and patterns behind a multiplayer game flow; such as character abilities, casting animations to hide latency, replicated objects, RPCs, and integration with the [Relay](https://unity.com/products/relay), [Lobby](https://unity.com/products/lobby), and [Authentication](https://unity.com/products/authentication) services.
+
+You can use the project as a reference starting point for your own Unity game or use elements individually.
+<br><br>
+
+---
+
+### 💡 Utilities Package
+This repository also contains a [Utilities](Packages/com.unity.multiplayer.samples.coop) package, containing reusable sample scripts. You can install it using the following manifest file entry:
+<br>
+`"com.unity.multiplayer.samples.coop": "https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop.git?path=/Packages/com.unity.multiplayer.samples.coop",`
+
+---
 
 
-__PLEASE NOTE__:
-Boss Room is compatible with the latest Unity Long Term Support (LTS) editor version, currently [2021 LTS](https://unity.com/releases/2021-lts). Please include standalone support for Windows/Mac in your installation. <br>
+<br>
 
-**Boss Room has been developed and tested on the following platforms:**
-- Windows
-- Mac
-- iOS
-- Android <br>
-
-**Boss Room's min spec devices are:**
-- iPhone 6S
-- Samsung Galaxy J2 Core <br>
-
-Find our full project documentation, [here](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom/index.html).
-
-To connect and find support, join the multiplayer community on the Unity [Discord](https://discord.gg/mNgM2XRDpb) and [Forum](https://forum.unity.com/forums/multiplayer.26/).<br> Got feedback? Tell us what you think using our new [Feedback Form](#feedback-form) <center>.
-| -- |
+For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/ART_NOTES.md).
 
 
+![](Documentation/Images/Boss.png)
+<br><br>
+  
+-----
 
-## Contents and Quick Links
-
+## Readme Contents and Quick Links
 <!-- TOC generated from https://luciopaiva.com/markdown-toc/ -->
+<details open>
+<summary> <b>Click to expand/collapse contents</b> </summary>
 
-
-- [Boss Room Overview](#boss-room-overview)
-- [Getting the project](#getting-the-project)
+- ### [Getting the project](#getting-the-project-1)
   - [Direct download](#direct-download)
   - [Installing Git LFS to clone locally](#installing-git-lfs-to-clone-locally)
-- [Registering the project with Unity Gaming Services (UGS)](#registering-the-project-with-unity-gaming-services-ugs)
-- [Opening the project for the first time](#opening-the-project-for-the-first-time)
-- [Exploring the project](#exploring-the-project)
-- [Testing multiplayer](#testing-multiplayer)
-- [Index of resources in this project](#index-of-resources-in-this-project)
+- ### [Requirements](#requirements-1)
+  - [Min Spec Devices](#boss-rooms-min-spec-devices-are)
+- ### [Opening the project for the first time](#opening-the-project-for-the-first-time-1) 
+- ### [Exploring the project](#exploring-the-project-1)
+  - [Registering with Unity Gaming Services (UGS)](#registering-the-project-with-unity-gaming-services-ugs)
+- ### [Testing multiplayer](#testing-multiplayer-1) 
+  - [Local Multiplayer Setup](#local-multiplayer-setup)
+  - [Multiplayer over Internet](#multiplayer-over-internet)
+  - [Relay Setup](#relay-setup) 
+- ### [Index of resources in this project](#index-of-resources-in-this-project-1)
   - [Gameplay](#gameplay)
   - [Game Flow](#game-flow)
   - [Connectivity](#connectivity)
   - [Services (Lobby, Relay, etc)](#services-lobby-relay-etc)
   - [Tools and Utilities](#tools-and-utilities)
-- [Troubleshooting](#troubleshooting)
-- [Licence](#licence)
-- [Other samples](#other-samples)
+- ### [Troubleshooting](#troubleshooting-1)
+  - [Bugs](#bugs)
+  - [Documentation](#documentation)
+- ### [License](#license-1)
+- ### [Contributing](#contributing-1)
+- ### [Community](#community-1)
+- ### [Feedback Form](#feedback-form-1)
+- ### [Other samples](#other-samples-1)
   - [Bite-size Samples](#bite-size-samples)
-- [Contributing](#contributing)
-- [Feedback Form](#feedback-form)
+</details>
 
-## Boss Room Overview
-
-Boss Room is designed to be used in its entirety to help you explore the concepts and patterns behind a multiplayer game flow; such as character abilities, casting animations to hide latency, replicated objects, RPCs, and integration with the [Relay](https://unity.com/products/relay), [Lobby](https://unity.com/products/lobby), and [Authentication](https://unity.com/products/authentication) services.
-
-You can use the project as a reference starting point for your own Unity game or use elements individually.
-
-This repository also contains a [Utilities](Packages/com.unity.multiplayer.samples.coop) package, containing reusable sample scripts. You can install it using the following manifest file entry:
-
-`"com.unity.multiplayer.samples.coop": "https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop.git?path=/Packages/com.unity.multiplayer.samples.coop",
-`. 
-  
-For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/ART_NOTES.md).
-
-
-![](Documentation/Images/Boss.png)
-  
+------
+<br>
 
 ## Getting the project
 ### Direct download
  - You can download the latest version of Boss Room from our [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
  - __Alternatively:__ click the green `Code` button and then select the 'Download Zip' option.  Please note that this will download the branch that you are currently viewing on Github.  
  - __Windows users:__ Using Windows' built-in extraction tool may generate an "Error 0x80010135: Path too long" error window which can invalidate the extraction process. A workaround for this is to shorten the zip file to a single character (eg. "c.zip") and move it to the shortest path on your computer (most often right at C:\\) and retry. If that solution fails, another workaround is to extract the downloaded zip file using [7zip](https://www.7-zip.org/).
+<br><br>
 
+## Requirements
+
+BossRoom is compatible with the latest Unity Long Term Support (LTS) editor version, currently [2021 LTS](https://unity.com/releases/2021-lts). Please include standalone support for Windows/Mac in your installation.
+
+**PLEASE NOTE:** You will also need Netcode for Game Objects to use these samples. Complete the [Hello World Tutorial](https://docs-multiplayer.unity3d.com/netcode/current/tutorials/helloworld) to prepare your environment.
+<br><br>
+
+#### Boss Room has been developed and tested on the following platforms:
+- Windows
+- Mac
+- iOS
+- Android <br>
+
+#### Boss Room's min spec devices are:
+- iPhone 6S
+- Samsung Galaxy J2 Core 
+<br><br>
 
 ### Installing Git LFS to clone locally
 
 Boss Room uses Git Large Files Support (LFS) to handle all large assets required locally. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions. This step is only needed if cloning locally. You can also just download the project which will already include large files.
+<br><br>
 
-## Registering the project with Unity Gaming Services (UGS)
 
-Boss Room leverages several services from UGS to facilitate connectivity between players. To use these services inside your project, you must [create an organization](https://support.unity.com/hc/en-us/articles/208592876-How-do-I-create-a-new-Organization-) inside the Unity Dashboard, and enable the [Relay](https://docs.unity.com/relay/get-started.html) and [Lobby](https://docs.unity.com/lobby/game-lobby-sample.html) services. Otherwise, you can still use Boss Room without UGS.
 
 ## Opening the project for the first time
 
@@ -93,8 +120,7 @@ Once you have downloaded the project, follow the steps below to get up and runni
  - Hit the **Play** button. You can then host a new game or join an existing one using the in-game UI.
 
   ![](Documentation/Images/StartupScene.png)
-  
-  ------------------------------------------
+<br><br><br>
 
 ## Exploring the project
 BossRoom is an eight-player co-op RPG game experience, where players collaborate to fight imps, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. Control model is click-to-move, with skills triggered by a mouse button or hotkey.
@@ -105,22 +131,34 @@ One of the eight clients acts as the host/server. That client will use a composi
 - Position updates are carried out through NetworkTransform that sync position and rotation. 
 
 Code is organized in domain-based assemblies. See the [Boss Room architecture documentation](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom-architecture) file for more details.
-  
+<br><br>
+
+### Registering the project with Unity Gaming Services (UGS)
+
+Boss Room leverages several services from UGS to facilitate connectivity between players. To use these services inside your project, you must [create an organization](https://support.unity.com/hc/en-us/articles/208592876-How-do-I-create-a-new-Organization-) inside the Unity Dashboard, and enable the [Relay](https://docs.unity.com/relay/get-started.html) and [Lobby](https://docs.unity.com/lobby/game-lobby-sample.html) services. Otherwise, you can still use Boss Room without UGS.
+<br><br><br>
+ 
 ## Testing multiplayer
 
 In order to see the multiplayer functionality in action we can either run multiple instances of the game locally on your computer - using either ParrelSync or builds - or choose to connect to a friend over the internet. See [how to test](https://docs-multiplayer.unity3d.com/netcode/current/tutorials/testing/testing_locally) for more info.
+<br><br>
 
----------------
-**Local multiplayer setup**
+### Local multiplayer setup
 
 First, build an executable by clicking **'File/Build Settings'** in the menu bar, and then click **'Build'**.<br>  
 ![](Documentation/Images/BuildProject.png)
 
 Once the build has completed you can launch several instances of the built executable in order to both host and join a game. When using several instances locally, you will have to set different profiles for each instance for authentication purposes, by using the **'Change Profile'** button. <br>  
-> __Mac users:__ to run multiple instances of the same app, you need to use the command line.  Run `open -n BossRoom.app`
 
----------------
-**Multiplayer over Internet**
+---
+
+💡  **Mac users:** To run multiple instances of the same app, you need to use the command line. Run `open -n BossRoom.app`
+
+---
+
+<br>
+
+### Multiplayer over Internet
 
 To play over internet, first build an executable that is shared between all players - as above.
 
@@ -129,17 +167,21 @@ It is possible to connect between multiple instances of the same executable OR b
 Running the game over internet currently requires setting up a relay. 
   
   
- **Relay Setup**
+### Relay Setup
  
 - Boss Room provides an integration with [Unity Relay](https://docs-multiplayer.unity3d.com/netcode/current/relay/relay). You can find our Unity Relay setup guide [here](https://docs-multiplayer.unity3d.com/netcode/current/relay/relay)
 
 - Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers.
 - Boss Room uses `UDP` and needs a `9998` external port to be open. 
 - Make sure your host's address listens on 0.0.0.0 (127.0.0.1 is for local development only).
+<br><br><br>
 
----------------
+-----
 
 ## Index of resources in this project
+
+<details open>
+<summary> <b>Click to expand/collapse contents</b> </summary>
 
 ### Gameplay
 * Action anticipation - AnticipateActionClient() in [Assets/Scripts/Gameplay/Action/Action.cs](Assets/Scripts/Gameplay/Action/Action.cs)
@@ -212,30 +254,30 @@ Running the game over internet currently requires setting up a relay.
 * RNSM custom config - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset)
 * NetworkSimulator usage through UI - [Assets/Scripts/Gameplay/UI/NetworkSimulationUIMediator.cs]
 * ParrelSync - [ Packages/manifest.json ](Packages/manifest.json)
-  
+</details>
+
+-------
+<br>
+
 ## Troubleshooting
   
-**Bugs**  
- Report bugs in Boss Room using Github [issues](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/issues)
- Report NGO bugs using NGO Github [issues](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects)
-  Report Unity bugs using the [Unity bug submission process](https://unity3d.com/unity/qa/bug-reporting).
+### Bugs 
+- Report bugs in Boss Room using Github [issues](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/issues)
+- Report NGO bugs using NGO Github [issues](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects)
+- Report Unity bugs using the [Unity bug submission process](https://unity3d.com/unity/qa/bug-reporting).
   
- **Documentation**  
-  For a deep dive into Unity Netcode and Boss Room, visit our [documentation site](https://docs-multiplayer.unity3d.com/).
+### Documentation  
+For a deep dive into Unity Netcode and Boss Room, visit our [documentation site](https://docs-multiplayer.unity3d.com/).
+<br><br>
   
-## Licence. 
-Boss Room is licenced under the Unity Companion Licence. See [LICENSE.md](LICENSE.md) for more legal information.
-
+## License
+Boss Room is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
 For a deep dive in Unity Netcode and Boss Room, visit our [docs site](https://docs-multiplayer.unity3d.com/).
-
-## Other samples
-### Bite-size Samples
-The [Bitesize Samples](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.bitesize)  repository is currently being expanded and contains a collection of smaller samples and games, showcasing sub-features of NGO. You can review these samples with documentation to understand our APIs and features better.
-
+<br><br>
 
 ## Contributing
-Please check out [CONTRIBUTING.md](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/blob/develop/CONTRIBUTING.md) for full guidelines on submitting issues and PRs to BossRoom. 
+We welcome your contributions to this sample code and objects. See our [contribution guidelines](CONTRIBUTING.md) for details.
   
 Our projects use the `git-flow` branching strategy:
  - our **`develop`** branch contains all active development
@@ -246,15 +288,28 @@ To get the project on your machine you need to clone the repository from GitHub 
 git clone https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop.git
 ```
 
-__IMPORTANT__: You should have [Git LFS](https://git-lfs.github.com/) installed on your local machine.
+**PLEASE NOTE:** You will need to have [Git LFS](https://git-lfs.github.com/) installed on your local machine in order to clone our repo.
+<br><br>
 
-Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues and PRs to BossRoom!
-
+## Community
+For help, questions, networking advice, or discussions about Netcode for GameObjects and its samples, please join our [Discord Community](https://discord.gg/FM8SE9E) or create a post in the [Unity Multiplayer Forum](https://forum.unity.com/forums/netcode-for-gameobjects.661/).
+<br><br>
 
 ## Feedback Form
 
 Thank you for cloning Boss Room and taking a look at the project. To help us improve and build better samples in the future, please consider submitting feedback about your experiences with Boss Room and let us know if you were able to learn everything you needed to today. It'll only take a couple of minutes. Thanks!
 
 [Enter the Boss Room Feedback Form](https://unitytech.typeform.com/bossroom)
+<br><br>
+
+## Other samples
+### Bite-size Samples
+- The [Bitesize Samples](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.bitesize)  repository is currently being expanded and contains a collection of smaller samples and games, showcasing sub-features of NGO. You can review these samples with documentation to understand our APIs and features better.
+<br><br>
+
+[![Documentation](https://img.shields.io/badge/Unity-boss--room--docs-57b9d3.svg?logo=unity&color=2196F3)](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom)
+[![Forums](https://img.shields.io/badge/Unity-multiplayer--forum-57b9d3.svg?logo=unity&color=2196F3)](https://forum.unity.com/forums/multiplayer.26/)
+[![Discord](https://img.shields.io/discord/449263083769036810.svg?label=discord&logo=discord&color=5865F2)](https://discord.gg/FM8SE9E)
+<br><br>
   
   ![](Documentation/Images/Players.png)

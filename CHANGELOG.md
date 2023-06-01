@@ -13,6 +13,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ### Changed
 * Updated Unity Transport Package to version 2.0.1 (#835)
+* Upgraded editor version to 2022.3.0f1 (#840)
 
 ## [2.1.0] - 2023-04-27
 
