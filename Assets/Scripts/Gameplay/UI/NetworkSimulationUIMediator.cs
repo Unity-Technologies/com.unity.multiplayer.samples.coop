@@ -12,12 +12,14 @@ namespace Unity.BossRoom.Gameplay.UI
 {
     public class NetworkSimulationUIMediator : MonoBehaviour
     {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         [SerializeField]
         NetworkSimulator m_NetworkSimulator;
-
+#endif
         [SerializeField]
         CanvasGroup m_CanvasGroup;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         [SerializeField]
         TMP_Dropdown m_PresetsDropdown;
 
@@ -47,47 +49,31 @@ namespace Unity.BossRoom.Gameplay.UI
         Dictionary<string, INetworkSimulatorPreset> m_SimulatorPresets = new Dictionary<string, INetworkSimulatorPreset>();
 
         Dictionary<string, NetworkScenario> m_Scenarios = new Dictionary<string, NetworkScenario>();
-
+#endif
         bool m_Shown;
+
         const string k_None = "None";
         const string k_PauseString = "Pause";
         const string k_ResumeString = "Resume";
 
         void Awake()
         {
-            // initialize connection presets dropdown
-            var optionData = new List<TMP_Dropdown.OptionData>();
-            foreach (var networkSimulatorPreset in NetworkSimulatorPresets.Values)
-            {
-                m_SimulatorPresets[networkSimulatorPreset.Name] = networkSimulatorPreset;
-                optionData.Add(new TMP_Dropdown.OptionData(networkSimulatorPreset.Name));
-            }
-            m_PresetsDropdown.AddOptions(optionData);
-            m_PresetsDropdown.onValueChanged.AddListener(OnPresetChanged);
-
-            // initialize scenario dropdown
-            optionData = new List<TMP_Dropdown.OptionData>();
-
-            // Adding empty scenario
-            optionData.Add(new TMP_Dropdown.OptionData(k_None));
-
-            // Adding ConnectionsCycle scenario
-            var scenarioName = m_ConnectionsCycleScenario.GetType().Name;
-            m_Scenarios[scenarioName] = m_ConnectionsCycleScenario;
-            optionData.Add(new TMP_Dropdown.OptionData(scenarioName));
-
-            // Adding RandomConnectionsSwap scenario
-            scenarioName = m_RandomConnectionsSwapScenario.GetType().Name;
-            m_Scenarios[scenarioName] = m_RandomConnectionsSwapScenario;
-            optionData.Add(new TMP_Dropdown.OptionData(scenarioName));
-
-            m_ScenariosDropdown.AddOptions(optionData);
-            m_ScenariosDropdown.onValueChanged.AddListener(OnScenarioChanged);
-
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            InitializeUI();
+#endif
             // Hide UI until ready
             Hide();
         }
 
+        public void Hide()
+        {
+            m_CanvasGroup.alpha = 0f;
+            m_CanvasGroup.interactable = false;
+            m_CanvasGroup.blocksRaycasts = false;
+            m_Shown = false;
+        }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         void Start()
         {
             NetworkManager.Singleton.OnClientStarted += OnNetworkManagerStarted;
@@ -123,15 +109,6 @@ namespace Unity.BossRoom.Gameplay.UI
             m_NetworkSimulator.Scenario?.Start(m_NetworkSimulator);
             UpdateScenarioButton();
         }
-
-        public void Hide()
-        {
-            m_CanvasGroup.alpha = 0f;
-            m_CanvasGroup.interactable = false;
-            m_CanvasGroup.blocksRaycasts = false;
-            m_Shown = false;
-        }
-
         void Show()
         {
             m_CanvasGroup.alpha = 1f;
@@ -151,6 +128,38 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 Show();
             }
+        }
+
+        void InitializeUI()
+        {
+            // initialize connection presets dropdown
+            var optionData = new List<TMP_Dropdown.OptionData>();
+            foreach (var networkSimulatorPreset in NetworkSimulatorPresets.Values)
+            {
+                m_SimulatorPresets[networkSimulatorPreset.Name] = networkSimulatorPreset;
+                optionData.Add(new TMP_Dropdown.OptionData(networkSimulatorPreset.Name));
+            }
+            m_PresetsDropdown.AddOptions(optionData);
+            m_PresetsDropdown.onValueChanged.AddListener(OnPresetChanged);
+
+            // initialize scenario dropdown
+            optionData = new List<TMP_Dropdown.OptionData>();
+
+            // Adding empty scenario
+            optionData.Add(new TMP_Dropdown.OptionData(k_None));
+
+            // Adding ConnectionsCycle scenario
+            var scenarioName = m_ConnectionsCycleScenario.GetType().Name;
+            m_Scenarios[scenarioName] = m_ConnectionsCycleScenario;
+            optionData.Add(new TMP_Dropdown.OptionData(scenarioName));
+
+            // Adding RandomConnectionsSwap scenario
+            scenarioName = m_RandomConnectionsSwapScenario.GetType().Name;
+            m_Scenarios[scenarioName] = m_RandomConnectionsSwapScenario;
+            optionData.Add(new TMP_Dropdown.OptionData(scenarioName));
+
+            m_ScenariosDropdown.AddOptions(optionData);
+            m_ScenariosDropdown.onValueChanged.AddListener(OnScenarioChanged);
         }
 
         void Update()
@@ -235,5 +244,6 @@ namespace Unity.BossRoom.Gameplay.UI
                 m_ScenariosButton.interactable = false;
             }
         }
+#endif
     }
 }
