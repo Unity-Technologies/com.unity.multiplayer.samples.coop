@@ -252,7 +252,7 @@ Running the game over internet currently requires setting up a relay.
 * Client authority - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/ClientAuthority/](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/ClientAuthority/)
 * Scene utils with synced loading screens - [Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/ ](Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/)
 * RNSM custom config - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset)
-* NetworkSimulator usage through UI - [Assets/Scripts/Gameplay/UI/NetworkSimulationUIMediator.cs]
+* NetworkSimulator usage through UI - [Assets/Scripts/Gameplay/UI/NetworkSimulationUIMediator.cs ](Assets/Scripts/Gameplay/UI/NetworkSimulationUIMediator.cs)
 * ParrelSync - [ Packages/manifest.json ](Packages/manifest.json)
 </details>
 
