@@ -9,7 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [unreleased] - yyyy-mm-dd
 
 ### Added
-* Adding NetworkSimulator tool (#841). Can be used through inspector while in-editor, or through custom in-game UI window in a build.
+* Adding NetworkSimulator tool (#841). Can be used through inspector while in-editor, or through custom in-game UI window in a build. The in-game UI window opens up automatically when starting a game, and can be opened and closed again by pressing 'tab' on a keyboard, or using five fingers at once on mobile.
 
 ### Changed
 * Updated Unity Transport Package to version 2.0.1 (#835)
