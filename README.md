@@ -5,7 +5,7 @@
 ###  Made with and Including Utilities for Netcode for GameObjects
 <br>
 
-[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-2021.3%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/qa/lts-releases?version=2021.3#:~:text=December%2015%2C%202022-,LTS%20Release,2021.3.15f1,-Released%3A%20December)
+[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-2022.3%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/whats-new/2022.3.0)
 [![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-1.2.0-57b9d3.svg?logo=unity&color=2196F3)](https://docs-multiplayer.unity3d.com/netcode/current/about)
 [![LatestRelease](https://img.shields.io/badge/Latest%20Github%20Release:-v2.0.4-57b9d3.svg?logo=github&color=brightgreen)](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases/tag/v2.0.4)
 <br><br>
@@ -86,9 +86,9 @@ For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/A
 
 ## Requirements
 
-BossRoom is compatible with the latest Unity Long Term Support (LTS) editor version, currently [2021 LTS](https://unity.com/releases/2021-lts). Please include standalone support for Windows/Mac in your installation.
+BossRoom is compatible with the latest Unity Long Term Support (LTS) editor version, currently [2022 LTS](https://unity.com/releases/editor/qa/lts-releases?version=2022.3). Please include standalone support for Windows/Mac in your installation.
 
-**PLEASE NOTE:** You will also need Netcode for Game Objects to use these samples. Complete the [Hello World Tutorial](https://docs-multiplayer.unity3d.com/netcode/current/tutorials/helloworld) to prepare your environment.
+**PLEASE NOTE:** You will also need Netcode for Game Objects to use these samples. See the [Installation Documentation](https://docs-multiplayer.unity3d.com/netcode/current/installation) to prepare your environment. You can also complete the [Get Started With NGO](https://docs-multiplayer.unity3d.com/netcode/current/tutorials/get-started-ngo) tutorial to familiarize yourself with Netcode For Game Objects.
 <br><br>
 
 #### Boss Room has been developed and tested on the following platforms:
