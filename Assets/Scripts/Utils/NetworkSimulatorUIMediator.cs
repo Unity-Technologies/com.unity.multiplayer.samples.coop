@@ -8,9 +8,9 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Unity.BossRoom.Gameplay.UI
+namespace Unity.BossRoom.Utils
 {
-    public class NetworkSimulationUIMediator : MonoBehaviour
+    public class NetworkSimulatorUIMediator : MonoBehaviour
     {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [SerializeField]
