@@ -115,20 +115,20 @@ namespace Unity.BossRoom.Utils
                     break;
                 case k_ConnectionCyclesScenarioName:
                     scenario = new ConnectionsCycle();
-                    ((ConnectionsCycle) scenario).Configurations.Clear();
+                    ((ConnectionsCycle)scenario).Configurations.Clear();
                     foreach (var configuration in m_ConnectionsCycleConfigurations)
                     {
-                        ((ConnectionsCycle) scenario).Configurations.Add(configuration);
+                        ((ConnectionsCycle)scenario).Configurations.Add(configuration);
                     }
                     break;
                 case k_RandomConnectionSwapScenarioName:
                     scenario = new RandomConnectionsSwap();
-                    ((RandomConnectionsSwap) scenario).Configurations.Clear();
+                    ((RandomConnectionsSwap)scenario).Configurations.Clear();
                     foreach (var configuration in m_RandomConnectionsSwapConfigurations)
                     {
-                        ((RandomConnectionsSwap) scenario).Configurations.Add(configuration);
+                        ((RandomConnectionsSwap)scenario).Configurations.Add(configuration);
                     }
-                    ((RandomConnectionsSwap) scenario).ChangeIntervalMilliseconds = m_RandomConnectionsSwapChangeIntervalMilliseconds;
+                    ((RandomConnectionsSwap)scenario).ChangeIntervalMilliseconds = m_RandomConnectionsSwapChangeIntervalMilliseconds;
                     break;
                 default:
                     Debug.LogError("Invalid Scenario selected.");
