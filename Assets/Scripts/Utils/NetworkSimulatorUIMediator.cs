@@ -147,8 +147,9 @@ namespace Unity.BossRoom.Utils
 
         void InitializeUI()
         {
-            // initialize connection presets dropdown
+            // Initialize connection presets dropdown
             var optionData = new List<TMP_Dropdown.OptionData>();
+            // Adding all available presets
             foreach (var networkSimulatorPreset in NetworkSimulatorPresets.Values)
             {
                 m_SimulatorPresets[networkSimulatorPreset.Name] = networkSimulatorPreset;
@@ -157,7 +158,7 @@ namespace Unity.BossRoom.Utils
             m_PresetsDropdown.AddOptions(optionData);
             m_PresetsDropdown.onValueChanged.AddListener(OnPresetChanged);
 
-            // initialize scenario dropdown
+            // Initialize scenario dropdown
             optionData = new List<TMP_Dropdown.OptionData>();
 
             // Adding empty scenario
