@@ -162,7 +162,6 @@ namespace Unity.BossRoom.Utils
                 Hide();
             }
             else
-            
             {
                 Show();
             }
