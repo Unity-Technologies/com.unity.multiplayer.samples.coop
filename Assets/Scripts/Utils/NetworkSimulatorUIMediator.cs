@@ -106,14 +106,14 @@ namespace Unity.BossRoom.Utils
                     break;
                 case k_ConnectionCyclesScenarioName:
                     scenario = new ConnectionsCycle();
-                    ((ConnectionsCycle) scenario).Configurations.Add(new ConnectionsCycle.Configuration() {ChangeIntervalMilliseconds = 5000, ConnectionPreset = NetworkSimulatorPresets.HomeBroadband});
-                    ((ConnectionsCycle) scenario).Configurations.Add(new ConnectionsCycle.Configuration() {ChangeIntervalMilliseconds = 5000, ConnectionPreset = NetworkSimulatorPresets.Mobile5G});
+                    ((ConnectionsCycle) scenario).Configurations.Add(new ConnectionsCycle.Configuration() { ChangeIntervalMilliseconds = 5000, ConnectionPreset = NetworkSimulatorPresets.HomeBroadband });
+                    ((ConnectionsCycle) scenario).Configurations.Add(new ConnectionsCycle.Configuration() { ChangeIntervalMilliseconds = 5000, ConnectionPreset = NetworkSimulatorPresets.Mobile5G });
                     break;
                 case k_RandomConnectionSwapScenarioName:
                     scenario = new RandomConnectionsSwap();
                     ((RandomConnectionsSwap) scenario).ChangeIntervalMilliseconds = 5000;
-                    ((RandomConnectionsSwap) scenario).Configurations.Add(new RandomConnectionsSwap.Configuration() {ConnectionPreset = NetworkSimulatorPresets.HomeBroadband});
-                    ((RandomConnectionsSwap) scenario).Configurations.Add(new RandomConnectionsSwap.Configuration() {ConnectionPreset = NetworkSimulatorPresets.Mobile5G});
+                    ((RandomConnectionsSwap) scenario).Configurations.Add(new RandomConnectionsSwap.Configuration() { ConnectionPreset = NetworkSimulatorPresets.HomeBroadband });
+                    ((RandomConnectionsSwap) scenario).Configurations.Add(new RandomConnectionsSwap.Configuration() { ConnectionPreset = NetworkSimulatorPresets.Mobile5G });
                     break;
                 default:
                     Debug.LogError("Invalid Scenario selected.");
