@@ -112,6 +112,8 @@ namespace Unity.BossRoom.Utils
             switch (scenarioName)
             {
                 case k_None:
+                    m_PresetsDropdown.captionText.color = m_PresetsDropdown.colors.normalColor;
+                    m_PresetsDropdown.interactable = true;
                     break;
                 case k_ConnectionCyclesScenarioName:
                     scenario = new ConnectionsCycle();
@@ -120,6 +122,8 @@ namespace Unity.BossRoom.Utils
                     {
                         ((ConnectionsCycle)scenario).Configurations.Add(configuration);
                     }
+                    m_PresetsDropdown.captionText.color = m_PresetsDropdown.colors.disabledColor;
+                    m_PresetsDropdown.interactable = false;
                     break;
                 case k_RandomConnectionSwapScenarioName:
                     scenario = new RandomConnectionsSwap();
@@ -128,10 +132,13 @@ namespace Unity.BossRoom.Utils
                     {
                         ((RandomConnectionsSwap)scenario).Configurations.Add(configuration);
                     }
-                    ((RandomConnectionsSwap)scenario).ChangeIntervalMilliseconds = m_RandomConnectionsSwapChangeIntervalMilliseconds;
+                    m_PresetsDropdown.captionText.color = m_PresetsDropdown.colors.disabledColor;
+                    m_PresetsDropdown.interactable = false;
                     break;
                 default:
                     Debug.LogError("Invalid Scenario selected.");
+                    m_PresetsDropdown.captionText.color = m_PresetsDropdown.colors.normalColor;
+                    m_PresetsDropdown.interactable = true;
                     break;
             }
             m_NetworkSimulator.Scenario = scenario;
@@ -155,6 +162,7 @@ namespace Unity.BossRoom.Utils
                 Hide();
             }
             else
+            
             {
                 Show();
             }
@@ -264,11 +272,13 @@ namespace Unity.BossRoom.Utils
             {
                 m_ScenariosButtonText.text = m_NetworkSimulator.Scenario.IsPaused ? k_ResumeString : k_PauseString;
                 m_ScenariosButton.interactable = true;
+                m_ScenariosButtonText.color = m_ScenariosButton.colors.normalColor;
             }
             else
             {
-                m_ScenariosButtonText.text = "";
+                m_ScenariosButtonText.text = "None";
                 m_ScenariosButton.interactable = false;
+                m_ScenariosButtonText.color = m_ScenariosButton.colors.disabledColor;
             }
         }
 #endif
