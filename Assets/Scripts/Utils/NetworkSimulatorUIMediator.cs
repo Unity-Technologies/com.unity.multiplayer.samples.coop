@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
 using Unity.Multiplayer.Tools.NetworkSimulator.Runtime;
+using Unity.Multiplayer.Tools.NetworkSimulator.Runtime.BuiltInScenarios;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +24,9 @@ namespace Unity.BossRoom.Utils
         TMP_Dropdown m_PresetsDropdown;
 
         [SerializeField]
+        TMP_Dropdown m_ScenariosDropdown;
+
+        [SerializeField]
         Button m_ScenariosButton;
 
         [SerializeField]
@@ -37,12 +41,12 @@ namespace Unity.BossRoom.Utils
         const int k_NbTouchesToOpenWindow = 5;
 
         Dictionary<string, INetworkSimulatorPreset> m_SimulatorPresets = new Dictionary<string, INetworkSimulatorPreset>();
-
-        Dictionary<string, NetworkScenario> m_Scenarios = new Dictionary<string, NetworkScenario>();
 #endif
         bool m_Shown;
 
         const string k_None = "None";
+        const string k_ConnectionCyclesScenarioName = "Connections Cycle";
+        const string k_RandomConnectionSwapScenarioName = "Random Connections Swap";
         const string k_PauseString = "Pause";
         const string k_ResumeString = "Resume";
 
@@ -91,11 +95,41 @@ namespace Unity.BossRoom.Utils
         {
             m_NetworkSimulator.ChangeConnectionPreset(m_SimulatorPresets[m_PresetsDropdown.options[optionIndex].text]);
         }
+
+        void OnScenarioChanged(int optionIndex)
+        {
+            var scenarioName = m_ScenariosDropdown.options[optionIndex].text;
+            NetworkScenario scenario = null;
+            switch (scenarioName)
+            {
+                case k_None:
+                    break;
+                case k_ConnectionCyclesScenarioName:
+                    scenario = new ConnectionsCycle();
+                    ((ConnectionsCycle) scenario).Configurations.Add(new ConnectionsCycle.Configuration() {ChangeIntervalMilliseconds = 5000, ConnectionPreset = NetworkSimulatorPresets.HomeBroadband});
+                    ((ConnectionsCycle) scenario).Configurations.Add(new ConnectionsCycle.Configuration() {ChangeIntervalMilliseconds = 5000, ConnectionPreset = NetworkSimulatorPresets.Mobile5G});
+                    break;
+                case k_RandomConnectionSwapScenarioName:
+                    scenario = new RandomConnectionsSwap();
+                    ((RandomConnectionsSwap) scenario).ChangeIntervalMilliseconds = 5000;
+                    ((RandomConnectionsSwap) scenario).Configurations.Add(new RandomConnectionsSwap.Configuration() {ConnectionPreset = NetworkSimulatorPresets.HomeBroadband});
+                    ((RandomConnectionsSwap) scenario).Configurations.Add(new RandomConnectionsSwap.Configuration() {ConnectionPreset = NetworkSimulatorPresets.Mobile5G});
+                    break;
+                default:
+                    Debug.LogError("Invalid Scenario selected.");
+                    break;
+            }
+            m_NetworkSimulator.Scenario = scenario;
+            m_NetworkSimulator.Scenario?.Start(m_NetworkSimulator);
+            UpdateScenarioButton();
+        }
+
         void Show()
         {
             m_CanvasGroup.alpha = 1f;
             m_CanvasGroup.interactable = true;
             m_CanvasGroup.blocksRaycasts = true;
+            UpdateScenarioButton();
             m_Shown = true;
         }
 
@@ -122,6 +156,21 @@ namespace Unity.BossRoom.Utils
             }
             m_PresetsDropdown.AddOptions(optionData);
             m_PresetsDropdown.onValueChanged.AddListener(OnPresetChanged);
+
+            // initialize scenario dropdown
+            optionData = new List<TMP_Dropdown.OptionData>();
+
+            // Adding empty scenario
+            optionData.Add(new TMP_Dropdown.OptionData(k_None));
+
+            // Adding ConnectionsCycle scenario
+            optionData.Add(new TMP_Dropdown.OptionData(k_ConnectionCyclesScenarioName));
+
+            // Adding RandomConnectionsSwap scenario
+            optionData.Add(new TMP_Dropdown.OptionData(k_RandomConnectionSwapScenarioName));
+
+            m_ScenariosDropdown.AddOptions(optionData);
+            m_ScenariosDropdown.onValueChanged.AddListener(OnScenarioChanged);
         }
 
         void Update()
@@ -182,6 +231,29 @@ namespace Unity.BossRoom.Utils
         public void SanitizeLagSpikeDurationInputField()
         {
             m_LagSpikeDuration.text = Regex.Replace(m_LagSpikeDuration.text, "[^0-9]", "");
+        }
+
+        public void TriggerScenario()
+        {
+            if (m_NetworkSimulator.Scenario != null)
+            {
+                m_NetworkSimulator.Scenario.IsPaused = !m_NetworkSimulator.Scenario.IsPaused;
+                UpdateScenarioButton();
+            }
+        }
+
+        void UpdateScenarioButton()
+        {
+            if (m_NetworkSimulator.Scenario != null)
+            {
+                m_ScenariosButtonText.text = m_NetworkSimulator.Scenario.IsPaused ? k_ResumeString : k_PauseString;
+                m_ScenariosButton.interactable = true;
+            }
+            else
+            {
+                m_ScenariosButtonText.text = "";
+                m_ScenariosButton.interactable = false;
+            }
         }
 #endif
     }
