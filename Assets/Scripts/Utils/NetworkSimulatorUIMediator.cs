@@ -38,6 +38,15 @@ namespace Unity.BossRoom.Utils
         [SerializeField]
         KeyCode m_OpenWindowKeyCode = KeyCode.Tilde;
 
+        [SerializeField]
+        List<ConnectionsCycle.Configuration> m_ConnectionsCycleConfigurations;
+
+        [SerializeField]
+        List<RandomConnectionsSwap.Configuration> m_RandomConnectionsSwapConfigurations;
+
+        [SerializeField]
+        int m_RandomConnectionsSwapChangeIntervalMilliseconds;
+
         const int k_NbTouchesToOpenWindow = 5;
 
         Dictionary<string, INetworkSimulatorPreset> m_SimulatorPresets = new Dictionary<string, INetworkSimulatorPreset>();
@@ -106,14 +115,20 @@ namespace Unity.BossRoom.Utils
                     break;
                 case k_ConnectionCyclesScenarioName:
                     scenario = new ConnectionsCycle();
-                    ((ConnectionsCycle) scenario).Configurations.Add(new ConnectionsCycle.Configuration() { ChangeIntervalMilliseconds = 5000, ConnectionPreset = NetworkSimulatorPresets.HomeBroadband });
-                    ((ConnectionsCycle) scenario).Configurations.Add(new ConnectionsCycle.Configuration() { ChangeIntervalMilliseconds = 5000, ConnectionPreset = NetworkSimulatorPresets.Mobile5G });
+                    ((ConnectionsCycle) scenario).Configurations.Clear();
+                    foreach (var configuration in m_ConnectionsCycleConfigurations)
+                    {
+                        ((ConnectionsCycle) scenario).Configurations.Add(configuration);
+                    }
                     break;
                 case k_RandomConnectionSwapScenarioName:
                     scenario = new RandomConnectionsSwap();
-                    ((RandomConnectionsSwap) scenario).ChangeIntervalMilliseconds = 5000;
-                    ((RandomConnectionsSwap) scenario).Configurations.Add(new RandomConnectionsSwap.Configuration() { ConnectionPreset = NetworkSimulatorPresets.HomeBroadband });
-                    ((RandomConnectionsSwap) scenario).Configurations.Add(new RandomConnectionsSwap.Configuration() { ConnectionPreset = NetworkSimulatorPresets.Mobile5G });
+                    ((RandomConnectionsSwap) scenario).Configurations.Clear();
+                    foreach (var configuration in m_RandomConnectionsSwapConfigurations)
+                    {
+                        ((RandomConnectionsSwap) scenario).Configurations.Add(configuration);
+                    }
+                    ((RandomConnectionsSwap) scenario).ChangeIntervalMilliseconds = m_RandomConnectionsSwapChangeIntervalMilliseconds;
                     break;
                 default:
                     Debug.LogError("Invalid Scenario selected.");
