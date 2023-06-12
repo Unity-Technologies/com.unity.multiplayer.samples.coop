@@ -116,24 +116,26 @@ namespace Unity.BossRoom.Utils
                     m_PresetsDropdown.interactable = true;
                     break;
                 case k_ConnectionCyclesScenarioName:
-                    scenario = new ConnectionsCycle();
-                    ((ConnectionsCycle)scenario).Configurations.Clear();
+                    var connectionsCyleScenario = new ConnectionsCycle();
+                    connectionsCyleScenario.Configurations.Clear();
                     foreach (var configuration in m_ConnectionsCycleConfigurations)
                     {
-                        ((ConnectionsCycle)scenario).Configurations.Add(configuration);
+                        connectionsCyleScenario.Configurations.Add(configuration);
                     }
                     m_PresetsDropdown.captionText.color = m_PresetsDropdown.colors.disabledColor;
                     m_PresetsDropdown.interactable = false;
+                    scenario = connectionsCyleScenario;
                     break;
                 case k_RandomConnectionSwapScenarioName:
-                    scenario = new RandomConnectionsSwap();
-                    ((RandomConnectionsSwap)scenario).Configurations.Clear();
+                    var randomConnectionsSwapScenario = new RandomConnectionsSwap();
+                    randomConnectionsSwapScenario.Configurations.Clear();
                     foreach (var configuration in m_RandomConnectionsSwapConfigurations)
                     {
-                        ((RandomConnectionsSwap)scenario).Configurations.Add(configuration);
+                        randomConnectionsSwapScenario.Configurations.Add(configuration);
                     }
                     m_PresetsDropdown.captionText.color = m_PresetsDropdown.colors.disabledColor;
                     m_PresetsDropdown.interactable = false;
+                    scenario = randomConnectionsSwapScenario;
                     break;
                 default:
                     Debug.LogError("Invalid Scenario selected.");
