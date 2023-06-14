@@ -1,6 +1,6 @@
 # Multiplayer Samples Co-op Changelog
 
-## [unreleased] - yyyy-mm-dd
+## [1.6.1] - 2023-06-14
 
 ### Fixed
 * Updating package dependency to Netcode for GameObjects version 1.4.0 (#839)
