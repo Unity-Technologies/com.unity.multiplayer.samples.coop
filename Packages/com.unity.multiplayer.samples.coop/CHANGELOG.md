@@ -1,7 +1,5 @@
 # Multiplayer Samples Co-op Changelog
 
-## [unreleased] - yyyy-mm-dd
-
 ## [1.6.1] - 2023-06-14
 
 ### Fixed
