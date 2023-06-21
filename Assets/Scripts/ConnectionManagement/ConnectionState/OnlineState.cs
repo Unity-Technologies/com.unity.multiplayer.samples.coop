@@ -5,8 +5,6 @@ namespace Unity.BossRoom.ConnectionManagement
     /// </summary>
     abstract class OnlineState : ConnectionState
     {
-        public const string k_DtlsConnType = "dtls";
-
         public override void OnUserRequestedShutdown()
         {
             // This behaviour will be the same for every online state

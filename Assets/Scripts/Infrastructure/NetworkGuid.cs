@@ -3,16 +3,10 @@ using Unity.Netcode;
 
 namespace Unity.BossRoom.Infrastructure
 {
-    public class NetworkGuid : INetworkSerializable
+    public struct NetworkGuid : INetworkSerializeByMemcpy
     {
         public ulong FirstHalf;
         public ulong SecondHalf;
-
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-        {
-            serializer.SerializeValue(ref FirstHalf);
-            serializer.SerializeValue(ref SecondHalf);
-        }
     }
 
     public static class NetworkGuidExtensions

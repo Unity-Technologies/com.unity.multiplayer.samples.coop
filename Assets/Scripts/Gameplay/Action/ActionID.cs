@@ -7,14 +7,9 @@ namespace Unity.BossRoom.Gameplay.Actions
     /// This struct is used by Action system (and GameDataSource) to refer to a specific action in runtime.
     /// It wraps a simple integer.
     /// </summary>
-    public struct ActionID : INetworkSerializable, IEquatable<ActionID>
+    public struct ActionID : INetworkSerializeByMemcpy, IEquatable<ActionID>
     {
         public int ID;
-
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-        {
-            serializer.SerializeValue(ref ID);
-        }
 
         public bool Equals(ActionID other)
         {

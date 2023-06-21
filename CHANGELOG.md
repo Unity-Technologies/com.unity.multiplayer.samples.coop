@@ -6,17 +6,58 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [unreleased] - aaaa-mm-dd
+## [2.2.0] - 2023-06-14
 
 ### Added
-*
+* Adding NetworkSimulator tool (#843). It can be used through the NetworkSimulator component's editor (see the [NetworkSimulator documentation](https://docs-multiplayer.unity3d.com/tools/current/tools-network-simulator/)), but only in-editor. To be able to use it in a build, a custom in-game UI window was added. The in-game UI window opens up automatically when starting or joining a networked session, and can be opened and closed again by pressing 'tab' on a keyboard, or using five fingers at once on mobile.
+
+### Changed
+* Upgraded editor version to 2022.3.0f1 (#840)
+* Updated Multiplayer Tools to version 2.0.0-pre.3 (#840)
+* NetworkTransform bandwidth optimizations applied to NetworkObject prefabs inside project (#836) Netcode for GameObjects v1.4.0 introduced bandwidth compression techniques to further reduce the bandwidth footprint of a NetworkTransform's synchronization payload. Inside Boss Room, the base prefab for PCs and NPCs, Character, had its NetworkTransform modified to now utilize half float precision, ie. "Use Half Float Precision" set to true. Its y position is also explicitly no longer synced. This results in a net 5 byte reduction in a NetworkTransform's synchronization payload. This bandwidth reduction was applied also to the Archer's arrow NetworkObject prefabs. Additionally, several NetworkObjects have now their "Synchronize Transform" flag disabled inside their NetworkObject component, meaning that its transform properties will not be synced when spawning and/or when late-joining clients connect. This is particularly useful if the NetworkObject is used more for management related tasks and has no spatial synchronization needs. For more information, see [Netcode for GameObjects' v1.4.0 release notes](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/releases/tag/ngo%2F1.4.0).
+* Updated Unity Transport Package to version 2.0.2 (#843). This gives access to the NetworkSimulator tool.
+
+## [2.1.0] - 2023-04-27
+
+### Added
+* Added OnServerStopped event to ConnectionManager and ConnectionState (#826). This allows for the detection of an unexpected shutdown on the server side.
+
+### Changed
+* Replaced our polling for lobby updates with a subscription to the new Websocket based LobbyEvents (#805). This saves up a significant amount of bandwidth usage to and from the service, since updates are infrequent in this game. Now clients and hosts only use up bandwidth on the Lobby service when it is needed. With polling, we used to send a GET request per client once every 2s. The responses were between ~550 bytes and 900 bytes, so if we suppose an average of 725 bytes and 100 000 concurrent users (CCU), this amounted to around 725B * 30 calls per minute * 100 000 CCU = 2.175 GB per minute. Scaling this to a month would get us 93.96 TB per month. In our case, since the only changes to the lobbies happen when a user connects or disconnects, most of that data was not necessary and can be saved to reduce bandwidth usage. Since the cost of using the Lobby service depends on bandwidth usage, this would also save money on an actual game.
+* Simplified reconnection flow by offloading responsibility to ConnectionMethod (#804). Now the ClientReconnectingState uses the ConnectionMethod it is configured with to handle setting up reconnection (i.e. reconnecting to the Lobby before trying to reconnect to the Relay server if it is using Relay and Lobby). It can now also fail early and stop retrying if the lobby doesn't exist anymore.
+* Replaced our custom pool implementation using queues with ObjectPool (#824)(#827)
+* Upgraded Boss Room to NGO 1.3.1 (#828) NetworkPrefabs inside NetworkManager's NetworkPrefabs list have been converted to NetworkPrefabsList ScriptableObject. 
+* Upgraded Boss Room to NGO 1.4.0 (#829)
+* Profile names generated are now only 30 characters or under to fit Authentication Service requirements (#831)
+
+### Cleanup
+* Clarified a TODO comment inside ClientCharacter, detailing how anticipation should only be executed on owning client players (#786)
+* Removed now unnecessary cached NetworkBehaviour status on some components, since they now do not allocate memory (#799) 
+* Certain structs converted to implement interface INetworkSerializeByMemcpy instead of INetworkSerializable (#822) INetworkSerializeByMemcpy optimizes for performance at the cost of bandwidth usage and flexibility, however it will only work with structs containing value types. For more details see the official [doc](https://docs-multiplayer.unity3d.com/netcode/current/advanced-topics/serialization/inetworkserializebymemcpy/index.html).
+
+### Fixed
+* EnemyPortals' VFX get disabled and re-enabled once the breakable crystals are broken (#784)
+* Elements inside the Tank's and Rogue's AnimatorTriggeredSpecialFX list have been revised to not loop AudioSource clips, ending the logging of multiple warnings to the console (#785)
+* ClientConnectedState now inherits from OnlineState instead of the base ConnectionState (#801)
+* UpdateRunner now sends the right value for deltaTime when updating its subscribers (#805)
+* Inputs are better sanitized when entering IP address and port (#821). Now all invalid characters are prevented, and UnityTransport's NetworkEndpoint.TryParse is used to verify the validity of the IP address and port that are entered before making the join/host button interactable.
+* Fixed failing connection management test (#826). This test had to be ignored previously because there was no mechanism to detect unexpected server shutdowns. With the OnServerStopped callback introduced in NGO 1.4.0, this is no longer an issue. 
+* Decoupled SceneLoaderWrapper and ConnectionStates (#830). The OnServerStarted and OnClientStarted callbacks available in NGO 1.4.0 allows us to remove the need for an external method to initialize the SceneLoaderWrapper after starting a NetworkingSession.
+
+## [2.0.4] - 2022-12-13
+### Changed
+* Updated Boss Room to NGO 1.2.0 (#791).
+  * Removed a workaround in our tests waiting for two frames before shutting down a client that is attempting to connect to a server. (see https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/pull/2261)
+* Replaced the workaround using custom messages to send a disconnect reason to clients with the new DisconnectReason feature in NGO. (#790)
+* Updating editor version to 2021.3.15f1 (#795)
+
+## [2.0.3] - 2022-12-05
+
 ### Changed
 * Hosts now delete their lobby when shutting down instead of only leaving it (#772) Since Boss Room doesn't support host migration, there is no need to keep the lobby alive after the host shuts down. This also changes how LobbyServiceExceptions are handled to prevent popup messages on clients trying to leave a lobby that is already deleted, following the best practices outlined in this doc : https://docs.unity.com/lobby/delete-a-lobby.html
-* 
-### Cleanup
-* Removed an unneeded workaround for animation syncing on OnNetworkSpawn of ServerAnimationHandler (#783) Refactorings to NetworkAnimator have made it unnecessary to manually sync an Animator's base animation state.
+
 ### Fixed
-*
+* Mage's heal FX plays out on itself and on targets. Added ability for SpecialFXGraphic components to remain at spawn rotation (#771)
 
 ## [2.0.2] - 2022-11-01
 ### Fixed
@@ -40,7 +81,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Reenabled depth buffer in the URP settings to enable the use of soft particles (#762)
 * Moved a torch out of a corner so that the flame VFX don't clip (#768)
 * Fixed issue where pressing 1 on keyboard would not invoke Revive or Pickup/Drop Actions (#770) Authority on modification of displayed Action now comes from a single spot, ClientInputSender.
-* Mage's heal FX plays out on itself and on targets. Added ability for SpecialFXGraphic components to remain at spawn rotation (#771)
 
 ## [2.0.0] - 2022-10-06
 

@@ -9,11 +9,11 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
     name: build {{ project.name }} - {{ editor }} on iOS
     agent:
         type: Unity::VM::osx
-        image: mobile/macos-10.15-testing:stable
+        image: package-ci/macos-12:v4
         flavor: b1.large
 
     commands:
-        - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
+        - pip install unity-downloader-cli==1.2.0 --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
         - unity-downloader-cli -c Editor -c iOS -u {{ editor }} --fast --wait
         - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
         - chmod +x ./utr
@@ -37,12 +37,12 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         type: Unity::VM
         # Any generic image can be used, no need to have Android tools in the image for building
         # All Android tools will be downloaded by unity-downloader-cli
-        image: desktop/android-execution-r19:v0.1.1-860408
+        image: mobile/android-execution-base:stable
         flavor: b1.xlarge
 
     commands:
         # Download unity-downloader-cli
-        - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
+        - pip install unity-downloader-cli==1.2.0 --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
         - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
         - python .yamato/disable-burst-if-requested.py --project-path {{ project.path }} --platform Android
         - unity-downloader-cli -c Editor -c Android -u {{ editor }} --fast --wait
@@ -70,7 +70,7 @@ mobile_test_ios_{{ project.name }}_{{ editor }}:
     name: {{ project.name }} mobile project tests - {{ editor }} on iOS
     agent:
         type: Unity::mobile::iPhone
-        image: mobile/macos-10.15-testing:latest
+        image: package-ci/macos-12:v4
         flavor: b1.medium
 
     # Skip repository cloning
@@ -103,7 +103,7 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
     name: {{ project.name }} mobile project tests - {{ editor }} on Android
     agent:
         type: Unity::mobile::shield
-        image: mobile/android-execution-r19:stable
+        image: mobile/android-execution-base:stable
         flavor: b1.medium
 
     # Skip repository cloning
@@ -119,7 +119,7 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
           start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
           start %ANDROID_SDK_ROOT%\platform-tools\adb.exe devices
           set UTR_VERSION=0.12.0
-          ./utr --artifacts_path=build/test-results --testproject={{ project.path }} --editor-location=.Editor --reruncount=2 --suite=playmode --platform=android --player-connection-ip=%BOKKEN_HOST_IP% --player-load-path=build/players --testfilter=Unity.BossRoom.Tests.Runtime
+          ./utr --artifacts_path=build/test-results --testproject={{ project.path }} --editor-location=.Editor --reruncount=2 --suite=playmode --platform=android --player-load-path=build/players --testfilter=Unity.BossRoom.Tests.Runtime
     # Set uploadable artifact paths
     artifacts:
         logs:

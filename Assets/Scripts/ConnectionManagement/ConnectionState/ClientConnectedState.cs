@@ -7,9 +7,9 @@ namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to a connected client. When being disconnected, transitions to the
-    /// ClientReconnecting state. When receiving a disconnect reason, transitions to the DisconnectingWithReason state.
+    /// ClientReconnecting state if no reason is given, or to the Offline state.
     /// </summary>
-    class ClientConnectedState : ConnectionState
+    class ClientConnectedState : OnlineState
     {
         [Inject]
         protected LobbyServiceFacade m_LobbyServiceFacade;
@@ -26,20 +26,18 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnClientDisconnect(ulong _)
         {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.Reconnecting);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientReconnecting);
-        }
-
-        public override void OnUserRequestedShutdown()
-        {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-        }
-
-        public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
-        {
-            m_ConnectStatusPublisher.Publish(disconnectReason);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
+            var disconnectReason = m_ConnectionManager.NetworkManager.DisconnectReason;
+            if (string.IsNullOrEmpty(disconnectReason))
+            {
+                m_ConnectStatusPublisher.Publish(ConnectStatus.Reconnecting);
+                m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientReconnecting);
+            }
+            else
+            {
+                var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
+                m_ConnectStatusPublisher.Publish(connectStatus);
+                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
+            }
         }
     }
 }

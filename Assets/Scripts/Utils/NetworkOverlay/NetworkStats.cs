@@ -61,14 +61,10 @@ namespace Unity.BossRoom.Utils
 
         ClientRpcParams m_PongClientParams;
 
-        bool m_IsServer;
-
         string m_TextToDisplay;
 
         public override void OnNetworkSpawn()
         {
-            m_IsServer = IsServer;
-
             bool isClientOnly = IsClient && !IsServer;
             if (!IsOwner && isClientOnly) // we don't want to track player ghost stats, only our own
             {
@@ -98,7 +94,7 @@ namespace Unity.BossRoom.Utils
 
         void FixedUpdate()
         {
-            if (!m_IsServer)
+            if (!IsServer)
             {
                 if (Time.realtimeSinceStartup - m_LastPingTime > k_PingIntervalSeconds)
                 {

@@ -45,7 +45,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         [SerializeField]
         private GameObject[] m_UnbrokenGameObjects;
 
-
         /// <summary>
         /// Is the item broken or not?
         /// </summary>
@@ -158,10 +157,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         private void PerformBreakVisualization(bool onStart)
         {
-            foreach (var gameObject in m_UnbrokenGameObjects)
+            foreach (var unbrokenGameObject in m_UnbrokenGameObjects)
             {
-                if (gameObject)
-                    gameObject.SetActive(false);
+                if (unbrokenGameObject)
+                {
+                    unbrokenGameObject.SetActive(false);
+                }
             }
 
             if (m_CurrentBrokenVisualization)
@@ -180,10 +181,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 Destroy(m_CurrentBrokenVisualization);
             }
-            foreach (var gameObject in m_UnbrokenGameObjects)
+            foreach (var unbrokenGameObject in m_UnbrokenGameObjects)
             {
-                if (gameObject)
-                    gameObject.SetActive(true);
+                if (unbrokenGameObject)
+                {
+                    unbrokenGameObject.SetActive(true);
+                }
             }
         }
 

@@ -1,6 +1,20 @@
 # Multiplayer Samples Co-op Changelog
 
-## [unreleased] - aaaa-mm-dd
+## [1.6.1] - 2023-06-14
+
+### Fixed
+* Updating package dependency to Netcode for GameObjects version 1.4.0 (#839)
+
+## [1.6.0] - 2023-04-27
+
+### Changed
+* Removed need for SceneLoaderWrapper.AddOnSceneEventCallback (#830). The OnServerStarted and OnClientStarted callbacks available in NGO 1.4.0 allows us to remove the need for an external method to initialize the SceneLoaderWrapper after starting a NetworkingSession.
+
+## [1.5.1] - 2022-12-13
+### Changed
+* Bumped RNSM to 1.1.0: Switched x axis units to seconds instead of frames now that it's available. This means adjusting the sample count to a lower value as well to 30 seconds, since the x axis was moving too slowly. (#788)
+
+## [1.5.0] - 2022-12-05
 
 ### Changed
 * ClientNetworkAnimator component has been added to the Samples Utilities Package. This allows for authority on Animators to be passed onto clients, meaning animations will be client-driven.

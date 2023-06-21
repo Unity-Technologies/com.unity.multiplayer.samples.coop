@@ -21,10 +21,29 @@ namespace Unity.BossRoom.ConnectionManagement
         protected ConnectionManager m_ConnectionManager;
         readonly ProfileManager m_ProfileManager;
         protected readonly string m_PlayerName;
+        protected const string k_DtlsConnType = "dtls";
 
+        /// <summary>
+        /// Setup the host connection prior to starting the NetworkManager
+        /// </summary>
+        /// <returns></returns>
         public abstract Task SetupHostConnectionAsync();
 
+
+        /// <summary>
+        /// Setup the client connection prior to starting the NetworkManager
+        /// </summary>
+        /// <returns></returns>
         public abstract Task SetupClientConnectionAsync();
+
+        /// <summary>
+        /// Setup the client for reconnection prior to reconnecting
+        /// </summary>
+        /// <returns>
+        /// success = true if succeeded in setting up reconnection, false if failed.
+        /// shouldTryAgain = true if we should try again after failing, false if not.
+        /// </returns>
+        public abstract Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync();
 
         public ConnectionMethodBase(ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
         {
@@ -47,6 +66,13 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ConnectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
         }
 
+        /// Using authentication, this makes sure your session is associated with your account and not your device. This means you could reconnect 
+        /// from a different device for example. A playerId is also a bit more permanent than player prefs. In a browser for example, 
+        /// player prefs can be cleared as easily as cookies.
+        /// The forked flow here is for debug purposes and to make UGS optional in Boss Room. This way you can study the sample without 
+        /// setting up a UGS account. It's recommended to investigate your own initialization and IsSigned flows to see if you need 
+        /// those checks on your own and react accordingly. We offer here the option for offline access for debug purposes, but in your own game you
+        /// might want to show an error popup and ask your player to connect to the internet.
         protected string GetPlayerId()
         {
             if (Services.Core.UnityServices.State != ServicesInitializationState.Initialized)
@@ -81,6 +107,12 @@ namespace Unity.BossRoom.ConnectionManagement
             utp.SetConnectionData(m_Ipaddress, m_Port);
         }
 
+        public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
+        {
+            // Nothing to do here
+            return (true, true);
+        }
+
         public override async Task SetupHostConnectionAsync()
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
@@ -90,7 +122,7 @@ namespace Unity.BossRoom.ConnectionManagement
     }
 
     /// <summary>
-    /// UTP's Relay connection setup
+    /// UTP's Relay connection setup using the Lobby integration
     /// </summary>
     class ConnectionMethodRelay : ConnectionMethodBase
     {
@@ -128,7 +160,26 @@ namespace Unity.BossRoom.ConnectionManagement
 
             // Configure UTP with allocation
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(joinedAllocation, OnlineState.k_DtlsConnType));
+            utp.SetRelayServerData(new RelayServerData(joinedAllocation, k_DtlsConnType));
+        }
+
+        public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
+        {
+            if (m_LobbyServiceFacade.CurrentUnityLobby == null)
+            {
+                Debug.Log("Lobby does not exist anymore, stopping reconnection attempts.");
+                return (false, false);
+            }
+
+            // When using Lobby with Relay, if a user is disconnected from the Relay server, the server will notify the
+            // Lobby service and mark the user as disconnected, but will not remove them from the lobby. They then have
+            // some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on the dashboard),
+            // after which they will be removed from the lobby completely.
+            // See https://docs.unity.com/lobby/reconnect-to-lobby.html
+            var lobby = await m_LobbyServiceFacade.ReconnectToLobbyAsync();
+            var success = lobby != null;
+            Debug.Log(success ? "Successfully reconnected to Lobby." : "Failed to reconnect to Lobby.");
+            return (success, true); // return a success if reconnecting to lobby returns a lobby
         }
 
         public override async Task SetupHostConnectionAsync()
@@ -152,7 +203,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
             // Setup UTP with relay connection info
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(hostAllocation, OnlineState.k_DtlsConnType)); // This is with DTLS enabled for a secure connection
+            utp.SetRelayServerData(new RelayServerData(hostAllocation, k_DtlsConnType)); // This is with DTLS enabled for a secure connection
         }
     }
 }
