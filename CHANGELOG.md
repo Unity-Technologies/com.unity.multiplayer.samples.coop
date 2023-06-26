@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
+## [unreleased] - yyyy-mm-dd
+### Cleanup
+* Removed an unneeded workaround for animation syncing on OnNetworkSpawn of ServerAnimationHandler (#783) Refactorings to NetworkAnimator have made it unnecessary to manually sync an Animator's base animation state.
+
 ## [2.2.0] - 2023-06-14
 
 ### Added
