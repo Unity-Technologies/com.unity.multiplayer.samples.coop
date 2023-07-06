@@ -58,6 +58,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
 --- !u!114 &514105321093282895
@@ -100,7 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 920a440eb254ba348915767fd046027a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ClientVisualization: {fileID: 0}
+  m_ClientCharacter: {fileID: 0}
   m_CharacterClass: {fileID: 0}
   m_BrainEnabled: 1
   m_KilledDestroyDelaySeconds: 3
@@ -231,7 +234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SyncPositionX: 1
-  SyncPositionY: 1
+  SyncPositionY: 0
   SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 1
@@ -242,8 +245,12 @@ MonoBehaviour:
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 1
   InLocalSpace: 0
   Interpolate: 1
+  SlerpPosition: 0
 --- !u!114 &3884788294438199994
 MonoBehaviour:
   m_ObjectHideFlags: 0

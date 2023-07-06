@@ -1,5 +1,6 @@
 using System;
 using TMPro;
+using Unity.Multiplayer.Tools.NetworkSimulator.Runtime;
 using UnityEngine;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -10,6 +11,9 @@ namespace Unity.BossRoom.Utils.Editor
 {
     public class NetworkLatencyWarning : MonoBehaviour
     {
+        [SerializeField]
+        NetworkSimulator m_NetworkSimulator;
+
         TextMeshProUGUI m_LatencyText;
         bool m_LatencyTextCreated;
 
@@ -25,10 +29,11 @@ namespace Unity.BossRoom.Utils.Editor
 
                 // adding this preprocessor directive check since UnityTransport's simulator tools only inject latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                var simulatorParameters = unityTransport.DebugSimulator;
-                m_ArtificialLatencyEnabled = simulatorParameters.PacketDelayMS > 0 ||
-                    simulatorParameters.PacketJitterMS > 0 ||
-                    simulatorParameters.PacketDropRate > 0;
+                var currentSimulationPreset = m_NetworkSimulator.CurrentPreset;
+                m_ArtificialLatencyEnabled = currentSimulationPreset.PacketDelayMs > 0 ||
+                    currentSimulationPreset.PacketJitterMs > 0 ||
+                    currentSimulationPreset.PacketLossInterval > 0 ||
+                    currentSimulationPreset.PacketLossPercent > 0;
 #else
                 m_ArtificialLatencyEnabled = false;
 #endif

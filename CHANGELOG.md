@@ -6,7 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [unreleased] - yyyy-mm-dd
+## [2.2.0] - 2023-07-06
+
+### Added
+* Adding NetworkSimulator tool (#843). It can be used through the NetworkSimulator component's editor (see the [NetworkSimulator documentation](https://docs-multiplayer.unity3d.com/tools/current/tools-network-simulator/)), but only in-editor. To be able to use it in a build, a custom in-game UI window was added. The in-game UI window opens up automatically when starting or joining a networked session, and can be opened and closed again by pressing 'tab' on a keyboard, or using five fingers at once on mobile.
+
+### Changed
+* Upgraded editor version to 2022.3.0f1 (#840)
+* Updated Multiplayer Tools to version 2.0.0-pre.3 (#840)
+* NetworkTransform bandwidth optimizations applied to NetworkObject prefabs inside project (#836) Netcode for GameObjects v1.4.0 introduced bandwidth compression techniques to further reduce the bandwidth footprint of a NetworkTransform's synchronization payload. Inside Boss Room, the base prefab for PCs and NPCs, Character, had its NetworkTransform modified to now utilize half float precision, ie. "Use Half Float Precision" set to true. Its y position is also explicitly no longer synced. This results in a net 5 byte reduction in a NetworkTransform's synchronization payload. This bandwidth reduction was applied also to the Archer's arrow NetworkObject prefabs. Additionally, several NetworkObjects have now their "Synchronize Transform" flag disabled inside their NetworkObject component, meaning that its transform properties will not be synced when spawning and/or when late-joining clients connect. This is particularly useful if the NetworkObject is used more for management related tasks and has no spatial synchronization needs. For more information, see [Netcode for GameObjects' v1.4.0 release notes](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/releases/tag/ngo%2F1.4.0).
+* Updated Unity Transport Package to version 2.0.2 (#843). This gives access to the NetworkSimulator tool.
+* Changed quality settings to allow full resolution MipMaps on mobile as a workaround for a regression in UI UV scaling (#848)  
 
 ## [2.1.0] - 2023-04-27
 

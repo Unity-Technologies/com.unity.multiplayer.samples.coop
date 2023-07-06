@@ -1,23 +1,20 @@
-validation_editor: 2020.3
-
-# Platforms that will be tested. The first entry in this array will also
-# be used for validation
+# Platforms that will be tested.
 test_platforms:
   - name: win
     type: Unity::VM
-    image: package-ci/win10:stable
+    image: package-ci/win10:v4
     flavor: b1.large
     editorpath: .Editor\Unity.exe
     utr: .\utr.bat
   - name: mac
     type: Unity::VM::osx
-    image: package-ci/mac:stable
+    image: package-ci/macos-12:v4
     flavor: b1.large
     editorpath: .Editor/Unity.app/Contents/MacOS/Unity
     utr: ./utr
   - name: ubuntu
     type: Unity::VM
-    image: package-ci/ubuntu:stable
+    image: package-ci/ubuntu-18.04:v4
     flavor: b1.large
     editorpath: .Editor/Unity
     utr: ./utr
@@ -33,4 +30,4 @@ projects:
       - name: com.unity.multiplayer.samples.coop
         path: Packages/com.unity.multiplayer.samples.coop
     test_editors:
-      - 2021.3
+      - 2022.3.0
