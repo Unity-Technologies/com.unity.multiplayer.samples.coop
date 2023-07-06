@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [2.2.0] - 2023-06-14
+## [2.2.0] - 2023-07-06
 
 ### Added
 * Adding NetworkSimulator tool (#843). It can be used through the NetworkSimulator component's editor (see the [NetworkSimulator documentation](https://docs-multiplayer.unity3d.com/tools/current/tools-network-simulator/)), but only in-editor. To be able to use it in a build, a custom in-game UI window was added. The in-game UI window opens up automatically when starting or joining a networked session, and can be opened and closed again by pressing 'tab' on a keyboard, or using five fingers at once on mobile.
