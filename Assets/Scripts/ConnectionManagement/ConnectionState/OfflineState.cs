@@ -30,7 +30,7 @@ namespace UUnity.BossRoom.ConnectionManagement
             if (m_ConnectionManager.NetworkManager.IsListening)
             {
                 m_ConnectionManager.NetworkManager.Shutdown();
-            }            
+            }
             if (SceneManager.GetActiveScene().name != k_MainMenuSceneName)
             {
                 SceneLoaderWrapper.Instance.LoadScene(k_MainMenuSceneName, useNetworkSceneManager: false);
