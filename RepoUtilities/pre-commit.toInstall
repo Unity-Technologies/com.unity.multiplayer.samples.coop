@@ -1,2 +1,0 @@
-#!/bin/sh
-python3 RepoUtilities/pre-commit.py
