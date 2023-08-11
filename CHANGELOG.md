@@ -9,7 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased]
 
 ### Fixed
-* Fixed colliders on diagonal walls to not have negative scale.
+* Fixed colliders on diagonal walls to not have negative scale (#854).
 
 
 ## [2.2.0] - 2023-07-06
