@@ -10,6 +10,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ### Changed
 * Upgraded editor version to 2022.3.7f1 (#855)
+  * Upgraded Authentication Service package to v2.7.1
+  * Upgraded Wire Service package to v1.2.0
 
 ### Fixed
 * Fixed colliders on diagonal walls to not have negative scale (#854).
