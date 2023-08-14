@@ -30,14 +30,14 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             m_LocalLobby.changed -= OnLocalLobbyChanged;
         }
 
-        void OnLocalLobbyChanged(LocalLobby lobby)
+        void OnLocalLobbyChanged(LocalLobby lobby, bool isLocalChanges)
         {
             if (string.IsNullOrEmpty(lobby.LobbyID)) // When the player leaves, their LocalLobby is cleared out but maintained.
             {
                 EndTracking();
             }
 
-            m_ShouldPushData = true;
+            m_ShouldPushData = isLocalChanges;
         }
 
         /// <summary>

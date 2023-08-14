@@ -10,7 +10,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
     [Serializable]
     public class LocalLobbyUser
     {
-        public event Action<LocalLobbyUser> changed;
+        /// <summary>
+        /// Event generated when the local lobby user has changed. Boolean parameter is true when it is a local change
+        /// and false when it comes from an update from the Lobby service.
+        /// </summary>
+        public event Action<LocalLobbyUser, bool> changed;
 
         public LocalLobbyUser()
         {
@@ -60,7 +64,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_UserData.IsHost = value;
                     m_LastChanged = UserMembers.IsHost;
-                    OnChanged();
+                    OnChanged(true);
                 }
             }
         }
@@ -74,7 +78,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_UserData.DisplayName = value;
                     m_LastChanged = UserMembers.DisplayName;
-                    OnChanged();
+                    OnChanged(true);
                 }
             }
         }
@@ -88,7 +92,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     m_UserData.ID = value;
                     m_LastChanged = UserMembers.ID;
-                    OnChanged();
+                    OnChanged(true);
                 }
             }
         }
@@ -110,12 +114,12 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             m_UserData = data;
             m_LastChanged = (UserMembers)lastChanged;
 
-            OnChanged();
+            OnChanged(false);
         }
 
-        void OnChanged()
+        void OnChanged(bool isLocal)
         {
-            changed?.Invoke(this);
+            changed?.Invoke(this, isLocal);
         }
 
         public Dictionary<string, PlayerDataObject> GetDataForUnityServices() =>
