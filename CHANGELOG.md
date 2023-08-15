@@ -8,8 +8,14 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ## [Unreleased]
 
+### Changed
+* Upgraded to Lobby 1.1.0 (#860).
+  * Lobbies are now locked when being created and are only unlocked when the relay allocation is ready.
+  * Removed explicit reference to Wire in the package manifest, since Wire is already a dependency of Lobby
+  
 ### Fixed
 * Fixed colliders on diagonal walls to not have negative scale (#854).
+* Unnecessary update requests are no longer being sent to Lobby after receiving update events from the service (#860).
 
 
 ## [2.2.0] - 2023-07-06
