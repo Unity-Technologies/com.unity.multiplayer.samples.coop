@@ -82,7 +82,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             {
                 m_IsTracking = true;
                 SubscribeToJoinedLobbyAsync();
-                m_JoinedLobbyContentHeartbeat.BeginTracking();
             }
         }
 
