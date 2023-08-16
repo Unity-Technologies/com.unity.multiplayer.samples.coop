@@ -30,4 +30,4 @@ projects:
       - name: com.unity.multiplayer.samples.coop
         path: Packages/com.unity.multiplayer.samples.coop
     test_editors:
-      - 2022.3.0
+      - 2022.3
