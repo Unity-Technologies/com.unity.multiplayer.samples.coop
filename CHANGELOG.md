@@ -11,7 +11,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Changed
 * Upgraded editor version to 2022.3.7f1 (#855)
   * Upgraded Authentication Service package to v2.7.1
-  * Upgraded Wire Service package to v1.2.0
 
 ### Changed
 * Upgraded to Lobby 1.1.0 (#860).
