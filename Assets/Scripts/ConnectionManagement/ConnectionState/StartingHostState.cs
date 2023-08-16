@@ -68,7 +68,6 @@ namespace Unity.BossRoom.ConnectionManagement
             try
             {
                 await m_ConnectionMethod.SetupHostConnectionAsync();
-                Debug.Log($"Created relay allocation with join code {m_LocalLobby.RelayJoinCode}");
 
                 // NGO's StartHost launches everything
                 if (!m_ConnectionManager.NetworkManager.StartHost())
