@@ -6,7 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [Unreleased]
+## [Unreleased] - yyyy-mm-dd
+
+### Changed
+* Upgraded editor version to 2022.3.7f1 (#855)
+  * Upgraded Authentication Service package to v2.7.1
+  * Upgraded Wire Service package to v1.2.0
 
 ### Changed
 * Upgraded to Lobby 1.1.0 (#860).
@@ -16,7 +21,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Fixed
 * Fixed colliders on diagonal walls to not have negative scale (#854).
 * Unnecessary update requests are no longer being sent to Lobby after receiving update events from the service (#860).
-
 
 ## [2.2.0] - 2023-07-06
 
