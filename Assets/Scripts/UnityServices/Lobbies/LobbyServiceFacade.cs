@@ -28,7 +28,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
         LifetimeScope m_ServiceScope;
         LobbyAPIInterface m_LobbyApiInterface;
-        JoinedLobbyContentHeartbeat m_JoinedLobbyContentHeartbeat;
 
         RateLimitCooldown m_RateLimitQuery;
         RateLimitCooldown m_RateLimitJoin;
@@ -47,12 +46,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         {
             m_ServiceScope = m_ParentScope.CreateChild(builder =>
             {
-                builder.Register<JoinedLobbyContentHeartbeat>(Lifetime.Singleton);
                 builder.Register<LobbyAPIInterface>(Lifetime.Singleton);
             });
 
             m_LobbyApiInterface = m_ServiceScope.Container.Resolve<LobbyAPIInterface>();
-            m_JoinedLobbyContentHeartbeat = m_ServiceScope.Container.Resolve<JoinedLobbyContentHeartbeat>();
 
             //See https://docs.unity.com/lobby/rate-limits.html
             m_RateLimitQuery = new RateLimitCooldown(1f);
@@ -269,7 +266,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             // The LobbyEventCallbacks object created here will now be managed by the Lobby SDK. The callbacks will be
             // unsubscribed from when we call UnsubscribeAsync on the ILobbyEvents object we receive and store here.
             m_LobbyEvents = await m_LobbyApiInterface.SubscribeToLobby(m_LocalLobby.LobbyID, lobbyEventCallbacks);
-            m_JoinedLobbyContentHeartbeat.BeginTracking();
+            m_UpdateRunner.Subscribe(DoLobbyHeartbeat, 1.5f);
         }
 
         async void UnsubscribeToJoinedLobbyAsync()
@@ -290,7 +287,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
             }
             m_HeartbeatTime = 0;
-            m_JoinedLobbyContentHeartbeat.EndTracking();
+            m_UpdateRunner.Unsubscribe(DoLobbyHeartbeat);
         }
 
         /// <summary>
@@ -362,13 +359,13 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
         }
 
-        public async void RemovePlayerFromLobbyAsync(string uasId, string lobbyId)
+        public async void RemovePlayerFromLobbyAsync(string uasId)
         {
             if (m_LocalUser.IsHost)
             {
                 try
                 {
-                    await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
+                    await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, m_LocalLobby.LobbyID);
                 }
                 catch (LobbyServiceException e)
                 {
@@ -402,9 +399,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         }
 
         /// <summary>
-        /// Attempt to push a set of key-value pairs associated with the local player which will overwrite any existing data for these keys.
+        /// Attempt to push a set of key-value pairs associated with the local player which will overwrite any existing
+        /// data for these keys. Lobby can be provided info about Relay (or any other remote allocation) so it can add
+        /// automatic disconnect handling.
         /// </summary>
-        public async Task UpdatePlayerDataAsync(Dictionary<string, PlayerDataObject> data)
+        public async Task UpdatePlayerDataAsync(string allocationId, string connectionInfo)
         {
             if (!m_RateLimitQuery.CanCall)
             {
@@ -413,7 +412,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
             try
             {
-                var result = await m_LobbyApiInterface.UpdatePlayer(CurrentUnityLobby.Id, AuthenticationService.Instance.PlayerId, data, null, null);
+                var result = await m_LobbyApiInterface.UpdatePlayer(CurrentUnityLobby.Id, AuthenticationService.Instance.PlayerId, m_LocalUser.GetDataForUnityServices(), allocationId, connectionInfo);
 
                 if (result != null)
                 {
@@ -434,47 +433,20 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         }
 
         /// <summary>
-        /// Lobby can be provided info about Relay (or any other remote allocation) so it can add automatic disconnect handling.
-        /// </summary>
-        public async Task UpdatePlayerRelayInfoAsync(string allocationId, string connectionInfo)
-        {
-            if (!m_RateLimitQuery.CanCall)
-            {
-                return;
-            }
-
-            try
-            {
-                await m_LobbyApiInterface.UpdatePlayer(CurrentUnityLobby.Id, AuthenticationService.Instance.PlayerId, new Dictionary<string, PlayerDataObject>(), allocationId, connectionInfo);
-            }
-            catch (LobbyServiceException e)
-            {
-                if (e.Reason == LobbyExceptionReason.RateLimited)
-                {
-                    m_RateLimitQuery.PutOnCooldown();
-                }
-                else
-                {
-                    PublishError(e);
-                }
-
-                //todo - retry logic? SDK is supposed to handle this eventually
-            }
-        }
-
-        /// <summary>
         /// Attempt to update a set of key-value pairs associated with a given lobby.
         /// </summary>
-        public async Task UpdateLobbyDataAsync(Dictionary<string, DataObject> data)
+        public async Task UpdateLobbyDataAsync()
         {
             if (!m_RateLimitQuery.CanCall)
             {
                 return;
             }
+
+            var localData = m_LocalLobby.GetDataForUnityServices();
 
             var dataCurr = CurrentUnityLobby.Data ?? new Dictionary<string, DataObject>();
 
-            foreach (var dataNew in data)
+            foreach (var dataNew in localData)
             {
                 if (dataCurr.ContainsKey(dataNew.Key))
                 {
