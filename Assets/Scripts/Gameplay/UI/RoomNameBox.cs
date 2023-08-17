@@ -18,10 +18,10 @@ namespace Unity.BossRoom.Gameplay.UI
         string m_LobbyCode;
 
         [Inject]
-        void InjectDependencies(LocalLobby localLobby)
+        private void InjectDependencies(LocalLobby localLobby)
         {
             m_LocalLobby = localLobby;
-            m_LocalLobby.changed += OnLobbyChanged;
+            m_LocalLobby.changed += UpdateUI;
         }
 
         void Awake()
@@ -29,17 +29,12 @@ namespace Unity.BossRoom.Gameplay.UI
             UpdateUI(m_LocalLobby);
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
-            m_LocalLobby.changed -= OnLobbyChanged;
+            m_LocalLobby.changed -= UpdateUI;
         }
 
-        void OnLobbyChanged(LocalLobby localLobby, bool _)
-        {
-            UpdateUI(localLobby);
-        }
-
-        void UpdateUI(LocalLobby localLobby)
+        private void UpdateUI(LocalLobby localLobby)
         {
             if (!string.IsNullOrEmpty(localLobby.LobbyCode))
             {
