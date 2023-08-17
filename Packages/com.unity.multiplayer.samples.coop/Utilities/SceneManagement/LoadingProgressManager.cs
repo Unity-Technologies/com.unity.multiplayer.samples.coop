@@ -54,7 +54,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 ProgressTrackers[NetworkManager.LocalClientId].Progress.Value : m_LocalProgress;
             private set
             {
-                if (IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId))
+                if (IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) && ProgressTrackers[NetworkManager.LocalClientId].IsSpawned)
                 {
                     ProgressTrackers[NetworkManager.LocalClientId].Progress.Value = value;
                 }
