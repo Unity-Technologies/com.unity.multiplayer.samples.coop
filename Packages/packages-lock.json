@@ -290,13 +290,13 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.wire": {
-      "version": "1.1.8",
+      "version": "1.2.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.services.core": "1.8.1",
-        "com.unity.nuget.newtonsoft-json": "3.1.0",
-        "com.unity.services.authentication": "2.4.0"
+        "com.unity.services.core": "1.10.1",
+        "com.unity.nuget.newtonsoft-json": "3.2.1",
+        "com.unity.services.authentication": "2.6.1"
       },
       "url": "https://packages.unity.com"
     },
