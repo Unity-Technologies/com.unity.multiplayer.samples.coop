@@ -11,11 +11,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
     [Serializable]
     public sealed class LocalLobby
     {
-        /// <summary>
-        /// Event generated when the local lobby has changed. Boolean parameter is true when it is a local change and
-        /// false when it comes from an update from the Lobby service.
-        /// </summary>
-        public event Action<LocalLobby, bool> changed;
+        public event Action<LocalLobby> changed;
 
         /// <summary>
         /// Create a list of new LocalLobbies from the result of a lobby list query.
@@ -78,7 +74,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             if (!m_LobbyUsers.ContainsKey(user.ID))
             {
                 DoAddUser(user);
-                OnChanged(true);
+                OnChanged();
             }
         }
 
@@ -91,7 +87,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         public void RemoveUser(LocalLobbyUser user)
         {
             DoRemoveUser(user);
-            OnChanged(true);
+            OnChanged();
         }
 
         void DoRemoveUser(LocalLobbyUser user)
@@ -106,14 +102,14 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             user.changed -= OnChangedUser;
         }
 
-        void OnChangedUser(LocalLobbyUser user, bool isLocal)
+        void OnChangedUser(LocalLobbyUser user)
         {
-            OnChanged(isLocal);
+            OnChanged();
         }
 
-        void OnChanged(bool isLocal)
+        void OnChanged()
         {
-            changed?.Invoke(this, isLocal);
+            changed?.Invoke(this);
         }
 
         public string LobbyID
@@ -122,7 +118,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             set
             {
                 m_Data.LobbyID = value;
-                OnChanged(true);
+                OnChanged();
             }
         }
 
@@ -132,7 +128,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             set
             {
                 m_Data.LobbyCode = value;
-                OnChanged(true);
+                OnChanged();
             }
         }
 
@@ -142,7 +138,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             set
             {
                 m_Data.RelayJoinCode = value;
-                OnChanged(true);
+                OnChanged();
             }
         }
 
@@ -152,7 +148,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             set
             {
                 m_Data.LobbyName = value;
-                OnChanged(true);
+                OnChanged();
             }
         }
 
@@ -162,7 +158,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             set
             {
                 m_Data.Private = value;
-                OnChanged(true);
+                OnChanged();
             }
         }
 
@@ -174,7 +170,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             set
             {
                 m_Data.MaxPlayerCount = value;
-                OnChanged(true);
+                OnChanged();
             }
         }
 
@@ -215,7 +211,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 }
             }
 
-            OnChanged(false);
+            OnChanged();
         }
 
         public Dictionary<string, DataObject> GetDataForUnityServices() =>
