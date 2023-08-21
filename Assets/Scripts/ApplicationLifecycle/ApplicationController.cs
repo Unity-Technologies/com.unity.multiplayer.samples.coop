@@ -122,6 +122,8 @@ namespace Unity.BossRoom.ApplicationLifecycle
 
         private bool OnWantToQuit()
         {
+            Application.wantsToQuit -= OnWantToQuit;
+            
             var canQuit = string.IsNullOrEmpty(m_LocalLobby?.LobbyID);
             if (!canQuit)
             {
