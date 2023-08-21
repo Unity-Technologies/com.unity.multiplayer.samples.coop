@@ -15,6 +15,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ### Fixed
 * Fixed colliders on diagonal walls to not have negative scale (#854).
+* Fixed a condition where one would be unable to quit the application through OS-level quit button, nor the in-game quit button (#863)
 
 ## [2.2.0] - 2023-07-06
 
