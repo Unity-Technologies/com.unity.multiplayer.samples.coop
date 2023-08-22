@@ -197,8 +197,8 @@ namespace Unity.BossRoom.ConnectionManagement
 
             m_LocalLobby.RelayJoinCode = joinCode;
 
-            //next line enable lobby and relay services integration
-            await m_LobbyServiceFacade.UpdateLobbyDataAsync();
+            // next line enables lobby and relay services integration
+            await m_LobbyServiceFacade.UpdateLobbyDataAndUnlockAsync();
             await m_LobbyServiceFacade.UpdatePlayerDataAsync(hostAllocation.AllocationIdBytes.ToString(), joinCode);
 
             // Setup UTP with relay connection info

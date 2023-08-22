@@ -459,9 +459,9 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         }
 
         /// <summary>
-        /// Attempt to update a set of key-value pairs associated with a given lobby.
+        /// Attempt to update the set of key-value pairs associated with a given lobby and unlocks it so clients can see it.
         /// </summary>
-        public async Task UpdateLobbyDataAsync()
+        public async Task UpdateLobbyDataAndUnlockAsync()
         {
             if (!m_RateLimitQuery.CanCall)
             {
@@ -484,12 +484,9 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 }
             }
 
-            //we would want to lock lobbies from appearing in queries if we're in relay mode and the relay isn't fully set up yet
-            var shouldLock = string.IsNullOrEmpty(m_LocalLobby.RelayJoinCode);
-
             try
             {
-                var result = await m_LobbyApiInterface.UpdateLobby(CurrentUnityLobby.Id, dataCurr, shouldLock);
+                var result = await m_LobbyApiInterface.UpdateLobby(CurrentUnityLobby.Id, dataCurr, shouldLock: false);
 
                 if (result != null)
                 {
