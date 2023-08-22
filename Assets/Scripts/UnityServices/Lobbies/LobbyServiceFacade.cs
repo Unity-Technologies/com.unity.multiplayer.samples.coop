@@ -366,7 +366,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             try
             {
                 await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, m_LocalLobby.LobbyID);
-                ResetLobby();
             }
             catch (LobbyServiceException e)
             {
@@ -375,6 +374,10 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     PublishError(e);
                 }
+            }
+            finally
+            {
+                ResetLobby();
             }
 
         }
@@ -405,11 +408,14 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 try
                 {
                     await m_LobbyApiInterface.DeleteLobby(m_LocalLobby.LobbyID);
-                    ResetLobby();
                 }
                 catch (LobbyServiceException e)
                 {
                     PublishError(e);
+                }
+                finally
+                {
+                    ResetLobby();
                 }
             }
             else
