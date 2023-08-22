@@ -73,17 +73,41 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             m_LocalLobby.ApplyRemoteData(lobby);
         }
 
+        /// <summary>
+        /// Initiates tracking of joined lobby's events. The host also starts sending heartbeat pings here.
+        /// </summary>
         public void BeginTracking()
         {
             if (!m_IsTracking)
             {
                 m_IsTracking = true;
                 SubscribeToJoinedLobbyAsync();
+
+                // Only the host sends heartbeat pings to the service to keep the lobby alive
+                if (m_LocalUser.IsHost)
+                {
+                    m_UpdateRunner.Subscribe(DoLobbyHeartbeat, 1.5f);
+                }
             }
         }
 
+        /// <summary>
+        /// Ends tracking of joined lobby's events and leaves or deletes the lobby. The host also stops sending heartbeat pings here.
+        /// </summary>
         public void EndTracking()
         {
+            if (m_IsTracking)
+            {
+                m_IsTracking = false;
+                UnsubscribeToJoinedLobbyAsync();
+
+                // Only the host sends heartbeat pings to the service to keep the lobby alive
+                if (m_LocalUser.IsHost)
+                {
+                    m_UpdateRunner.Unsubscribe(DoLobbyHeartbeat);
+                }
+            }
+
             if (CurrentUnityLobby != null)
             {
                 if (m_LocalUser.IsHost)
@@ -95,11 +119,9 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                     LeaveLobbyAsync();
                 }
             }
-
-            if (m_IsTracking)
+            else
             {
-                m_IsTracking = false;
-                UnsubscribeToJoinedLobbyAsync();
+                ResetLobby();
             }
         }
 
@@ -219,7 +241,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             if (changes.LobbyDeleted)
             {
                 Debug.Log("Lobby deleted");
-                ResetLobby();
+                EndTracking();
             }
             else
             {
@@ -248,7 +270,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         void OnKickedFromLobby()
         {
             Debug.Log("Kicked from Lobby");
-            ResetLobby();
+            EndTracking();
         }
 
         void OnLobbyEventConnectionStateChanged(LobbyEventConnectionState lobbyEventConnectionState)
@@ -266,7 +288,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             // The LobbyEventCallbacks object created here will now be managed by the Lobby SDK. The callbacks will be
             // unsubscribed from when we call UnsubscribeAsync on the ILobbyEvents object we receive and store here.
             m_LobbyEvents = await m_LobbyApiInterface.SubscribeToLobby(m_LocalLobby.LobbyID, lobbyEventCallbacks);
-            m_UpdateRunner.Subscribe(DoLobbyHeartbeat, 1.5f);
         }
 
         async void UnsubscribeToJoinedLobbyAsync()
@@ -287,7 +308,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
             }
             m_HeartbeatTime = 0;
-            m_UpdateRunner.Unsubscribe(DoLobbyHeartbeat);
         }
 
         /// <summary>
@@ -340,7 +360,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         /// <summary>
         /// Attempt to leave a lobby
         /// </summary>
-        public async void LeaveLobbyAsync()
+        async void LeaveLobbyAsync()
         {
             string uasId = AuthenticationService.Instance.PlayerId;
             try
@@ -378,7 +398,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
-        public async void DeleteLobbyAsync()
+        async void DeleteLobbyAsync()
         {
             if (m_LocalUser.IsHost)
             {
@@ -486,7 +506,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         /// <summary>
         /// Lobby requires a periodic ping to detect rooms that are still active, in order to mitigate "zombie" lobbies.
         /// </summary>
-        public void DoLobbyHeartbeat(float dt)
+        void DoLobbyHeartbeat(float dt)
         {
             m_HeartbeatTime += dt;
             if (m_HeartbeatTime > k_HeartbeatPeriod)
