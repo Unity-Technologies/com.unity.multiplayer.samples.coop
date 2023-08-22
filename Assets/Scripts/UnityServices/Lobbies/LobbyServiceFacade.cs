@@ -119,10 +119,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                     LeaveLobbyAsync();
                 }
             }
-            else
-            {
-                ResetLobby();
-            }
         }
 
         /// <summary>
@@ -241,6 +237,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             if (changes.LobbyDeleted)
             {
                 Debug.Log("Lobby deleted");
+                ResetLobby();
                 EndTracking();
             }
             else
@@ -270,6 +267,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         void OnKickedFromLobby()
         {
             Debug.Log("Kicked from Lobby");
+            ResetLobby();
             EndTracking();
         }
 
