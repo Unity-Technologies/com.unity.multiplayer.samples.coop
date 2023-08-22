@@ -86,6 +86,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 // Only the host sends heartbeat pings to the service to keep the lobby alive
                 if (m_LocalUser.IsHost)
                 {
+                    m_HeartbeatTime = 0;
                     m_UpdateRunner.Subscribe(DoLobbyHeartbeat, 1.5f);
                 }
             }
@@ -305,7 +306,6 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 }
 
             }
-            m_HeartbeatTime = 0;
         }
 
         /// <summary>
