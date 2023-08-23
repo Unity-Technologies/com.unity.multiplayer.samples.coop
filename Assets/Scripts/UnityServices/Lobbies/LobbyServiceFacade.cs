@@ -5,6 +5,7 @@ using Unity.BossRoom.Infrastructure;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
+using Unity.Services.Wire.Internal;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -293,18 +294,20 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         {
             if (m_LobbyEvents != null && m_LobbyEventConnectionState != LobbyEventConnectionState.Unsubscribed)
             {
+#if UNITY_EDITOR
                 try
                 {
                     await m_LobbyEvents.UnsubscribeAsync();
                 }
-                catch (ObjectDisposedException e)
+                catch (WebSocketException e)
                 {
                     // This exception occurs in the editor when exiting play mode without first leaving the lobby.
-                    // This is because Wire disposes of subscriptions internally when exiting play mode in the editor.
-                    Debug.Log("Subscription is already disposed of, cannot unsubscribe.");
+                    // This is because Wire closes the websocket internally when exiting playmode in the editor.
                     Debug.Log(e.Message);
                 }
-
+#else
+                await m_LobbyEvents.UnsubscribeAsync();
+#endif
             }
         }
 
