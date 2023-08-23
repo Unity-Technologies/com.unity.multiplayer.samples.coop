@@ -30,7 +30,18 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ClientIDToPlayerId = new Dictionary<ulong, string>();
         }
 
-        public static SessionManager<T> Instance => s_Instance ??= new SessionManager<T>();
+        public static SessionManager<T> Instance
+        {
+            get
+            {
+                if (s_Instance == null)
+                {
+                    s_Instance = new SessionManager<T>();
+                }
+
+                return s_Instance;
+            }
+        }
 
         static SessionManager<T> s_Instance;
 

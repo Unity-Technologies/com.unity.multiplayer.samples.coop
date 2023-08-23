@@ -23,8 +23,14 @@ public class EditorChildSceneLoader : MonoBehaviour
 
     public void SaveSceneSetup()
     {
-        ChildScenesToLoadConfig ??= new List<SceneAsset>();
-        ChildScenesToLoadConfig.Clear();
+        if (ChildScenesToLoadConfig == null)
+        {
+            ChildScenesToLoadConfig = new List<SceneAsset>();
+        }
+        else
+        {
+            ChildScenesToLoadConfig.Clear();
+        }
         foreach (var sceneSetup in EditorSceneManager.GetSceneManagerSetup())
         {
             ChildScenesToLoadConfig.Add(AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneSetup.path));

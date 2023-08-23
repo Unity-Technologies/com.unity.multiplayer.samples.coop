@@ -473,7 +473,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 return;
             }
 
-            var dataCurr = CurrentUnityLobby.Data ?? new Dictionary<string, DataObject>();
+            var dataCurr = CurrentUnityLobby.Data;
+            if (dataCurr == null)
+            {
+                dataCurr = new Dictionary<string, DataObject>();
+            }
 
             foreach (var dataNew in data)
             {

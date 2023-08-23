@@ -21,7 +21,12 @@ namespace Unity.BossRoom.Utils
         {
             get
             {
-                return m_Profile ??= GetProfile();
+                if (m_Profile == null)
+                {
+                    m_Profile = GetProfile();
+                }
+
+                return m_Profile;
             }
             set
             {
