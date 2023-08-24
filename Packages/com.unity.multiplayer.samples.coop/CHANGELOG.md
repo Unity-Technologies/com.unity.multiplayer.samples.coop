@@ -1,5 +1,10 @@
 # Multiplayer Samples Co-op Changelog
 
+## [Unreleased] - yyyy-mm-dd
+
+### Fixed
+* Clarified fix used to handle clients reconnecting to the server while keeping the same active scene and having additional scenes additively loaded (#864)
+
 ## [1.6.1] - 2023-06-14
 
 ### Fixed
