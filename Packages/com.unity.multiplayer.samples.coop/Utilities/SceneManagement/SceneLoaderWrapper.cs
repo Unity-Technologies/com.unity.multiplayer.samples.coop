@@ -133,7 +133,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             switch (sceneEvent.SceneEventType)
             {
                 case SceneEventType.Load: // Server told client to load a scene
-                    // Only executes on client
+                    // Only executes on client or host
                     if (NetworkManager.IsClient)
                     {
                         // Only start a new loading screen if scene loaded in Single mode, else simply update
@@ -150,7 +150,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                     }
                     break;
                 case SceneEventType.LoadEventCompleted: // Server told client that all clients finished loading a scene
-                    // Only executes on client
+                    // Only executes on client or host
                     if (NetworkManager.IsClient)
                     {
                         m_ClientLoadingScreen.StopLoadingScreen();
