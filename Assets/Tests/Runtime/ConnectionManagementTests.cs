@@ -356,6 +356,7 @@ namespace Unity.BossRoom.Tests.Runtime
             subscriptions.Dispose();
         }
 
+        #if !NETCODEFORGAMEOBJECTS_1_5_2_OR_1_6_0
         [UnityTest]
         public IEnumerator UnexpectedServerShutdown_ClientsFailToReconnect()
         {
@@ -435,6 +436,7 @@ namespace Unity.BossRoom.Tests.Runtime
             Assert.AreEqual(NumberOfClients, nbGenericDisconnectMsgReceived, "Not all clients received a GenericDisconnect message.");
             subscriptions.Dispose();
         }
+#endif
 
         [UnityTest]
         public IEnumerator ClientAndHostChangingRolesBetweenSessions_Success()
