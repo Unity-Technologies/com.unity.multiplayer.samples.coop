@@ -12,6 +12,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Upgraded editor version to 2022.3.7f1 (#855)
   * Upgraded Authentication Service package to v2.7.1
   * Upgraded Wire Service package to v1.2.0
+* Upgraded Boss Room to Netcode for GameObjects v1.6.0 (#865)
+  * A package Version Define has been created for Netcode for GameObjects v.1.5.2 - v1.6.0. A subsequent NGO version upgrade will address the runtime test that has been ignored with this version bump
 
 ### Fixed
 * Fixed colliders on diagonal walls to not have negative scale (#854).
