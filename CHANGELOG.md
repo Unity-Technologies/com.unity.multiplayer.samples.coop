@@ -12,6 +12,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Upgraded editor version to 2022.3.7f1 (#855)
   * Upgraded Authentication Service package to v2.7.1
   * Upgraded Wire Service package to v1.2.0
+* Replaced usages of null-coalescing and null-conditional operators with regular null checks. (#867) These operators can cause issues when used with types inheriting UnityEngine.Object because that type redefines the == operator to define when an object is null. This redefinition applies to regular null checks (if foo == null) but not to those operators, thus this could lead to unexpected behaviour. While those operators were safely used within Boss Room, only with types that were not inheriting UnityEngine.Object, we decided to remove most usages for consistency. This will also help avoid accidental mistakes, such as a user reusing a part of this code, but modifying it so that one of those operators are used with a UnityEngine.Object.
 
 ### Fixed
 * Fixed colliders on diagonal walls to not have negative scale (#854).

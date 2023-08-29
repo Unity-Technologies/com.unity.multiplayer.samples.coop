@@ -1,5 +1,10 @@
 # Multiplayer Samples Co-op Changelog
 
+## [Unreleased] - yyyy-mm-dd
+
+### Changed
+* Replaced usages of null-coalescing and null-conditional operators with regular null checks. (#867) These operators can cause issues when used with types inheriting UnityEngine.Object because that type redefines the == operator to define when an object is null. This redefinition applies to regular null checks (if foo == null) but not to those operators, thus this could lead to unexpected behaviour. While those operators were safely used within Boss Room, only with types that were not inheriting UnityEngine.Object, we decided to remove most usages for consistency. This will also help avoid accidental mistakes, such as a user reusing a part of this code, but modifying it so that one of those operators are used with a UnityEngine.Object.
+
 ## [1.6.1] - 2023-06-14
 
 ### Fixed
