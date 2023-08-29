@@ -88,7 +88,11 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         void OnNetworkDespawn()
         {
-            m_LifeStateChangedEventMessageSubscriber?.Unsubscribe(OnLifeStateChangedEventMessage);
+            if (m_LifeStateChangedEventMessageSubscriber != null)
+            {
+                m_LifeStateChangedEventMessageSubscriber.Unsubscribe(OnLifeStateChangedEventMessage);
+            }
+
             NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
             NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnSynchronizeComplete;
@@ -96,7 +100,10 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         protected override void OnDestroy()
         {
-            m_LifeStateChangedEventMessageSubscriber?.Unsubscribe(OnLifeStateChangedEventMessage);
+            if (m_LifeStateChangedEventMessageSubscriber != null)
+            {
+                m_LifeStateChangedEventMessageSubscriber.Unsubscribe(OnLifeStateChangedEventMessage);
+            }
 
             if (m_NetcodeHooks)
             {

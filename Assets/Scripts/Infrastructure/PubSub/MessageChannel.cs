@@ -42,7 +42,10 @@ namespace Unity.BossRoom.Infrastructure
 
             foreach (var messageHandler in m_MessageHandlers)
             {
-                messageHandler?.Invoke(message);
+                if (messageHandler != null)
+                {
+                    messageHandler.Invoke(message);
+                }
             }
         }
 

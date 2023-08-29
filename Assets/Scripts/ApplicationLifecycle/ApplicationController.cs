@@ -96,8 +96,16 @@ namespace Unity.BossRoom.ApplicationLifecycle
 
         protected override void OnDestroy()
         {
-            m_Subscriptions?.Dispose();
-            m_LobbyServiceFacade?.EndTracking();
+            if (m_Subscriptions != null)
+            {
+                m_Subscriptions.Dispose();
+            }
+
+            if (m_LobbyServiceFacade != null)
+            {
+                m_LobbyServiceFacade.EndTracking();
+            }
+
             base.OnDestroy();
         }
 
@@ -122,7 +130,7 @@ namespace Unity.BossRoom.ApplicationLifecycle
 
         private bool OnWantToQuit()
         {
-            var canQuit = string.IsNullOrEmpty(m_LocalLobby?.LobbyID);
+            var canQuit = m_LocalLobby != null && string.IsNullOrEmpty(m_LocalLobby.LobbyID);
             if (!canQuit)
             {
                 StartCoroutine(LeaveBeforeQuit());

@@ -87,7 +87,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void OnDestroy()
         {
-            m_ServiceErrorSubscription?.Unsubscribe(ServiceErrorHandler);
+            if (m_ServiceErrorSubscription != null)
+            {
+                m_ServiceErrorSubscription.Unsubscribe(ServiceErrorHandler);
+            }
         }
     }
 }

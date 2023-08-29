@@ -66,7 +66,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void OnDestroy()
         {
-            m_ConnectStatusSubscriber?.Unsubscribe(OnConnectStatus);
+            if (m_ConnectStatusSubscriber != null)
+            {
+                m_ConnectStatusSubscriber.Unsubscribe(OnConnectStatus);
+            }
         }
 
         //Lobby and Relay calls done from UI

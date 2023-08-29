@@ -255,7 +255,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 var incomingData = new LocalLobbyUser
                 {
                     IsHost = lobby.HostId.Equals(player.Id),
-                    DisplayName = player.Data?.ContainsKey("DisplayName") == true ? player.Data["DisplayName"].Value : default,
+                    DisplayName = player.Data != null && player.Data.ContainsKey("DisplayName") ? player.Data["DisplayName"].Value : default,
                     ID = player.Id
                 };
 

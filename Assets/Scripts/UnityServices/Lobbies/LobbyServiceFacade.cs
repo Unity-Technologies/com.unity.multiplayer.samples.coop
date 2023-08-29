@@ -212,8 +212,14 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         void ResetLobby()
         {
             CurrentUnityLobby = null;
-            m_LocalUser.ResetState();
-            m_LocalLobby?.Reset(m_LocalUser);
+            if (m_LocalUser != null)
+            {
+                m_LocalUser.ResetState();
+            }
+            if (m_LocalLobby != null)
+            {
+                m_LocalLobby.Reset(m_LocalUser);
+            }
 
             // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
         }

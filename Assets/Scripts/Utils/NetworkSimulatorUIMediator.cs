@@ -144,7 +144,11 @@ namespace Unity.BossRoom.Utils
                     break;
             }
             m_NetworkSimulator.Scenario = scenario;
-            m_NetworkSimulator.Scenario?.Start(m_NetworkSimulator);
+            if (m_NetworkSimulator.Scenario != null)
+            {
+                m_NetworkSimulator.Scenario.Start(m_NetworkSimulator);
+            }
+
             UpdateScenarioButton();
         }
 
