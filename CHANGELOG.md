@@ -13,7 +13,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * Upgraded Authentication Service package to v2.7.1
   * Upgraded Wire Service package to v1.2.0
 * Upgraded Boss Room to Netcode for GameObjects v1.6.0 (#865)
-  * A package Version Define has been created for Netcode for GameObjects v.1.5.2 - v1.6.0. A subsequent NGO version upgrade will address the runtime test that has been ignored with this version bump
+  * A package Version Define has been created for Netcode for GameObjects v.1.5.2 - v1.6.0. Recent refactorings to NetworkManager's shutdown have prevented the ability to invoke CustomMessages when OnClientDisconnected callbacks are invoked during a shutdown as host. This is a known issue and will be addressed in a future NGO version.
 
 ### Fixed
 * Fixed colliders on diagonal walls to not have negative scale (#854).
