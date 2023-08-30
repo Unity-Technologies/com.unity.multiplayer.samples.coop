@@ -28,6 +28,12 @@
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"
     ],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.netcode.gameobjects",
+            "expression": "[1.5.2,1.6.0]",
+            "define": "NETCODEFORGAMEOBJECTS_1_5_2_OR_1_6_0"
+        }
+    ],
     "noEngineReferences": false
 }
