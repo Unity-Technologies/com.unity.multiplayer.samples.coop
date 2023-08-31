@@ -13,8 +13,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * Upgraded Authentication Service package to v2.7.1
 * Upgraded Boss Room to Netcode for GameObjects v1.6.0 (#865)
   * A package Version Define has been created for Netcode for GameObjects v.1.5.2 - v1.6.0. Recent refactorings to NetworkManager's shutdown have prevented the ability to invoke CustomMessages when OnClientDisconnected callbacks are invoked during a shutdown as host. This regression has caused one of our runtime tests, namely Unity.BossRoom.Tests.Runtime.ConnectionManagementTests.UnexpectedServerShutdown_ClientsFailToReconnect, to fail and it does not impact gameplay. This is a known issue and will be addressed in a future NGO version.
-
-### Changed
 * Upgraded to Lobby 1.1.0 (#860).
   * Lobbies are now locked when being created and are only unlocked when the relay allocation is ready.
   * Removed explicit reference to Wire in the package manifest, since Wire is already a dependency of Lobby
@@ -22,6 +20,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Fixed
 * Fixed colliders on diagonal walls to not have negative scale (#854).
 * Unnecessary update requests are no longer being sent to Lobby after receiving update events from the service (#860).
+* Fixed a condition where one would be unable to quit the application through OS-level quit button, nor the in-game quit button (#863)
 
 ## [2.2.0] - 2023-07-06
 
