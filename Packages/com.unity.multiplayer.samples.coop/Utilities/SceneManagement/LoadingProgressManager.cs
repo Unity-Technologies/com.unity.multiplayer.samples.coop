@@ -27,6 +27,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             set
             {
+                m_IsLoading = true;
                 LocalProgress = 0;
                 m_LocalLoadOperation = value;
             }
@@ -35,6 +36,8 @@ namespace Unity.Multiplayer.Samples.Utilities
         AsyncOperation m_LocalLoadOperation;
 
         float m_LocalProgress;
+
+        bool m_IsLoading;
 
         /// <summary>
         /// This event is invoked each time the dictionary of progress trackers is updated (if one is removed or added, for example.)
@@ -51,7 +54,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 ProgressTrackers[NetworkManager.LocalClientId].Progress.Value : m_LocalProgress;
             private set
             {
-                if (IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId))
+                if (IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) && ProgressTrackers[NetworkManager.LocalClientId].IsSpawned)
                 {
                     ProgressTrackers[NetworkManager.LocalClientId].Progress.Value = value;
                 }
@@ -84,9 +87,17 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void Update()
         {
-            if (m_LocalLoadOperation != null)
+            if (m_LocalLoadOperation != null && m_IsLoading)
             {
-                LocalProgress = m_LocalLoadOperation.isDone ? 1 : m_LocalLoadOperation.progress;
+                if (m_LocalLoadOperation.isDone)
+                {
+                    m_IsLoading = false;
+                    LocalProgress = 1;
+                }
+                else
+                {
+                    LocalProgress = m_LocalLoadOperation.progress;
+                }
             }
         }
 
@@ -136,11 +147,6 @@ namespace Unity.Multiplayer.Samples.Utilities
                     UpdateTrackersClientRpc();
                 }
             }
-        }
-
-        public void ResetLocalProgress()
-        {
-            LocalProgress = 0;
         }
     }
 }
