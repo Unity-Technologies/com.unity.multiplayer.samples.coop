@@ -141,7 +141,7 @@ namespace Unity.BossRoom.ConnectionManagement
             response.Reason = JsonUtility.ToJson(gameReturnStatus);
             if (m_LobbyServiceFacade.CurrentUnityLobby != null)
             {
-                m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
+                m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId);
             }
         }
 
