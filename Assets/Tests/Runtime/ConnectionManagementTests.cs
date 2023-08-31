@@ -67,7 +67,6 @@ namespace Unity.BossRoom.Tests.Runtime
         ConnectionManager[] m_ClientConnectionManagers;
         ConnectionManager m_ServerConnectionManager;
 
-
         protected override bool CanStartServerAndClients()
         {
             return false;
@@ -154,6 +153,7 @@ namespace Unity.BossRoom.Tests.Runtime
             {
                 GameObject.DestroyImmediate(sceneGameObject);
             }
+
             yield return base.OnTearDown();
         }
 
@@ -285,6 +285,7 @@ namespace Unity.BossRoom.Tests.Runtime
 
             // The first client should be able to connect
             Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient, "The first client is not connected.");
+
             // Every other client should get their connection denied
             for (var i = 1; i < NumberOfClients; i++)
             {
@@ -356,6 +357,7 @@ namespace Unity.BossRoom.Tests.Runtime
             subscriptions.Dispose();
         }
 
+#if !NETCODEFORGAMEOBJECTS_1_5_2_OR_1_6_0
         [UnityTest]
         public IEnumerator UnexpectedServerShutdown_ClientsFailToReconnect()
         {
@@ -435,6 +437,7 @@ namespace Unity.BossRoom.Tests.Runtime
             Assert.AreEqual(NumberOfClients, nbGenericDisconnectMsgReceived, "Not all clients received a GenericDisconnect message.");
             subscriptions.Dispose();
         }
+#endif
 
         [UnityTest]
         public IEnumerator ClientAndHostChangingRolesBetweenSessions_Success()
@@ -508,6 +511,7 @@ namespace Unity.BossRoom.Tests.Runtime
             {
                 m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
             }
+
             m_ClientConnectionManagers[0].RequestShutdown();
 
             for (var i = 1; i < NumberOfClients; i++)
@@ -523,6 +527,5 @@ namespace Unity.BossRoom.Tests.Runtime
                 Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient, $"Client{i} is connected while no server is running.");
             }
         }
-
     }
 }
