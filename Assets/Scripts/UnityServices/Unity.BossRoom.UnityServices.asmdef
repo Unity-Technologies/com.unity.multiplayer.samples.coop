@@ -6,6 +6,7 @@
         "Unity.Services.Authentication",
         "Unity.Services.Lobbies",
         "Unity.Services.Relay",
+        "Unity.Services.Wire.Internal",
         "Unity.BossRoom.Infrastructure",
         "VContainer"
     ],
