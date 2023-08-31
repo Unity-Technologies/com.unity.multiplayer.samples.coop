@@ -11,6 +11,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Changed
 * Upgraded editor version to 2022.3.7f1 (#855)
   * Upgraded Authentication Service package to v2.7.1
+* Upgraded Boss Room to Netcode for GameObjects v1.6.0 (#865)
+  * A package Version Define has been created for Netcode for GameObjects v.1.5.2 - v1.6.0. Recent refactorings to NetworkManager's shutdown have prevented the ability to invoke CustomMessages when OnClientDisconnected callbacks are invoked during a shutdown as host. This regression has caused one of our runtime tests, namely Unity.BossRoom.Tests.Runtime.ConnectionManagementTests.UnexpectedServerShutdown_ClientsFailToReconnect, to fail and it does not impact gameplay. This is a known issue and will be addressed in a future NGO version.
 
 ### Changed
 * Upgraded to Lobby 1.1.0 (#860).
