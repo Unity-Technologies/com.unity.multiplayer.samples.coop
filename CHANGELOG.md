@@ -19,6 +19,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
   
 ### Fixed
 * Fixed colliders on diagonal walls to not have negative scale (#854).
+* Fixed order of components in networked GameObjects (#866). NetworkObjects are now always above NetworkBehaviours in the component order in GameObjects. This fixes a bug where during scene unloading the NetworkBehaviours would be destroyed before the NetworkObject on the host, which caused these NetworkBehaviours to not have their OnNetworkDespawned invoked in that situation on the host.
 * Unnecessary update requests are no longer being sent to Lobby after receiving update events from the service (#860).
 * Fixed a condition where one would be unable to quit the application through OS-level quit button, nor the in-game quit button (#863)
 
