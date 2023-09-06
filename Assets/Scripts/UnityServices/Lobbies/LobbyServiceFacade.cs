@@ -228,8 +228,14 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         void ResetLobby()
         {
             CurrentUnityLobby = null;
-            m_LocalUser.ResetState();
-            m_LocalLobby?.Reset(m_LocalUser);
+            if (m_LocalUser != null)
+            {
+                m_LocalUser.ResetState();
+            }
+            if (m_LocalLobby != null)
+            {
+                m_LocalLobby.Reset(m_LocalUser);
+            }
 
             // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
         }
@@ -471,7 +477,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
             var localData = m_LocalLobby.GetDataForUnityServices();
 
-            var dataCurr = CurrentUnityLobby.Data ?? new Dictionary<string, DataObject>();
+            var dataCurr = CurrentUnityLobby.Data;
+            if (dataCurr == null)
+            {
+                dataCurr = new Dictionary<string, DataObject>();
+            }
 
             foreach (var dataNew in localData)
             {
@@ -533,7 +543,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
         void PublishError(LobbyServiceException e)
         {
-            var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
+            var reason = e.InnerException == null ? e.Message : $"{e.Message} ({e.InnerException.Message})"; // Lobby error type, then HTTP error type.
             m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Lobby Error", reason, UnityServiceErrorMessage.Service.Lobby, e));
         }
     }

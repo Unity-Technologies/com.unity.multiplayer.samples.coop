@@ -30,7 +30,18 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ClientIDToPlayerId = new Dictionary<ulong, string>();
         }
 
-        public static SessionManager<T> Instance => s_Instance ??= new SessionManager<T>();
+        public static SessionManager<T> Instance
+        {
+            get
+            {
+                if (s_Instance == null)
+                {
+                    s_Instance = new SessionManager<T>();
+                }
+
+                return s_Instance;
+            }
+        }
 
         static SessionManager<T> s_Instance;
 
@@ -56,7 +67,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 // Mark client as disconnected, but keep their data so they can reconnect.
                 if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId))
                 {
-                    if (GetPlayerData(playerId)?.ClientID == clientId)
+                    var playerData = GetPlayerData(playerId);
+                    if (playerData != null && playerData.Value.ClientID == clientId)
                     {
                         var clientData = m_ClientData[playerId];
                         clientData.IsConnected = false;
@@ -70,7 +82,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId))
                 {
                     m_ClientIDToPlayerId.Remove(clientId);
-                    if (GetPlayerData(playerId)?.ClientID == clientId)
+                    var playerData = GetPlayerData(playerId);
+                    if (playerData != null && playerData.Value.ClientID == clientId)
                     {
                         m_ClientData.Remove(playerId);
                     }
@@ -251,7 +264,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             foreach (var id in idsToClear)
             {
                 string playerId = m_ClientIDToPlayerId[id];
-                if (GetPlayerData(playerId)?.ClientID == id)
+                var playerData = GetPlayerData(playerId);
+                if (playerData != null && playerData.Value.ClientID == id)
                 {
                     m_ClientData.Remove(playerId);
                 }
