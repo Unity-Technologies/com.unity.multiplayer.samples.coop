@@ -133,7 +133,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             switch (sceneEvent.SceneEventType)
             {
                 case SceneEventType.Load: // Server told client to load a scene
-                    // Only executes on client
+                    // Only executes on client or host
                     if (NetworkManager.IsClient)
                     {
                         // Only start a new loading screen if scene loaded in Single mode, else simply update
@@ -150,23 +150,29 @@ namespace Unity.Multiplayer.Samples.Utilities
                     }
                     break;
                 case SceneEventType.LoadEventCompleted: // Server told client that all clients finished loading a scene
-                    // Only executes on client
+                    // Only executes on client or host
                     if (NetworkManager.IsClient)
                     {
                         m_ClientLoadingScreen.StopLoadingScreen();
-                        m_LoadingProgressManager.ResetLocalProgress();
                     }
                     break;
                 case SceneEventType.Synchronize: // Server told client to start synchronizing scenes
                 {
-                    // todo: this is a workaround that could be removed once MTT-3363 is done
                     // Only executes on client that is not the host
                     if (NetworkManager.IsClient && !NetworkManager.IsHost)
                     {
-                        // unload all currently loaded additive scenes so that if we connect to a server with the same
-                        // main scene we properly load and synchronize all appropriate scenes without loading a scene
-                        // that is already loaded.
-                        UnloadAdditiveScenes();
+                        if (NetworkManager.SceneManager.ClientSynchronizationMode == LoadSceneMode.Single)
+                        {
+                            // If using the Single ClientSynchronizationMode, unload all currently loaded additive
+                            // scenes. In this case, we want the client to only keep the same scenes loaded as the
+                            // server. Netcode For GameObjects will automatically handle loading all the scenes that the
+                            // server has loaded to the client during the synchronization process. If the server's main
+                            // scene is different to the client's, it will start by loading that scene in single mode,
+                            // unloading every additively loaded scene in the process. However, if the server's main
+                            // scene is the same as the client's, it will not automatically unload additive scenes, so
+                            // we do it manually here.
+                            UnloadAdditiveScenes();
+                        }
                     }
                     break;
                 }

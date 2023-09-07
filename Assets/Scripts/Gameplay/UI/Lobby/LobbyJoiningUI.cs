@@ -41,13 +41,16 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             if (m_UpdateRunner != null)
             {
-                m_UpdateRunner?.Unsubscribe(PeriodicRefresh);
+                m_UpdateRunner.Unsubscribe(PeriodicRefresh);
             }
         }
 
         void OnDestroy()
         {
-            m_LocalLobbiesRefreshedSub?.Unsubscribe(UpdateUI);
+            if (m_LocalLobbiesRefreshedSub != null)
+            {
+                m_LocalLobbiesRefreshedSub.Unsubscribe(UpdateUI);
+            }
         }
 
         [Inject]

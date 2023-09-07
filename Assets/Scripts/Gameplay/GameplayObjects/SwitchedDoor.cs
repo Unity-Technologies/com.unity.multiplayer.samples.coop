@@ -100,7 +100,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             if (IsClient)
             {
                 m_PhysicsObject.SetActive(!isDoorOpen);
-                m_Publisher?.Publish(new DoorStateChangedEventMessage() { IsDoorOpen = isDoorOpen });
+                if (m_Publisher != null)
+                {
+                    m_Publisher.Publish(new DoorStateChangedEventMessage() { IsDoorOpen = isDoorOpen });
+                }
             }
         }
 

@@ -17,15 +17,17 @@ using VContainer.Unity;
 
 namespace Unity.BossRoom.ApplicationLifecycle
 {
-
     /// <summary>
     /// An entry point to the application, where we bind all the common dependencies to the root DI scope.
     /// </summary>
     public class ApplicationController : LifetimeScope
     {
-        [SerializeField] UpdateRunner m_UpdateRunner;
-        [SerializeField] ConnectionManager m_ConnectionManager;
-        [SerializeField] NetworkManager m_NetworkManager;
+        [SerializeField]
+        UpdateRunner m_UpdateRunner;
+        [SerializeField]
+        ConnectionManager m_ConnectionManager;
+        [SerializeField]
+        NetworkManager m_NetworkManager;
 
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -96,8 +98,16 @@ namespace Unity.BossRoom.ApplicationLifecycle
 
         protected override void OnDestroy()
         {
-            m_Subscriptions?.Dispose();
-            m_LobbyServiceFacade?.EndTracking();
+            if (m_Subscriptions != null)
+            {
+                m_Subscriptions.Dispose();
+            }
+
+            if (m_LobbyServiceFacade != null)
+            {
+                m_LobbyServiceFacade.EndTracking();
+            }
+
             base.OnDestroy();
         }
 
@@ -116,17 +126,21 @@ namespace Unity.BossRoom.ApplicationLifecycle
             {
                 Debug.LogError(e.Message);
             }
+
             yield return null;
             Application.Quit();
         }
 
         private bool OnWantToQuit()
         {
-            var canQuit = string.IsNullOrEmpty(m_LocalLobby?.LobbyID);
+            Application.wantsToQuit -= OnWantToQuit;
+
+            var canQuit = m_LocalLobby != null && string.IsNullOrEmpty(m_LocalLobby.LobbyID);
             if (!canQuit)
             {
                 StartCoroutine(LeaveBeforeQuit());
             }
+
             return canQuit;
         }
 

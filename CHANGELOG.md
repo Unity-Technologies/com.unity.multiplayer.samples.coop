@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
+## [2.3.0] - 2023-09-07
+
+### Changed
+* Upgraded editor version to 2022.3.7f1 (#855)
+  * Upgraded Authentication Service package to v2.7.1
+* Replaced usages of null-coalescing and null-conditional operators with regular null checks. (#867) These operators can cause issues when used with types inheriting UnityEngine.Object because that type redefines the == operator to define when an object is null. This redefinition applies to regular null checks (if foo == null) but not to those operators, thus this could lead to unexpected behaviour. While those operators were safely used within Boss Room, only with types that were not inheriting UnityEngine.Object, we decided to remove most usages for consistency. This will also help avoid accidental mistakes, such as a user reusing a part of this code, but modifying it so that one of those operators are used with a UnityEngine.Object.
+* Upgraded Boss Room to Netcode for GameObjects v1.6.0 (#865)
+  * A package Version Define has been created for Netcode for GameObjects v.1.5.2 - v1.6.0. Recent refactorings to NetworkManager's shutdown have prevented the ability to invoke CustomMessages when OnClientDisconnected callbacks are invoked during a shutdown as host. This regression has caused one of our runtime tests, namely Unity.BossRoom.Tests.Runtime.ConnectionManagementTests.UnexpectedServerShutdown_ClientsFailToReconnect, to fail and it does not impact gameplay. This is a known issue and will be addressed in a future NGO version.
+* Upgraded to Lobby 1.1.0 (#860).
+  * Lobbies are now locked when being created and are only unlocked when the relay allocation is ready.
+  * Removed explicit reference to Wire in the package manifest, since Wire is already a dependency of Lobby
+  
+### Fixed
+* Fixed colliders on diagonal walls to not have negative scale (#854).
+* Fixed order of components in networked GameObjects (#866). NetworkObjects are now always above NetworkBehaviours in the component order in GameObjects. This fixes a bug where during scene unloading the NetworkBehaviours would be destroyed before the NetworkObject on the host, which caused these NetworkBehaviours to not have their OnNetworkDespawned invoked in that situation on the host.
+* Unnecessary update requests are no longer being sent to Lobby after receiving update events from the service (#860).
+* Fixed a condition where one would be unable to quit the application through OS-level quit button, nor the in-game quit button (#863)
+
 ## [2.2.0] - 2023-07-06
 
 ### Added

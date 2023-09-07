@@ -42,6 +42,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             CreateLobbyOptions createOptions = new CreateLobbyOptions
             {
                 IsPrivate = isPrivate,
+                IsLocked = true, // locking the lobby at creation to prevent other players from joining before it is ready
                 Player = new Player(id: requesterUasId, data: hostUserData),
                 Data = lobbyData
             };

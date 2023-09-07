@@ -1,5 +1,20 @@
 # Multiplayer Samples Co-op Changelog
 
+## [1.7.0] - 2023-09-07
+
+### Changed
+* Updating package dependencies (#869)
+  *  Tutorial Framework upgraded to v3.1.3
+  *  Netcode for GameObjects upgraded to v1.6.0 
+  *  Unity Relay upgraded to v1.0.5
+
+### Changed
+* Replaced usages of null-coalescing and null-conditional operators with regular null checks. (#867) These operators can cause issues when used with types inheriting UnityEngine.Object because that type redefines the == operator to define when an object is null. This redefinition applies to regular null checks (if foo == null) but not to those operators, thus this could lead to unexpected behaviour. While those operators were safely used within Boss Room, only with types that were not inheriting UnityEngine.Object, we decided to remove most usages for consistency. This will also help avoid accidental mistakes, such as a user reusing a part of this code, but modifying it so that one of those operators are used with a UnityEngine.Object.
+
+### Fixed
+* Clarified fix used to handle clients reconnecting to the server while keeping the same active scene and having additional scenes additively loaded (#864)
+* Host loading progress bar is now properly updated on all clients during scene loads (#862)
+
 ## [1.6.1] - 2023-06-14
 
 ### Fixed

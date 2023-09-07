@@ -30,7 +30,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void OnDestroy()
         {
-            m_Subscriptions?.Dispose();
+            if (m_Subscriptions != null)
+            {
+                m_Subscriptions.Dispose();
+            }
         }
 
         void OnConnectStatus(ConnectStatus status)

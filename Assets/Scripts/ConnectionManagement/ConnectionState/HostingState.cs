@@ -42,7 +42,19 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public override void OnClientConnected(ulong clientId)
         {
-            m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.Success, PlayerName = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName });
+            var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+            if (playerData != null)
+            {
+                m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.Success, PlayerName = playerData.Value.PlayerName });
+            }
+            else
+            {
+                // This should not happen since player data is assigned during connection approval
+                Debug.LogError($"No player data associated with client {clientId}");
+                var reason = JsonUtility.ToJson(ConnectStatus.GenericDisconnect);
+                m_ConnectionManager.NetworkManager.DisconnectClient(clientId, reason);
+            }
+
         }
 
         public override void OnClientDisconnect(ulong clientId)
@@ -129,7 +141,7 @@ namespace Unity.BossRoom.ConnectionManagement
             response.Reason = JsonUtility.ToJson(gameReturnStatus);
             if (m_LobbyServiceFacade.CurrentUnityLobby != null)
             {
-                m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
+                m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId);
             }
         }
 

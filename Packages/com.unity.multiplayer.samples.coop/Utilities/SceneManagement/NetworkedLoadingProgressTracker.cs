@@ -1,4 +1,5 @@
 using Unity.Netcode;
+using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
@@ -11,5 +12,10 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// The current loading progress associated with the owner of this NetworkBehavior
         /// </summary>
         public NetworkVariable<float> Progress { get; } = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+        void Awake()
+        {
+            DontDestroyOnLoad(this);
+        }
     }
 }

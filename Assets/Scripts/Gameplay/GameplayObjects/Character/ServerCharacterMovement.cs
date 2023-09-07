@@ -141,7 +141,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         public void CancelMove()
         {
-            m_NavPath?.Clear();
+            if (m_NavPath != null)
+            {
+                m_NavPath.Clear();
+            }
             m_MovementState = MovementState.Idle;
         }
 
