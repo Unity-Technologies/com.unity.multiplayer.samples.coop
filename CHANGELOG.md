@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [Unreleased] - yyyy-mm-dd
+## [2.3.0] - 2023-09-07
 
 ### Changed
 * Upgraded editor version to 2022.3.7f1 (#855)
