@@ -5,7 +5,6 @@
 ### Changed
 * Updating package dependencies (#869)
   *  Tutorial Framework upgraded to v3.1.3
-  *  Multiplayer Tools upgraded to 2.0.0-pre.3
   *  Netcode for GameObjects upgraded to v1.6.0 
   *  Unity Relay upgraded to v1.0.5
 
