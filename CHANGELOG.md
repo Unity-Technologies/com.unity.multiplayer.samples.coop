@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
+## [unreleased] - yyyy-mm-dd
+
+### Fixed
+* Fixed NetworkVariable warnings that would be logged when a player was spawned (#863) For a player, certain NetworkVariable values were previously modified before the player's NetworkObject was spawned, resulting in warnings. Now, the NetworkVariable itself is instantiated on the server pre-spawn, such that it is instantiated with the new default value, ensuring the new default value is ready to be read on subsequent OnNetworkSpawn methods for said NetworkObject.
+
 ## [2.3.0] - 2023-09-07
 
 ### Changed
