@@ -14,7 +14,7 @@
     "com.unity.postprocessing": "3.2.2",
     "com.unity.render-pipelines.universal": "14.0.8",
     "com.unity.services.multiplayer": "file:../../operate-services-sdk/Packages/Public/com.unity.services.multiplayer",
-    "com.unity.netcode.gameobjects": "file:../../com.unity.netcode.gameobjects/com.unity.netcode.gameobjects",
+    "com.unity.netcode.gameobjects": "1.6.0",
     "com.unity.test-framework": "1.1.33",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.7.5",
