@@ -8,6 +8,10 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ## [unreleased] - yyyy-mm-dd
 
+### Changed
+* Upgraded editor version to 2022.3.14f1 (#871)
+* Upgraded Boss Room to Netcode for GameObjects v1.7.1 (#871)
+
 ### Fixed
 * Fixed NetworkVariable warnings that would be logged when a player was spawned (#863) For a player, certain NetworkVariable values were previously modified before the player's NetworkObject was spawned, resulting in warnings. Now, the NetworkVariable itself is instantiated on the server pre-spawn, such that it is instantiated with the new default value, ensuring the new default value is ready to be read on subsequent OnNetworkSpawn methods for said NetworkObject.
 
