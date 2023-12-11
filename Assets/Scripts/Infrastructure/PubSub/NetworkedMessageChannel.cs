@@ -75,6 +75,12 @@ namespace Unity.BossRoom.Infrastructure
 
         void SendMessageThroughNetwork(T message)
         {
+            // Avoid throwing an exception if you are in the middle of shutting down and either
+            // NetworkManager no longer exists or the CustomMessagingManager no longer exists.
+            if (m_NetworkManager == null || m_NetworkManager.CustomMessagingManager == null)
+            {
+                return;
+            }
             var writer = new FastBufferWriter(FastBufferWriter.GetWriteSize<T>(), Allocator.Temp);
             writer.WriteValueSafe(message);
             m_NetworkManager.CustomMessagingManager.SendNamedMessageToAll(m_Name, writer);
