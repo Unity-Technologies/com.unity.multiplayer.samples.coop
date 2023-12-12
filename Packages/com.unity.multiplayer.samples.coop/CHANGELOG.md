@@ -1,5 +1,10 @@
 # Multiplayer Samples Co-op Changelog
 
+## [unreleased] - yyyy-mm-dd
+
+### Changed
+* Upgraded Utilities package to Netcode for GameObjects v1.7.1 (#871)
+
 ## [1.7.0] - 2023-09-07
 
 ### Changed
