@@ -6,10 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [unreleased] - yyyy-mm-dd
+## [2.4.0] - 2023-12-13
 
 ### Changed
 * Upgraded editor version to 2022.3.14f1 (#871)
+  * com.unity.ai.navigation upgraded to v1.1.5
+  * com.unity.render-pipelines.universal upgraded to v14.0.9
+  * com.unity.services.authentication upgraded to v2.7.1
 * Upgraded Boss Room to Netcode for GameObjects v1.7.1 (#871)
 
 ### Fixed
