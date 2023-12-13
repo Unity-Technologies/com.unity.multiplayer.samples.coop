@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
+## [2.4.0] - 2023-12-13
+
+### Changed
+* Upgraded editor version to 2022.3.14f1 (#871)
+  * com.unity.ai.navigation upgraded to v1.1.5
+  * com.unity.render-pipelines.universal upgraded to v14.0.9
+  * com.unity.services.authentication upgraded to v2.7.1
+* Upgraded Boss Room to Netcode for GameObjects v1.7.1 (#871)
+
+### Fixed
+* Fixed NetworkVariable warnings that would be logged when a player was spawned (#863) For a player, certain NetworkVariable values were previously modified before the player's NetworkObject was spawned, resulting in warnings. Now, the NetworkVariable itself is instantiated on the server pre-spawn, such that it is instantiated with the new default value, ensuring the new default value is ready to be read on subsequent OnNetworkSpawn methods for said NetworkObject.
+
 ## [2.3.0] - 2023-09-07
 
 ### Changed
