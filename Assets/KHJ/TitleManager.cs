@@ -49,21 +49,8 @@ namespace PanicBuying
 
         public void OnJoinRoomButtonClicked()
         {
-            JoinRoomButtonClicked e = new();
-
-            Event.Emit(e);
-
-            //joinRoomPanel.gameObject.SetActive(true);
-            //_currentState = State.Join;
-        }
-
-        public void Join()
-        {
-            string code = joinCodeText.text; //Join Code
-
-            JoinRoomSubmited e = new(code);
-
-            Event.Emit(e);
+            joinRoomPanel.gameObject.SetActive(true);
+            _currentState = State.Join;
         }
 
         public void OnOptionButtonClicked()
