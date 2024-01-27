@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace PanicBuying
 {
     public static class Event
     {

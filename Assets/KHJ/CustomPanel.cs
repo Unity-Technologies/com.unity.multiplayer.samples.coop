@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace PanicBuying
 {
     public class CustomPanel : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler
     {
