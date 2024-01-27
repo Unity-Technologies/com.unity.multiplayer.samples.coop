@@ -24,7 +24,7 @@ namespace PanicBuying
         private TextMeshProUGUI joinCodeText;
 
         [SerializeField]
-        public CustomPanel optionPanel;
+        public ConfigurationPanel optionPanel;
 
         private static State _currentState;
 
@@ -38,7 +38,7 @@ namespace PanicBuying
             _currentState = state;
         }
 
-        public void OnCreateRoomButtonClicked()
+        public void OnCreateRoomButtonClick()
         {
             //RoomScene에 들어가면 JoinCode를 생성하는것으로 생각
 
@@ -47,24 +47,24 @@ namespace PanicBuying
             Event.Emit(e);
         }
 
-        public void OnJoinRoomButtonClicked()
+        public void OnJoinRoomButtonClick()
         {
             joinRoomPanel.gameObject.SetActive(true);
             _currentState = State.Join;
         }
 
-        public void OnOptionButtonClicked()
+        public void OnOptionButtonClick()
         {
             optionPanel.gameObject.SetActive(true);
+            optionPanel.InitUI();
             _currentState = State.Option;
-
             OptionButtonClicked e = new();
 
             Event.Emit(e);
 
         }
 
-        public void OnExitButtonClicked()
+        public void OnExitButtonClick()
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
