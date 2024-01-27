@@ -1,0 +1,52 @@
+git-lfs/2.12.1 (GitHub; windows amd64; go 1.14.10; git 85b28e06)
+git version 2.29.2.windows.3
+
+$ git.exe filter-process
+Unable to move lfs\tmp\177921956 to lfs\objects\a6\99\a699a043195b71622df343e8c353312cdfdc49c4b8c7043eb14584c34451991c
+
+
+rename lfs\tmp\177921956 lfs\objects\a6\99\a699a043195b71622df343e8c353312cdfdc49c4b8c7043eb14584c34451991c: Access is denied.
+
+Current time in UTC: 
+2024-01-27 07:49:50
+
+ENV:
+LocalWorkingDir=
+LocalGitDir=
+LocalGitStorageDir=
+LocalMediaDir=lfs\objects
+LocalReferenceDirs=
+TempDir=lfs\tmp
+ConcurrentTransfers=8
+TusTransfers=false
+BasicTransfersOnly=false
+SkipDownloadErrors=false
+FetchRecentAlways=false
+FetchRecentRefsDays=7
+FetchRecentCommitsDays=0
+FetchRecentRefsIncludeRemotes=true
+PruneOffsetDays=3
+PruneVerifyRemoteAlways=false
+PruneRemoteName=origin
+LfsStorageDir=lfs
+AccessDownload=none
+AccessUpload=none
+DownloadTransfers=basic,lfs-standalone-file
+UploadTransfers=basic,lfs-standalone-file
+GIT_ASKPASS=c:/program files/microsoft visual studio/2022/community/common7/ide/commonextensions/microsoft/teamfoundation/team explorer/Git/mingw64/bin\git-askpass.exe
+GIT_CEILING_DIRECTORIES=D:
+GIT_CONFIG_PARAMETERS='gc.auto'='0' 'credential.helper'='manager' 'core.askpass'='c:/program files/microsoft visual studio/2022/community/common7/ide/commonextensions/microsoft/teamfoundation/team explorer/Git/mingw64/bin\git-askpass.exe'
+GIT_EXEC_PATH=c:/program files/microsoft visual studio/2022/community/common7/ide/commonextensions/microsoft/teamfoundation/team explorer/Git/mingw64/libexec/git-core
+GIT_FLUSH=1
+GIT_HTTP_USER_AGENT=git/2.40.1 (Microsoft Windows NT 10.0.19045.0; Win32NT x64) CLR/4.0.30319 VS17/17.0.0
+GIT_MERGE_VERBOSITY=4
+GIT_OPTIONAL_LOCKS=0
+GIT_PAGER=cat
+GIT_PREFIX=
+GIT_TERMINAL_PROMPT=0
+
+Client IP addresses:
+fe80::4990:60ba:4e0e:26b9 192.168.56.1
+fe80::d781:7110:56b2:6dee 192.168.59.1
+fe80::c643:f37b:c690:4ffa 192.168.0.151
+fe80::29a2:4e0b:d09e:f425 172.30.128.1
