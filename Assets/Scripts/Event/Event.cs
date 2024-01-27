@@ -59,7 +59,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
-                (list[i] as IEventListener<EventType>).OnEventTriggered(newEvent);
+                (list[i] as IEventListener<EventType>).OnEventEmitted(newEvent);
             }
         }
 
@@ -88,24 +88,40 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
     public interface IEventListener<EventType> : EventListenerBase
     {
-        void OnEventTriggered(EventType eventObject);
+        void OnEventEmitted(EventType eventObject);
     }
 
     class EventListener<EventType> : IEventListener<EventType> where EventType : struct
     {
-        private Action<EventType> _func;
+        private Action<EventType> _func = null;
 
-        EventListener(Action<EventType> func) {
-            _func = func;
+
+        public EventListener(){}
+
+        public void StartListen(Action<EventType> action)
+        {
+            if (_func != null)
+                return;
+
+            _func = action;
             Event.AddListener(this);
         }
 
-        ~EventListener()
+        public void StopListen()
         {
+            if (_func == null)
+                return;
+
+            _func = null;
             Event.RemoveListener(this);
         }
 
-        public void OnEventTriggered(EventType eventObject) {
+        public bool IsListening()
+        {
+            return _func != null;
+        }
+
+        public void OnEventEmitted(EventType eventObject) {
             _func(eventObject);
         }
     }
