@@ -17,7 +17,6 @@ namespace PanicBuying
                 if (!_isOver)
                 {
                     gameObject.SetActive(false);
-                    TitleManager.SetState(TitleManager.State.Normal);
                 }
             }
         }

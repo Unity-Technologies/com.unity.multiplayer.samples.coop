@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace PanicBuying
 {
@@ -12,8 +13,12 @@ namespace PanicBuying
         public Sprite Image2D { get => image2D; }
 
         [SerializeField]
-        Mesh mesh3D;
-        public Mesh Mesh3D { get => mesh3D; }
+        GameObject holdingPrefab;
+        public GameObject HoldingPrefab { get => holdingPrefab; }
+        
+        [SerializeField]
+        NetworkObject droppedPrefab;
+        public NetworkObject DroppedPrefab { get => droppedPrefab; }
 
         [SerializeField]
         int maxCount = 1;

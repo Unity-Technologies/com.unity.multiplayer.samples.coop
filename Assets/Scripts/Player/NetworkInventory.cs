@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,57 +19,109 @@ namespace PanicBuying
             }
         }
 
-        public void SelectSlot(int InIndex)
+        bool SetHoldingItem(ItemSO inSO)
         {
-            Debug.Assert(InIndex >= 0 && InIndex < items.Count);
+            if (inSO == null && holdingObject == null)
+                return false;
 
-            selectedItem = items[InIndex];
-            if (selectedItem != null)
+            if (holdingObject)
+                Destroy(holdingObject);
+
+            if (inSO != null)
             {
-                selectedItem.transform.SetParent(handObject);
+                holdingObject = Instantiate(inSO.HoldingPrefab).GetComponent<ItemObject_Holding>();
+                holdingObject.transform.SetParent(handTransform);
+            }
+
+            return true;
+        }
+
+        bool SelectSlot(int inIndex = -1)
+        {
+            if (inIndex == -1)
+            {
+                selectedIndex = inIndex;
+
+                return SetHoldingItem(null);
+            }
+
+            inIndex = Math.Clamp(inIndex, 0, items.Count - 1);
+
+            bool sameSO = IsSelecting() && items[selectedIndex].SO == items[inIndex].SO;
+            selectedIndex = inIndex;
+
+            if (sameSO)
+                return false;
+
+            return SetHoldingItem(items[selectedIndex].SO);
+        }
+
+        [ServerRpc]
+        public void SelectSlot_ServerRpc(int inIndex, ServerRpcParams serverRpcParams = new())
+        {
+            if (SelectSlot(inIndex))
+            {
+                SelectItem_ClientRpc(inIndex, items[inIndex].Id);
             }
         }
 
-        public void Drop()
+        [ClientRpc]
+        void SelectItem_ClientRpc(int inIndex, int inItemId, ClientRpcParams clientRpcParams = new())
         {
-            if (IsOwner && selectedItem)
-            {
-                NetworkObject Object = Instantiate(itemObjectPrefab).GetComponent<NetworkObject>();
+            if (IsOwner)
+                SelectSlot(inIndex);
+            else
+                SetHoldingItem(GameManager.Instance?.GetItemSO(inItemId));
+        }
 
-                if (selectedItem.Count > 1)
+        [ServerRpc]
+        public void Drop_ServerRpc(ServerRpcParams serverRpcParams = new())
+        {
+            if (serverRpcParams.Receive.SenderClientId != OwnerClientId)
+                return;
+
+            if (IsOwner && holdingObject && IsSelecting())
+            {
+                ItemObject_Dropped Object = Instantiate(itemObjectPrefab).GetComponent<ItemObject_Dropped>();
+
+                if (items[selectedIndex].Count > 1)
                 {
-                    selectedItem.RemoveOne();
+                    items[selectedIndex].RemoveOne();
                 }
                 else
                 {
-                    selectedItem.transform.SetParent(Object.transform);
-                    items.Remove(selectedItem);
+                    if (SelectSlot(-1))
+                    {
+                        SelectItem_ClientRpc(-1, -1);
+                    }
+
+                    RemoveItem_ClientRpc(items[selectedIndex], PanicUtil.MakeClientRpcParams(OwnerClientId));
+                    items.RemoveAt(selectedIndex);
                 }
-
-
-                Object.Spawn();
             }
         }
 
-        bool TryGetItem(ItemBehaviour InItem)
+        bool TryGetItem(ItemObject_Dropped inItemObject)
         {
-            foreach (var ExistingItem in items)
+            for (int i = 0; i < items.Count; ++i)
             {
-                if (ExistingItem.Accumulate(InItem) == false)
+                if (items[i].Accumulate(ref inItemObject.itemData))
                 {
-                    continue;
+                    UpdateItem_ClientRpc(i, items[i], PanicUtil.MakeClientRpcParams(OwnerClientId));
                 }
             }
 
-            if (InItem.Count > 0 && items.Count < kItemSlotNum)
+            if (inItemObject.itemData.Count > 0 && items.Count < kItemSlotNum)
             {
-                InItem.transform.SetParent(transform);
-                items.Add(InItem);
+                AddItem_ClientRpc(inItemObject.itemData, PanicUtil.MakeClientRpcParams(OwnerClientId));
+                items.Add(inItemObject.itemData);
+
+                Destroy(inItemObject.gameObject);
                 return true;
             }
-            else if (InItem.Count <= 0)
+            else if (inItemObject.itemData.Count <= 0)
             {
-                Destroy(InItem.gameObject);
+                Destroy(inItemObject.gameObject);
                 return true;
             }
             else
@@ -81,12 +134,12 @@ namespace PanicBuying
         [ServerRpc]
         void RequestInventory_ServerRpc(ServerRpcParams serverRpcParams = new())
         {
-            if (serverRpcParams.Receive.SenderClientId == OwnerClientId)
-            {
-                var Params = PanicUtil.MakeClientRpcParams(OwnerClientId);
+            if (serverRpcParams.Receive.SenderClientId != OwnerClientId)
+                return;
 
-                SendInventory_ClientRpc(new (items), Params);
-            }
+            var Params = PanicUtil.MakeClientRpcParams(OwnerClientId);
+
+            SendInventory_ClientRpc(new(items), Params);
         }
 
         [ClientRpc]
@@ -95,31 +148,65 @@ namespace PanicBuying
             items = new(inventory.itemBehaviours);
         }
 
+        [ClientRpc]
+        void RemoveItem_ClientRpc(ItemData inItem, ClientRpcParams clientRpcParams)
+        {
+            if (items.Remove(inItem) == false)
+            {
+                RequestInventory_ServerRpc();
+            }
+        }
+
+        [ClientRpc]
+        void AddItem_ClientRpc(ItemData inItem, ClientRpcParams clientRpcParams)
+        {
+            if(items.Count < kItemSlotNum)
+            {
+                items.Add(inItem);
+            }
+            else
+            {
+                RequestInventory_ServerRpc();
+            }
+        }
+
+        [ClientRpc]
+        void UpdateItem_ClientRpc(int slotIndex, ItemData inItem, ClientRpcParams clientRpcParams)
+        {
+            if (slotIndex >= 0 && slotIndex < items.Count && items[slotIndex].SO == inItem.SO)
+            {
+                items[slotIndex] = inItem;
+            }
+            else
+            {
+                RequestInventory_ServerRpc();
+            }
+        }
 
         const int kItemSlotNum = 4;
 
         [SerializeField]
-        NetworkObject owner;
+        Transform handTransform;
 
-        [SerializeField]
-        Transform handObject;
+        ItemObject_Holding holdingObject;
 
         [SerializeField]
         NetworkObject itemObjectPrefab;
 
-        ItemBehaviour selectedItem = null;
+        int selectedIndex = -1;
+        bool IsSelecting() { return selectedIndex >= 0 && selectedIndex < items.Count; }
 
         [SerializeField, HideInInspector]
-        protected List<ItemBehaviour> items = new();
+        protected List<ItemData> items = new();
     }
 
     public struct InventoryStruct : INetworkSerializeByMemcpy
     {
-        public InventoryStruct(List<ItemBehaviour> inItems)
+        public InventoryStruct(List<ItemData> inItems)
         {
             itemBehaviours = inItems.ToArray();
         }
 
-        public ItemBehaviour[] itemBehaviours;
+        public ItemData[] itemBehaviours;
     }
 }

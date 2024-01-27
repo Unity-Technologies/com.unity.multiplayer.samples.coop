@@ -41,6 +41,9 @@ namespace PanicBuying
 
         public async void Initialize()
         {
+            NetworkStateWorkEvent e = new(true);
+            Event.Emit(e);
+
             await UnityServices.InitializeAsync();
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
             await VivoxService.Instance.InitializeAsync();
@@ -55,6 +58,9 @@ namespace PanicBuying
 
             createRoomListener.StartListen(async (e) =>
             {
+                NetworkStateWorkEvent networkWorking = new(true);
+                Event.Emit(networkWorking);
+
                 var allRegions = await RelayService.Instance.ListRegionsAsync();
 
                 if (allRegions.Count <= 0)
@@ -80,10 +86,16 @@ namespace PanicBuying
                 {
                     Debug.LogError(ex.Message + "\n" + ex.StackTrace);
                 }
+
+                networkWorking.working = false;
+                Event.Emit(networkWorking);
             });
 
             joinRoomListener.StartListen(async (e) =>
             {
+                NetworkStateWorkEvent networkWorking = new(true);
+                Event.Emit(networkWorking);
+
                 JoinCode = e.code;
 
                 try
@@ -106,7 +118,13 @@ namespace PanicBuying
                 {
                     Debug.LogError(ex.Message + "\n" + ex.StackTrace);
                 }
+
+                networkWorking.working = false;
+                Event.Emit(networkWorking);
             });
+
+            e.working = false;
+            Event.Emit(e);
         }
     }
 }
