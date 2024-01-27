@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode.Components;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.PanicBuying.Character
 {
     [DisallowMultipleComponent]
     public class ClientNetworkTransform : NetworkTransform
