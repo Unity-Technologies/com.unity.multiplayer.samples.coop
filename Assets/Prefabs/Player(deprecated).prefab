@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 668665900357435312}
   m_Layer: 0
   m_Name: Player(deprecated)
-  m_TagString: Untagged
+  m_TagString: PlayerCharacter
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -214,11 +214,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b8db28dcff2224bb976bfde497afb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  walkingSpeed: 3
+  runningSpeed: 9
+  slowSpeed: 2
   moveMultiplier: 10
+  maxStamina: 100
+  staminaChangeRate: 1
+  staminaCooldown: 3
+  curStamina: 0
+  moveSpeed: 0
+  moveType: 0
   jumpForce: 3
-  gravityScale: 10
   jumpCooldownTime: 1
+  gravityScale: 10
   playerHeight: 2
   orientation: {fileID: 2559919783936610365}
   playerObj: {fileID: 648256680004537854}

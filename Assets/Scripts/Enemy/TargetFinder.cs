@@ -10,7 +10,8 @@ namespace PanicBuying
     public enum EnemyState
     {
         Patrolling,
-        Chasing
+        Chasing,
+        Standby
     }
 
     public class TargetFinder : MonoBehaviour
@@ -22,10 +23,10 @@ namespace PanicBuying
         public List<PatrolRoute> routes;
         private NavMeshAgent agent;
 
-        private EnemyState state = EnemyState.Chasing;
+        private EnemyState state = EnemyState.Standby;
 
-        private int routeIdx;
-        private int patrolPointIdx;
+        public int routeIdx;
+        public int patrolPointIdx;
 
         private void Start()
         {
@@ -37,13 +38,13 @@ namespace PanicBuying
                 routes.Add(go.GetComponent<PatrolRoute>());
             }
 
-            StartPatrolling();
+            Invoke("StartPatrolling", 3.0f);
         }
 
         private void Update()
         {
-            Debug.Log(agent.remainingDistance);
-            if (agent.remainingDistance <= agent.stoppingDistance)
+            if (state == EnemyState.Standby) return;
+            if ((agent.destination - transform.position).magnitude <= agent.stoppingDistance)
             {
                 if (state == EnemyState.Patrolling)
                     Invoke("GetNextPatrolPoint", patrolStartTime);
@@ -54,7 +55,6 @@ namespace PanicBuying
 
         public void setTarget(Vector3 targetPos)
         {
-            CancelInvoke();
             state = EnemyState.Chasing;
             agent.speed = chasingSpeed;
             agent.SetDestination(targetPos);
@@ -62,9 +62,6 @@ namespace PanicBuying
 
         private void StartPatrolling()
         {
-            CancelInvoke();
-            state = EnemyState.Patrolling;
-            agent.speed = patrolSpeed;
             routeIdx = 0;
             patrolPointIdx = 0;
             float shortestDistance = float.MaxValue;
@@ -74,12 +71,11 @@ namespace PanicBuying
             {
                 for (int j=0; j < routes[i].patrolPoints.Length; j++)
                 {
-                    agent.SetDestination(routes[i].patrolPoints[j].position);
-                    if (shortestDistance > agent.remainingDistance)
+                    if (shortestDistance > (routes[i].patrolPoints[j].position - transform.position).magnitude)
                     {
                         routeIdx = i;
                         patrolPointIdx = j;
-                        shortestDistance = agent.remainingDistance;
+                        shortestDistance = (routes[i].patrolPoints[j].position - transform.position).magnitude;
                     }
                 }
             }
@@ -101,6 +97,10 @@ namespace PanicBuying
         private void SetPatrolPoint(int routeIdx, int patrolPointIdx)
         {
             CancelInvoke();
+            state = EnemyState.Patrolling;
+            agent.speed = patrolSpeed;
+
+            Debug.Log(gameObject.name + " goes to route " + routeIdx + " patrol point " + patrolPointIdx);
             agent.SetDestination(routes[routeIdx].patrolPoints[patrolPointIdx].position);
         }
     }
