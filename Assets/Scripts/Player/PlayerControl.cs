@@ -9,18 +9,34 @@ using Unity.PanicBuying.Character;
 
 namespace Unity.PanicBuying.Character
 {
+    public enum moveState
+    {
+        Walking,
+        Running,
+        Slow
+    }
+
     public class PlayerControl : NetworkBehaviour
     {
         [Header("Movement Speed")]
-        public float moveSpeed;
+        public float walkingSpeed;
+        public float runningSpeed;
+        public float slowSpeed;
         public float moveMultiplier;
-        public float jumpForce;
-        public float gravityScale;
+        public float maxStamina;
+        public float staminaChangeRate;
+        public float staminaCooldown;
+
+        public float curStamina;
+        public float moveSpeed;
+        public moveState moveType;
 
         [Header("Jump & Ground Check")]
+        public float jumpForce;
         public float jumpCooldownTime;
+        public float gravityScale;
         public float playerHeight;
-        bool isGrounded; 
+        bool isGrounded;
 
         public Transform orientation;
         public Transform playerObj;
@@ -74,7 +90,7 @@ namespace Unity.PanicBuying.Character
                 rbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 
                 jumpAvailable = false;
-                Invoke("JumpCooldown", jumpCooldownTime);
+                Invoke("CooldownJump", jumpCooldownTime);
             }
             GetInput();
 
@@ -87,6 +103,7 @@ namespace Unity.PanicBuying.Character
                 GiveGravity();
                 MovePlayer();
                 SpeedControl();
+                
             }
         }
 
@@ -99,13 +116,43 @@ namespace Unity.PanicBuying.Character
         {
             horizontalInput = Input.GetAxisRaw("Horizontal");
             verticalInput = Input.GetAxisRaw("Vertical");
+            if (moveType != moveState.Slow)
+            {
+                if (Input.GetKey(KeyCode.LeftShift))
+                    moveType = moveState.Running;
+                else
+                    moveType = moveState.Walking;
+            }
         }
 
         private void MovePlayer()
         {
             moveDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
+            switch (moveType)
+            {
+                case moveState.Walking:
+                    moveSpeed = walkingSpeed;
+                    curStamina += staminaChangeRate;
+                    break;
+                case moveState.Running:
+                    moveSpeed = runningSpeed;
+                    curStamina -= staminaChangeRate;
+                    break;
+                case moveState.Slow:
+                    moveSpeed = slowSpeed;
+                    curStamina += staminaChangeRate;
+                    break;
+            }
             rbody.AddForce(moveDir.normalized * moveSpeed * moveMultiplier, ForceMode.Force);
+
+            if (curStamina < 0)
+            {
+                moveType = moveState.Slow;
+                Invoke("CooldownSlow", staminaCooldown);
+            }
+            else if (curStamina > maxStamina)
+                curStamina = maxStamina;
         }
 
         private void SpeedControl()
@@ -119,7 +166,21 @@ namespace Unity.PanicBuying.Character
             }
         }
 
-        private void JumpCooldown()
+        private void CheckStamina()
+        {
+            if (curStamina < 0)
+            {
+                moveType = moveState.Slow;
+                Invoke("CooldownSlow", staminaCooldown);
+            }
+        }
+
+        private void CooldownSlow()
+        {
+            moveType = moveState.Walking;
+        }
+
+        private void CooldownJump()
         {
             jumpAvailable = true;
         }
