@@ -1,7 +1,9 @@
+using System;
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,180 +11,266 @@ using Unity.PanicBuying.Character;
 
 namespace Unity.PanicBuying.Character
 {
-    public enum moveState
-    {
-        Walking,
-        Running,
-        Slow
-    }
 
     public class PlayerControl : NetworkBehaviour
     {
+        public enum AnimationState
+        {
+            Idle,
+            Walk,
+            Run,
+            Jump,
+            SneakIdle,
+            SneakWalk,
+            InsertCoin,
+            Attack,
+            Throw
+        }
+
         [Header("Movement Speed")]
-        public float walkingSpeed;
-        public float runningSpeed;
-        public float slowSpeed;
-        public float moveMultiplier;
+        public float walkSpeed;
+        public float runSpeed;
+        public float sneakSpeed;
+        public float cameraSensX;
+        public float cameraSensY;
+
+        public float weight;
+        bool isSneak = false;
+
+
+        //stamina
         public float maxStamina;
         public float staminaChangeRate;
         public float staminaCooldown;
-
         public float curStamina;
-        public float moveSpeed;
-        public moveState moveType;
+
+        private bool runnable = true;
+        bool isRun = false;
 
         [Header("Jump & Ground Check")]
         public float jumpForce;
-        public float jumpCooldownTime;
-        public float gravityScale;
         public float playerHeight;
-        bool isGrounded;
 
+        bool jumpable = true;
+
+        public NetworkAnimator networkAnimator;
         public Transform orientation;
-        public Transform playerObj;
-        public GameObject tpsCamera;
+        public Transform body;
         public GameObject fpsCamera;
 
         float horizontalInput;
         float verticalInput;
 
-        bool jumpAvailable = true;
+        Rigidbody rigidbody;
 
-        Vector3 moveDir;
+        public float defaultMass;
 
-        Rigidbody rbody;
+        AnimationState animationState = AnimationState.Idle;
 
-        // Start is called before the first frame update
+        private bool isGrounded;
+
         void Start()
         {
-            rbody = GetComponent<Rigidbody>();
+            rigidbody = GetComponent<Rigidbody>();
+            rigidbody.mass = defaultMass;
             Transform spawnPoint = GameObject.Find("PlayerSpawnPoint").transform;
             transform.position = spawnPoint.position;
 
             if (IsOwner)
             {
-                //// setting TPS cam
-                //GameObject cam = Instantiate(tpsCamera);
-                //CinemachineFreeLook cineCam = cam.GetComponent<CinemachineFreeLook>();
-                //cineCam.Follow = transform;
-                //cineCam.LookAt = transform;
-                //TPSCameraController camController = cam.GetComponent<TPSCameraController>();
-                //camController.orientation = orientation;
-                //camController.player = transform;
-                //camController.playerObj = playerObj;
-
-                // setting FPS cam
                 GameObject cam = Instantiate(fpsCamera);
                 FPSCameraController camController = cam.GetComponent<FPSCameraController>();
                 camController.orientation = orientation;
+                camController.body = body;
+                camController.sensX = cameraSensX;
+                camController.sensY = cameraSensY;
             }
         }
+
 
         private void Update()
         {
             if (!IsOwner) return;
+            //Physics.BoxCast();
+        }
 
-            isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f);
-
-            if (Input.GetKeyDown(KeyCode.Space) && isGrounded && jumpAvailable)
+        private void Animate()
+        {
+            switch (animationState)
             {
-                rbody.velocity = new Vector3(rbody.velocity.x, 0f, rbody.velocity.z);
-                rbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-
-                jumpAvailable = false;
-                Invoke("CooldownJump", jumpCooldownTime);
+                case AnimationState.Idle:
+                    networkAnimator.Animator.SetBool("Walk", false);
+                    networkAnimator.Animator.SetBool("Run", false);
+                    networkAnimator.Animator.SetBool("Sneak", false);
+                    networkAnimator.Animator.SetBool("Jump", false);
+                    break;
+                case AnimationState.Walk:
+                    networkAnimator.Animator.SetBool("Walk", true);
+                    networkAnimator.Animator.SetBool("Run", false);
+                    networkAnimator.Animator.SetBool("Sneak", false);
+                    networkAnimator.Animator.SetBool("Jump", false);
+                    break;
+                case AnimationState.Run:
+                    networkAnimator.Animator.SetBool("Run", true);
+                    networkAnimator.Animator.SetBool("Sneak", false);
+                    break;
+                case AnimationState.SneakIdle:
+                    networkAnimator.Animator.SetBool("Walk", false);
+                    networkAnimator.Animator.SetBool("Run", false);
+                    networkAnimator.Animator.SetBool("Sneak", true);
+                    networkAnimator.Animator.SetBool("Jump", false);
+                    break;
+                case AnimationState.SneakWalk:
+                    networkAnimator.Animator.SetBool("Walk", true);
+                    networkAnimator.Animator.SetBool("Run", false);
+                    networkAnimator.Animator.SetBool("Sneak", true);
+                    networkAnimator.Animator.SetBool("Jump", false);
+                    break;
+                case AnimationState.Jump:
+                    networkAnimator.Animator.SetBool("Walk", false);
+                    networkAnimator.Animator.SetBool("Run", false);
+                    networkAnimator.Animator.SetBool("Sneak", false);
+                    networkAnimator.Animator.SetBool("Jump", true);
+                    break;
             }
-            GetInput();
-
         }
 
         private void FixedUpdate()
         {
             if (IsOwner)
             {
-                GiveGravity();
+                GetInput();
                 MovePlayer();
-                SpeedControl();
-                
+                Animate();
             }
         }
 
-        private void GiveGravity()
-        {
-            rbody.AddForce(Vector3.down * gravityScale, ForceMode.Force);
-        }
+
 
         private void GetInput()
         {
             horizontalInput = Input.GetAxisRaw("Horizontal");
             verticalInput = Input.GetAxisRaw("Vertical");
-            if (moveType != moveState.Slow)
+
+            if (runnable)
             {
                 if (Input.GetKey(KeyCode.LeftShift))
-                    moveType = moveState.Running;
+                {
+                    isRun = true;
+                    isSneak = false;
+                }
                 else
-                    moveType = moveState.Walking;
+                {
+                    isRun = false;
+                }
             }
+
+            isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight);
+
+            if (isGrounded)
+            {
+                if (isSneak)
+                {
+                    animationState = AnimationState.SneakIdle;
+                }
+                else
+                {
+                    animationState = AnimationState.Idle;
+                }
+            }
+            else
+            {
+                animationState = AnimationState.Jump;
+            }
+
+            Debug.DrawLine(transform.position, transform.position + Vector3.down * playerHeight, Color.red);
+
+            if (isGrounded && !isRun && Input.GetKeyDown(KeyCode.C))
+            {
+                isSneak = !isSneak;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+            {
+                rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                isSneak = false;
+                animationState = AnimationState.Jump;
+            }
+            Debug.Log(isGrounded);
+            Debug.Log(animationState);
         }
 
         private void MovePlayer()
         {
-            moveDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
-
-            switch (moveType)
+            var direction = Vector3.Normalize(orientation.forward * verticalInput + orientation.right * horizontalInput);
+            if (direction.magnitude > 0.0f)
             {
-                case moveState.Walking:
-                    moveSpeed = walkingSpeed;
-                    curStamina += staminaChangeRate;
-                    break;
-                case moveState.Running:
-                    moveSpeed = runningSpeed;
-                    curStamina -= staminaChangeRate;
-                    break;
-                case moveState.Slow:
-                    moveSpeed = slowSpeed;
-                    curStamina += staminaChangeRate;
-                    break;
+                float moveSpeed;
+                if (isSneak)
+                {
+                    if(isGrounded)
+                    {
+                        animationState = AnimationState.SneakWalk;
+                    }
+                   
+                    moveSpeed = sneakSpeed;
+                    IncreaseStamina();
+                }
+                else if (isRun)
+                {
+                    if (isGrounded)
+                    {
+                        animationState = AnimationState.Run;
+                    }
+                    moveSpeed = runSpeed;
+                    DecreaseStamina();
+                }
+                else
+                {
+                    if (isGrounded)
+                    {
+                        animationState = AnimationState.Walk;
+                    }
+                    moveSpeed = walkSpeed;
+                    IncreaseStamina();
+                }
+                rigidbody.AddForce(direction * moveSpeed * Time.deltaTime, ForceMode.VelocityChange);
             }
-            rbody.AddForce(moveDir.normalized * moveSpeed * moveMultiplier, ForceMode.Force);
+            else
+            {
+                IncreaseStamina();
+                IncreaseStamina();
+            }
 
+
+        }
+        public void SetWeight(float weigth)
+        {
+            rigidbody.mass = defaultMass + weigth;
+        }
+
+        private void DecreaseStamina()
+        {
+            curStamina -= staminaChangeRate;
             if (curStamina < 0)
             {
-                moveType = moveState.Slow;
+                runnable = false;
                 Invoke("CooldownSlow", staminaCooldown);
             }
-            else if (curStamina > maxStamina)
+        }
+
+        private void IncreaseStamina()
+        {
+            curStamina += staminaChangeRate;
+            if (curStamina > maxStamina)
+            {
                 curStamina = maxStamina;
-        }
-
-        private void SpeedControl()
-        {
-            Vector3 moveVelocity = new Vector3(rbody.velocity.x, 0f, rbody.velocity.z);
-
-            if (moveVelocity.magnitude > moveSpeed)
-            {
-                Vector3 controlledVelocity = moveVelocity.normalized * moveSpeed;
-                rbody.velocity = new Vector3(controlledVelocity.x, rbody.velocity.y, controlledVelocity.z);
-            }
-        }
-
-        private void CheckStamina()
-        {
-            if (curStamina < 0)
-            {
-                moveType = moveState.Slow;
-                Invoke("CooldownSlow", staminaCooldown);
             }
         }
 
         private void CooldownSlow()
         {
-            moveType = moveState.Walking;
-        }
-
-        private void CooldownJump()
-        {
-            jumpAvailable = true;
+            runnable = true;
         }
     }
 }

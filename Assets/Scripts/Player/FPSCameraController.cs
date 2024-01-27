@@ -10,6 +10,7 @@ namespace Unity.PanicBuying.Character
         public float sensY;
 
         public Transform orientation;
+        public Transform body;
 
         float xRotation;
         float yRotation;
@@ -22,15 +23,14 @@ namespace Unity.PanicBuying.Character
 
         private void Update()
         {
-            float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
-            float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
+            float mouseX = Input.GetAxisRaw("Mouse X") * sensX;
+            float mouseY = Input.GetAxisRaw("Mouse Y") * sensY;
 
             yRotation += mouseX;
             xRotation -= mouseY;
             xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-            transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-            orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+            transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0);
+            body.localRotation = Quaternion.Euler(0, yRotation, 0);
 
             transform.position = orientation.position;
         }
