@@ -7,6 +7,7 @@ using Unity.Services.Relay.Models;
 using UnityEngine;
 using Unity.Services;
 using UnityEngine.SceneManagement;
+using Unity.Services.Vivox;
 
 namespace PanicBuying
 {
@@ -41,9 +42,16 @@ namespace PanicBuying
         public async void Initialize()
         {
             await UnityServices.InitializeAsync();
-
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            await VivoxService.Instance.InitializeAsync();
+
             PlayerId = AuthenticationService.Instance.PlayerId;
+
+            LoginOptions options = new LoginOptions();
+            options.DisplayName = "User";
+            options.EnableTTS = false;
+            options.PlayerId = PlayerId;
+            await VivoxService.Instance.LoginAsync(options);
 
             createRoomListener.StartListen(async (e) =>
             {
@@ -57,12 +65,14 @@ namespace PanicBuying
 
                 var region = allRegions[0];
 
-
                 try
                 {
                     this.NetworkType = Type.Host;
                     this.HostAllocation = await RelayService.Instance.CreateAllocationAsync(4, region.Id);
                     this.JoinCode = await RelayService.Instance.GetJoinCodeAsync(this.HostAllocation.AllocationId);
+
+                    Channel3DProperties channel3dProperties = new();
+                    await VivoxService.Instance.JoinPositionalChannelAsync(this.JoinCode, ChatCapability.AudioOnly, channel3dProperties);
 
                     SceneManager.LoadScene($"CharacterMovementScene");
                 }
@@ -76,12 +86,19 @@ namespace PanicBuying
             {
                 JoinCode = e.code;
 
-                Debug.Log("code: " + e.code);
-
                 try
                 {
                     this.NetworkType = Type.Client;
                     this.JoinAllocation = await RelayService.Instance.JoinAllocationAsync(e.code);
+
+                    Channel3DProperties channel3dProperties = new(
+                        7,
+                        1,
+                        1.0f,
+                        AudioFadeModel.InverseByDistance
+                        );
+
+                    await VivoxService.Instance.JoinPositionalChannelAsync(e.code, ChatCapability.AudioOnly, channel3dProperties);
 
                     SceneManager.LoadScene($"CharacterMovementScene");
                 }
