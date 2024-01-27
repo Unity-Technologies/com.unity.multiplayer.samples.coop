@@ -4,6 +4,15 @@ using UnityEngine;
 
 namespace PanicBuying
 {
+    public struct NetworkStateWorkEvent {
+        public bool working;
+
+        public NetworkStateWorkEvent(bool working)
+        {
+            this.working = working;
+        }
+    };
+
     public struct CreateRoomButtonClicked { };
 
     public struct JoinRoomSubmited {

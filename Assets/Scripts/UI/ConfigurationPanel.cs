@@ -71,7 +71,6 @@ public class ConfigurationPanel : MonoBehaviour
 
     public void Close()
     {
-        TitleManager.SetState(TitleManager.State.Normal);
         gameObject.SetActive(false);
     }
 }

@@ -10,13 +10,6 @@ namespace PanicBuying
 {
     public class TitleManager : MonoBehaviour
     {
-        public enum State
-        {
-            Join,
-            Option,
-            Normal
-        }
-
         [SerializeField]
         private CustomPanel joinRoomPanel;
 
@@ -26,17 +19,19 @@ namespace PanicBuying
         [SerializeField]
         public ConfigurationPanel optionPanel;
 
-        private static State _currentState;
+        [SerializeField]
+        private GameObject blackPanel;
 
-        private void Start()
+        private EventListener<NetworkStateWorkEvent> networkWorkListener = new();
+
+        private void Awake()
         {
-            _currentState = State.Normal;
+            networkWorkListener.StartListen((e) =>
+            {
+                blackPanel.SetActive(e.working);
+            });
         }
 
-        public static void SetState(State state)
-        {
-            _currentState = state;
-        }
 
         public void OnCreateRoomButtonClick()
         {
@@ -50,14 +45,12 @@ namespace PanicBuying
         public void OnJoinRoomButtonClick()
         {
             joinRoomPanel.gameObject.SetActive(true);
-            _currentState = State.Join;
         }
 
         public void OnOptionButtonClick()
         {
             optionPanel.gameObject.SetActive(true);
             optionPanel.InitUI();
-            _currentState = State.Option;
             OptionButtonClicked e = new();
 
             Event.Emit(e);
