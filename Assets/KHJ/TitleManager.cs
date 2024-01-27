@@ -6,68 +6,74 @@ using Unity.Multiplayer.Samples.BossRoom;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class TitleManager : MonoBehaviour
+namespace PanicBuying
 {
-    public enum State
+    public class TitleManager : MonoBehaviour
     {
-        Join,
-        Option,
-        Normal
-    }
+        public enum State
+        {
+            Join,
+            Option,
+            Normal
+        }
 
-    [SerializeField]
-    private CustomPanel joinRoomPanel;
+        [SerializeField]
+        private CustomPanel joinRoomPanel;
 
-    [SerializeField]
-    private TextMeshProUGUI joinCodeText;
+        [SerializeField]
+        private TextMeshProUGUI joinCodeText;
 
-    [SerializeField]
-    public CustomPanel optionPanel;
+        [SerializeField]
+        public CustomPanel optionPanel;
 
-    private static State _currentState;
+        private static State _currentState;
 
-    private void Start()
-    {
-        _currentState = State.Normal;
-    }
+        private void Start()
+        {
+            _currentState = State.Normal;
+        }
 
-    public static void SetState(State state)
-    {
-        _currentState=state;
-    }
+        public static void SetState(State state)
+        {
+            _currentState = state;
+        }
 
-    public void OnCreateRoomButtonClicked()
-    {
-        SceneManager.LoadScene($"RoomScene");
-        //RoomScene에 들어가면 JoinCode를 생성하는것으로 생각
-    }
+        public void OnCreateRoomButtonClicked()
+        {
+            //RoomScene에 들어가면 JoinCode를 생성하는것으로 생각
 
-    public void OnJoinRoomButtonClicked()
-    {
-        joinRoomPanel.gameObject.SetActive(true);
-        _currentState = State.Join;
-    }
+            CreateRoomButtonClicked e = new();
 
-    public void Join()
-    {
-        // string code = joinCodeText.text; //Join Code
-        // SceneManager.LoadScene($"RoomScene");
-        //JoinCode 입력후 Join 시도
-    }
+            Event.Emit(e);
+        }
 
-    public void OnOptionButtonClicked()
-    {
-        optionPanel.gameObject.SetActive(true);
-        _currentState = State.Option;
-    }
+        public void OnJoinRoomButtonClicked()
+        {
+            joinRoomPanel.gameObject.SetActive(true);
+            _currentState = State.Join;
+        }
 
-    public void OnExitButtonClicked()
-    {
+        public void OnOptionButtonClicked()
+        {
+            optionPanel.gameObject.SetActive(true);
+            _currentState = State.Option;
+
+            OptionButtonClicked e = new();
+
+            Event.Emit(e);
+
+        }
+
+        public void OnExitButtonClicked()
+        {
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false;
 #else
         Application.Quit();
 #endif
+        }
     }
 }
+
+
 
