@@ -6,12 +6,24 @@ using Unity.Netcode;
 
 namespace PanicBuying
 {
-    public class ItemBehaviour : NetworkBehaviour
+    public struct ItemData : INetworkSerializeByMemcpy
     {
-        public int Count { get => count.Value; private set => count.Value = value; }
-        public int Duration { get => duration.Value; private set => duration.Value = value; }
+        public ItemData(int itemId = -1)
+        {
+            var itemSO = GameManager.Instance?.GetItemSO(itemId);
 
-        virtual public bool Use()
+            id = itemId;
+            count = 1;
+            duration = itemSO != null ? itemSO.MaxDuration : 0;
+        }
+
+
+        public int Count { get => count; set => count = value; }
+        public int Duration { get => duration; set => duration = value; }
+        public ItemSO SO { get => GameManager.Instance?.GetItemSO(id); }
+        public int Id { get => id; }
+
+        public bool UseOnce()
         {
             if (Duration > 0)
             {
@@ -21,7 +33,7 @@ namespace PanicBuying
             else if (Count > 0)
             {
                 Count--;
-                Duration = itemSO.MaxDuration;
+                Duration = SO.MaxDuration;
                 return true;
             }
             else
@@ -44,9 +56,9 @@ namespace PanicBuying
         }
 
 
-        public bool Accumulate(ItemBehaviour Other)
+        public bool Accumulate(ref ItemData Other)
         {
-            if (Other.itemSO != itemSO ||
+            if (Other.SO != SO ||
                 GetExtraCount() <= 0 ||
                 Other.Count <= 0)
             {
@@ -68,7 +80,7 @@ namespace PanicBuying
 
         public int GetMaxCount()
         {
-            return itemSO.MaxCount;
+            return SO.MaxCount;
         }
 
         public int GetExtraCount()
@@ -76,16 +88,8 @@ namespace PanicBuying
             return Math.Max(GetMaxCount() - Count, 0);
         }
 
-        private void Awake()
-        {
-            duration.Value = itemSO.MaxDuration;
-
-            // subscribe
-        }
-
-        [SerializeField]
-        protected ItemSO itemSO;
-        protected NetworkVariable<int> count = new(1);
-        protected NetworkVariable<int> duration;
+        int id;
+        int count;
+        int duration;
     }
 }
