@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8675303835223082557}
   - component: {fileID: 1805776049238535802}
   - component: {fileID: 615234323923947737}
+  - component: {fileID: 865721701113426215}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 1809104924961298411}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.1, y: 11.68, z: 2.23}
+  m_LocalPosition: {x: 670.65796, y: 513.48773, z: 52.596195}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -51,7 +52,7 @@ MonoBehaviour:
     PlayerPrefab: {fileID: 8085191860752111266, guid: 420635050345f4d4b9ccbc3afa83ba27, type: 3}
     Prefabs:
       NetworkPrefabsLists:
-      - {fileID: 11400000, guid: 803bf6228cb433f4290fb48be2f80645, type: 2}
+      - {fileID: 11400000, guid: a0256e362f0ebd143b505877bd88fc75, type: 2}
     TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
@@ -82,7 +83,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6960e84d07fb87f47956e7a81d71c4e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ProtocolType: 0
+  m_ProtocolType: 1
   m_UseWebSockets: 0
   m_UseEncryption: 0
   m_MaxPacketQueueSize: 128
@@ -99,3 +100,16 @@ MonoBehaviour:
     PacketDelayMS: 0
     PacketJitterMS: 0
     PacketDropRate: 0
+--- !u!114 &865721701113426215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1809104924961298411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 920e3e60ab28d9541a275f72489de35f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: {fileID: 11400000, guid: 2bf549399f4770146a207ad49fda24d6, type: 2}

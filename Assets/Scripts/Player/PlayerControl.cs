@@ -40,7 +40,7 @@ namespace Unity.PanicBuying.Character
         void Start()
         {
             rbody = GetComponent<Rigidbody>();
-            Transform spawnPoint = GameObject.Find("SpawnPoint").transform;
+            Transform spawnPoint = GameObject.Find("PlayerSpawnPoint").transform;
             transform.position = spawnPoint.position;
 
             if (IsOwner)
