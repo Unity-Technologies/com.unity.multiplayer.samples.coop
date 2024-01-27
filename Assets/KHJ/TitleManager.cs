@@ -22,7 +22,7 @@ public class TitleManager : MonoBehaviour
     private TextMeshProUGUI joinCodeText;
 
     [SerializeField]
-    public CustomPanel optionPanel;
+    public ConfigurationPanel optionPanel;
 
     private static State _currentState;
 
@@ -36,13 +36,13 @@ public class TitleManager : MonoBehaviour
         _currentState=state;
     }
 
-    public void OnCreateRoomButtonClicked()
+    public void OnCreateRoomButtonClick()
     {
         SceneManager.LoadScene($"RoomScene");
         //RoomScene에 들어가면 JoinCode를 생성하는것으로 생각
     }
 
-    public void OnJoinRoomButtonClicked()
+    public void OnJoinRoomButtonClick()
     {
         joinRoomPanel.gameObject.SetActive(true);
         _currentState = State.Join;
@@ -55,13 +55,14 @@ public class TitleManager : MonoBehaviour
         //JoinCode 입력후 Join 시도
     }
 
-    public void OnOptionButtonClicked()
+    public void OnOptionButtonClick()
     {
         optionPanel.gameObject.SetActive(true);
+        optionPanel.InitUI();
         _currentState = State.Option;
     }
 
-    public void OnExitButtonClicked()
+    public void OnExitButtonClick()
     {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
