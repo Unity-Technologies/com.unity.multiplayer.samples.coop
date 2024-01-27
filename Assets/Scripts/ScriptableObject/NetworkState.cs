@@ -64,7 +64,7 @@ namespace PanicBuying
                     this.HostAllocation = await RelayService.Instance.CreateAllocationAsync(4, region.Id);
                     this.JoinCode = await RelayService.Instance.GetJoinCodeAsync(this.HostAllocation.AllocationId);
 
-                    SceneManager.LoadScene($"NetworkTest");
+                    SceneManager.LoadScene($"CharacterMovementScene");
                 }
                 catch (RelayServiceException ex)
                 {
@@ -76,12 +76,14 @@ namespace PanicBuying
             {
                 JoinCode = e.code;
 
+                Debug.Log("code: " + e.code);
+
                 try
                 {
                     this.NetworkType = Type.Client;
                     this.JoinAllocation = await RelayService.Instance.JoinAllocationAsync(e.code);
 
-                    SceneManager.LoadScene($"NetworkTest");
+                    SceneManager.LoadScene($"CharacterMovementScene");
                 }
                 catch (RelayServiceException ex)
                 {

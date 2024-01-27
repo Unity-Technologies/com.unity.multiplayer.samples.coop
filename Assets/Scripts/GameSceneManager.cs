@@ -54,6 +54,8 @@ namespace PanicBuying
                             allocation.HostConnectionData
                         );
 
+                    NetworkManager.Singleton.StartClient();
+
                     return;
                 }
 

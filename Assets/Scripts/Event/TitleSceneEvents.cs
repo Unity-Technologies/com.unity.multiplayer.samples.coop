@@ -6,8 +6,6 @@ namespace PanicBuying
 {
     public struct CreateRoomButtonClicked { };
 
-    public struct JoinRoomButtonClicked { };
-
     public struct JoinRoomSubmited {
 
         public string code;
