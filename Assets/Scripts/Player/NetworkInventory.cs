@@ -18,6 +18,65 @@ namespace PanicBuying
             }
         }
 
+        public void SelectSlot(int InIndex)
+        {
+            Debug.Assert(InIndex >= 0 && InIndex < items.Count);
+
+            selectedItem = items[InIndex];
+            if (selectedItem != null)
+            {
+                selectedItem.transform.SetParent(handObject);
+            }
+        }
+
+        public void Drop()
+        {
+            if (IsOwner && selectedItem)
+            {
+                NetworkObject Object = Instantiate(itemObjectPrefab).GetComponent<NetworkObject>();
+
+                if (selectedItem.Count > 1)
+                {
+                    selectedItem.RemoveOne();
+                }
+                else
+                {
+                    selectedItem.transform.SetParent(Object.transform);
+                    items.Remove(selectedItem);
+                }
+
+
+                Object.Spawn();
+            }
+        }
+
+        bool TryGetItem(ItemBehaviour InItem)
+        {
+            foreach (var ExistingItem in items)
+            {
+                if (ExistingItem.Accumulate(InItem) == false)
+                {
+                    continue;
+                }
+            }
+
+            if (InItem.Count > 0 && items.Count < kItemSlotNum)
+            {
+                InItem.transform.SetParent(transform);
+                items.Add(InItem);
+                return true;
+            }
+            else if (InItem.Count <= 0)
+            {
+                Destroy(InItem.gameObject);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
         [ServerRpc]
         void RequestInventory_ServerRpc(ServerRpcParams serverRpcParams = new())
@@ -26,28 +85,41 @@ namespace PanicBuying
             {
                 var Params = PanicUtil.MakeClientRpcParams(OwnerClientId);
 
-                SendInventory_ClientRpc(_inventory, Params);
+                SendInventory_ClientRpc(new (items), Params);
             }
         }
 
         [ClientRpc]
         void SendInventory_ClientRpc(InventoryStruct inventory, ClientRpcParams clientRpcParams)
         {
-            _inventory = inventory;
+            items = new(inventory.itemBehaviours);
         }
 
 
-        protected InventoryStruct _inventory;
-    }
+        const int kItemSlotNum = 4;
 
+        [SerializeField]
+        NetworkObject owner;
+
+        [SerializeField]
+        Transform handObject;
+
+        [SerializeField]
+        NetworkObject itemObjectPrefab;
+
+        ItemBehaviour selectedItem = null;
+
+        [SerializeField, HideInInspector]
+        protected List<ItemBehaviour> items = new();
+    }
 
     public struct InventoryStruct : INetworkSerializeByMemcpy
     {
-        public InventoryStruct(int SlotNumber = 5)
+        public InventoryStruct(List<ItemBehaviour> inItems)
         {
-            Items = new(SlotNumber, Allocator.Persistent);
+            itemBehaviours = inItems.ToArray();
         }
 
-        NativeArray<ItemData> Items;
+        public ItemBehaviour[] itemBehaviours;
     }
 }
