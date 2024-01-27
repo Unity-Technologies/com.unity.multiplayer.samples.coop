@@ -208,15 +208,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b8db28dcff2224bb976bfde497afb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
+  moveSpeed: 3
   moveMultiplier: 10
-  jumpForce: 10
-  gravityScale: 20
+  jumpForce: 3
+  gravityScale: 10
   jumpCooldownTime: 1
   playerHeight: 2
   orientation: {fileID: 2559919783936610365}
   playerObj: {fileID: 648256680004537854}
   tpsCamera: {fileID: 879550914640252354, guid: 72f5236163479c24785def48580d7408, type: 3}
+  fpsCamera: {fileID: 6951800497722235643, guid: 6882e67f00ebb1142a5bc37710407726, type: 3}
 --- !u!54 &-5623243991471995553
 Rigidbody:
   m_ObjectHideFlags: 0

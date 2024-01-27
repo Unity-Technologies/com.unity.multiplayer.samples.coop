@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.PanicBuying.Character
 {
     public class NetworkUI: MonoBehaviour
     {

@@ -5,9 +5,9 @@ using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.PanicBuying.Character;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.PanicBuying.Character
 {
     public class PlayerControl : NetworkBehaviour
     {
@@ -25,6 +25,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public Transform orientation;
         public Transform playerObj;
         public GameObject tpsCamera;
+        public GameObject fpsCamera;
 
         float horizontalInput;
         float verticalInput;
@@ -44,15 +45,20 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             if (IsOwner)
             {
-                // setting cam
-                GameObject cam = Instantiate(tpsCamera);
-                CinemachineFreeLook cineCam = cam.GetComponent<CinemachineFreeLook>();
-                cineCam.Follow = transform;
-                cineCam.LookAt = transform;
-                CameraController camController = cam.GetComponent<CameraController>();
+                //// setting TPS cam
+                //GameObject cam = Instantiate(tpsCamera);
+                //CinemachineFreeLook cineCam = cam.GetComponent<CinemachineFreeLook>();
+                //cineCam.Follow = transform;
+                //cineCam.LookAt = transform;
+                //TPSCameraController camController = cam.GetComponent<TPSCameraController>();
+                //camController.orientation = orientation;
+                //camController.player = transform;
+                //camController.playerObj = playerObj;
+
+                // setting FPS cam
+                GameObject cam = Instantiate(fpsCamera);
+                FPSCameraController camController = cam.GetComponent<FPSCameraController>();
                 camController.orientation = orientation;
-                camController.player = transform;
-                camController.playerObj = playerObj;
             }
         }
 
