@@ -22,6 +22,7 @@ namespace PanicBuying
 
         public List<PatrolRoute> routes;
         private NavMeshAgent agent;
+        public BoxCaster caster;
 
         private EnemyState state = EnemyState.Standby;
 
@@ -55,9 +56,17 @@ namespace PanicBuying
 
         public void setTarget(Vector3 targetPos)
         {
-            state = EnemyState.Chasing;
-            agent.speed = chasingSpeed;
-            agent.SetDestination(targetPos);
+            caster.transform.LookAt(new Vector3(targetPos.x, 0, targetPos.z));
+            caster.BoxCast();            
+            if (caster.isHit)
+            {
+                if (caster.hit.collider.CompareTag("PlayerCharacter"))
+                {
+                    state = EnemyState.Chasing;
+                    agent.speed = chasingSpeed;
+                    agent.SetDestination(targetPos);
+                }
+            }
         }
 
         private void StartPatrolling()
@@ -100,7 +109,6 @@ namespace PanicBuying
             state = EnemyState.Patrolling;
             agent.speed = patrolSpeed;
 
-            Debug.Log(gameObject.name + " goes to route " + routeIdx + " patrol point " + patrolPointIdx);
             agent.SetDestination(routes[routeIdx].patrolPoints[patrolPointIdx].position);
         }
     }
