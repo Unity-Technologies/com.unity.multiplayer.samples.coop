@@ -130,24 +130,24 @@ namespace Unity.BossRoom.DebugCheats
             GoToPostGameServerRpc();
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void SpawnEnemyServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void SpawnEnemyServerRpc(RpcParams serverRpcParams = default)
         {
             var newEnemy = Instantiate(m_EnemyPrefab);
             newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
             PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "SpawnEnemy");
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void SpawnBossServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void SpawnBossServerRpc(RpcParams serverRpcParams = default)
         {
             var newEnemy = Instantiate(m_BossPrefab);
             newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
             PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "SpawnBoss");
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void KillTargetServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void KillTargetServerRpc(RpcParams serverRpcParams = default)
         {
             ulong clientId = serverRpcParams.Receive.SenderClientId;
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
@@ -171,8 +171,8 @@ namespace Unity.BossRoom.DebugCheats
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void KillAllEnemiesServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void KillAllEnemiesServerRpc(RpcParams serverRpcParams = default)
         {
             foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
             {
@@ -187,8 +187,8 @@ namespace Unity.BossRoom.DebugCheats
             PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "KillAllEnemies");
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void ToggleGodModeServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void ToggleGodModeServerRpc(RpcParams serverRpcParams = default)
         {
             var clientId = serverRpcParams.Receive.SenderClientId;
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
@@ -199,8 +199,8 @@ namespace Unity.BossRoom.DebugCheats
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void HealPlayerServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void HealPlayerServerRpc(RpcParams serverRpcParams = default)
         {
             var clientId = serverRpcParams.Receive.SenderClientId;
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
@@ -222,8 +222,8 @@ namespace Unity.BossRoom.DebugCheats
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void ToggleSuperSpeedServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void ToggleSuperSpeedServerRpc(RpcParams serverRpcParams = default)
         {
             var clientId = serverRpcParams.Receive.SenderClientId;
             foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
@@ -237,8 +237,8 @@ namespace Unity.BossRoom.DebugCheats
             PublishCheatUsedMessage(clientId, "ToggleSuperSpeed");
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void ToggleTeleportModeServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void ToggleTeleportModeServerRpc(RpcParams serverRpcParams = default)
         {
             var clientId = serverRpcParams.Receive.SenderClientId;
             foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
@@ -252,8 +252,8 @@ namespace Unity.BossRoom.DebugCheats
             PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "ToggleTeleportMode");
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void ToggleDoorServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void ToggleDoorServerRpc(RpcParams serverRpcParams = default)
         {
             if (SwitchedDoor != null)
             {
@@ -266,8 +266,8 @@ namespace Unity.BossRoom.DebugCheats
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void TogglePortalsServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void TogglePortalsServerRpc(RpcParams serverRpcParams = default)
         {
             foreach (var portal in FindObjectsOfType<EnemyPortal>())
             {
@@ -288,8 +288,8 @@ namespace Unity.BossRoom.DebugCheats
             PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "TogglePortals");
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
+        [Rpc(SendTo.Server, RequireOwnership = false)]
+        void GoToPostGameServerRpc(RpcParams serverRpcParams = default)
         {
             SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
             PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "GoToPostGame");

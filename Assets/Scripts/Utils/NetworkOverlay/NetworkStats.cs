@@ -59,7 +59,7 @@ namespace Unity.BossRoom.Utils
 
         Dictionary<int, float> m_PingHistoryStartTimes = new Dictionary<int, float>();
 
-        ClientRpcParams m_PongClientParams;
+        RpcParams m_PongClientParams;
 
         string m_TextToDisplay;
 
@@ -77,7 +77,7 @@ namespace Unity.BossRoom.Utils
                 CreateNetworkStatsText();
             }
 
-            m_PongClientParams = new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } };
+            m_PongClientParams =  RpcTarget.Group(new[] { OwnerClientId }, RpcTargetUse.Persistent);
         }
 
         // Creating a UI text object and add it to NetworkOverlay canvas
@@ -100,6 +100,7 @@ namespace Unity.BossRoom.Utils
                 {
                     // We could have had a ping/pong where the ping sends the pong and the pong sends the ping. Issue with this
                     // is the higher the latency, the lower the sampling would be. We need pings to be sent at a regular interval
+                    Debug.Log($"Sending ping {m_CurrentRTTPingId}");
                     PingServerRPC(m_CurrentRTTPingId);
                     m_PingHistoryStartTimes[m_CurrentRTTPingId] = Time.realtimeSinceStartup;
                     m_CurrentRTTPingId++;
@@ -146,15 +147,17 @@ namespace Unity.BossRoom.Utils
             }
         }
 
-        [ServerRpc]
-        void PingServerRPC(int pingId, ServerRpcParams serverParams = default)
+        [Rpc(SendTo.Server)]
+        void PingServerRPC(int pingId, RpcParams serverParams = default)
         {
+            Debug.Log($"Server responding to ping {pingId}");
             PongClientRPC(pingId, m_PongClientParams);
         }
 
-        [ClientRpc]
-        void PongClientRPC(int pingId, ClientRpcParams clientParams = default)
+        [Rpc(SendTo.SpecifiedInParams)]
+        void PongClientRPC(int pingId, RpcParams clientParams = default)
         {
+            Debug.Log($"Got reply to ping {pingId}");
             var startTime = m_PingHistoryStartTimes[pingId];
             m_PingHistoryStartTimes.Remove(pingId);
             m_BossRoomRTT.NextValue(Time.realtimeSinceStartup - startTime);
