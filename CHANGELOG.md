@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
 ### Fixed
-* Added Null reference check to ClientInputSender to fix null reference for missing ability
+* Added Null reference check to ClientInputSender to fix null reference for missing ability (#880)
 
 ## [2.4.0] - 2023-12-13
 
