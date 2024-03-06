@@ -9,7 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased]
 
 ### Cleanup
-* Removed NetworkObject from MainMenuState
+* Removed NetworkObject from MainMenuState (#881)
 
 ## [2.4.0] - 2023-12-13
 
