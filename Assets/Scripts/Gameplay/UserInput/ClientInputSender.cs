@@ -23,9 +23,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
         //upstream network conservation. This matters when holding down your mouse button to move.
         const float k_MoveSendRateSeconds = 0.04f; //25 fps.
 
-        const float
-            k_TargetMoveTimeout =
-                0.45f; //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
+        const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
 
         float m_LastSentMove;
 
@@ -41,7 +39,8 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
         RaycastHitComparer m_RaycastHitComparer;
 
-        [SerializeField] ServerCharacter m_ServerCharacter;
+        [SerializeField]
+        ServerCharacter m_ServerCharacter;
 
         /// <summary>
         /// This event fires at the time when an action request is sent to the server.
@@ -54,12 +53,12 @@ namespace Unity.BossRoom.Gameplay.UserInput
         /// </summary>
         public enum SkillTriggerStyle
         {
-            None, //no skill was triggered.
-            MouseClick, //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
-            Keyboard, //skill was triggered via a Keyboard press, implying target should be taken from the active target.
+            None,        //no skill was triggered.
+            MouseClick,  //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
+            Keyboard,    //skill was triggered via a Keyboard press, implying target should be taken from the active target.
             KeyboardRelease, //represents a released key.
-            UI, //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target.
-            UIRelease, //represents letting go of the mouse-button on a UI button
+            UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target.
+            UIRelease,   //represents letting go of the mouse-button on a UI button
         }
 
         bool IsReleaseStyle(SkillTriggerStyle style)
@@ -106,7 +105,8 @@ namespace Unity.BossRoom.Gameplay.UserInput
         /// </summary>
         CharacterClass CharacterClass => m_ServerCharacter.CharacterClass;
 
-        [SerializeField] PhysicsWrapper m_PhysicsWrapper;
+        [SerializeField]
+        PhysicsWrapper m_PhysicsWrapper;
 
         public ActionState actionState1 { get; private set; }
 
@@ -140,13 +140,11 @@ namespace Unity.BossRoom.Gameplay.UserInput
             {
                 actionState1 = new ActionState() { actionID = action1.ActionID, selectable = true };
             }
-
             if (CharacterClass.Skill2 &&
                 GameDataSource.Instance.TryGetActionPrototypeByID(CharacterClass.Skill2.ActionID, out var action2))
             {
                 actionState2 = new ActionState() { actionID = action2.ActionID, selectable = true };
             }
-
             if (CharacterClass.Skill3 &&
                 GameDataSource.Instance.TryGetActionPrototypeByID(CharacterClass.Skill3.ActionID, out var action3))
             {
@@ -227,19 +225,16 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 }
                 else if (!IsReleaseStyle(m_ActionRequests[i].TriggerStyle))
                 {
-                    var actionPrototype =
-                        GameDataSource.Instance.GetActionPrototypeByID(m_ActionRequests[i].RequestedActionID);
+                    var actionPrototype = GameDataSource.Instance.GetActionPrototypeByID(m_ActionRequests[i].RequestedActionID);
                     if (actionPrototype.Config.ActionInput != null)
                     {
                         var skillPlayer = Instantiate(actionPrototype.Config.ActionInput);
-                        skillPlayer.Initiate(m_ServerCharacter, m_PhysicsWrapper.Transform.position,
-                            actionPrototype.ActionID, SendInput, FinishSkill);
+                        skillPlayer.Initiate(m_ServerCharacter, m_PhysicsWrapper.Transform.position, actionPrototype.ActionID, SendInput, FinishSkill);
                         m_CurrentSkillInput = skillPlayer;
                     }
                     else
                     {
-                        PerformSkill(actionPrototype.ActionID, m_ActionRequests[i].TriggerStyle,
-                            m_ActionRequests[i].TargetId);
+                        PerformSkill(actionPrototype.ActionID, m_ActionRequests[i].TriggerStyle, m_ActionRequests[i].TargetId);
                     }
                 }
             }
@@ -359,8 +354,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
         /// <param name="triggerStyle">How did this skill play get triggered? Mouse, Keyboard, UI etc.</param>
         /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
         /// <returns>true if we should play an action, false otherwise. </returns>
-        bool GetActionRequestForTarget(Transform hit, ActionID actionID, SkillTriggerStyle triggerStyle,
-            out ActionRequestData resultData)
+        bool GetActionRequestForTarget(Transform hit, ActionID actionID, SkillTriggerStyle triggerStyle, out ActionRequestData resultData)
         {
             resultData = new ActionRequestData();
 
@@ -433,8 +427,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 //for projectile logic, infer the direction from the click position.
                 case ActionLogic.LaunchProjectile:
                     resultData.Direction = direction;
-                    resultData.ShouldClose =
-                        false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive.
+                    resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive.
                     return;
                 case ActionLogic.Melee:
                     resultData.Direction = direction;
@@ -482,13 +475,13 @@ namespace Unity.BossRoom.Gameplay.UserInput
         {
             if (Input.GetKeyDown(KeyCode.Alpha1) && CharacterClass.Skill1)
             {
+                
                 RequestAction(actionState1.actionID, SkillTriggerStyle.Keyboard);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha1) && CharacterClass.Skill1)
             {
                 RequestAction(actionState1.actionID, SkillTriggerStyle.KeyboardRelease);
             }
-
             if (Input.GetKeyDown(KeyCode.Alpha2) && CharacterClass.Skill2)
             {
                 RequestAction(actionState2.actionID, SkillTriggerStyle.Keyboard);
@@ -497,7 +490,6 @@ namespace Unity.BossRoom.Gameplay.UserInput
             {
                 RequestAction(actionState2.actionID, SkillTriggerStyle.KeyboardRelease);
             }
-
             if (Input.GetKeyDown(KeyCode.Alpha3) && CharacterClass.Skill3)
             {
                 RequestAction(actionState3.actionID, SkillTriggerStyle.Keyboard);
@@ -511,17 +503,14 @@ namespace Unity.BossRoom.Gameplay.UserInput
             {
                 RequestAction(GameDataSource.Instance.Emote1ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
             }
-
             if (Input.GetKeyDown(KeyCode.Alpha6))
             {
                 RequestAction(GameDataSource.Instance.Emote2ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
             }
-
             if (Input.GetKeyDown(KeyCode.Alpha7))
             {
                 RequestAction(GameDataSource.Instance.Emote3ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
             }
-
             if (Input.GetKeyDown(KeyCode.Alpha8))
             {
                 RequestAction(GameDataSource.Instance.Emote4ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
@@ -539,8 +528,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype.ActionID,
-                        SkillTriggerStyle.MouseClick);
+                    RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype.ActionID, SkillTriggerStyle.MouseClick);
                 }
                 else if (Input.GetMouseButton(0))
                 {
@@ -552,8 +540,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
         void UpdateAction1()
         {
             var isHoldingNetworkObject =
-                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
-                    m_ServerCharacter.HeldNetworkObject.Value,
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_ServerCharacter.HeldNetworkObject.Value,
                     out var heldNetworkObject);
 
             NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_ServerCharacter.TargetId.Value,
@@ -567,19 +554,19 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 actionState1.actionID = GameDataSource.Instance.DropActionPrototype.ActionID;
             }
             else if ((m_ServerCharacter.TargetId.Value != 0
-                      && selection != null
-                      && selection.TryGetComponent(out PickUpState pickUpState))
-                    )
+                    && selection != null
+                    && selection.TryGetComponent(out PickUpState pickUpState))
+               )
             {
                 // special case: targeting a pickup-able item or holding a pickup object
 
                 actionState1.actionID = GameDataSource.Instance.PickUpActionPrototype.ActionID;
             }
             else if (m_ServerCharacter.TargetId.Value != 0
-                     && selection != null
-                     && selection.NetworkObjectId != m_ServerCharacter.NetworkObjectId
-                     && selection.TryGetComponent(out ServerCharacter charState)
-                     && !charState.IsNpc)
+                && selection != null
+                && selection.NetworkObjectId != m_ServerCharacter.NetworkObjectId
+                && selection.TryGetComponent(out ServerCharacter charState)
+                && !charState.IsNpc)
             {
                 // special case: when we have a player selected, we change the meaning of the basic action
                 // we have another player selected! In that case we want to reflect that our basic Action is a Revive, not an attack!
