@@ -475,7 +475,6 @@ namespace Unity.BossRoom.Gameplay.UserInput
         {
             if (Input.GetKeyDown(KeyCode.Alpha1) && CharacterClass.Skill1)
             {
-                
                 RequestAction(actionState1.actionID, SkillTriggerStyle.Keyboard);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha1) && CharacterClass.Skill1)
