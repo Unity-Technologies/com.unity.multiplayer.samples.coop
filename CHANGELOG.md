@@ -109,7 +109,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Updated Boss Room to NGO 1.1.0 (#708)
   *  Now uses managed types for custom INetworkSerializable in NetworkVariables. NetworkGUID is now a class instead of a struct.
   * Cleanup Relay and UTP setup. Flow is now simpler, no need for the RelayUtilities anymore.
-  * This cleansup various setup steps and puts them all in a new "ConnectionMethod.cs".
+  * This cleans up various setup steps and puts them all in a new "ConnectionMethod.cs".
   * MaxSendQueueSize value is removed, reserialized NetworkManager to remove that now useless value.
   * Reverted the default value for max payload size, this is no longer useful as NGO is mostly reliable.
   * Set connection approval timeout higher, 1 sec is pretty short. If there's a packet drop, some hangups on the network, clients would get timedout too easily.
