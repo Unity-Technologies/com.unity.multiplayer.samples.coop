@@ -473,27 +473,27 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if (Input.GetKeyDown(KeyCode.Alpha1) && CharacterClass.Skill1)
             {
                 RequestAction(actionState1.actionID, SkillTriggerStyle.Keyboard);
             }
-            else if (Input.GetKeyUp(KeyCode.Alpha1))
+            else if (Input.GetKeyUp(KeyCode.Alpha1) && CharacterClass.Skill1)
             {
                 RequestAction(actionState1.actionID, SkillTriggerStyle.KeyboardRelease);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha2))
+            if (Input.GetKeyDown(KeyCode.Alpha2) && CharacterClass.Skill2)
             {
                 RequestAction(actionState2.actionID, SkillTriggerStyle.Keyboard);
             }
-            else if (Input.GetKeyUp(KeyCode.Alpha2))
+            else if (Input.GetKeyUp(KeyCode.Alpha2) && CharacterClass.Skill2)
             {
                 RequestAction(actionState2.actionID, SkillTriggerStyle.KeyboardRelease);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha3))
+            if (Input.GetKeyDown(KeyCode.Alpha3) && CharacterClass.Skill3)
             {
                 RequestAction(actionState3.actionID, SkillTriggerStyle.Keyboard);
             }
-            else if (Input.GetKeyUp(KeyCode.Alpha3))
+            else if (Input.GetKeyUp(KeyCode.Alpha3) && CharacterClass.Skill3)
             {
                 RequestAction(actionState3.actionID, SkillTriggerStyle.KeyboardRelease);
             }
