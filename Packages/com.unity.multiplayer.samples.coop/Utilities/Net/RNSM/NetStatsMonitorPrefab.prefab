@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Visible: 1
   m_MaxRefreshRate: 30
   <CustomStyleSheet>k__BackingField: {fileID: 0}
-  <PanelSettingsOverride>k__BackingField: {fileID: 0}
+  <PanelSettingsOverride>k__BackingField: {fileID: 11400000, guid: a6950950532d2c54f9c56511fa441eb4, type: 2}
   <Position>k__BackingField:
     <OverridePosition>k__BackingField: 1
     m_PositionLeftToRight: 0
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -276,7 +276,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: -3
+  m_SortingOrder: -1
   m_TargetDisplay: 0
 --- !u!114 &2517675027224123876
 MonoBehaviour:
