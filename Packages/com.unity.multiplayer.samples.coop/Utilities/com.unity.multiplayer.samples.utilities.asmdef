@@ -4,7 +4,8 @@
     "references": [
         "Unity.Netcode.Components",
         "Unity.Netcode.Runtime",
-        "Unity.Services.Relay"
+        "Unity.Services.Relay",
+        "Unity.Collections"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

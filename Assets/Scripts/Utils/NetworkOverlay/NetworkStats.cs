@@ -59,7 +59,7 @@ namespace Unity.BossRoom.Utils
 
         Dictionary<int, float> m_PingHistoryStartTimes = new Dictionary<int, float>();
 
-        ClientRpcParams m_PongClientParams;
+        RpcParams m_PongClientParams;
 
         string m_TextToDisplay;
 
@@ -77,7 +77,7 @@ namespace Unity.BossRoom.Utils
                 CreateNetworkStatsText();
             }
 
-            m_PongClientParams = new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } };
+            m_PongClientParams = RpcTarget.Group(new[] { OwnerClientId }, RpcTargetUse.Persistent);
         }
 
         // Creating a UI text object and add it to NetworkOverlay canvas
@@ -146,14 +146,14 @@ namespace Unity.BossRoom.Utils
             }
         }
 
-        [ServerRpc]
-        void PingServerRPC(int pingId, ServerRpcParams serverParams = default)
+        [Rpc(SendTo.Server)]
+        void PingServerRPC(int pingId, RpcParams serverParams = default)
         {
             PongClientRPC(pingId, m_PongClientParams);
         }
 
-        [ClientRpc]
-        void PongClientRPC(int pingId, ClientRpcParams clientParams = default)
+        [Rpc(SendTo.SpecifiedInParams)]
+        void PongClientRPC(int pingId, RpcParams clientParams = default)
         {
             var startTime = m_PingHistoryStartTimes[pingId];
             m_PingHistoryStartTimes.Remove(pingId);

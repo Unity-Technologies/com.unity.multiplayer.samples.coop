@@ -224,7 +224,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             }
         }
 
-        [ClientRpc]
+        [Rpc(SendTo.ClientsAndHost)]
         private void RecvHitEnemyClientRPC(ulong enemyId)
         {
             //in the future we could do quite fancy things, like deparenting the Graphics Arrow and parenting it to the target.

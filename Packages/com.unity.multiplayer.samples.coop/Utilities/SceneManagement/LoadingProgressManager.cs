@@ -101,7 +101,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        [ClientRpc]
+        [Rpc(SendTo.ClientsAndHost)]
         void UpdateTrackersClientRpc()
         {
             if (!IsHost)
