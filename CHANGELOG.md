@@ -17,6 +17,9 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ## [2.4.0] - 2023-12-13
 
+### Fixed
+* Changed Canvas Sort order of multiple UI elements to enable visibility of RNSM and reconnection attempts during the loading screen (#879)
+
 ### Changed
 * Upgraded editor version to 2022.3.14f1 (#871)
   * com.unity.ai.navigation upgraded to v1.1.5
