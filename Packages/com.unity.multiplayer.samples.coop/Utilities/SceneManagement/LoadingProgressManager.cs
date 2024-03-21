@@ -102,7 +102,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         }
 
         [Rpc(SendTo.ClientsAndHost)]
-        void UpdateTrackersClientRpc()
+        void ClientUpdateTrackersRpc()
         {
             if (!IsHost)
             {
@@ -131,7 +131,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 var networkObject = tracker.GetComponent<NetworkObject>();
                 networkObject.SpawnWithOwnership(clientId);
                 ProgressTrackers[clientId] = tracker.GetComponent<NetworkedLoadingProgressTracker>();
-                UpdateTrackersClientRpc();
+                ClientUpdateTrackersRpc();
             }
         }
 
@@ -144,7 +144,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                     var tracker = ProgressTrackers[clientId];
                     ProgressTrackers.Remove(clientId);
                     tracker.NetworkObject.Despawn();
-                    UpdateTrackersClientRpc();
+                    ClientUpdateTrackersRpc();
                 }
             }
         }

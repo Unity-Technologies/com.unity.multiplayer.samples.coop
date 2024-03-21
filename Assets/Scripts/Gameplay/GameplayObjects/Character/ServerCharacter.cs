@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Gameplay.Actions;
@@ -189,7 +188,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         /// <param name="movementTarget">The position which this character should move towards.</param>
         [Rpc(SendTo.Server)]
-        public void SendCharacterInputServerRpc(Vector3 movementTarget)
+        public void ServerSendCharacterInputRpc(Vector3 movementTarget)
         {
             if (LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
@@ -214,7 +213,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         /// <param name="data">Data about which action to play and its associated details. </param>
         [Rpc(SendTo.Server)]
-        public void RecvDoActionServerRPC(ActionRequestData data)
+        public void ServerPlayActionRpc(ActionRequestData data)
         {
             ActionRequestData data1 = data;
             if (!GameDataSource.Instance.GetActionPrototypeByID(data1.ActionID).Config.IsFriendly)
@@ -232,7 +231,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// Called on server when the character's client decides they have stopped "charging up" an attack.
         /// </summary>
         [Rpc(SendTo.Server)]
-        public void RecvStopChargingUpServerRpc()
+        public void ServerStopChargingUpRpc()
         {
             m_ServerActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
         }

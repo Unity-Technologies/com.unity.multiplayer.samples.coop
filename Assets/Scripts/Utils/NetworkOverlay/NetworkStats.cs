@@ -100,7 +100,7 @@ namespace Unity.BossRoom.Utils
                 {
                     // We could have had a ping/pong where the ping sends the pong and the pong sends the ping. Issue with this
                     // is the higher the latency, the lower the sampling would be. We need pings to be sent at a regular interval
-                    PingServerRPC(m_CurrentRTTPingId);
+                    ServerPingRpc(m_CurrentRTTPingId);
                     m_PingHistoryStartTimes[m_CurrentRTTPingId] = Time.realtimeSinceStartup;
                     m_CurrentRTTPingId++;
                     m_LastPingTime = Time.realtimeSinceStartup;
@@ -147,13 +147,13 @@ namespace Unity.BossRoom.Utils
         }
 
         [Rpc(SendTo.Server)]
-        void PingServerRPC(int pingId, RpcParams serverParams = default)
+        void ServerPingRpc(int pingId, RpcParams serverParams = default)
         {
-            PongClientRPC(pingId, m_PongClientParams);
+            ClientPongRpc(pingId, m_PongClientParams);
         }
 
         [Rpc(SendTo.SpecifiedInParams)]
-        void PongClientRPC(int pingId, RpcParams clientParams = default)
+        void ClientPongRpc(int pingId, RpcParams clientParams = default)
         {
             var startTime = m_PingHistoryStartTimes[pingId];
             m_PingHistoryStartTimes.Remove(pingId);

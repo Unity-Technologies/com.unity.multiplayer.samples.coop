@@ -53,7 +53,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
             // start the "charging up" ActionFX
-            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
+            serverCharacter.clientCharacter.ClientPlayActionRpc(Data);
 
             // sanity-check our data a bit
             Debug.Assert(Config.Projectiles.Length > 1, $"Action {name} has {Config.Projectiles.Length} Projectiles. Expected at least 2!");
@@ -122,7 +122,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                     parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
                 }
 
-                parent.clientCharacter.RecvStopChargingUpClientRpc(GetPercentChargedUp());
+                parent.clientCharacter.ClientStopChargingUpRpc(GetPercentChargedUp());
                 if (!m_HitByAttack)
                 {
                     LaunchProjectile(parent);

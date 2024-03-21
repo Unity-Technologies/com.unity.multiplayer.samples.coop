@@ -85,7 +85,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             }
 
-            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
+            serverCharacter.clientCharacter.ClientPlayActionRpc(Data);
             return true;
         }
 
@@ -238,7 +238,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             if (!m_WasStunned)
             {
                 parent.Movement.CancelMove();
-                parent.clientCharacter.RecvCancelAllActionsClientRpc();
+                parent.clientCharacter.ClientCancelAllActionsRpc();
             }
             m_WasStunned = true;
         }

@@ -207,7 +207,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
         void SendInput(ActionRequestData action)
         {
             ActionInputEvent?.Invoke(action);
-            m_ServerCharacter.RecvDoActionServerRPC(action);
+            m_ServerCharacter.ServerPlayActionRpc(action);
         }
 
         void FixedUpdate()
@@ -273,7 +273,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
                                 k_MaxNavMeshDistance,
                                 NavMesh.AllAreas))
                         {
-                            m_ServerCharacter.SendCharacterInputServerRpc(hit.position);
+                            m_ServerCharacter.ServerSendCharacterInputRpc(hit.position);
 
                             //Send our client only click request
                             ClientMoveEvent?.Invoke(hit.position);

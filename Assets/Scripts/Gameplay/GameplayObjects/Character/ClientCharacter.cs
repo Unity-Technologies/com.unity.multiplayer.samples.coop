@@ -70,7 +70,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         /// <param name="data"> Data about which action to play and its associated details. </param>
         [Rpc(SendTo.ClientsAndHost)]
-        public void RecvDoActionClientRPC(ActionRequestData data)
+        public void ClientPlayActionRpc(ActionRequestData data)
         {
             ActionRequestData data1 = data;
             m_ClientActionViz.PlayAction(ref data1);
@@ -80,7 +80,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// This RPC is invoked on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
         /// </summary>
         [Rpc(SendTo.ClientsAndHost)]
-        public void RecvCancelAllActionsClientRpc()
+        public void ClientCancelAllActionsRpc()
         {
             m_ClientActionViz.CancelAllActions();
         }
@@ -89,7 +89,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// This RPC is invoked on the client when active action FXs of a certain type need to be cancelled (e.g. when the Stealth action ends)
         /// </summary>
         [Rpc(SendTo.ClientsAndHost)]
-        public void RecvCancelActionsByPrototypeIDClientRpc(ActionID actionPrototypeID)
+        public void ClientCancelActionsByPrototypeIDRpc(ActionID actionPrototypeID)
         {
             m_ClientActionViz.CancelAllActionsWithSamePrototypeID(actionPrototypeID);
         }
@@ -99,7 +99,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// Provides a value between 0 and 1 inclusive which indicates how "charged up" the attack ended up being.
         /// </summary>
         [Rpc(SendTo.ClientsAndHost)]
-        public void RecvStopChargingUpClientRpc(float percentCharged)
+        public void ClientStopChargingUpRpc(float percentCharged)
         {
             m_ClientActionViz.OnStoppedChargingUp(percentCharged);
         }
