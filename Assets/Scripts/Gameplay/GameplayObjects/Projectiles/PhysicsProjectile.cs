@@ -204,7 +204,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                     var targetNetObj = m_CollisionCache[i].GetComponentInParent<NetworkObject>();
                     if (targetNetObj)
                     {
-                        RecvHitEnemyClientRPC(targetNetObj.NetworkObjectId);
+                        ClientHitEnemyRpc(targetNetObj.NetworkObjectId);
 
                         //retrieve the person that created us, if he's still around.
                         NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out var spawnerNet);
@@ -224,8 +224,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             }
         }
 
-        [ClientRpc]
-        private void RecvHitEnemyClientRPC(ulong enemyId)
+        [Rpc(SendTo.ClientsAndHost)]
+        private void ClientHitEnemyRpc(ulong enemyId)
         {
             //in the future we could do quite fancy things, like deparenting the Graphics Arrow and parenting it to the target.
             //For the moment we play some particles (optionally), and cause the target to animate a hit-react.

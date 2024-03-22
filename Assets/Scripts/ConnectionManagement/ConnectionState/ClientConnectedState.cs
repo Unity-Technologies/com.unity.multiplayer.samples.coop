@@ -1,4 +1,3 @@
-using System;
 using Unity.BossRoom.UnityServices.Lobbies;
 using UnityEngine;
 using VContainer;
@@ -27,7 +26,8 @@ namespace Unity.BossRoom.ConnectionManagement
         public override void OnClientDisconnect(ulong _)
         {
             var disconnectReason = m_ConnectionManager.NetworkManager.DisconnectReason;
-            if (string.IsNullOrEmpty(disconnectReason))
+            if (string.IsNullOrEmpty(disconnectReason) ||
+                disconnectReason == "Disconnected due to host shutting down.")
             {
                 m_ConnectStatusPublisher.Publish(ConnectStatus.Reconnecting);
                 m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientReconnecting);

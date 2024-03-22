@@ -6,14 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [Unreleased]
+## [Unreleased] - yyyy-mm-dd
+
+### Changed
+* Upgraded to Boss Room to Netcode for GameObjects v1.8.1 (#883)
+  * Upgraded to the newer API for Rpcs, Universal Rpcs
+  * ClientConnectedState has been modified to account for server/host now populating DisconnectReason before disconnecting a client before shutting down
 
 ### Cleanup
 * Removed NetworkObject from MainMenuState (#881)
 
 ### Fixed
 * Added Null reference check to ClientInputSender to fix null reference for missing ability (#880)
-
 
 ## [2.4.0] - 2023-12-13
 
