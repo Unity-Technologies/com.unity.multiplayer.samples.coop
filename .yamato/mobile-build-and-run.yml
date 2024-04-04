@@ -15,7 +15,7 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
     commands:
         - pip install unity-downloader-cli==1.2.0 --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
         - unity-downloader-cli -c Editor -c iOS -u {{ editor }} --fast --wait
-        - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
+        - curl -s https://artifactory-slo.bf.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
         - chmod +x ./utr
         - ./utr --suite=playmode --platform=iOS --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --build-only --testfilter=Unity.BossRoom.Tests.Runtime
 
@@ -82,7 +82,7 @@ mobile_test_ios_{{ project.name }}_{{ editor }}:
 
     commands:
         # Download standalone UnityTestRunner
-        - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
+        - curl -s https://artifactory-slo.bf.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
         # Give UTR execution permissions
         - chmod +x ./utr
         # Run the test build on the device
