@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using Unity.Services.Multiplayer;
 
 namespace Unity.BossRoom.UnityServices.Lobbies
 {
+    // Note: MultiplayerSDK refactoring
     public struct LobbyListFetchedMessage
     {
-        public readonly IReadOnlyList<LocalLobby> LocalLobbies;
+        public readonly IList<ISessionInfo>  LocalLobbies;
 
-        public LobbyListFetchedMessage(List<LocalLobby> localLobbies)
+        public LobbyListFetchedMessage(IList<ISessionInfo>  localLobbies)
         {
             LocalLobbies = localLobbies;
         }

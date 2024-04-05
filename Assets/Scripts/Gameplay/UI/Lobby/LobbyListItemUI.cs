@@ -1,11 +1,13 @@
 using System;
 using TMPro;
 using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.Services.Multiplayer;
 using UnityEngine;
 using VContainer;
 
 namespace Unity.BossRoom.Gameplay.UI
 {
+    // Note: MultiplayerSDK refactoring
     /// <summary>
     /// An individual Lobby UI in the list of available lobbies
     /// </summary>
@@ -16,14 +18,14 @@ namespace Unity.BossRoom.Gameplay.UI
 
         [Inject] LobbyUIMediator m_LobbyUIMediator;
 
-        LocalLobby m_Data;
+        ISessionInfo m_Data;
 
 
-        public void SetData(LocalLobby data)
+        public void SetData(ISessionInfo data)
         {
             m_Data = data;
-            m_lobbyNameText.SetText(data.LobbyName);
-            m_lobbyCountText.SetText($"{data.PlayerCount}/{data.MaxPlayerCount}");
+            m_lobbyNameText.SetText(data.Name);
+            m_lobbyCountText.SetText($"{data.MaxPlayers - data.AvailableSlots}/{data.MaxPlayers}");
         }
 
         public void OnClick()

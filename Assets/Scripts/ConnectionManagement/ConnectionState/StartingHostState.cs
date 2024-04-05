@@ -63,17 +63,18 @@ namespace Unity.BossRoom.ConnectionManagement
             StartHostFailed();
         }
 
+        // Note: MultiplayerSDK refactoring
         async void StartHost()
         {
             try
             {
                 await m_ConnectionMethod.SetupHostConnectionAsync();
 
-                // NGO's StartHost launches everything
+                /*// NGO's StartHost launches everything
                 if (!m_ConnectionManager.NetworkManager.StartHost())
                 {
                     StartHostFailed();
-                }
+                }*/
             }
             catch (Exception)
             {

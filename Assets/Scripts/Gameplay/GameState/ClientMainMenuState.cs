@@ -5,7 +5,6 @@ using Unity.BossRoom.UnityServices.Auth;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.BossRoom.Utils;
 using Unity.Services.Authentication;
-using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -97,10 +96,11 @@ namespace Unity.BossRoom.Gameplay.GameState
 
             Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
-            m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
+            // Note: MultiplayerSDK refactoring
+            //m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
 
             // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
-            m_LocalLobby.AddUser(m_LocalUser);
+            //m_LocalLobby.AddUser(m_LocalUser);
         }
 
         private void OnSignInFailed()

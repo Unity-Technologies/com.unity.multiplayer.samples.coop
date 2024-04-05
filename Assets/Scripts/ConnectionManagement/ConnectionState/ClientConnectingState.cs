@@ -62,11 +62,12 @@ namespace Unity.BossRoom.ConnectionManagement
                 // Setup NGO with current connection method
                 await m_ConnectionMethod.SetupClientConnectionAsync();
 
+                // Note: MultiplayerSDK refactoring
                 // NGO's StartClient launches everything
-                if (!m_ConnectionManager.NetworkManager.StartClient())
+                /*if (!m_ConnectionManager.NetworkManager.StartClient())
                 {
                     throw new Exception("NetworkManager StartClient failed");
-                }
+                }*/
             }
             catch (Exception e)
             {

@@ -153,9 +153,10 @@ namespace Unity.BossRoom.ConnectionManagement
             m_CurrentState.OnServerStopped();
         }
 
-        public void StartClientLobby(string playerName)
+        // Note: MultiplayerSDK refactoring
+        public void StartClientLobby(string sessionCode, string playerName)
         {
-            m_CurrentState.StartClientLobby(playerName);
+            m_CurrentState.StartClientLobby(sessionCode, playerName);
         }
 
         public void StartClientIp(string playerName, string ipaddress, int port)
@@ -163,9 +164,10 @@ namespace Unity.BossRoom.ConnectionManagement
             m_CurrentState.StartClientIP(playerName, ipaddress, port);
         }
 
-        public void StartHostLobby(string playerName)
+        // Note: MultiplayerSDK refactoring
+        public void StartHostLobby(string sessionCode, string playerName)
         {
-            m_CurrentState.StartHostLobby(playerName);
+            m_CurrentState.StartHostLobby(sessionCode, playerName);
         }
 
         public void StartHostIp(string playerName, string ipaddress, int port)
