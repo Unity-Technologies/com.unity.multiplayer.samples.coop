@@ -77,7 +77,10 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnDestroy()
         {
-            m_LoadingProgressManager.onTrackersUpdated -= OnProgressTrackersUpdated;
+            if (m_LoadingProgressManager != null)
+            {
+                m_LoadingProgressManager.onTrackersUpdated -= OnProgressTrackersUpdated;
+            }
         }
 
         void Update()
