@@ -140,9 +140,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             {
                 name = "AvatarGraphics" + m_ServerCharacter.OwnerClientId;
 
-                if (m_ServerCharacter.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+                if (m_ServerCharacter.TryGetComponent(out ClientPlayerAvatarNetworkAnimator characterNetworkAnimator))
                 {
-                    m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
+                    m_ClientVisualsAnimator = characterNetworkAnimator.Animator;
                 }
 
                 m_CharacterSwapper = GetComponentInChildren<CharacterSwap>();
