@@ -13,11 +13,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
     /// </summary>
     public class ClientPlayerAvatarNetworkAnimator : NetworkAnimator
     {
-        [SerializeField]
+        [SerializeField] 
         NetworkAvatarGuidState m_NetworkAvatarGuidState;
-        
+
         bool m_AvatarInstantiated;
-        
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
@@ -25,6 +25,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             {
                 return;
             }
+
             InstantiateAvatar();
         }
 
@@ -45,10 +46,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             {
                 InstantiateAvatar();
             }
-            
+
             base.OnSynchronize(ref serializer);
         }
-        
+
         void InstantiateAvatar()
         {
             if (Animator.transform.childCount > 0)
@@ -60,9 +61,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
             // spawn avatar graphics GameObject
             Instantiate(m_NetworkAvatarGuidState.RegisteredAvatar.Graphics, Animator.transform);
-            
+
             Animator.Rebind();
-            
+
             m_AvatarInstantiated = true;
         }
     }
