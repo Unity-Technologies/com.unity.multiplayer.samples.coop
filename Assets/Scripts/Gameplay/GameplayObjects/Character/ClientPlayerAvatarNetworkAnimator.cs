@@ -13,7 +13,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
     /// </summary>
     public class ClientPlayerAvatarNetworkAnimator : NetworkAnimator
     {
-        [SerializeField] 
+        [SerializeField]
         NetworkAvatarGuidState m_NetworkAvatarGuidState;
 
         bool m_AvatarInstantiated;
