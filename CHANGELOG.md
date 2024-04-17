@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [Unreleased] - yyyy-mm-dd
+## [2.5.0] - 2024-04-18
 
 ### Changed
 * Upgraded Boss Room to Netcode for GameObjects v1.8.1 (#883)
@@ -22,12 +22,10 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Removed NetworkObject from MainMenuState (#881)
 
 ### Fixed
+* Changed Canvas Sort order of multiple UI elements to enable visibility of RNSM and reconnection attempts during the loading screen (#879)
 * Added Null reference check to ClientInputSender to fix null reference for missing ability (#880)
 
 ## [2.4.0] - 2023-12-13
-
-### Fixed
-* Changed Canvas Sort order of multiple UI elements to enable visibility of RNSM and reconnection attempts during the loading screen (#879)
 
 ### Changed
 * Upgraded editor version to 2022.3.14f1 (#871)
