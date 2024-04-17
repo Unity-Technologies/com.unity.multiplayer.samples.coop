@@ -14,6 +14,9 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * ClientConnectedState has been modified to account for server/host now populating DisconnectReason before disconnecting a client before shutting down
 * Upgraded editor version to 2022.3.22f1 (#884)
   * com.unity.render-pipelines.universal upgraded to v14.0.10
+* ClientPlayerAvatarNetworkAnimator has been created to: instantiate the player model based on a networked GUID, rebind this rig to the player's Animator, and apply synchronize data to said Animator (#886)
+  * This change allows for NetworkAnimator's synchronize step to properly apply its sync data to clients instead of applying an animation state change on OnNetworkSpawn()
+  * A side-effect of this change has been that a coroutine that had been awaiting the assignment of NetworkAnimator has since been removed as it is no longer an issue on Netcode for GameObjects (since v1.3.1)
 
 ### Cleanup
 * Removed NetworkObject from MainMenuState (#881)

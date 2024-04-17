@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
@@ -44,7 +43,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         ServerCharacter m_ServerCharacter;
 
-        ClientAvatarGuidHandler m_ClientAvatarGuidHandler;
+        ClientPlayerAvatarNetworkAnimator m_ClientPlayerAvatarNetworkAnimator;
 
         NetworkAvatarGuidState m_NetworkAvatarGuidState;
 
@@ -111,18 +110,11 @@ namespace Unity.BossRoom.Gameplay.UI
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 
             // if PC, find our graphics transform and update health through callbacks, if displayed
-            if (TryGetComponent(out m_ClientAvatarGuidHandler) && TryGetComponent(out m_NetworkAvatarGuidState))
+            if (TryGetComponent(out m_ClientPlayerAvatarNetworkAnimator) && TryGetComponent(out m_NetworkAvatarGuidState))
             {
                 m_BaseHP = m_NetworkAvatarGuidState.RegisteredAvatar.CharacterClass.BaseHP;
 
-                if (m_ServerCharacter.clientCharacter)
-                {
-                    TrackGraphicsTransform(m_ServerCharacter.clientCharacter.gameObject);
-                }
-                else
-                {
-                    m_ClientAvatarGuidHandler.AvatarGraphicsSpawned += TrackGraphicsTransform;
-                }
+                m_TransformToTrack = m_ClientPlayerAvatarNetworkAnimator.Animator.transform;
 
                 if (m_DisplayHealth)
                 {
@@ -153,11 +145,6 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 m_NetworkHealthState.HitPointsReplenished -= DisplayUIHealth;
                 m_NetworkHealthState.HitPointsDepleted -= RemoveUIHealth;
-            }
-
-            if (m_ClientAvatarGuidHandler)
-            {
-                m_ClientAvatarGuidHandler.AvatarGraphicsSpawned -= TrackGraphicsTransform;
             }
         }
 
@@ -211,11 +198,6 @@ namespace Unity.BossRoom.Gameplay.UI
             yield return new WaitForSeconds(k_DurationSeconds);
 
             m_UIState.HideHealth();
-        }
-
-        void TrackGraphicsTransform(GameObject graphicsGameObject)
-        {
-            m_TransformToTrack = graphicsGameObject.transform;
         }
 
         /// <remarks>
