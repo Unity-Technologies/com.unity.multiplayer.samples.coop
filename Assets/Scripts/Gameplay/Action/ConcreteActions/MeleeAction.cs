@@ -51,7 +51,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
 
             serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
-            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
+            serverCharacter.clientCharacter.ClientPlayActionRpc(Data);
             return true;
         }
 

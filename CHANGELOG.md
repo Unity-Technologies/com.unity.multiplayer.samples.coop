@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
+## [2.5.0] - 2024-04-18
+
+### Changed
+* Upgraded Boss Room to Netcode for GameObjects v1.8.1 (#883)
+  * Upgraded to the newer API for Rpcs, Universal Rpcs
+  * ClientConnectedState has been modified to account for server/host now populating DisconnectReason before disconnecting a client before shutting down
+* Upgraded editor version to 2022.3.22f1 (#884)
+  * com.unity.render-pipelines.universal upgraded to v14.0.10
+* ClientPlayerAvatarNetworkAnimator has been created to: instantiate the player model based on a networked GUID, rebind this rig to the player's Animator, and apply synchronize data to said Animator (#886)
+  * This change allows for NetworkAnimator's synchronize step to properly apply its sync data to clients instead of applying an animation state change on OnNetworkSpawn()
+  * A side-effect of this change has been that a coroutine that had been awaiting the assignment of NetworkAnimator has since been removed as it is no longer an issue on Netcode for GameObjects (since v1.3.1)
+
+### Cleanup
+* Removed NetworkObject from MainMenuState (#881)
+
+### Fixed
+* Changed Canvas Sort order of multiple UI elements to enable visibility of RNSM and reconnection attempts during the loading screen (#879)
+* Added Null reference check to ClientInputSender to fix null reference for missing ability (#880)
+
 ## [2.4.0] - 2023-12-13
 
 ### Changed
@@ -100,7 +119,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Updated Boss Room to NGO 1.1.0 (#708)
   *  Now uses managed types for custom INetworkSerializable in NetworkVariables. NetworkGUID is now a class instead of a struct.
   * Cleanup Relay and UTP setup. Flow is now simpler, no need for the RelayUtilities anymore.
-    * This cleansup various setup steps and puts them all in a new "ConnectionMethod.cs".
+  * This cleans up various setup steps and puts them all in a new "ConnectionMethod.cs".
   * MaxSendQueueSize value is removed, reserialized NetworkManager to remove that now useless value.
   * Reverted the default value for max payload size, this is no longer useful as NGO is mostly reliable.
   * Set connection approval timeout higher, 1 sec is pretty short. If there's a packet drop, some hangups on the network, clients would get timedout too easily.

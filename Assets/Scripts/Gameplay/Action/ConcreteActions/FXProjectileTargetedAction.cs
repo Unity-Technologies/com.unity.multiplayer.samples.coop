@@ -49,7 +49,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
             serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             // tell clients to visualize this action
-            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
+            serverCharacter.clientCharacter.ClientPlayActionRpc(Data);
             return true;
         }
 
@@ -84,7 +84,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             if (!m_ImpactedTarget)
             {
-                serverCharacter.clientCharacter.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
+                serverCharacter.clientCharacter.ClientCancelActionsByPrototypeIDRpc(ActionID);
             }
         }
 

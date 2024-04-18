@@ -59,7 +59,7 @@ namespace Unity.BossRoom.Utils
 
         Dictionary<int, float> m_PingHistoryStartTimes = new Dictionary<int, float>();
 
-        ClientRpcParams m_PongClientParams;
+        RpcParams m_PongClientParams;
 
         string m_TextToDisplay;
 
@@ -77,7 +77,7 @@ namespace Unity.BossRoom.Utils
                 CreateNetworkStatsText();
             }
 
-            m_PongClientParams = new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } };
+            m_PongClientParams = RpcTarget.Group(new[] { OwnerClientId }, RpcTargetUse.Persistent);
         }
 
         // Creating a UI text object and add it to NetworkOverlay canvas
@@ -100,7 +100,7 @@ namespace Unity.BossRoom.Utils
                 {
                     // We could have had a ping/pong where the ping sends the pong and the pong sends the ping. Issue with this
                     // is the higher the latency, the lower the sampling would be. We need pings to be sent at a regular interval
-                    PingServerRPC(m_CurrentRTTPingId);
+                    ServerPingRpc(m_CurrentRTTPingId);
                     m_PingHistoryStartTimes[m_CurrentRTTPingId] = Time.realtimeSinceStartup;
                     m_CurrentRTTPingId++;
                     m_LastPingTime = Time.realtimeSinceStartup;
@@ -146,14 +146,14 @@ namespace Unity.BossRoom.Utils
             }
         }
 
-        [ServerRpc]
-        void PingServerRPC(int pingId, ServerRpcParams serverParams = default)
+        [Rpc(SendTo.Server)]
+        void ServerPingRpc(int pingId, RpcParams serverParams = default)
         {
-            PongClientRPC(pingId, m_PongClientParams);
+            ClientPongRpc(pingId, m_PongClientParams);
         }
 
-        [ClientRpc]
-        void PongClientRPC(int pingId, ClientRpcParams clientParams = default)
+        [Rpc(SendTo.SpecifiedInParams)]
+        void ClientPongRpc(int pingId, RpcParams clientParams = default)
         {
             var startTime = m_PingHistoryStartTimes[pingId];
             m_PingHistoryStartTimes.Remove(pingId);
