@@ -26,6 +26,8 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
         logs:
             paths:
                 - "build/logs/**"
+    dependencies:
+      - .yamato/update-manifest.yml#update_manifest
 {% endfor -%}
 {% endfor -%}
 
@@ -59,6 +61,8 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
     variables:
         CI: true
         ENABLE_BURST_COMPILATION: False
+    dependencies:
+      - .yamato/update-manifest.yml#update_manifest
 {% endfor -%}
 {% endfor -%}
 
