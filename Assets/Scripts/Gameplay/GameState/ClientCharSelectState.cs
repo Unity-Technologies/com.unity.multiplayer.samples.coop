@@ -416,7 +416,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             if (m_NetworkCharSelection.IsSpawned)
             {
-                m_NetworkCharSelection.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
+                m_NetworkCharSelection.ServerChangeSeatRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
             }
         }
 
@@ -428,7 +428,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             if (m_NetworkCharSelection.IsSpawned)
             {
                 // request to lock in or unlock if already locked in
-                m_NetworkCharSelection.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);
+                m_NetworkCharSelection.ServerChangeSeatRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);
             }
         }
 

@@ -113,13 +113,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             }
 
             // send client RPC to detonate on clients
-            DetonateClientRpc();
+            ClientDetonateRpc();
 
             m_Detonated = true;
         }
 
-        [ClientRpc]
-        void DetonateClientRpc()
+        [Rpc(SendTo.ClientsAndHost)]
+        void ClientDetonateRpc()
         {
             detonatedCallback?.Invoke();
         }

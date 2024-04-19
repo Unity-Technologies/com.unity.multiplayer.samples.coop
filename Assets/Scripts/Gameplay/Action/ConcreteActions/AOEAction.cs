@@ -35,7 +35,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             // This means we are responsible for triggering reaction-anims ourselves, which we do in PerformAoe()
             Data.TargetIds = new ulong[0];
             serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
-            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
+            serverCharacter.clientCharacter.ClientPlayActionRpc(Data);
             return ActionConclusion.Continue;
         }
 
