@@ -31,12 +31,3 @@ projects:
         path: Packages/com.unity.multiplayer.samples.coop
     test_editors:
       - 2022.3
-
-os_variables:
-  # Unix (macOS and Ubuntu)
-  unix:
-    yamato_trigger_branch: $GIT_REVISION
-  # Windows specific
-ci:
-  mac:
-    yamato_trigger_branch: "$GIT_BRANCH"
