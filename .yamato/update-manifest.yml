@@ -1,3 +1,5 @@
+#{% metadata_file .yamato/project.metafile %}
+#---
 update_manifest:
   name: ⚡ Update NGO version in Boss Room manifest ⚡
   agent:
@@ -7,14 +9,10 @@ update_manifest:
   commands:
     - command: |-
         external_trigger=$YAMATO_TRIGGER_TYPE
+        echo $external_trigger
         if [ "$external_trigger" = "ExternalPush" ]; then
           ngo_develop_branch=https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop
           sed -i 's|"com\.unity\.netcode\.gameobjects": "[^"]*"|"com.unity.netcode.gameobjects": "'"$ngo_develop_branch"'"|' Packages/manifest.json
-          echo "NGO develop branch is updated in manifest.json"
           cat Packages/manifest.json
         fi
-        echo "No change in manifest.json"
-    artifacts:
-        logs:
-            paths:
-                - "*.log"
+        echo $external_trigger
