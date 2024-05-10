@@ -7,6 +7,7 @@ pull_request_trigger:
   name: Pull Request Trigger (main, develop, & release branches)
   dependencies:
     - .yamato/project-standards.yml#standards_{{ projects.first.name }}
+    - .yamato/create_build.yml#Release_MacOS_Regular_Build_Universal
 {% for project in projects -%}
 {% for platform in test_platforms -%}
     # desktop platforms

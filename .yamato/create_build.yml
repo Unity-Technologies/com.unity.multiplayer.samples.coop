@@ -1,0 +1,52 @@
+#All-CI:
+All-CI: 
+  name: All-Test
+  dependencies:
+  - path: .yamato/build-ci.yml#Standalone_Win_Regular_Build_Il2cpp_DX11
+  - path: .yamato/build-ci.yml#DedicatedServer_Win_Regular_Build_Il2cpp
+  - path: .yamato/build-ci.yml#DedicatedServer_Linux_Regular_Build_Il2cpp
+  - path: .yamato/build-ci.yml#Android_Regular_Build_Il2cpp_Vulkan
+  - path: .yamato/build-ci.yml#MacOS_Regular_Build_Intelx64
+  - path: .yamato/build-ci.yml#MacOS_Regular_Build_Silicon
+  - path: .yamato/build-ci.yml#MacOS_Regular_Build_Universal
+
+#All-Release:
+All-Release: 
+  name: All-Release
+  dependencies:
+  - path: .yamato/build-ci.yml#Release_Standalone_Win_Build_Il2cpp_DX11
+  - path: .yamato/build-ci.yml#Release_Android_Build_Il2cpp_Vulkan
+  - path: .yamato/build-ci.yml#Release_MacOS_Regular_Build_Intelx64
+  - path: .yamato/build-ci.yml#Release_MacOS_Regular_Build_Silicon
+  - path: .yamato/build-ci.yml#Release_MacOS_Regular_Build_Universal
+
+Release_MacOS_Regular_Build_Universal:
+  ##using the image from here https://github.cds.internal.unity3d.com/unity/dots/blob/0bfe82574686c79e64e82cf628be2abdc3ee1836/.yamato/standalone.yml#L113 might have to replace it later 
+  name: Release_MacOS_Regular_Build_Universal
+  agent:
+    image: dots-ci/macos:v1.472-auto
+    type: Unity::VM::osx
+    flavor: m1.mac
+  timeout_options:
+    stages:
+      execution: 8
+  commands:
+    - command: echo $YAMATO_SOURCE_DIR
+    - command: echo $YAMATO_WORK_DIR
+    - command: unity-downloader-cli -u 2022.3.27f1 -p $YAMATO_SOURCE_DIR/TestingEditor --wait -c editor -c il2cpp
+      timeout: 30
+      retries: 10
+    - command: echo "Editor is downloaded"
+    - command: export NGOVersion=https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop
+    - command: $YAMATO_SOURCE_DIR/TestingEditor/Unity.app/Contents/MacOS/Unity -projectPath $YAMATO_SOURCE_DIR -executeMethod BuilderScript.UpdateUnityManifest -logFile $YAMATO_SOURCE_DIR/UnityLog.txt
+    - command: $YAMATO_SOURCE_DIR/TestingEditor/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath $YAMATO_SOURCE_DIR -buildOSXUniversal -executeMethod BuilderScript.BuildReleaseStandAloneOSX_Universal -logFile ./artifacts/UnityLog.txt -automated -crash-report-folder ./artifacts/crashDumps
+    - command: echo "Player build finished"
+  artifacts:
+    logs:
+      paths:
+        - '*.log'
+        - '*.xml'
+        - artifacts/**
+    players:
+      paths:
+        - BossRoom/build/**
