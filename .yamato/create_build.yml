@@ -1,3 +1,6 @@
+{% metadata_file .yamato/project.metafile %}
+---
+
 #All-CI:
 All-CI: 
   name: All-Test
