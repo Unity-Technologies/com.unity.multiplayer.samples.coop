@@ -43,6 +43,8 @@ Release_MacOS_Regular_Build_Universal:
     - command: cat Packages/manifest.json
     - command: $YAMATO_SOURCE_DIR/TestingEditor/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath $YAMATO_SOURCE_DIR -buildOSXUniversal -executeMethod BuilderScript.BuildReleaseStandAloneOSX_Universal -logFile ./artifacts/UnityLog.txt -automated -crash-report-folder ./artifacts/crashDumps
     - command: echo "Player build finished"
+  dependencies:
+    - .yamato/project-pack.yml#pack_{{ project.name }}
   artifacts:
     logs:
       paths:
