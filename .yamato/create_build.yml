@@ -38,7 +38,7 @@ Release_MacOS_Regular_Build_Universal:
       retries: 10
     - command: echo "Editor is downloaded"
     - command: export NGOVersion=https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop
-    - command: $YAMATO_SOURCE_DIR/TestingEditor/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath $YAMATO_SOURCE_DIR -executeMethod BuilderScript.UpdateUnityManifest -logFile $YAMATO_SOURCE_DIR/UnityLog.txt
+    - command: $YAMATO_SOURCE_DIR/TestingEditor/Unity.app/Contents/MacOS/Unity -projectPath $YAMATO_SOURCE_DIR -executeMethod BuilderScript.UpdateUnityManifest -logFile $YAMATO_SOURCE_DIR/UnityLog.txt
       timeout: 30
     - command: cat Packages/manifest.json
     - command: $YAMATO_SOURCE_DIR/TestingEditor/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath $YAMATO_SOURCE_DIR -buildOSXUniversal -executeMethod BuilderScript.BuildReleaseStandAloneOSX_Universal -logFile ./artifacts/UnityLog.txt -automated -crash-report-folder ./artifacts/crashDumps
