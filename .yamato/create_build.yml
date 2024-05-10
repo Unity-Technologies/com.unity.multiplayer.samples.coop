@@ -23,6 +23,7 @@ All-Release:
   - path: .yamato/build-ci.yml#Release_MacOS_Regular_Build_Silicon
   - path: .yamato/build-ci.yml#Release_MacOS_Regular_Build_Universal
 
+{% for project in projects -%}
 Release_MacOS_Regular_Build_Universal:
   ##using the image from here https://github.cds.internal.unity3d.com/unity/dots/blob/0bfe82574686c79e64e82cf628be2abdc3ee1836/.yamato/standalone.yml#L113 might have to replace it later 
   name: Release_MacOS_Regular_Build_Universal
@@ -57,3 +58,4 @@ Release_MacOS_Regular_Build_Universal:
     players:
       paths:
         - BossRoom/build/**
+{% endfor -%}
