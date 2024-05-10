@@ -1,5 +1,6 @@
 using System.Collections;
 using System.IO;
+using System.Threading;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.PackageManager;
@@ -234,12 +235,14 @@ public class BuilderScript : MonoBehaviour
                     else
                     {
                         Debug.LogError("Failed to install package: " + request.Error.message);
-                        QuitUnity();
                     }
 
                     EditorApplication.update -= () => { };
                     QuitUnity();
                 }
+
+                Thread.Sleep(3000);
+                QuitUnity();
             };
         }
         else
@@ -261,7 +264,7 @@ public class BuilderScript : MonoBehaviour
         }
         return false;
     }
-    
+
     static IEnumerator WaitAndQuit()
     {
         yield return new WaitForSeconds(60); // Adjust the duration as needed
