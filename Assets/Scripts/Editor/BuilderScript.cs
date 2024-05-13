@@ -236,7 +236,7 @@ public class BuilderScript : MonoBehaviour
             }
             
             request = Client.Add(packageId);
-            EditorApplication.Exit(0);
+            //EditorApplication.Exit(0);
             //Debug.Log("Before Entering Update loop");
             //EditorApplication.update += ManifestUpdateLoop;
             // Register callback for when the installation is complete
@@ -265,6 +265,7 @@ public class BuilderScript : MonoBehaviour
             Debug.Log("Package is already installed.");
             EditorApplication.Exit(0);
         }
+        EditorApplication.Exit(0);
     }
 
     private static void ManifestUpdateLoop()
