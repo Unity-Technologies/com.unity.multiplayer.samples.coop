@@ -7,6 +7,7 @@ using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Rendering;
+using WebSocketSharp;
 //using PackageInfo = UnityEditor.PackageInfo;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
@@ -209,22 +210,37 @@ public class BuilderScript : MonoBehaviour
         return (Directory.GetCurrentDirectory() + "\\Packages\\manifest.json").Replace('\\',
             Path.DirectorySeparatorChar);
     }
-    
+
+    private static AddRequest request;
     [MenuItem("Tools/Builder/Update Unity Manifest")]
+    [InitializeOnLoadMethod]
     static void UpdateUnityManifest()
     {
+        if (ngoVersion.IsNullOrEmpty())
+        {
+            Debug.Log("ngoVersion is empty");
+            EditorApplication.Exit(0);
+            return;
+        }
         // Construct the package name with the version
         //string packageId = $"{packageName}@{packageVersion}";
-        string packageId = "com.unity.netcode.gameobjects@" + ngoVersion;
+        var packageId = "com.unity.netcode.gameobjects@" + ngoVersion;
         
         // Check if the package is already installed
         if (!PackageExists(packageId))
         {
             // Start the package installation
-            AddRequest request = Client.Add(packageId);
-
+            if (request != null && request.Status == StatusCode.InProgress)
+            {
+                return;
+            }
+            
+            request = Client.Add(packageId);
+            EditorApplication.Exit(0);
+            //Debug.Log("Before Entering Update loop");
+            //EditorApplication.update += ManifestUpdateLoop;
             // Register callback for when the installation is complete
-            EditorApplication.update += () =>
+            /*EditorApplication.update += () =>
             {
                 if (request.IsCompleted)
                 {
@@ -240,18 +256,42 @@ public class BuilderScript : MonoBehaviour
                     EditorApplication.update -= () => { };
                     QuitUnity();
                 }
-
-                Thread.Sleep(3000);
                 QuitUnity();
             };
+            */
         }
         else
         {
             Debug.Log("Package is already installed.");
-            QuitUnity();
+            EditorApplication.Exit(0);
         }
     }
 
+    private static void ManifestUpdateLoop()
+    {
+       // AddRequest request = Client.Add(packageId);
+       Debug.Log("Frank testing request status:" + request.Status);
+
+        if (request.Status is StatusCode.Success or StatusCode.Failure)
+        {
+            if (request.Status == StatusCode.Success)
+            {
+                Debug.Log("Package installed successfully!");
+            }
+            else
+            {
+                Debug.LogError("Failed to install package: " + request.Error.message);
+            }
+
+            //EditorApplication.update -= () => { };
+            EditorApplication.update -= ManifestUpdateLoop;
+            EditorApplication.Exit(0);
+            Application.Quit();
+        }
+
+        //Thread.Sleep(3000);
+        //QuitUnity();
+    }
     // Check if a package with the given ID is installed
     private static bool PackageExists(string packageId)
     {
@@ -273,7 +313,6 @@ public class BuilderScript : MonoBehaviour
 
     static void QuitUnity()
     {
-        //
         EditorApplication.Exit(0);
     }
     
