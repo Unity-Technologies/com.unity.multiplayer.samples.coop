@@ -42,13 +42,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collections": {
-      "version": "2.1.4",
+      "version": "2.2.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.burst": "1.8.4",
+        "com.unity.burst": "1.8.8",
         "com.unity.modules.unityanalytics": "1.0.0",
-        "com.unity.nuget.mono-cecil": "1.11.4"
+        "com.unity.nuget.mono-cecil": "1.11.4",
+        "com.unity.test-framework.performance": "3.0.2"
       },
       "url": "https://packages.unity.com"
     },
@@ -102,7 +103,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.mathematics": {
-      "version": "1.2.6",
+      "version": "1.3.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -353,6 +354,16 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.test-framework.performance": {
+      "version": "3.0.2",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.test-framework": "1.1.31",
+        "com.unity.modules.jsonserialize": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.textmeshpro": {
       "version": "3.0.6",
       "depth": 0,
@@ -385,15 +396,15 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "2.0.2",
+      "version": "https://github.cds.internal.unity3d.com/unity/com.unity.transport.git?path=/com.unity.transport#c986737e7f4c9dda25ba5716bbdbdd277e5f4e66",
       "depth": 0,
-      "source": "registry",
+      "source": "git",
       "dependencies": {
-        "com.unity.collections": "2.1.4",
-        "com.unity.burst": "1.8.4",
-        "com.unity.mathematics": "1.2.6"
+        "com.unity.collections": "2.2.1",
+        "com.unity.burst": "1.8.12",
+        "com.unity.mathematics": "1.3.1"
       },
-      "url": "https://packages.unity.com"
+      "hash": "c986737e7f4c9dda25ba5716bbdbdd277e5f4e66"
     },
     "com.unity.ugui": {
       "version": "1.0.0",
