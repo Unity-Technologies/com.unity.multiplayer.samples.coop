@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnityEditor;
 using Unity.Tutorials.Core.Editor;
-using Unity.Netcode;
 
-namespace Unity.Netcode.Samples.MultiplayerUseCases
+namespace Unity.Netcode.Samples.BossRoom
 {
 
     /// <summary>
@@ -12,7 +11,7 @@ namespace Unity.Netcode.Samples.MultiplayerUseCases
     [CreateAssetMenu(fileName = DefaultFileName, menuName = "Tutorials/" + DefaultFileName + " Instance")]
     public class TutorialCallbacks : ScriptableObject
     {
-        [SerializeField] SceneAsset m_UseCaseSelectionScene;
+        [SerializeField] SceneAsset m_StartupScene;
 
         /// <summary>
         /// The default file name used to create asset of this class type.
@@ -44,8 +43,8 @@ namespace Unity.Netcode.Samples.MultiplayerUseCases
         public void FocusGameView()
         {
             /*
-             * todo: this solution is a bit weak, but it's the best we can do without accessing internal APIs.
-             * Check that it works for Unity 2022 and 2023 as well
+             * note: this solution is a bit weak, but it's the best we can do without accessing internal APIs.
+             * we'll need to check that it works for Unity 6 as well
              */
             EditorApplication.ExecuteMenuItem("Window/General/Game");
         }
@@ -72,19 +71,14 @@ namespace Unity.Netcode.Samples.MultiplayerUseCases
                                             && NetworkManager.Singleton.IsClient;
         }
 
-        public bool IsPlayerSelectedInRPCScene()
-        {
-            return Selection.activeObject && Selection.activeObject.name == "Player(Clone)";
-        }
-
         public void OpenURL(string url)
         {
             TutorialEditorUtils.OpenUrl(url);
         }
 
-        public void LoadSelectionScene()
+        public void LoadStartupScene()
         {
-            UnityEditor.SceneManagement.EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(m_UseCaseSelectionScene));
+            UnityEditor.SceneManagement.EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(m_StartupScene));
         }
     }
 }
