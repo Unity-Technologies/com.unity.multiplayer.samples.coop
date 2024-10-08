@@ -15,7 +15,7 @@ test_{{ project.name }}_{{ editor }}_{{ platform.name }}:
     flavor: {{ platform.flavor}}
   commands:
     - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
-    - choco upgrade unity-downloader-cli -y -s https://artifactory.prd.it.unity3d.com/artifactory/api/nuget/unity-choco-local
+    - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - unity-downloader-cli -u {{ editor }} -c editor -w --fast
     - upm-ci project test -u {{ editor }} --project-path {{ project.path }} --type project-tests --extra-utr-arg=--testfilter=Unity.BossRoom.Tests.Runtime
   artifacts:
