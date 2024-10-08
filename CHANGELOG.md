@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
+## [Unreleased]
+### Added
+* Added a welcome dialog to guide users on their first time experience
+* Added a Table of Contents with helpful resources, that can be accessed from the `Tutorials > Show Tutorials` menu
+
 ## [2.5.0] - 2024-04-18
 
 ### Changed
