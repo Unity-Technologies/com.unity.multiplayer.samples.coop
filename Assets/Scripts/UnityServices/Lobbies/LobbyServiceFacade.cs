@@ -142,13 +142,14 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             try
             {
                 var lobby = /*await m_LobbyApiInterface.CreateLobby(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), null);*/
-                    await MultiplayerService.Instance.CreateSessionAsync(new CreateSessionOptions(2)
+                    await MultiplayerService.Instance.CreateSessionAsync(new SessionOptions()
                     {
+                        MaxPlayers = 2,
                         Name = lobbyName,
                         IsPrivate = isPrivate,
                         Password = null,//string.IsNullOrEmpty(Password) ? null : Password,
                         IsLocked = false, //Todos
-                    }.WithRelayConnection());
+                    }.WithRelayNetwork());
                 return (true, lobby);
             }
             catch (LobbyServiceException e)

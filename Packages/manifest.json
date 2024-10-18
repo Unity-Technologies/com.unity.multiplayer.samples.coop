@@ -15,7 +15,7 @@
     "com.unity.postprocessing": "3.2.2",
     "com.unity.render-pipelines.universal": "14.0.9",
     "com.unity.services.authentication": "2.7.2",
-    "com.unity.services.multiplayer": "0.2.0",
+    "com.unity.services.multiplayer": "1.0.0",
     "com.unity.test-framework": "1.1.33",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.7.6",
