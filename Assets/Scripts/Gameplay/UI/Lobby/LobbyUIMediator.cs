@@ -1,4 +1,5 @@
 using System;
+using PlasticGui.WorkspaceWindow.Topbar;
 using Unity.BossRoom.Gameplay.Configuration;
 using TMPro;
 using Unity.BossRoom.ConnectionManagement;
@@ -6,11 +7,13 @@ using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices.Auth;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.Services.Core;
+using Unity.Services.Multiplayer;
 using UnityEngine;
 using VContainer;
 
 namespace Unity.BossRoom.Gameplay.UI
 {
+    // Note: MultiplayerSDK refactoring
     public class LobbyUIMediator : MonoBehaviour
     {
         [SerializeField] CanvasGroup m_CanvasGroup;
@@ -32,6 +35,8 @@ namespace Unity.BossRoom.Gameplay.UI
         ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
 
         const string k_DefaultLobbyName = "no-name";
+        
+        ISession _session;
 
         [Inject]
         void InjectDependenciesAndInitialize(
@@ -72,8 +77,8 @@ namespace Unity.BossRoom.Gameplay.UI
             }
         }
 
+        // Note: MultiplayerSDK refactoring
         //Lobby and Relay calls done from UI
-
         public async void CreateLobbyRequest(string lobbyName, bool isPrivate)
         {
             // before sending request to lobby service, populate an empty lobby name, if necessary
@@ -92,9 +97,16 @@ namespace Unity.BossRoom.Gameplay.UI
                 return;
             }
 
-            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, m_ConnectionManager.MaxConnectedPlayers, isPrivate);
+            // don't create lobby here just yet, advance state machine instead
+            /*// create lobby
+            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, m_ConnectionManager.MaxConnectedPlayers, isPrivate);*/
+            m_ConnectionManager.StartHostLobby(lobbyName, m_LocalUser.DisplayName);
+            
+            UnblockUIAfterLoadingIsComplete();
+            return;
 
-            if (lobbyCreationAttempt.Success)
+            //if loby created, start host
+            /*if (lobbyCreationAttempt.Success)
             {
                 m_LocalUser.IsHost = true;
                 m_LobbyServiceFacade.SetRemoteLobby(lobbyCreationAttempt.Lobby);
@@ -105,7 +117,7 @@ namespace Unity.BossRoom.Gameplay.UI
             else
             {
                 UnblockUIAfterLoadingIsComplete();
-            }
+            }*/
         }
 
         public async void QueryLobbiesRequest(bool blockUI)
@@ -136,6 +148,7 @@ namespace Unity.BossRoom.Gameplay.UI
             }
         }
 
+        // Note: MultiplayerSDK refactoring
         public async void JoinLobbyWithCodeRequest(string lobbyCode)
         {
             BlockUIWhileLoadingIsInProgress();
@@ -147,8 +160,13 @@ namespace Unity.BossRoom.Gameplay.UI
                 UnblockUIAfterLoadingIsComplete();
                 return;
             }
-
-            var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(null, lobbyCode);
+            
+            // TODO: need to unblock the UI elsewhere?
+            
+            m_ConnectionManager.StartClientLobby(lobbyCode, m_LocalUser.DisplayName);
+            return;
+            
+            /*var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(null, lobbyCode);
 
             if (result.Success)
             {
@@ -157,10 +175,11 @@ namespace Unity.BossRoom.Gameplay.UI
             else
             {
                 UnblockUIAfterLoadingIsComplete();
-            }
+            }*/
         }
 
-        public async void JoinLobbyRequest(LocalLobby lobby)
+        // Note: MultiplayerSDK refactoring
+        public async void JoinLobbyRequest(ISessionInfo sessionInfo)
         {
             BlockUIWhileLoadingIsInProgress();
 
@@ -172,7 +191,10 @@ namespace Unity.BossRoom.Gameplay.UI
                 return;
             }
 
-            var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode);
+            //m_ConnectionManager.StartClientLobby(sessionInfo., m_LocalUser.DisplayName);
+            
+            // for now!
+            /*var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode);
 
             if (result.Success)
             {
@@ -181,7 +203,7 @@ namespace Unity.BossRoom.Gameplay.UI
             else
             {
                 UnblockUIAfterLoadingIsComplete();
-            }
+            }*/
         }
 
         public async void QuickJoinRequest()
@@ -213,7 +235,7 @@ namespace Unity.BossRoom.Gameplay.UI
             m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
 
             Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-            m_ConnectionManager.StartClientLobby(m_LocalUser.DisplayName);
+            m_ConnectionManager.StartClientLobby(string.Empty, m_LocalUser.DisplayName);
         }
 
         //show/hide UI

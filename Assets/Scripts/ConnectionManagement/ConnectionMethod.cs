@@ -1,13 +1,9 @@
-using System;
 using System.Threading.Tasks;
 using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.BossRoom.Utils;
 using Unity.Netcode.Transports.UTP;
-using Unity.Networking.Transport.Relay;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
-using Unity.Services.Relay;
-using Unity.Services.Relay.Models;
 using UnityEngine;
 
 namespace Unity.BossRoom.ConnectionManagement
@@ -121,46 +117,57 @@ namespace Unity.BossRoom.ConnectionManagement
         }
     }
 
+    // Note: MultiplayerSDK refactoring
     /// <summary>
     /// UTP's Relay connection setup using the Lobby integration
     /// </summary>
     class ConnectionMethodRelay : ConnectionMethodBase
     {
         LobbyServiceFacade m_LobbyServiceFacade;
-        LocalLobby m_LocalLobby;
+        /*LocalLobby m_LocalLobby;*/
 
-        public ConnectionMethodRelay(LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
+        string m_SessionName;
+        bool m_IsPrivate = true;
+
+        public ConnectionMethodRelay(string sessionName, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
             : base(connectionManager, profileManager, playerName)
         {
+            m_SessionName = sessionName;
             m_LobbyServiceFacade = lobbyServiceFacade;
-            m_LocalLobby = localLobby;
+            /*m_LocalLobby = localLobby;*/
             m_ConnectionManager = connectionManager;
         }
 
+        // Note: MultiplayerSDK refactoring
         public override async Task SetupClientConnectionAsync()
         {
             Debug.Log("Setting up Unity Relay client");
 
+            // TODO: where to grab name
             SetConnectionPayload(GetPlayerId(), m_PlayerName);
 
-            if (m_LobbyServiceFacade.CurrentUnityLobby == null)
+            // don't need this either?
+            /*if (m_LobbyServiceFacade.CurrentUnityLobby == null)
             {
                 throw new Exception("Trying to start relay while Lobby isn't set");
             }
 
-            Debug.Log($"Setting Unity Relay client with join code {m_LocalLobby.RelayJoinCode}");
+            Debug.Log($"Setting Unity Relay client with join code {m_LocalLobby.RelayJoinCode}");*/
 
-            // Create client joining allocation from join code
+            // don't need to do, relay allocation handled by service
+            /*// Create client joining allocation from join code
             var joinedAllocation = await RelayService.Instance.JoinAllocationAsync(m_LocalLobby.RelayJoinCode);
             Debug.Log($"client: {joinedAllocation.ConnectionData[0]} {joinedAllocation.ConnectionData[1]}, " +
                 $"host: {joinedAllocation.HostConnectionData[0]} {joinedAllocation.HostConnectionData[1]}, " +
-                $"client: {joinedAllocation.AllocationId}");
+                $"client: {joinedAllocation.AllocationId}");*/
 
-            await m_LobbyServiceFacade.UpdatePlayerDataAsync(joinedAllocation.AllocationId.ToString(), m_LocalLobby.RelayJoinCode);
-
+            /*await m_LobbyServiceFacade.UpdatePlayerDataAsync(joinedAllocation.AllocationId.ToString(), m_LocalLobby.RelayJoinCode);*/
+            await m_LobbyServiceFacade.TryJoinLobbyAsync(m_SessionName/*, lobbyCode*/);
+            
+            // TODO: do we need this?
             // Configure UTP with allocation
-            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(joinedAllocation, k_DtlsConnType));
+            /*var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
+            utp.SetRelayServerData(new RelayServerData(joinedAllocation, k_DtlsConnType));*/
         }
 
         public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
@@ -182,13 +189,14 @@ namespace Unity.BossRoom.ConnectionManagement
             return (success, true); // return a success if reconnecting to lobby returns a lobby
         }
 
+        // Note: MultiplayerSDK refactoring
         public override async Task SetupHostConnectionAsync()
         {
             Debug.Log("Setting up Unity Relay host");
 
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
 
-            // Create relay allocation
+            /*// Create relay allocation
             Allocation hostAllocation = await RelayService.Instance.CreateAllocationAsync(m_ConnectionManager.MaxConnectedPlayers, region: null);
             var joinCode = await RelayService.Instance.GetJoinCodeAsync(hostAllocation.AllocationId);
 
@@ -199,13 +207,18 @@ namespace Unity.BossRoom.ConnectionManagement
 
             // next line enables lobby and relay services integration
             await m_LobbyServiceFacade.UpdateLobbyDataAndUnlockAsync();
-            await m_LobbyServiceFacade.UpdatePlayerDataAsync(hostAllocation.AllocationIdBytes.ToString(), joinCode);
+            await m_LobbyServiceFacade.UpdatePlayerDataAsync(hostAllocation.AllocationIdBytes.ToString(), joinCode);*/
 
-            // Setup UTP with relay connection info
+            // TODO: needed?
+            /*// Setup UTP with relay connection info
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetRelayServerData(new RelayServerData(hostAllocation, k_DtlsConnType)); // This is with DTLS enabled for a secure connection
 
-            Debug.Log($"Created relay allocation with join code {m_LocalLobby.RelayJoinCode}");
+            Debug.Log($"Created relay allocation with join code {m_LocalLobby.RelayJoinCode}");*/
+            
+            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(m_SessionName, m_ConnectionManager.MaxConnectedPlayers, m_IsPrivate);
+
+            Debug.Log($"{lobbyCreationAttempt.Success} lobbyCreationAttempt.Lobby.Id: {lobbyCreationAttempt.Lobby.Id} lobbyCreationAttempt.Lobby.Code {lobbyCreationAttempt.Lobby.Code}");
         }
     }
 }

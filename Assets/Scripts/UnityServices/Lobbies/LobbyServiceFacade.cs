@@ -5,6 +5,7 @@ using Unity.BossRoom.Infrastructure;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
+using Unity.Services.Multiplayer;
 using Unity.Services.Wire.Internal;
 using UnityEngine;
 using VContainer;
@@ -12,6 +13,7 @@ using VContainer.Unity;
 
 namespace Unity.BossRoom.UnityServices.Lobbies
 {
+    // Note: MultiplayerSDK refactoring
     /// <summary>
     /// An abstraction layer between the direct calls into the Lobby API and the outcomes you actually want.
     /// </summary>
@@ -42,6 +44,8 @@ namespace Unity.BossRoom.UnityServices.Lobbies
         bool m_IsTracking = false;
 
         LobbyEventConnectionState m_LobbyEventConnectionState = LobbyEventConnectionState.Unknown;
+
+        public ISession CurrentSession;
 
         public void Start()
         {
@@ -123,10 +127,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
+        // Note: MultiplayerSDK refactoring
         /// <summary>
         /// Attempt to create a new lobby and then join it.
         /// </summary>
-        public async Task<(bool Success, Lobby Lobby)> TryCreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate)
+        public async Task<(bool Success, ISession Lobby)> TryCreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate)
         {
             if (!m_RateLimitHost.CanCall)
             {
@@ -136,7 +141,15 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
             try
             {
-                var lobby = await m_LobbyApiInterface.CreateLobby(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), null);
+                var lobby = /*await m_LobbyApiInterface.CreateLobby(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), null);*/
+                    await MultiplayerService.Instance.CreateSessionAsync(new SessionOptions()
+                    {
+                        MaxPlayers = 2,
+                        Name = lobbyName,
+                        IsPrivate = isPrivate,
+                        Password = null,//string.IsNullOrEmpty(Password) ? null : Password,
+                        IsLocked = false, //Todos
+                    }.WithRelayNetwork());
                 return (true, lobby);
             }
             catch (LobbyServiceException e)
@@ -154,21 +167,31 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             return (false, null);
         }
 
+        // Note: MultiplayerSDK refactoring
         /// <summary>
         /// Attempt to join an existing lobby. Will try to join via code, if code is null - will try to join via ID.
         /// </summary>
-        public async Task<(bool Success, Lobby Lobby)> TryJoinLobbyAsync(string lobbyId, string lobbyCode)
+        public async Task<(bool Success, ISession Lobby)> TryJoinLobbyAsync(string lobbyId/*, string lobbyCode*/)
         {
             if (!m_RateLimitJoin.CanCall ||
-                (lobbyId == null && lobbyCode == null))
+                (lobbyId == null/* && lobbyCode == null*/))
             {
                 Debug.LogWarning("Join Lobby hit the rate limit.");
                 return (false, null);
             }
 
+            Debug.Log($"joinning session with lobby code {lobbyId}");
+            
             try
             {
-                if (!string.IsNullOrEmpty(lobbyCode))
+                var session = await MultiplayerService.Instance.JoinSessionByCodeAsync(lobbyId,
+                    new JoinSessionOptions()
+                    {
+                        /*Password = string.IsNullOrEmpty(Password) ? null : Password,
+                        PlayerProperties = PlayerData*/
+                    });
+                return (true, session);
+                /*if (!string.IsNullOrEmpty(lobbyCode))
                 {
                     var lobby = await m_LobbyApiInterface.JoinLobbyByCode(AuthenticationService.Instance.PlayerId, lobbyCode, m_LocalUser.GetDataForUnityServices());
                     return (true, lobby);
@@ -177,7 +200,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
                 {
                     var lobby = await m_LobbyApiInterface.JoinLobbyById(AuthenticationService.Instance.PlayerId, lobbyId, m_LocalUser.GetDataForUnityServices());
                     return (true, lobby);
-                }
+                }*/
             }
             catch (LobbyServiceException e)
             {
@@ -317,6 +340,7 @@ namespace Unity.BossRoom.UnityServices.Lobbies
             }
         }
 
+        // Note: MultiplayerSDK refactoring
         /// <summary>
         /// Used for getting the list of all active lobbies, without needing full info for each.
         /// </summary>
@@ -330,8 +354,11 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 
             try
             {
-                var response = await m_LobbyApiInterface.QueryAllLobbies();
-                m_LobbyListFetchedPub.Publish(new LobbyListFetchedMessage(LocalLobby.CreateLocalLobbies(response)));
+                /*var response = await m_LobbyApiInterface.QueryAllLobbies();*/
+                var queryResults = await MultiplayerService.Instance.QuerySessionsAsync(new()
+                {
+                });
+                m_LobbyListFetchedPub.Publish(new LobbyListFetchedMessage(queryResults.Sessions/*LocalLobby.CreateLocalLobbies(response)*/));
             }
             catch (LobbyServiceException e)
             {

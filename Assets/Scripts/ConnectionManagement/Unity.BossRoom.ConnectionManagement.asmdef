@@ -9,10 +9,9 @@
         "Unity.Services.Core",
         "Unity.Services.Authentication",
         "Unity.BossRoom.Utils",
-        "Unity.Services.Lobbies",
         "Unity.Networking.Transport",
         "VContainer",
-        "Unity.Services.Relay"
+        "Unity.Services.Multiplayer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
