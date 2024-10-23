@@ -28,13 +28,11 @@ namespace Unity.BossRoom.ConnectionManagement
 
         public virtual void StartClientIP(string playerName, string ipaddress, int port) { }
         
-        // Note: MultiplayerSDK refactoring
-        public virtual void StartClientLobby(string sessionCode, string playerName) { }
+        public virtual void StartClientSession(string playerName) { }
 
         public virtual void StartHostIP(string playerName, string ipaddress, int port) { }
-
-        // Note: MultiplayerSDK refactoring
-        public virtual void StartHostLobby(string sessionCode, string playerName) { }
+        
+        public virtual void StartHostSession(string playerName) { }
 
         public virtual void OnUserRequestedShutdown() { }
 

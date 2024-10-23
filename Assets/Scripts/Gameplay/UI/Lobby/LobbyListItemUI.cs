@@ -1,6 +1,6 @@
 using System;
 using TMPro;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 using VContainer;
@@ -9,7 +9,7 @@ namespace Unity.BossRoom.Gameplay.UI
 {
     // Note: MultiplayerSDK refactoring
     /// <summary>
-    /// An individual Lobby UI in the list of available lobbies
+    /// An individual Lobby UI in the list of available lobbies`
     /// </summary>
     public class LobbyListItemUI : MonoBehaviour
     {
@@ -30,7 +30,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public void OnClick()
         {
-            m_LobbyUIMediator.JoinLobbyRequest(m_Data);
+            m_LobbyUIMediator.JoinSessionRequest(m_Data);
         }
     }
 }

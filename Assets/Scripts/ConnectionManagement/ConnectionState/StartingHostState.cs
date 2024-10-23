@@ -1,6 +1,6 @@
 using System;
 using Unity.BossRoom.Infrastructure;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
@@ -15,9 +15,9 @@ namespace Unity.BossRoom.ConnectionManagement
     class StartingHostState : OnlineState
     {
         [Inject]
-        LobbyServiceFacade m_LobbyServiceFacade;
+        MultiplayerServicesFacade m_MultiplayerServicesFacade;
         [Inject]
-        LocalLobby m_LocalLobby;
+        LocalSession m_LocalSession;
         ConnectionMethodBase m_ConnectionMethod;
 
         public StartingHostState Configure(ConnectionMethodBase baseConnectionMethod)
@@ -63,18 +63,11 @@ namespace Unity.BossRoom.ConnectionManagement
             StartHostFailed();
         }
 
-        // Note: MultiplayerSDK refactoring
         async void StartHost()
         {
             try
             {
                 await m_ConnectionMethod.SetupHostConnectionAsync();
-
-                /*// NGO's StartHost launches everything
-                if (!m_ConnectionManager.NetworkManager.StartHost())
-                {
-                    StartHostFailed();
-                }*/
             }
             catch (Exception)
             {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.BossRoom.Infrastructure;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -28,7 +28,7 @@ namespace Unity.BossRoom.Gameplay.UI
         IObjectResolver m_Container;
         LobbyUIMediator m_LobbyUIMediator;
         UpdateRunner m_UpdateRunner;
-        ISubscriber<LobbyListFetchedMessage> m_LocalLobbiesRefreshedSub;
+        ISubscriber<SessionListFetchedMessage> m_LocalLobbiesRefreshedSub;
 
         List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
 
@@ -58,7 +58,7 @@ namespace Unity.BossRoom.Gameplay.UI
             IObjectResolver container,
             LobbyUIMediator lobbyUIMediator,
             UpdateRunner updateRunner,
-            ISubscriber<LobbyListFetchedMessage> localLobbiesRefreshedSub)
+            ISubscriber<SessionListFetchedMessage> localLobbiesRefreshedSub)
         {
             m_Container = container;
             m_LobbyUIMediator = lobbyUIMediator;
@@ -83,31 +83,31 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public void OnJoinButtonPressed()
         {
-            m_LobbyUIMediator.JoinLobbyWithCodeRequest(SanitizeJoinCode(m_JoinCodeField.text));
+            m_LobbyUIMediator.JoinSessionWithCodeRequest(SanitizeJoinCode(m_JoinCodeField.text));
         }
 
         void PeriodicRefresh(float _)
         {
             //this is a soft refresh without needing to lock the UI and such
-            m_LobbyUIMediator.QueryLobbiesRequest(false);
+            m_LobbyUIMediator.QuerySessionRequest(false);
         }
 
         public void OnRefresh()
         {
-            m_LobbyUIMediator.QueryLobbiesRequest(true);
+            m_LobbyUIMediator.QuerySessionRequest(true);
         }
 
-        void UpdateUI(LobbyListFetchedMessage message)
+        void UpdateUI(SessionListFetchedMessage message)
         {
-            EnsureNumberOfActiveUISlots(message.LocalLobbies.Count);
+            EnsureNumberOfActiveUISlots(message.LocalSessions.Count);
 
-            for (var i = 0; i < message.LocalLobbies.Count; i++)
+            for (var i = 0; i < message.LocalSessions.Count; i++)
             {
-                var localLobby = message.LocalLobbies[i];
+                var localLobby = message.LocalSessions[i];
                 m_LobbyListItems[i].SetData(localLobby);
             }
 
-            if (message.LocalLobbies.Count == 0)
+            if (message.LocalSessions.Count == 0)
             {
                 m_EmptyLobbyListLabel.enabled = true;
             }

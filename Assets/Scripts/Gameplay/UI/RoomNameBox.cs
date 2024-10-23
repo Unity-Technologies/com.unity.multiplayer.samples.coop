@@ -1,6 +1,6 @@
 using System;
 using TMPro;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -14,31 +14,31 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         Button m_CopyToClipboardButton;
 
-        LocalLobby m_LocalLobby;
+        LocalSession m_LocalSession;
         string m_LobbyCode;
 
         [Inject]
-        private void InjectDependencies(LocalLobby localLobby)
+        private void InjectDependencies(LocalSession localSession)
         {
-            m_LocalLobby = localLobby;
-            m_LocalLobby.changed += UpdateUI;
+            m_LocalSession = localSession;
+            m_LocalSession.changed += UpdateUI;
         }
 
         void Awake()
         {
-            UpdateUI(m_LocalLobby);
+            UpdateUI(m_LocalSession);
         }
 
         private void OnDestroy()
         {
-            m_LocalLobby.changed -= UpdateUI;
+            m_LocalSession.changed -= UpdateUI;
         }
 
-        private void UpdateUI(LocalLobby localLobby)
+        private void UpdateUI(LocalSession localSession)
         {
-            if (!string.IsNullOrEmpty(localLobby.LobbyCode))
+            if (!string.IsNullOrEmpty(localSession.SessionCode))
             {
-                m_LobbyCode = localLobby.LobbyCode;
+                m_LobbyCode = localSession.SessionCode;
                 m_RoomNameText.text = $"Lobby Code: {m_LobbyCode}";
                 gameObject.SetActive(true);
                 m_CopyToClipboardButton.gameObject.SetActive(true);

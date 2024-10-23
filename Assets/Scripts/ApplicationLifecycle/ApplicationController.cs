@@ -7,7 +7,7 @@ using Unity.BossRoom.Gameplay.Messages;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices;
 using Unity.BossRoom.UnityServices.Auth;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.BossRoom.Utils;
 using Unity.Netcode;
 using UnityEngine;
@@ -29,8 +29,8 @@ namespace Unity.BossRoom.ApplicationLifecycle
         [SerializeField]
         NetworkManager m_NetworkManager;
 
-        LocalLobby m_LocalLobby;
-        LobbyServiceFacade m_LobbyServiceFacade;
+        LocalSession m_LocalSession;
+        MultiplayerServicesFacade m_MultiplayerServicesFacade;
 
         IDisposable m_Subscriptions;
 
@@ -43,8 +43,8 @@ namespace Unity.BossRoom.ApplicationLifecycle
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
-            builder.Register<LocalLobbyUser>(Lifetime.Singleton);
-            builder.Register<LocalLobby>(Lifetime.Singleton);
+            builder.Register<LocalSessionUser>(Lifetime.Singleton);
+            builder.Register<LocalSession>(Lifetime.Singleton);
 
             builder.Register<ProfileManager>(Lifetime.Singleton);
 
@@ -69,19 +69,19 @@ namespace Unity.BossRoom.ApplicationLifecycle
             builder.RegisterInstance(new MessageChannel<ReconnectMessage>()).AsImplementedInterfaces();
 
             //buffered message channels hold the latest received message in buffer and pass to any new subscribers
-            builder.RegisterInstance(new BufferedMessageChannel<LobbyListFetchedMessage>()).AsImplementedInterfaces();
+            builder.RegisterInstance(new BufferedMessageChannel<SessionListFetchedMessage>()).AsImplementedInterfaces();
 
             //all the lobby service stuff, bound here so that it persists through scene loads
             builder.Register<AuthenticationServiceFacade>(Lifetime.Singleton); //a manager entity that allows us to do anonymous authentication with unity services
 
             //LobbyServiceFacade is registered as entrypoint because it wants a callback after container is built to do it's initialization
-            builder.RegisterEntryPoint<LobbyServiceFacade>(Lifetime.Singleton).AsSelf();
+            builder.RegisterEntryPoint<MultiplayerServicesFacade>(Lifetime.Singleton).AsSelf();
         }
 
         private void Start()
         {
-            m_LocalLobby = Container.Resolve<LocalLobby>();
-            m_LobbyServiceFacade = Container.Resolve<LobbyServiceFacade>();
+            m_LocalSession = Container.Resolve<LocalSession>();
+            m_MultiplayerServicesFacade = Container.Resolve<MultiplayerServicesFacade>();
 
             var quitApplicationSub = Container.Resolve<ISubscriber<QuitApplicationMessage>>();
 
@@ -103,9 +103,9 @@ namespace Unity.BossRoom.ApplicationLifecycle
                 m_Subscriptions.Dispose();
             }
 
-            if (m_LobbyServiceFacade != null)
+            if (m_MultiplayerServicesFacade != null)
             {
-                m_LobbyServiceFacade.EndTracking();
+                m_MultiplayerServicesFacade.EndTracking();
             }
 
             base.OnDestroy();
@@ -120,7 +120,7 @@ namespace Unity.BossRoom.ApplicationLifecycle
             // We want to quit anyways, so if anything happens while trying to leave the Lobby, log the exception then carry on
             try
             {
-                m_LobbyServiceFacade.EndTracking();
+                m_MultiplayerServicesFacade.EndTracking();
             }
             catch (Exception e)
             {
@@ -135,7 +135,7 @@ namespace Unity.BossRoom.ApplicationLifecycle
         {
             Application.wantsToQuit -= OnWantToQuit;
 
-            var canQuit = m_LocalLobby != null && string.IsNullOrEmpty(m_LocalLobby.LobbyID);
+            var canQuit = m_LocalSession != null && string.IsNullOrEmpty(m_LocalSession.SessionID);
             if (!canQuit)
             {
                 StartCoroutine(LeaveBeforeQuit());

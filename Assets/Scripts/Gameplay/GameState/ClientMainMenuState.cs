@@ -2,7 +2,7 @@ using System;
 using Unity.BossRoom.Gameplay.Configuration;
 using Unity.BossRoom.Gameplay.UI;
 using Unity.BossRoom.UnityServices.Auth;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.BossRoom.Utils;
 using Unity.Services.Authentication;
 using UnityEngine;
@@ -41,9 +41,9 @@ namespace Unity.BossRoom.Gameplay.GameState
         [Inject]
         AuthenticationServiceFacade m_AuthServiceFacade;
         [Inject]
-        LocalLobbyUser m_LocalUser;
+        LocalSessionUser m_LocalUser;
         [Inject]
-        LocalLobby m_LocalLobby;
+        LocalSession m_LocalSession;
         [Inject]
         ProfileManager m_ProfileManager;
 
@@ -135,9 +135,9 @@ namespace Unity.BossRoom.Gameplay.GameState
             Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
             // Updating LocalUser and LocalLobby
-            m_LocalLobby.RemoveUser(m_LocalUser);
+            m_LocalSession.RemoveUser(m_LocalUser);
             m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
-            m_LocalLobby.AddUser(m_LocalUser);
+            m_LocalSession.AddUser(m_LocalUser);
         }
 
         public void OnStartClicked()

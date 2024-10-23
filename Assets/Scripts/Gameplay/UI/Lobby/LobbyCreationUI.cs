@@ -25,7 +25,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public void OnCreateClick()
         {
-            m_LobbyUIMediator.CreateLobbyRequest(m_LobbyNameInputField.text, m_IsPrivate.isOn);
+            m_LobbyUIMediator.CreateSessionRequest(m_LobbyNameInputField.text, m_IsPrivate.isOn);
         }
 
         public void Show()

@@ -29,7 +29,7 @@ namespace Unity.BossRoom.Gameplay.UI
             var errorMessage = error.Message;
             switch (error.AffectedService)
             {
-                case UnityServiceErrorMessage.Service.Lobby:
+                case UnityServiceErrorMessage.Service.Session:
                 {
                     HandleLobbyError(error);
                     break;
