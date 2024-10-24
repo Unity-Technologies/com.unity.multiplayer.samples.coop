@@ -68,6 +68,15 @@ namespace Unity.BossRoom.ConnectionManagement
             try
             {
                 await m_ConnectionMethod.SetupHostConnectionAsync();
+
+                if (m_ConnectionMethod is ConnectionMethodIP)
+                {
+                    // NGO's StartHost launches everything
+                    if (!m_ConnectionManager.NetworkManager.StartHost())
+                    {
+                        StartHostFailed();
+                    }   
+                }
             }
             catch (Exception)
             {

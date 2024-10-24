@@ -59,8 +59,15 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             try
             {
-                // Setup NGO with current connection method
                 m_ConnectionMethod.SetupClientConnectionAsync();
+
+                if (m_ConnectionMethod is ConnectionMethodIP)
+                {
+                    if (!m_ConnectionManager.NetworkManager.StartClient())
+                    {
+                        throw new Exception("NetworkManager StartClient failed");
+                    }   
+                }
             }
             catch (Exception e)
             {
