@@ -124,7 +124,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
                     null);
                 return (true, session);
             }
-            catch (SessionException e)
+            catch (Exception e)
             {
                 PublishError(e);
             }
@@ -164,7 +164,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
                     return (true, session);
                 }
             }
-            catch (SessionException e)
+            catch (Exception e)
             {
                 PublishError(e);
             }
@@ -188,7 +188,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 var session = await m_MultiplayerServicesInterface.QuickJoinSession(m_LocalUser.GetDataForUnityServices());
                 return (true, session);
             }
-            catch (SessionException e)
+            catch (Exception e)
             {
                 PublishError(e);
             }
@@ -320,7 +320,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 var queryResults = await m_MultiplayerServicesInterface.QuerySessions();
                 m_SessionListFetchedPub.Publish(new SessionListFetchedMessage(queryResults.Sessions));
             }
-            catch (SessionException e)
+            catch (Exception e)
             {
                 PublishError(e);
             }
@@ -332,13 +332,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
             {
                 return await m_MultiplayerServicesInterface.ReconnectToSession(m_LocalSession.SessionID);
             }
-            catch (SessionException e)
+            catch (Exception e)
             {
-                // If session is not found and if we are not the host, it has already been deleted. No need to publish the error here.
-                if (e.Error != SessionError.SessionNotFound && !m_LocalUser.IsHost)
-                {
-                    PublishError(e);
-                }
+                PublishError(e, true);
             }
 
             return null;
@@ -353,13 +349,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
             {
                 await CurrentUnitySession.LeaveAsync();
             }
-            catch (SessionException e)
+            catch (Exception e)
             {
-                // If session is not found and if we are not the host, it has already been deleted. No need to publish the error here.
-                if (e.Error != SessionError.SessionNotFound && !m_LocalUser.IsHost)
-                {
-                    PublishError(e);
-                }
+                PublishError(e, true);
             }
             finally
             {
@@ -376,7 +368,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 {
                     await CurrentUnitySession.AsHost().RemovePlayerAsync(uasId);
                 }
-                catch (SessionException e)
+                catch (Exception e)
                 {
                     PublishError(e);
                 }
@@ -395,7 +387,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 {
                     await CurrentUnitySession.AsHost().DeleteAsync();
                 }
-                catch (SessionException e)
+                catch (Exception e)
                 {
                     PublishError(e);
                 }
@@ -439,15 +431,36 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 CurrentUnitySession.AsHost().SetProperties(dataCurr);
                 await CurrentUnitySession.AsHost().SavePropertiesAsync();
             }
-            catch (SessionException e)
+            catch (Exception e)
             {
                 PublishError(e);
             }
         }
 
-        void PublishError(SessionException e)
+        void PublishError(Exception e, bool checkIfDeleted = false)
         {
-            if (e.Error == SessionError.RateLimitExceeded)
+            if (e is not AggregateException aggregateException)
+            {
+                m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Session Error", e.Message, UnityServiceErrorMessage.Service.Session, e));
+                return;
+            }
+            
+            if (aggregateException.InnerException is not SessionException sessionException)
+            {
+                m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Session Error", e.Message, UnityServiceErrorMessage.Service.Session, e));
+                return;
+            }
+            
+            // If session is not found and if we are not the host, it has already been deleted. No need to publish the error here.
+            if (checkIfDeleted)
+            {
+                if (sessionException.Error == SessionError.SessionNotFound && !m_LocalUser.IsHost)
+                {
+                    return;
+                }
+            }
+            
+            if (sessionException.Error == SessionError.RateLimitExceeded)
             {
                 m_RateLimitJoin.PutOnCooldown();
                 return;
