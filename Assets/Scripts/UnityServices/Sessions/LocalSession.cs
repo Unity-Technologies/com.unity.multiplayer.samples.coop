@@ -249,7 +249,6 @@ namespace Unity.BossRoom.UnityServices.Sessions
         public void Reset(LocalSessionUser localUser)
         {
             CopyDataFrom(new SessionData(), new Dictionary<string, LocalSessionUser>());
-            AddUser(localUser);
         }
     }
 }
