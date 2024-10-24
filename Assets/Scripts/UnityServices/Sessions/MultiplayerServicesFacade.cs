@@ -116,8 +116,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
             try
             {
-                var session = await m_MultiplayerServicesInterface.CreateSession(AuthenticationService.Instance.PlayerId,
-                    sessionName,
+                var session = await m_MultiplayerServicesInterface.CreateSession(sessionName,
                     maxPlayers,
                     isPrivate,
                     m_LocalUser.GetDataForUnityServices(),

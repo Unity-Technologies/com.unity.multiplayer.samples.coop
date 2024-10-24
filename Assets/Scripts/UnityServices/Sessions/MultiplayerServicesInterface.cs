@@ -32,14 +32,14 @@ namespace Unity.BossRoom.UnityServices.Sessions
             };
         }
 
-        public async Task<ISession> CreateSession(string requesterUasId, string sessionName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerProperty> playerProperties, Dictionary<string, SessionProperty> sessionProperties)
+        public async Task<ISession> CreateSession(string sessionName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerProperty> playerProperties, Dictionary<string, SessionProperty> sessionProperties)
         {
             var sessionOptions = new SessionOptions
             {
                 Name = sessionName,
                 MaxPlayers = maxPlayers,
                 IsPrivate = isPrivate,
-                IsLocked = true,
+                IsLocked = false,
                 PlayerProperties = playerProperties,
                 SessionProperties = sessionProperties
             }.WithRelayNetwork();
