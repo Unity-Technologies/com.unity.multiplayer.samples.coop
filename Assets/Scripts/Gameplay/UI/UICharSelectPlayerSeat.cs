@@ -36,7 +36,7 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         private CharacterTypeEnum m_CharacterClass;
 
-        // just a way to designate which seat we are -- the leftmost seat on the lobby UI is index 0, the next one is index 1, etc.
+        // just a way to designate which seat we are -- the leftmost seat on the Session UI is index 0, the next one is index 1, etc.
         private int m_SeatIndex;
 
         // playerNumber of who is sitting in this seat right now. 0-based; e.g. this is 0 for Player 1, 1 for Player 2, etc. Meaningless when m_State is Inactive (and in that case it is set to -1 for clarity)

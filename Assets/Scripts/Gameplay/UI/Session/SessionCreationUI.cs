@@ -5,13 +5,13 @@ using VContainer;
 
 namespace Unity.BossRoom.Gameplay.UI
 {
-    public class LobbyCreationUI : MonoBehaviour
+    public class SessionCreationUI : MonoBehaviour
     {
-        [SerializeField] InputField m_LobbyNameInputField;
+        [SerializeField] InputField m_SessionNameInputField;
         [SerializeField] GameObject m_LoadingIndicatorObject;
         [SerializeField] Toggle m_IsPrivate;
         [SerializeField] CanvasGroup m_CanvasGroup;
-        [Inject] LobbyUIMediator m_LobbyUIMediator;
+        [Inject] SessionUIMediator m_SessionUIMediator;
 
         void Awake()
         {
@@ -25,7 +25,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public void OnCreateClick()
         {
-            m_LobbyUIMediator.CreateSessionRequest(m_LobbyNameInputField.text, m_IsPrivate.isOn);
+            m_SessionUIMediator.CreateSessionRequest(m_SessionNameInputField.text, m_IsPrivate.isOn);
         }
 
         public void Show()

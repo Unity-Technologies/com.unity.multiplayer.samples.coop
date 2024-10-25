@@ -12,11 +12,11 @@ using VContainer;
 
 namespace Unity.BossRoom.Gameplay.UI
 {
-    public class LobbyUIMediator : MonoBehaviour
+    public class SessionUIMediator : MonoBehaviour
     {
         [SerializeField] CanvasGroup m_CanvasGroup;
-        [SerializeField] LobbyJoiningUI m_LobbyJoiningUI;
-        [SerializeField] LobbyCreationUI m_LobbyCreationUI;
+        [SerializeField] SessionJoiningUI m_SessionJoiningUI;
+        [SerializeField] SessionCreationUI m_SessionCreationUI;
         [SerializeField] UITinter m_JoinToggleHighlight;
         [SerializeField] UITinter m_JoinToggleTabBlocker;
         [SerializeField] UITinter m_CreateToggleHighlight;
@@ -219,24 +219,24 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;
-            m_LobbyCreationUI.Hide();
-            m_LobbyJoiningUI.Hide();
+            m_SessionCreationUI.Hide();
+            m_SessionJoiningUI.Hide();
         }
 
-        public void ToggleJoinLobbyUI()
+        public void ToggleJoinSessionUI()
         {
-            m_LobbyJoiningUI.Show();
-            m_LobbyCreationUI.Hide();
+            m_SessionJoiningUI.Show();
+            m_SessionCreationUI.Hide();
             m_JoinToggleHighlight.SetToColor(1);
             m_JoinToggleTabBlocker.SetToColor(1);
             m_CreateToggleHighlight.SetToColor(0);
             m_CreateToggleTabBlocker.SetToColor(0);
         }
 
-        public void ToggleCreateLobbyUI()
+        public void ToggleCreateSessionUI()
         {
-            m_LobbyJoiningUI.Hide();
-            m_LobbyCreationUI.Show();
+            m_SessionJoiningUI.Hide();
+            m_SessionCreationUI.Show();
             m_JoinToggleHighlight.SetToColor(0);
             m_JoinToggleTabBlocker.SetToColor(0);
             m_CreateToggleHighlight.SetToColor(1);

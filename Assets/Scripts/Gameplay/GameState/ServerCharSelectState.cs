@@ -23,7 +23,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         public override GameState ActiveState => GameState.CharSelect;
         public NetworkCharSelection networkCharSelection { get; private set; }
 
-        Coroutine m_WaitToEndLobbyCoroutine;
+        Coroutine m_WaitToEndSessionCoroutine;
 
         [Inject]
         ConnectionManager m_ConnectionManager;
@@ -50,10 +50,10 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
         {
-            int idx = FindLobbyPlayerIdx(clientId);
+            int idx = FindSessionPlayerIdx(clientId);
             if (idx == -1)
             {
-                throw new Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats! Shouldn't be here!");
+                throw new Exception($"OnClientChangedSeat: client ID {clientId} is not a Session player and cannot change seats! Shouldn't be here!");
             }
 
             if (networkCharSelection.IsSessionClosed.Value)
@@ -112,13 +112,13 @@ namespace Unity.BossRoom.Gameplay.GameState
                 }
             }
 
-            CloseLobbyIfReady();
+            CloseSessionIfReady();
         }
 
         /// <summary>
-        /// Returns the index of a client in the master LobbyPlayer list, or -1 if not found
+        /// Returns the index of a client in the master SessionPlayer list, or -1 if not found
         /// </summary>
-        int FindLobbyPlayerIdx(ulong clientId)
+        int FindSessionPlayerIdx(ulong clientId)
         {
             for (int i = 0; i < networkCharSelection.sessionPlayers.Count; ++i)
             {
@@ -130,9 +130,9 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         /// <summary>
         /// Looks through all our connections and sees if everyone has locked in their choice;
-        /// if so, we lock in the whole lobby, save state, and begin the transition to gameplay
+        /// if so, we lock in the whole Session, save state, and begin the transition to gameplay
         /// </summary>
-        void CloseLobbyIfReady()
+        void CloseSessionIfReady()
         {
             foreach (NetworkCharSelection.SessionPlayerState playerInfo in networkCharSelection.sessionPlayers)
             {
@@ -144,25 +144,25 @@ namespace Unity.BossRoom.Gameplay.GameState
             networkCharSelection.IsSessionClosed.Value = true;
 
             // remember our choices so the next scene can use the info
-            SaveLobbyResults();
+            SaveSessionResults();
 
             // Delay a few seconds to give the UI time to react, then switch scenes
-            m_WaitToEndLobbyCoroutine = StartCoroutine(WaitToEndLobby());
+            m_WaitToEndSessionCoroutine = StartCoroutine(WaitToEndSession());
         }
 
         /// <summary>
-        /// Cancels the process of closing the lobby, so that if a new player joins, they are able to chose a character.
+        /// Cancels the process of closing the Session, so that if a new player joins, they are able to choose a character.
         /// </summary>
-        void CancelCloseLobby()
+        void CancelCloseSession()
         {
-            if (m_WaitToEndLobbyCoroutine != null)
+            if (m_WaitToEndSessionCoroutine != null)
             {
-                StopCoroutine(m_WaitToEndLobbyCoroutine);
+                StopCoroutine(m_WaitToEndSessionCoroutine);
             }
             networkCharSelection.IsSessionClosed.Value = false;
         }
 
-        void SaveLobbyResults()
+        void SaveSessionResults()
         {
             foreach (NetworkCharSelection.SessionPlayerState playerInfo in networkCharSelection.sessionPlayers)
             {
@@ -178,7 +178,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
         }
 
-        IEnumerator WaitToEndLobby()
+        IEnumerator WaitToEndSession()
         {
             yield return new WaitForSeconds(3);
             SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true);
@@ -216,7 +216,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             // We need to filter out the event that are not a client has finished loading the scene
             if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
-            // When the client finishes loading the Lobby Map, we will need to Seat it
+            // When the client finishes loading the Session Map, we will need to Seat it
             SeatNewPlayer(sceneEvent.ClientId);
         }
 
@@ -229,7 +229,7 @@ namespace Unity.BossRoom.Gameplay.GameState
                     return possiblePlayerNumber;
                 }
             }
-            // we couldn't get a Player# for this person... which means the lobby is full!
+            // we couldn't get a Player# for this person... which means the Session is full!
             return -1;
         }
 
@@ -250,10 +250,10 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         void SeatNewPlayer(ulong clientId)
         {
-            // If lobby is closing and waiting to start the game, cancel to allow that new player to select a character
+            // If Session is closing and waiting to start the game, cancel to allow that new player to select a character
             if (networkCharSelection.IsSessionClosed.Value)
             {
-                CancelCloseLobby();
+                CancelCloseSession();
             }
 
             SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
@@ -290,8 +290,8 @@ namespace Unity.BossRoom.Gameplay.GameState
 
             if (!networkCharSelection.IsSessionClosed.Value)
             {
-                // If the lobby is not already closing, close if the remaining players are all ready
-                CloseLobbyIfReady();
+                // If the Session is not already closing, close if the remaining players are all ready
+                CloseSessionIfReady();
             }
         }
     }

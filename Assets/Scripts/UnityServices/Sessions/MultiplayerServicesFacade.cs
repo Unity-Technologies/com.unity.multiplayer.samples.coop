@@ -232,12 +232,12 @@ namespace Unity.BossRoom.UnityServices.Sessions
             Debug.Log("Session changed.");
             m_LocalSession.ApplyRemoteData(CurrentUnitySession);
 
-            // as client, check if host is still in lobby
+            // as client, check if host is still in session
             if (!m_LocalUser.IsHost)
             {
-                foreach (var lobbyUser in m_LocalSession.sessionUsers)
+                foreach (var sessionUser in m_LocalSession.sessionUsers)
                 {
-                    if (lobbyUser.Value.IsHost)
+                    if (sessionUser.Value.IsHost)
                     {
                         return;
                     }

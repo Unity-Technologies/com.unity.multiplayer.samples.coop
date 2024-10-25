@@ -117,7 +117,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
     // Note: MultiplayerSDK refactoring
     /// <summary>
-    /// UTP's Relay connection setup using the Lobby integration
+    /// UTP's Relay connection setup using the Session integration
     /// </summary>
     class ConnectionMethodRelay : ConnectionMethodBase
     {
@@ -149,10 +149,10 @@ namespace Unity.BossRoom.ConnectionManagement
             }
 
             // TODO SESSIONS:
-            // When using Lobby with Relay, if a user is disconnected from the Relay server, the server will notify the
-            // Lobby service and mark the user as disconnected, but will not remove them from the lobby. They then have
+            // When using Session with Relay, if a user is disconnected from the Relay server, the server will notify the
+            // Session service and mark the user as disconnected, but will not remove them from the Session. They then have
             // some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on the dashboard),
-            // after which they will be removed from the lobby completely.
+            // after which they will be removed from the Session completely.
             // See https://docs.unity.com/lobby/reconnect-to-lobby.html
             var session = await m_MultiplayerServicesFacade.ReconnectToSessionAsync();
             var success = session != null;
@@ -166,30 +166,6 @@ namespace Unity.BossRoom.ConnectionManagement
             Debug.Log("Setting up Unity Relay host");
 
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
-            
-            /*// Create relay allocation
-            Allocation hostAllocation = await RelayService.Instance.CreateAllocationAsync(m_ConnectionManager.MaxConnectedPlayers, region: null);
-            var joinCode = await RelayService.Instance.GetJoinCodeAsync(hostAllocation.AllocationId);
-
-            Debug.Log($"server: connection data: {hostAllocation.ConnectionData[0]} {hostAllocation.ConnectionData[1]}, " +
-                $"allocation ID:{hostAllocation.AllocationId}, region:{hostAllocation.Region}");
-
-            m_LocalLobby.RelayJoinCode = joinCode;
-
-            // next line enables lobby and relay services integration
-            await m_LobbyServiceFacade.UpdateLobbyDataAndUnlockAsync();
-            await m_LobbyServiceFacade.UpdatePlayerDataAsync(hostAllocation.AllocationIdBytes.ToString(), joinCode);*/
-
-            // TODO: needed?
-            /*// Setup UTP with relay connection info
-            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(hostAllocation, k_DtlsConnType)); // This is with DTLS enabled for a secure connection
-
-            Debug.Log($"Created relay allocation with join code {m_LocalLobby.RelayJoinCode}");*/
-            
-            // var lobbyCreationAttempt = await m_MultiplayerServicesFacade.TryCreateSessionAsync(m_SessionName, m_ConnectionManager.MaxConnectedPlayers, m_IsPrivate);
-
-            // Debug.Log($"{lobbyCreationAttempt.Success} lobbyCreationAttempt.Lobby.Id: {lobbyCreationAttempt.Session.Id} lobbyCreationAttempt.Lobby.Code {lobbyCreationAttempt.Session.Code}");
         }
     }
 }

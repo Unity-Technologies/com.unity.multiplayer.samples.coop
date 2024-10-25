@@ -15,7 +15,7 @@ namespace Unity.BossRoom.Gameplay.UI
         Button m_CopyToClipboardButton;
 
         LocalSession m_LocalSession;
-        string m_LobbyCode;
+        string m_SessionCode;
 
         [Inject]
         private void InjectDependencies(LocalSession localSession)
@@ -38,8 +38,8 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             if (!string.IsNullOrEmpty(localSession.SessionCode))
             {
-                m_LobbyCode = localSession.SessionCode;
-                m_RoomNameText.text = $"Lobby Code: {m_LobbyCode}";
+                m_SessionCode = localSession.SessionCode;
+                m_RoomNameText.text = $"Session Code: {m_SessionCode}";
                 gameObject.SetActive(true);
                 m_CopyToClipboardButton.gameObject.SetActive(true);
             }
@@ -51,7 +51,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public void CopyToClipboard()
         {
-            GUIUtility.systemCopyBuffer = m_LobbyCode;
+            GUIUtility.systemCopyBuffer = m_SessionCode;
         }
     }
 }
