@@ -33,6 +33,7 @@ namespace Unity.BossRoom.Gameplay.UI
         ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
 
         const string k_DefaultSessionName = "no-name";
+        const int k_MaxPlayers = 8;
         
         ISession m_Session;
 
@@ -93,6 +94,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
             m_ConnectionManager.StartHostSession(m_LocalUser.DisplayName);
             
+            var result = await m_MultiplayerServicesFacade.TryCreateSessionAsync(sessionName, k_MaxPlayers, isPrivate);
+
+            HandleSessionJoinResult(result);
+            
             UnblockUIAfterLoadingIsComplete();
         }
 
@@ -140,14 +145,7 @@ namespace Unity.BossRoom.Gameplay.UI
             
             var result = await m_MultiplayerServicesFacade.TryJoinSessionAsync(sessionCode, null);
 
-            if (result.Success)
-            {
-                OnJoinedSession(result.Session);
-            }
-            else
-            {
-                UnblockUIAfterLoadingIsComplete();
-            }
+            HandleSessionJoinResult(result);
         }
 
         public async void JoinSessionRequest(ISessionInfo sessionInfo)
@@ -166,14 +164,7 @@ namespace Unity.BossRoom.Gameplay.UI
             
             var result = await m_MultiplayerServicesFacade.TryJoinSessionAsync(null, sessionInfo.Id);
 
-            if (result.Success)
-            {
-                OnJoinedSession(result.Session);
-            }
-            else
-            {
-                UnblockUIAfterLoadingIsComplete();
-            }
+            HandleSessionJoinResult(result);
         }
 
         public async void QuickJoinRequest()
@@ -192,6 +183,11 @@ namespace Unity.BossRoom.Gameplay.UI
             
             var result = await m_MultiplayerServicesFacade.TryQuickJoinSessionAsync();
 
+            HandleSessionJoinResult(result);
+        }
+        
+        void HandleSessionJoinResult((bool Success, ISession Session) result)
+        {
             if (result.Success)
             {
                 OnJoinedSession(result.Session);
