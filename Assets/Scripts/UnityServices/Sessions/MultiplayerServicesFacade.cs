@@ -45,10 +45,10 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
             m_MultiplayerServicesInterface = m_ServiceScope.Container.Resolve<MultiplayerServicesInterface>();
 
-            //See https://docs.unity.com/lobby/rate-limits.html
+            //See https://docs.unity.com/ugs/manual/lobby/manual/rate-limits
             m_RateLimitQuery = new RateLimitCooldown(1f);
-            m_RateLimitJoin = new RateLimitCooldown(3f);
-            m_RateLimitQuickJoin = new RateLimitCooldown(10f);
+            m_RateLimitJoin = new RateLimitCooldown(1f);
+            m_RateLimitQuickJoin = new RateLimitCooldown(1f);
             m_RateLimitHost = new RateLimitCooldown(3f);
         }
 
