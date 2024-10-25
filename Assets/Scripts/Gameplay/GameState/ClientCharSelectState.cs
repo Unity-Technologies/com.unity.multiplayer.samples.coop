@@ -38,9 +38,9 @@ namespace Unity.BossRoom.Gameplay.GameState
         [Tooltip("This is triggered when the player presses the \"Ready\" button")]
         string m_AnimationTriggerOnCharChosen = "BeginRevive";
 
-        [Header("Lobby Seats")]
+        [Header("Session Seats")]
         [SerializeField]
-        [Tooltip("Collection of 8 portrait-boxes, one for each potential lobby member")]
+        [Tooltip("Collection of 8 portrait-boxes, one for each potential session member")]
         List<UICharSelectPlayerSeat> m_PlayerSeats;
 
         [System.Serializable]
@@ -60,7 +60,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         [Tooltip("Text element for the Ready button")]
         TextMeshProUGUI m_ReadyButtonText;
 
-        [Header("UI Elements for different lobby modes")]
+        [Header("UI Elements for different session modes")]
         [SerializeField]
         [Tooltip("UI elements to turn on when the player hasn't chosen their seat yet. Turned off otherwise!")]
         List<GameObject> m_UIElementsForNoSeatChosen;
@@ -68,10 +68,10 @@ namespace Unity.BossRoom.Gameplay.GameState
         [SerializeField]
         [Tooltip("UI elements to turn on when the player has locked in their seat choice (and is now waiting for other players to do the same). Turned off otherwise!")]
         List<GameObject> m_UIElementsForSeatChosen;
-
+        
         [SerializeField]
-        [Tooltip("UI elements to turn on when the lobby is closed (and game is about to start). Turned off otherwise!")]
-        List<GameObject> m_UIElementsForLobbyEnding;
+        [Tooltip("UI elements to turn on when the session is closed (and game is about to start). Turned off otherwise!")]
+        List<GameObject> m_UIElementsForSessionEnding;
 
         [SerializeField]
         [Tooltip("UI elements to turn on when there's been a fatal error (and the client cannot proceed). Turned off otherwise!")]
@@ -95,20 +95,20 @@ namespace Unity.BossRoom.Gameplay.GameState
         Dictionary<Guid, GameObject> m_SpawnedCharacterGraphics = new Dictionary<Guid, GameObject>();
 
         /// <summary>
-        /// Conceptual modes or stages that the lobby can be in. We don't actually
-        /// bother to keep track of what LobbyMode we're in at any given time; it's just
+        /// Conceptual modes or stages that the session can be in. We don't actually
+        /// bother to keep track of what SessionMode we're in at any given time; it's just
         /// an abstraction that makes it easier to configure which UI elements should
-        /// be enabled/disabled in each stage of the lobby.
+        /// be enabled/disabled in each stage of the session.
         /// </summary>
-        enum LobbyMode
+        enum SessionMode
         {
             ChooseSeat, // "Choose your seat!" stage
             SeatChosen, // "Waiting for other players!" stage
-            LobbyEnding, // "Get ready! Game is starting!" stage
+            SessionEnding, // "Get ready! Game is starting!" stage
             FatalError, // "Fatal Error" stage
         }
 
-        Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
+        Dictionary<SessionMode, List<GameObject>> m_SessionUIElementsByMode;
 
         [Inject]
         ConnectionManager m_ConnectionManager;
@@ -121,12 +121,12 @@ namespace Unity.BossRoom.Gameplay.GameState
             m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
             m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
 
-            m_LobbyUIElementsByMode = new Dictionary<LobbyMode, List<GameObject>>()
+            m_SessionUIElementsByMode = new Dictionary<SessionMode, List<GameObject>>()
             {
-                { LobbyMode.ChooseSeat, m_UIElementsForNoSeatChosen },
-                { LobbyMode.SeatChosen, m_UIElementsForSeatChosen },
-                { LobbyMode.LobbyEnding, m_UIElementsForLobbyEnding },
-                { LobbyMode.FatalError, m_UIElementsForFatalError },
+                { SessionMode.ChooseSeat, m_UIElementsForNoSeatChosen },
+                { SessionMode.SeatChosen, m_UIElementsForSeatChosen },
+                { SessionMode.SessionEnding, m_UIElementsForSessionEnding },
+                { SessionMode.FatalError, m_UIElementsForFatalError },
             };
         }
 
@@ -148,7 +148,7 @@ namespace Unity.BossRoom.Gameplay.GameState
                 m_PlayerSeats[i].Initialize(i);
             }
 
-            ConfigureUIForLobbyMode(LobbyMode.ChooseSeat);
+            ConfigureUIForSessionMode(SessionMode.ChooseSeat);
             UpdateCharacterSelection(NetworkCharSelection.SeatState.Inactive);
         }
 
@@ -156,8 +156,8 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             if (m_NetworkCharSelection)
             {
-                m_NetworkCharSelection.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
-                m_NetworkCharSelection.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
+                m_NetworkCharSelection.IsSessionClosed.OnValueChanged -= OnSessionClosedChanged;
+                m_NetworkCharSelection.sessionPlayers.OnListChanged -= OnSessionPlayerStateChanged;
             }
         }
 
@@ -169,8 +169,8 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
             else
             {
-                m_NetworkCharSelection.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
-                m_NetworkCharSelection.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
+                m_NetworkCharSelection.IsSessionClosed.OnValueChanged += OnSessionClosedChanged;
+                m_NetworkCharSelection.sessionPlayers.OnListChanged += OnSessionPlayerStateChanged;
             }
         }
 
@@ -185,24 +185,24 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         void UpdatePlayerCount()
         {
-            int count = m_NetworkCharSelection.LobbyPlayers.Count;
+            int count = m_NetworkCharSelection.sessionPlayers.Count;
             var pstr = (count > 1) ? "players" : "player";
             m_NumPlayersText.text = "<b>" + count + "</b> " + pstr + " connected";
         }
 
         /// <summary>
-        /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
+        /// Called by the server when any of the seats in the session have changed. (Including ours!)
         /// </summary>
-        void OnLobbyPlayerStateChanged(NetworkListEvent<NetworkCharSelection.LobbyPlayerState> changeEvent)
+        void OnSessionPlayerStateChanged(NetworkListEvent<NetworkCharSelection.SessionPlayerState> changeEvent)
         {
             UpdateSeats();
             UpdatePlayerCount();
 
             // now let's find our local player in the list and update the character/info box appropriately
             int localPlayerIdx = -1;
-            for (int i = 0; i < m_NetworkCharSelection.LobbyPlayers.Count; ++i)
+            for (int i = 0; i < m_NetworkCharSelection.sessionPlayers.Count; ++i)
             {
-                if (m_NetworkCharSelection.LobbyPlayers[i].ClientId == NetworkManager.Singleton.LocalClientId)
+                if (m_NetworkCharSelection.sessionPlayers[i].ClientId == NetworkManager.Singleton.LocalClientId)
                 {
                     localPlayerIdx = i;
                     break;
@@ -211,27 +211,27 @@ namespace Unity.BossRoom.Gameplay.GameState
 
             if (localPlayerIdx == -1)
             {
-                // we aren't currently participating in the lobby!
-                // this can happen for various reasons, such as the lobby being full and us not getting a seat.
+                // we aren't currently participating in the session!
+                // this can happen for various reasons, such as the session being full and us not getting a seat.
                 UpdateCharacterSelection(NetworkCharSelection.SeatState.Inactive);
             }
-            else if (m_NetworkCharSelection.LobbyPlayers[localPlayerIdx].SeatState == NetworkCharSelection.SeatState.Inactive)
+            else if (m_NetworkCharSelection.sessionPlayers[localPlayerIdx].SeatState == NetworkCharSelection.SeatState.Inactive)
             {
                 // we haven't chosen a seat yet (or were kicked out of our seat by someone else)
                 UpdateCharacterSelection(NetworkCharSelection.SeatState.Inactive);
-                // make sure our player num is properly set in Lobby UI
-                OnAssignedPlayerNumber(m_NetworkCharSelection.LobbyPlayers[localPlayerIdx].PlayerNumber);
+                // make sure our player num is properly set in Session UI
+                OnAssignedPlayerNumber(m_NetworkCharSelection.sessionPlayers[localPlayerIdx].PlayerNumber);
             }
             else
             {
-                // we have a seat! Note that if our seat is LockedIn, this function will also switch the lobby mode
-                UpdateCharacterSelection(m_NetworkCharSelection.LobbyPlayers[localPlayerIdx].SeatState, m_NetworkCharSelection.LobbyPlayers[localPlayerIdx].SeatIdx);
+                // we have a seat! Note that if our seat is LockedIn, this function will also switch the session mode
+                UpdateCharacterSelection(m_NetworkCharSelection.sessionPlayers[localPlayerIdx].SeatState, m_NetworkCharSelection.sessionPlayers[localPlayerIdx].SeatIdx);
             }
         }
 
         /// <summary>
         /// Internal utility that sets the character-graphics and class-info box based on
-        /// our chosen seat. It also triggers a LobbyMode change when it notices that our seat-state
+        /// our chosen seat. It also triggers a SessionMode change when it notices that our seat-state
         /// is LockedIn.
         /// </summary>
         /// <param name="state">Our current seat state</param>
@@ -276,7 +276,7 @@ namespace Unity.BossRoom.Gameplay.GameState
                     // the local player has locked in their seat choice! Rearrange the UI appropriately
                     // the character should act excited
                     m_CurrentCharacterGraphicsAnimator.SetTrigger(m_AnimationTriggerOnCharChosen);
-                    ConfigureUIForLobbyMode(m_NetworkCharSelection.IsLobbyClosed.Value ? LobbyMode.LobbyEnding : LobbyMode.SeatChosen);
+                    ConfigureUIForSessionMode(m_NetworkCharSelection.IsSessionClosed.Value ? SessionMode.SessionEnding : SessionMode.SeatChosen);
                     m_HasLocalPlayerLockedIn = true;
                 }
                 else if (m_HasLocalPlayerLockedIn && state == NetworkCharSelection.SeatState.Active)
@@ -284,7 +284,7 @@ namespace Unity.BossRoom.Gameplay.GameState
                     // reset character seats if locked in choice was unselected
                     if (m_HasLocalPlayerLockedIn)
                     {
-                        ConfigureUIForLobbyMode(LobbyMode.ChooseSeat);
+                        ConfigureUIForSessionMode(SessionMode.ChooseSeat);
                         m_ClassInfoBox.SetLockedIn(false);
                         m_HasLocalPlayerLockedIn = false;
                     }
@@ -297,7 +297,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        /// Internal utility that sets the graphics for the eight lobby-seats (based on their current networked state)
+        /// Internal utility that sets the graphics for the eight session-seats (based on their current networked state)
         /// </summary>
         void UpdateSeats()
         {
@@ -305,8 +305,8 @@ namespace Unity.BossRoom.Gameplay.GameState
             // Once they have chosen their class (by "locking in" their seat), other players in that seat are kicked out.
             // But until a seat is locked in, we need to display each seat as being used by the latest player to choose it.
             // So we go through all players and figure out who should visually be shown as sitting in that seat.
-            NetworkCharSelection.LobbyPlayerState[] curSeats = new NetworkCharSelection.LobbyPlayerState[m_PlayerSeats.Count];
-            foreach (NetworkCharSelection.LobbyPlayerState playerState in m_NetworkCharSelection.LobbyPlayers)
+            NetworkCharSelection.SessionPlayerState[] curSeats = new NetworkCharSelection.SessionPlayerState[m_PlayerSeats.Count];
+            foreach (NetworkCharSelection.SessionPlayerState playerState in m_NetworkCharSelection.sessionPlayers)
             {
                 if (playerState.SeatIdx == -1 || playerState.SeatState == NetworkCharSelection.SeatState.Inactive)
                     continue; // this player isn't seated at all!
@@ -326,37 +326,37 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        /// Called by the server when the lobby closes (because all players are seated and locked in)
+        /// Called by the server when the session closes (because all players are seated and locked in)
         /// </summary>
-        void OnLobbyClosedChanged(bool wasLobbyClosed, bool isLobbyClosed)
+        void OnSessionClosedChanged(bool wasSessionClosed, bool isSessionClosed)
         {
-            if (isLobbyClosed)
+            if (isSessionClosed)
             {
-                ConfigureUIForLobbyMode(LobbyMode.LobbyEnding);
+                ConfigureUIForSessionMode(SessionMode.SessionEnding);
             }
             else
             {
                 if (m_LastSeatSelected == -1)
                 {
-                    ConfigureUIForLobbyMode(LobbyMode.ChooseSeat);
+                    ConfigureUIForSessionMode(SessionMode.ChooseSeat);
                 }
                 else
                 {
-                    ConfigureUIForLobbyMode(LobbyMode.SeatChosen);
+                    ConfigureUIForSessionMode(SessionMode.SeatChosen);
                     m_ClassInfoBox.ConfigureForClass(m_NetworkCharSelection.AvatarConfiguration[m_LastSeatSelected].CharacterClass);
                 }
             }
         }
 
         /// <summary>
-        /// Turns on the UI elements for a specified "lobby mode", and turns off UI elements for all other modes.
-        /// It can also disable/enable the lobby seats and the "Ready" button if they are inappropriate for the
+        /// Turns on the UI elements for a specified "session mode", and turns off UI elements for all other modes.
+        /// It can also disable/enable the session seats and the "Ready" button if they are inappropriate for the
         /// given mode.
         /// </summary>
-        void ConfigureUIForLobbyMode(LobbyMode mode)
+        void ConfigureUIForSessionMode(SessionMode mode)
         {
             // first the easy bit: turn off all the inappropriate ui elements, and turn the appropriate ones on!
-            foreach (var list in m_LobbyUIElementsByMode.Values)
+            foreach (var list in m_SessionUIElementsByMode.Values)
             {
                 foreach (var uiElement in list)
                 {
@@ -364,16 +364,16 @@ namespace Unity.BossRoom.Gameplay.GameState
                 }
             }
 
-            foreach (var uiElement in m_LobbyUIElementsByMode[mode])
+            foreach (var uiElement in m_SessionUIElementsByMode[mode])
             {
                 uiElement.SetActive(true);
             }
 
-            // that finishes the easy bit. Next, each lobby mode might also need to configure the lobby seats and class-info box.
+            // that finishes the easy bit. Next, each session mode might also need to configure the session seats and class-info box.
             bool isSeatsDisabledInThisMode = false;
             switch (mode)
             {
-                case LobbyMode.ChooseSeat:
+                case SessionMode.ChooseSeat:
                     if (m_LastSeatSelected == -1)
                     {
                         if (m_CurrentCharacterGraphics)
@@ -384,16 +384,16 @@ namespace Unity.BossRoom.Gameplay.GameState
                     }
                     m_ReadyButtonText.text = "READY!";
                     break;
-                case LobbyMode.SeatChosen:
+                case SessionMode.SeatChosen:
                     isSeatsDisabledInThisMode = true;
                     m_ClassInfoBox.SetLockedIn(true);
                     m_ReadyButtonText.text = "UNREADY";
                     break;
-                case LobbyMode.FatalError:
+                case SessionMode.FatalError:
                     isSeatsDisabledInThisMode = true;
                     m_ClassInfoBox.ConfigureForNoSelection();
                     break;
-                case LobbyMode.LobbyEnding:
+                case SessionMode.SessionEnding:
                     isSeatsDisabledInThisMode = true;
                     m_ClassInfoBox.ConfigureForNoSelection();
                     break;
