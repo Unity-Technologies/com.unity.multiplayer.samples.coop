@@ -115,7 +115,6 @@ namespace Unity.BossRoom.ConnectionManagement
         }
     }
 
-    // Note: MultiplayerSDK refactoring
     /// <summary>
     /// UTP's Relay connection setup using the Session integration
     /// </summary>
@@ -148,7 +147,6 @@ namespace Unity.BossRoom.ConnectionManagement
                 return (false, false);
             }
 
-            // TODO SESSIONS:
             // When using Session with Relay, if a user is disconnected from the Relay server, the server will notify the
             // Session service and mark the user as disconnected, but will not remove them from the Session. They then have
             // some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on the dashboard),
@@ -160,7 +158,6 @@ namespace Unity.BossRoom.ConnectionManagement
             return (success, true); // return a success if reconnecting to session returns a session
         }
 
-        // Note: MultiplayerSDK refactoring
         public override async Task SetupHostConnectionAsync()
         {
             Debug.Log("Setting up Unity Relay host");
