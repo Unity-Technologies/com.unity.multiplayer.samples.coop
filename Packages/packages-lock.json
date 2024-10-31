@@ -135,6 +135,15 @@
         "com.unity.modules.uielements": "1.0.0"
       }
     },
+    "com.unity.multiplayer.playmode": {
+      "version": "1.3.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "2.0.2"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",
       "depth": 0,
@@ -434,13 +443,6 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
-    },
-    "com.veriorpies.parrelsync": {
-      "version": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync#bb3d5067e49e403d8b8ba15c036d313b4dd2c696",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "bb3d5067e49e403d8b8ba15c036d313b4dd2c696"
     },
     "jp.hadashikick.vcontainer": {
       "version": "1.11.0",
