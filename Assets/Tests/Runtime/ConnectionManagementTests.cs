@@ -194,11 +194,12 @@ namespace Unity.BossRoom.Tests.Runtime
             }
         }
 
-        [Test]
-        public void StartHost_Success()
+        [UnityTest]
+        public IEnumerator StartHost_Success()
         {
             StartHost();
             AssertHostIsListening();
+            yield return null;
         }
 
         [UnityTest]
