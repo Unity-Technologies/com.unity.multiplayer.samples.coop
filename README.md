@@ -5,8 +5,8 @@
 ###  Made with and Including Utilities for Netcode for GameObjects
 <br>
 
-[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-2022.3%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/whats-new/2022.3.0)
-[![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-1.8.1-57b9d3.svg?logo=unity&color=2196F3)](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/releases/tag/ngo%2F1.8.1)
+[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-6000.0.25f1%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/whats-new/6000.0.25)
+[![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-2.0.0-57b9d3.svg?logo=unity&color=2196F3)](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/releases/tag/ngo%2F1.8.1)
 [![LatestRelease](https://img.shields.io/badge/Latest%20Github%20Release:-v2.5.0-57b9d3.svg?logo=github&color=brightgreen)](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases/tag/v2.5.0)
 <br><br>
 
@@ -86,7 +86,7 @@ For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/A
 
 ## Requirements
 
-BossRoom is compatible with the latest Unity Long Term Support (LTS) editor version, currently [2022 LTS](https://unity.com/releases/editor/qa/lts-releases?version=2022.3). Please include standalone support for Windows/Mac in your installation.
+BossRoom is compatible with the latest Unity Long Term Support (LTS) editor version, currently [6000.0 LTS](https://unity.com/releases/editor/archive). Please include standalone support for Windows/Mac in your installation.
 
 **PLEASE NOTE:** You will also need Netcode for Game Objects to use these samples. See the [Installation Documentation](https://docs-multiplayer.unity3d.com/netcode/current/installation) to prepare your environment. You can also complete the [Get Started With NGO](https://docs-multiplayer.unity3d.com/netcode/current/tutorials/get-started-ngo) tutorial to familiarize yourself with Netcode For Game Objects.
 <br><br>
@@ -112,7 +112,7 @@ Boss Room uses Git Large Files Support (LFS) to handle all large assets required
 ## Opening the project for the first time
 
 Once you have downloaded the project, follow the steps below to get up and running:
- - Check that you have installed the most recent [LTS editor version](https://unity.com/releases/2021-lts).
+ - Check that you have installed the most recent [LTS editor version](https://unity.com/releases/unity-6-releases).
  	- Include standalone support for Windows/Mac in your installation. 
  - Add the project to the _Unity Hub_ by clicking on the **Add** button and pointing it to the root folder of the downloaded project.
  	- __Please note :__ the first time you open the project Unity will import all assets, which will take longer than usual.
