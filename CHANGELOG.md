@@ -11,6 +11,11 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Added a welcome dialog to guide users on their first time experience
 * Added a Table of Contents with helpful resources, that can be accessed from the `Tutorials > Show Tutorials` menu
 
+### Changed
+* Upgraded Boss Room to Netcode for GameObjects v2.0.0
+* Upgraded editor version to 6000.0.25f1
+
+
 ## [2.5.0] - 2024-04-18
 
 ### Changed
