@@ -15,6 +15,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using VContainer;
 using VContainer.Unity;
+using Object = UnityEngine.Object;
 
 namespace Unity.BossRoom.Tests.Runtime
 {
@@ -149,9 +150,9 @@ namespace Unity.BossRoom.Tests.Runtime
                 m_ClientScopes[i].Dispose();
             }
 
-            foreach (var sceneGameObject in GameObject.FindObjectsOfType<GameObject>())
+            foreach (var sceneGameObject in Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
             {
-                GameObject.DestroyImmediate(sceneGameObject);
+                Object.DestroyImmediate(sceneGameObject);
             }
 
             yield return base.OnTearDown();
