@@ -17,7 +17,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Upgraded editor version to 6000.0.25f1
 
 ### Cleanup
-* Removed ParallelSync from the project
+* Removed ParrelSync from the project
 
 
 ## [2.5.0] - 2024-04-18
