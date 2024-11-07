@@ -9,16 +9,19 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
     name: build {{ project.name }} - {{ editor }} on iOS
     agent:
         type: Unity::VM::osx
-        image: package-ci/macos-12:v4
+        image: package-ci/macos-13:v4
         flavor: b1.large
 
     commands:
         - pip install unity-downloader-cli==1.2.0 --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
         - unity-downloader-cli -c Editor -c iOS -u {{ editor }} --fast --wait
+        - echo "CONFIGURATION = Release" >> ~/XcodeBuildConfig.xcconfig
         - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
         - chmod +x ./utr
         - ./utr --suite=playmode --platform=iOS --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --build-only --testfilter=Unity.BossRoom.Tests.Runtime
-
+    variables:
+      UNITY_TESTS_XCODEBUILD_TIMEOUT: 60
+      XCODE_XCCONFIG_FILE: ~/XcodeBuildConfig.xcconfig
     artifacts:
         players:
             paths:
@@ -70,7 +73,7 @@ mobile_test_ios_{{ project.name }}_{{ editor }}:
     name: {{ project.name }} mobile project tests - {{ editor }} on iOS
     agent:
         type: Unity::mobile::iPhone
-        image: package-ci/macos-12:v4
+        image: package-ci/macos-13:v4
         flavor: b1.medium
 
     # Skip repository cloning

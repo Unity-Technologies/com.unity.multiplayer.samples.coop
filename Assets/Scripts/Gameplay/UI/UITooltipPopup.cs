@@ -67,7 +67,7 @@ namespace Unity.BossRoom.Gameplay.UI
                 if (!m_Canvas)
                 {
                     // typically there's only one canvas in the scene, so pick that
-                    m_Canvas = FindObjectOfType<Canvas>();
+                    m_Canvas = FindAnyObjectByType<Canvas>();
                 }
             }
         }
