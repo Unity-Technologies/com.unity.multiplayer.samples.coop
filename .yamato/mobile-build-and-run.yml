@@ -116,13 +116,20 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
         - .yamato/mobile-build-and-run.yml#Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}
     commands:
       # Download standalone UnityTestRunner
-      - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
-      - |
-          set ANDROID_DEVICE_CONNECTION=%BOKKEN_DEVICE_IP%
-          start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
-          start %ANDROID_SDK_ROOT%\platform-tools\adb.exe devices
-          set UTR_VERSION=0.12.0
-          ./utr --artifacts_path=build/test-results --testproject={{ project.path }} --editor-location=.Editor --reruncount=2 --suite=playmode --platform=android --player-load-path=build/players --testfilter=Unity.BossRoom.Tests.Runtime
+      - unity-downloader-cli --fast --wait -u {{ editor }} -c editor -c Android
+      - >
+        ANDROID_DEVICE_CONNECTION=$BOKKEN_DEVICE_IP
+        ANDROID_SDK_ROOT=$PWD/.Editor/Data/PlaybackEngines/AndroidPlayer/SDK
+        UnifiedTestRunner
+        --artifacts-path=build/test-results
+        --editor-location=.Editor
+        --suite=playmode
+        --testproject={{ project.path }}
+        --platform=Android
+        --player-load-path=build/players
+        --testfilter=Unity.BossRoom.Tests.Runtime
+        --reruncount=2
+        --player-connection-ip=$BOKKEN_HOST_IP    
     # Set uploadable artifact paths
     artifacts:
         logs:
