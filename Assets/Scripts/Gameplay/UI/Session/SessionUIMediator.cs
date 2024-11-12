@@ -194,6 +194,7 @@ namespace Unity.BossRoom.Gameplay.UI
             }
             else
             {
+                m_ConnectionManager.RequestShutdown();
                 UnblockUIAfterLoadingIsComplete();
             }
         }
