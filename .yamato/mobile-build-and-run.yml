@@ -47,6 +47,7 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         # Download unity-downloader-cli
         - pip install unity-downloader-cli==1.2.0 --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
         - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
+        - chmod +x utr.bat
         - python .yamato/disable-burst-if-requested.py --project-path {{ project.path }} --platform Android
         - unity-downloader-cli -c Editor -c Android -u {{ editor }} --fast --wait
         # Build player(s)
