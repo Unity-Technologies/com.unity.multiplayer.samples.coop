@@ -51,7 +51,7 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         - unity-downloader-cli -c Editor -c Android -u {{ editor }} --fast --wait
         # Build player(s)
         - set UTR_VERSION=0.12.0
-        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=mono --build-only --testfilter=Unity.BossRoom.Tests.Runtime
+        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=il2cpp --build-only --testfilter=Unity.BossRoom.Tests.Runtime
     artifacts:
         players:
             paths:
