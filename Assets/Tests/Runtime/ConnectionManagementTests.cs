@@ -260,7 +260,6 @@ namespace Unity.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        [Ignore("MTT-9625 - Temporarily disabling this test due to failure after upgrading to 6000.0.27f1 and onward")]
         public IEnumerator AttemptingToConnectWithSamePlayerId_ClientsDisconnectedWithReason()
         {
             StartHost();
