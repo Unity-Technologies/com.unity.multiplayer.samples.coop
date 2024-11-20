@@ -237,8 +237,8 @@ Running the game over internet currently requires setting up a relay.
 * Session Create with Relay - StartHostSession() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
 * Subscribing to SessionEvents - SubscribeToJoinedSessionAsync() in [Assets/Scripts/UnityServices/Sessions/MultiplayerServicesFacade.cs ](Assets/Scripts/UnityServices/Sessions/MultiplayerServicesFacade.cs)
 * Authentication - EnsurePlayerIsAuthorized() in [Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs ](Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs)
-* Authentication - Profile management for ParrelSync/local instances - GetProfile() in [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
-* Profile manager for ParrelSync and local play [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
+* Authentication - Profile management for local instances - GetProfile() in [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
+* Profile manager for local play [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
 
 ### Tools and Utilities
 * Networked message channel (inter-class and networked messaging) - [Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs](Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs)
@@ -253,6 +253,7 @@ Running the game over internet currently requires setting up a relay.
 * Scene utils with synced loading screens - [Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/ ](Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/)
 * RNSM custom config - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset)
 * NetworkSimulator usage through UI - [Assets/Scripts/Utils/NetworkSimulatorUIMediator.cs ](Assets/Scripts/Utils/NetworkSimulatorUIMediator.cs)
+* Multiplayer Play Mode - [ Packages/manifest.json ](Packages/manifest.json)
 </details>
 
 -------

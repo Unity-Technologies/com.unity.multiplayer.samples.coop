@@ -40,18 +40,19 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         type: Unity::VM
         # Any generic image can be used, no need to have Android tools in the image for building
         # All Android tools will be downloaded by unity-downloader-cli
-        image: mobile/android-execution-base:stable
-        flavor: b1.xlarge
+        image: mobile/android-execution-base:v2.1774381
+        flavor: b1.large
 
     commands:
         # Download unity-downloader-cli
-        - pip install unity-downloader-cli==1.2.0 --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
-        - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
-        - python .yamato/disable-burst-if-requested.py --project-path {{ project.path }} --platform Android
+        - gsudo choco source add -n Unity -s https://artifactory-slo.bf.unity3d.com/artifactory/api/nuget/unity-choco-local --priority=1
+        - gsudo choco install -y unity-config unity-downloader-cli
+        - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr.bat --output ./utr.bat
+        - unity-config project set registry candidates --project-path {{ project.path }}
         - unity-downloader-cli -c Editor -c Android -u {{ editor }} --fast --wait
+        - python .yamato/disable-burst-if-requested.py --project-path {{ project.path }} --platform Android
         # Build player(s)
-        - set UTR_VERSION=0.12.0
-        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=mono --build-only --testfilter=Unity.BossRoom.Tests.Runtime
+        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=il2cpp --build-only --testfilter=Unity.BossRoom.Tests.Runtime
     artifacts:
         players:
             paths:
@@ -106,7 +107,7 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
     name: {{ project.name }} mobile project tests - {{ editor }} on Android
     agent:
         type: Unity::mobile::shield
-        image: mobile/android-execution-base:stable
+        image: package-ci/ubuntu-22.04:v4
         flavor: b1.medium
 
     # Skip repository cloning
@@ -116,13 +117,20 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
         - .yamato/mobile-build-and-run.yml#Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}
     commands:
       # Download standalone UnityTestRunner
-      - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
-      - |
-          set ANDROID_DEVICE_CONNECTION=%BOKKEN_DEVICE_IP%
-          start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
-          start %ANDROID_SDK_ROOT%\platform-tools\adb.exe devices
-          set UTR_VERSION=0.12.0
-          ./utr --artifacts_path=build/test-results --testproject={{ project.path }} --editor-location=.Editor --reruncount=2 --suite=playmode --platform=android --player-load-path=build/players --testfilter=Unity.BossRoom.Tests.Runtime
+      - unity-downloader-cli --fast --wait -u {{ editor }} -c editor -c Android
+      - >
+        ANDROID_DEVICE_CONNECTION=$BOKKEN_DEVICE_IP
+        ANDROID_SDK_ROOT=$PWD/.Editor/Data/PlaybackEngines/AndroidPlayer/SDK
+        UnifiedTestRunner
+        --artifacts-path=build/test-results
+        --editor-location=.Editor
+        --suite=playmode
+        --testproject={{ project.path }}
+        --platform=Android
+        --player-load-path=build/players
+        --testfilter=Unity.BossRoom.Tests.Runtime
+        --reruncount=2
+        --player-connection-ip=$BOKKEN_HOST_IP    
     # Set uploadable artifact paths
     artifacts:
         logs:
