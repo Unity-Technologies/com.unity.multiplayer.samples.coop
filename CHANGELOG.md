@@ -10,6 +10,15 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Added
 * Added a welcome dialog to guide users on their first time experience
 * Added a Table of Contents with helpful resources, that can be accessed from the `Tutorials > Show Tutorials` menu
+* Added the Multiplayer Play Mode package v1.3.1 to the project 
+
+### Changed
+* Upgraded Boss Room to Netcode for GameObjects v2.0.0
+* Upgraded editor version to 6000.0.25f1
+
+### Cleanup
+* Removed ParrelSync from the project
+
 
 ## [2.5.0] - 2024-04-18
 

@@ -40,7 +40,7 @@ namespace Unity.BossRoom.DebugCheats
             {
                 if (m_SwitchedDoor == null)
                 {
-                    m_SwitchedDoor = FindObjectOfType<SwitchedDoor>();
+                    m_SwitchedDoor = FindAnyObjectByType<SwitchedDoor>();
                 }
                 return m_SwitchedDoor;
             }
@@ -173,7 +173,7 @@ namespace Unity.BossRoom.DebugCheats
         [Rpc(SendTo.Server, RequireOwnership = false)]
         void ServerKillAllEnemiesRpc(RpcParams serverRpcParams = default)
         {
-            foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
+            foreach (var serverCharacter in FindObjectsByType<ServerCharacter>(FindObjectsSortMode.None))
             {
                 if (serverCharacter.IsNpc && serverCharacter.LifeState == LifeState.Alive)
                 {
@@ -268,7 +268,7 @@ namespace Unity.BossRoom.DebugCheats
         [Rpc(SendTo.Server, RequireOwnership = false)]
         void ServerTogglePortalsRpc(RpcParams serverRpcParams = default)
         {
-            foreach (var portal in FindObjectsOfType<EnemyPortal>())
+            foreach (var portal in FindObjectsByType<EnemyPortal>(FindObjectsSortMode.None))
             {
                 if (m_DestroyPortalsOnNextToggle)
                 {
