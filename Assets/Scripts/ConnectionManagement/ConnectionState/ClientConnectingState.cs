@@ -5,8 +5,8 @@ using UnityEngine;
 namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
-    /// Connection state corresponding to when a client is attempting to connect to a server. Starts the client when
-    /// entering. If successful, transitions to the ClientConnected state. If not, transitions to the Offline state.
+    ///     Connection state corresponding to when a client is attempting to connect to a server. Starts the client when
+    ///     entering. If successful, transitions to the ClientConnected state. If not, transitions to the Offline state.
     /// </summary>
     class ClientConnectingState : OnlineState
     {
@@ -51,9 +51,9 @@ namespace Unity.BossRoom.ConnectionManagement
                 var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
                 m_ConnectStatusPublisher.Publish(connectStatus);
             }
+
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
-
 
         internal async Task ConnectClientAsync()
         {
@@ -66,7 +66,7 @@ namespace Unity.BossRoom.ConnectionManagement
                     if (!m_ConnectionManager.NetworkManager.StartClient())
                     {
                         throw new Exception("NetworkManager StartClient failed");
-                    }   
+                    }
                 }
             }
             catch (Exception e)
