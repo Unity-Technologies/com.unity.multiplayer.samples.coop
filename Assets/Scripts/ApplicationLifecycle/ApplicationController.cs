@@ -112,7 +112,7 @@ namespace Unity.BossRoom.ApplicationLifecycle
         }
 
         /// <summary>
-        ///     In builds, if we are in a MultiplayerServicesFacade and try to send a Leave request on application quit, it won't go through if we're quitting on the same frame.
+        ///     In builds, if we are in a Session and try to send a Leave request on application quit, it won't go through if we're quitting on the same frame.
         ///     So, we need to delay just briefly to let the request happen (though we don't need to wait for the result).
         /// </summary>
         private IEnumerator LeaveBeforeQuit()
