@@ -9,8 +9,8 @@ using VContainer;
 namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
-    /// Connection state corresponding to a host starting up. Starts the host when entering the state. If successful,
-    /// transitions to the Hosting state, if not, transitions back to the Offline state.
+    ///     Connection state corresponding to a host starting up. Starts the host when entering the state. If successful,
+    ///     transitions to the Hosting state, if not, transitions back to the Offline state.
     /// </summary>
     class StartingHostState : OnlineState
     {
@@ -43,6 +43,7 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             var connectionData = request.Payload;
             var clientId = request.ClientNetworkId;
+
             // This happens when starting as a host, before the end of the StartHost call. In that case, we simply approve ourselves.
             if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
             {
@@ -75,7 +76,7 @@ namespace Unity.BossRoom.ConnectionManagement
                     if (!m_ConnectionManager.NetworkManager.StartHost())
                     {
                         StartHostFailed();
-                    }   
+                    }
                 }
             }
             catch (Exception)

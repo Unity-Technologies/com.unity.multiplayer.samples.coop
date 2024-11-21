@@ -9,8 +9,9 @@ using UnityEngine;
 namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
-    /// ConnectionMethod contains all setup needed to setup NGO to be ready to start a connection, either host or client side.
-    /// Please override this abstract class to add a new transport or way of connecting.
+    ///     ConnectionMethod contains all setup needed to setup NGO to be ready to start a connection, either host or client
+    ///     side.
+    ///     Please override this abstract class to add a new transport or way of connecting.
     /// </summary>
     public abstract class ConnectionMethodBase
     {
@@ -19,23 +20,23 @@ namespace Unity.BossRoom.ConnectionManagement
         protected readonly string m_PlayerName;
 
         /// <summary>
-        /// Setup the host connection prior to starting the NetworkManager
+        ///     Setup the host connection prior to starting the NetworkManager
         /// </summary>
         /// <returns></returns>
         public abstract Task SetupHostConnectionAsync();
-        
+
         /// <summary>
-        /// Setup the client connection prior to starting the NetworkManager
+        ///     Setup the client connection prior to starting the NetworkManager
         /// </summary>
         /// <returns></returns>
         public abstract void SetupClientConnectionAsync();
 
         /// <summary>
-        /// Setup the client for reconnection prior to reconnecting
+        ///     Setup the client for reconnection prior to reconnecting
         /// </summary>
         /// <returns>
-        /// success = true if succeeded in setting up reconnection, false if failed.
-        /// shouldTryAgain = true if we should try again after failing, false if not.
+        ///     success = true if succeeded in setting up reconnection, false if failed.
+        ///     shouldTryAgain = true if we should try again after failing, false if not.
         /// </returns>
         public abstract Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync();
 
@@ -79,7 +80,7 @@ namespace Unity.BossRoom.ConnectionManagement
     }
 
     /// <summary>
-    /// Simple IP connection setup with UTP
+    ///     Simple IP connection setup with UTP
     /// </summary>
     class ConnectionMethodIP : ConnectionMethodBase
     {
@@ -116,7 +117,7 @@ namespace Unity.BossRoom.ConnectionManagement
     }
 
     /// <summary>
-    /// UTP's Relay connection setup using the Session integration
+    ///     UTP's Relay connection setup using the Session integration
     /// </summary>
     class ConnectionMethodRelay : ConnectionMethodBase
     {

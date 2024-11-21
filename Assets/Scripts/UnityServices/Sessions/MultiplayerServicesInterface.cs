@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Unity.BossRoom.UnityServices.Sessions
 {
     /// <summary>
-    /// Wrapper for all the interactions with the Sessions API.
+    ///     Wrapper for all the interactions with the Sessions API.
     /// </summary>
     public class MultiplayerServicesInterface
     {
@@ -43,7 +43,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 PlayerProperties = playerProperties,
                 SessionProperties = sessionProperties
             }.WithRelayNetwork();
-            
+
             return await MultiplayerService.Instance.CreateSessionAsync(sessionOptions);
         }
 
@@ -53,7 +53,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             {
                 PlayerProperties = localUserData
             };
-            return await MultiplayerService.Instance.JoinSessionByCodeAsync(sessionCode,joinSessionOptions);
+            return await MultiplayerService.Instance.JoinSessionByCodeAsync(sessionCode, joinSessionOptions);
         }
 
         public async Task<ISession> JoinSessionById(string sessionId, Dictionary<string, PlayerProperty> localUserData)
@@ -69,16 +69,16 @@ namespace Unity.BossRoom.UnityServices.Sessions
         {
             var quickJoinOptions = new QuickJoinOptions
             {
-                Filters = m_FilterOptions, 
+                Filters = m_FilterOptions,
                 CreateSession = true // create a Session if no matching Session was found
             };
-            
+
             var sessionOptions = new SessionOptions
             {
                 MaxPlayers = k_MaxPlayers,
                 PlayerProperties = localUserData
             }.WithRelayNetwork();
-            
+
             return await MultiplayerService.Instance.MatchmakeSessionAsync(quickJoinOptions, sessionOptions);
         }
 

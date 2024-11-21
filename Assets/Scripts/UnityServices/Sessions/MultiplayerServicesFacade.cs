@@ -11,16 +11,22 @@ using VContainer.Unity;
 namespace Unity.BossRoom.UnityServices.Sessions
 {
     /// <summary>
-    /// An abstraction layer between the direct calls into the Multiplayer Services SDK and the outcomes you actually want.
+    ///     An abstraction layer between the direct calls into the Multiplayer Services SDK and the outcomes you actually want.
     /// </summary>
     public class MultiplayerServicesFacade : IDisposable, IStartable
     {
-        [Inject] LifetimeScope m_ParentScope;
-        [Inject] UpdateRunner m_UpdateRunner;
-        [Inject] LocalSession m_LocalSession;
-        [Inject] LocalSessionUser m_LocalUser;
-        [Inject] IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePub;
-        [Inject] IPublisher<SessionListFetchedMessage> m_SessionListFetchedPub;
+        [Inject]
+        LifetimeScope m_ParentScope;
+        [Inject]
+        UpdateRunner m_UpdateRunner;
+        [Inject]
+        LocalSession m_LocalSession;
+        [Inject]
+        LocalSessionUser m_LocalUser;
+        [Inject]
+        IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePub;
+        [Inject]
+        IPublisher<SessionListFetchedMessage> m_SessionListFetchedPub;
 
         LifetimeScope m_ServiceScope;
         MultiplayerServicesInterface m_MultiplayerServicesInterface;
@@ -68,7 +74,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Initiates tracking of joined session's events. The host also starts sending heartbeat pings here.
+        ///     Initiates tracking of joined session's events. The host also starts sending heartbeat pings here.
         /// </summary>
         public void BeginTracking()
         {
@@ -80,7 +86,8 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Ends tracking of joined session's events and leaves or deletes the session. The host also stops sending heartbeat pings here.
+        ///     Ends tracking of joined session's events and leaves or deletes the session. The host also stops sending heartbeat
+        ///     pings here.
         /// </summary>
         public void EndTracking()
         {
@@ -104,7 +111,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Attempt to create a new session and then join it.
+        ///     Attempt to create a new session and then join it.
         /// </summary>
         public async Task<(bool Success, ISession Session)> TryCreateSessionAsync(string sessionName, int maxPlayers, bool isPrivate)
         {
@@ -132,7 +139,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Attempt to join an existing session. Will try to join via code, if code is null - will try to join via ID.
+        ///     Attempt to join an existing session. Will try to join via code, if code is null - will try to join via ID.
         /// </summary>
         public async Task<(bool Success, ISession Session)> TryJoinSessionAsync(string sessionCode, string sessionId)
         {
@@ -149,7 +156,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             }
 
             Debug.Log($"Joining session with session code {sessionCode}");
-            
+
             try
             {
                 if (!string.IsNullOrEmpty(sessionCode))
@@ -172,7 +179,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Attempt to join the first session among the available sessions that match the filtered onlineMode.
+        ///     Attempt to join the first session among the available sessions that match the filtered onlineMode.
         /// </summary>
         public async Task<(bool Success, ISession Session)> TryQuickJoinSessionAsync()
         {
@@ -200,6 +207,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             CurrentUnitySession = null;
             m_LocalUser?.ResetState();
             m_LocalSession?.Reset(m_LocalUser);
+
             // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
         }
 
@@ -214,7 +222,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             CurrentUnitySession.PlayerPropertiesChanged += OnPlayerPropertiesChanged;
             CurrentUnitySession.SessionPropertiesChanged += OnSessionPropertiesChanged;
         }
-        
+
         void UnsubscribeFromJoinedSessionAsync()
         {
             CurrentUnitySession.Changed -= OnSessionChanged;
@@ -226,7 +234,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             CurrentUnitySession.PlayerPropertiesChanged -= OnPlayerPropertiesChanged;
             CurrentUnitySession.SessionPropertiesChanged -= OnSessionPropertiesChanged;
         }
-        
+
         void OnSessionChanged()
         {
             Debug.Log("Session changed.");
@@ -245,10 +253,11 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
                 m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the session", "Disconnecting.", UnityServiceErrorMessage.Service.Session));
                 EndTracking();
+
                 // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
             }
         }
-        
+
         void OnSessionStateChanged(SessionState sessionState)
         {
             switch (sessionState)
@@ -268,31 +277,31 @@ namespace Unity.BossRoom.UnityServices.Sessions
                     throw new ArgumentOutOfRangeException(nameof(sessionState), sessionState, null);
             }
         }
-        
+
         void OnSessionDeleted()
         {
             Debug.Log("Session deleted.");
             ResetSession();
             EndTracking();
         }
-        
+
         void OnPlayerJoined(string playerId)
         {
             Debug.Log($"Player joined: {playerId}");
         }
-        
+
         void OnPlayerLeft(string playerId)
         {
             Debug.Log($"Player left: {playerId}");
         }
-        
+
         void OnRemovedFromSession()
         {
             Debug.Log("Removed from Session.");
             ResetSession();
             EndTracking();
         }
-        
+
         void OnPlayerPropertiesChanged()
         {
             Debug.Log("Player properties changed.");
@@ -304,7 +313,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Used for getting the list of all active sessions, without needing full info for each.
+        ///     Used for getting the list of all active sessions, without needing full info for each.
         /// </summary>
         public async Task RetrieveAndPublishSessionListAsync()
         {
@@ -340,7 +349,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Attempt to leave a session
+        ///     Attempt to leave a session
         /// </summary>
         async void LeaveSessionAsync()
         {
@@ -356,7 +365,6 @@ namespace Unity.BossRoom.UnityServices.Sessions
             {
                 ResetSession();
             }
-
         }
 
         public async void RemovePlayerFromSessionAsync(string uasId)
@@ -402,7 +410,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Attempt to update the set of key-value pairs associated with a given session and unlocks it so clients can see it.
+        ///     Attempt to update the set of key-value pairs associated with a given session and unlocks it so clients can see it.
         /// </summary>
         public async Task UpdateSessionPropertiesAndUnlockAsync()
         {
@@ -410,7 +418,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             {
                 return;
             }
-            
+
             if (!m_RateLimitQuery.CanCall)
             {
                 return;
@@ -443,13 +451,13 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Session Error", e.Message, UnityServiceErrorMessage.Service.Session, e));
                 return;
             }
-            
+
             if (aggregateException.InnerException is not SessionException sessionException)
             {
                 m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Session Error", e.Message, UnityServiceErrorMessage.Service.Session, e));
                 return;
             }
-            
+
             // If session is not found and if we are not the host, it has already been deleted. No need to publish the error here.
             if (checkIfDeleted)
             {
@@ -458,13 +466,13 @@ namespace Unity.BossRoom.UnityServices.Sessions
                     return;
                 }
             }
-            
+
             if (sessionException.Error == SessionError.RateLimitExceeded)
             {
                 m_RateLimitJoin.PutOnCooldown();
                 return;
             }
-            
+
             var reason = e.InnerException == null ? e.Message : $"{e.Message} ({e.InnerException.Message})"; // Session error type, then HTTP error type.
             m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Session Error", reason, UnityServiceErrorMessage.Service.Session, e));
         }

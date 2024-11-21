@@ -5,13 +5,14 @@ using Unity.Services.Multiplayer;
 namespace Unity.BossRoom.UnityServices.Sessions
 {
     /// <summary>
-    /// Data for a local session user instance. This will update data and is observed to know when to push local user changes to the entire session.
+    ///     Data for a local session user instance. This will update data and is observed to know when to push local user
+    ///     changes to the entire session.
     /// </summary>
     [Serializable]
     public class LocalSessionUser
     {
         UserData m_UserData;
-        
+
         public event Action<LocalSessionUser> changed;
 
         public LocalSessionUser()
@@ -39,7 +40,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Used for limiting costly OnChanged actions to just the members which actually changed.
+        ///     Used for limiting costly OnChanged actions to just the members which actually changed.
         /// </summary>
         [Flags]
         public enum UserMembers
@@ -92,7 +93,6 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 }
             }
         }
-
 
         public void CopyDataFrom(LocalSessionUser session)
         {

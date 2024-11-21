@@ -7,7 +7,7 @@ using VContainer;
 namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
-    /// Base class representing a connection state.
+    ///     Base class representing a connection state.
     /// </summary>
     abstract class ConnectionState
     {
@@ -27,11 +27,11 @@ namespace Unity.BossRoom.ConnectionManagement
         public virtual void OnServerStarted() { }
 
         public virtual void StartClientIP(string playerName, string ipaddress, int port) { }
-        
+
         public virtual void StartClientSession(string playerName) { }
 
         public virtual void StartHostIP(string playerName, string ipaddress, int port) { }
-        
+
         public virtual void StartHostSession(string playerName) { }
 
         public virtual void OnUserRequestedShutdown() { }

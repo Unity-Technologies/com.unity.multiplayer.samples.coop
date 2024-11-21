@@ -6,19 +6,20 @@ using UnityEngine;
 namespace Unity.BossRoom.UnityServices.Sessions
 {
     /// <summary>
-    /// A local wrapper around a session's remote data, with additional functionality for providing that data to UI elements and tracking local player objects.
+    ///     A local wrapper around a session's remote data, with additional functionality for providing that data to UI
+    ///     elements and tracking local player objects.
     /// </summary>
     [Serializable]
     public sealed class LocalSession
     {
         Dictionary<string, LocalSessionUser> m_SessionUsers = new();
         public Dictionary<string, LocalSessionUser> sessionUsers => m_SessionUsers;
-        
+
         SessionData m_Data;
         public SessionData Data => new(m_Data);
-        
+
         public event Action<LocalSession> changed;
-        
+
         public string SessionID
         {
             get => m_Data.SessionID;
@@ -110,7 +111,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 MaxPlayerCount = -1;
             }
         }
-        
+
         public void AddUser(LocalSessionUser user)
         {
             if (!m_SessionUsers.ContainsKey(user.ID))

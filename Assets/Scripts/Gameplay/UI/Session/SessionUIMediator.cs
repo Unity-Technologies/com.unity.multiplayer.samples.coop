@@ -14,15 +14,24 @@ namespace Unity.BossRoom.Gameplay.UI
 {
     public class SessionUIMediator : MonoBehaviour
     {
-        [SerializeField] CanvasGroup m_CanvasGroup;
-        [SerializeField] SessionJoiningUI m_SessionJoiningUI;
-        [SerializeField] SessionCreationUI m_SessionCreationUI;
-        [SerializeField] UITinter m_JoinToggleHighlight;
-        [SerializeField] UITinter m_JoinToggleTabBlocker;
-        [SerializeField] UITinter m_CreateToggleHighlight;
-        [SerializeField] UITinter m_CreateToggleTabBlocker;
-        [SerializeField] TextMeshProUGUI m_PlayerNameLabel;
-        [SerializeField] GameObject m_LoadingSpinner;
+        [SerializeField]
+        CanvasGroup m_CanvasGroup;
+        [SerializeField]
+        SessionJoiningUI m_SessionJoiningUI;
+        [SerializeField]
+        SessionCreationUI m_SessionCreationUI;
+        [SerializeField]
+        UITinter m_JoinToggleHighlight;
+        [SerializeField]
+        UITinter m_JoinToggleTabBlocker;
+        [SerializeField]
+        UITinter m_CreateToggleHighlight;
+        [SerializeField]
+        UITinter m_CreateToggleTabBlocker;
+        [SerializeField]
+        TextMeshProUGUI m_PlayerNameLabel;
+        [SerializeField]
+        GameObject m_LoadingSpinner;
 
         AuthenticationServiceFacade m_AuthenticationServiceFacade;
         MultiplayerServicesFacade m_MultiplayerServicesFacade;
@@ -34,7 +43,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         const string k_DefaultSessionName = "no-name";
         const int k_MaxPlayers = 8;
-        
+
         ISession m_Session;
 
         [Inject]
@@ -93,11 +102,11 @@ namespace Unity.BossRoom.Gameplay.UI
             }
 
             m_ConnectionManager.StartHostSession(m_LocalUser.DisplayName);
-            
+
             var result = await m_MultiplayerServicesFacade.TryCreateSessionAsync(sessionName, k_MaxPlayers, isPrivate);
 
             HandleSessionJoinResult(result);
-            
+
             UnblockUIAfterLoadingIsComplete();
         }
 
@@ -140,9 +149,9 @@ namespace Unity.BossRoom.Gameplay.UI
                 UnblockUIAfterLoadingIsComplete();
                 return;
             }
-            
+
             m_ConnectionManager.StartClientSession(m_LocalUser.DisplayName);
-            
+
             var result = await m_MultiplayerServicesFacade.TryJoinSessionAsync(sessionCode, null);
 
             HandleSessionJoinResult(result);
@@ -161,7 +170,7 @@ namespace Unity.BossRoom.Gameplay.UI
             }
 
             m_ConnectionManager.StartClientSession(m_LocalUser.DisplayName);
-            
+
             var result = await m_MultiplayerServicesFacade.TryJoinSessionAsync(null, sessionInfo.Id);
 
             HandleSessionJoinResult(result);
@@ -178,14 +187,14 @@ namespace Unity.BossRoom.Gameplay.UI
                 UnblockUIAfterLoadingIsComplete();
                 return;
             }
-            
+
             m_ConnectionManager.StartHostSession(m_LocalUser.DisplayName);
-            
+
             var result = await m_MultiplayerServicesFacade.TryQuickJoinSessionAsync();
 
             HandleSessionJoinResult(result);
         }
-        
+
         void HandleSessionJoinResult((bool Success, ISession Session) result)
         {
             if (result.Success)
@@ -204,7 +213,7 @@ namespace Unity.BossRoom.Gameplay.UI
             m_MultiplayerServicesFacade.SetRemoteSession(remoteSession);
 
             Debug.Log($"Joined session with ID: {m_LocalSession.SessionID}");
-            
+
             m_ConnectionManager.StartClientSession(m_LocalUser.DisplayName);
         }
 
