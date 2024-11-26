@@ -1,5 +1,11 @@
 # Multiplayer Samples Co-op Changelog
 
+## [Unreleased]
+
+### Changed
+* Replaced Lobby and Relay standalone packages with the Multiplayer Services package v1.0.2
+* Removed UnityRelayUtilities
+
 ## [1.9.0] - 2024-04-18
 
 ### Changed
