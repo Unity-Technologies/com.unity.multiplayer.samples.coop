@@ -176,7 +176,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             info.MaxPlayerCount = session.MaxPlayers;
             info.SessionCode = session.Code;
             info.Private = session.IsPrivate;
-            
+
             if (session.Properties != null)
             {
                 info.RelayJoinCode = session.Properties.TryGetValue("RelayJoinCode", out var property) ? property.Value : null; // By providing RelayCode through the session properties with Member visibility, we ensure a client is connected to the session before they could attempt a relay connection, preventing timing issues between them.
