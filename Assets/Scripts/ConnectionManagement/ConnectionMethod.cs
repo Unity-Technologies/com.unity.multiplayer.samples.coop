@@ -150,7 +150,7 @@ namespace Unity.BossRoom.ConnectionManagement
             // Session service and mark the user as disconnected, but will not remove them from the Session. They then have
             // some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on the dashboard),
             // after which they will be removed from the Session completely.
-            // See https://docs.unity.com/lobby/reconnect-to-lobby.html
+            // See https://docs.unity.com/ugs/en-us/manual/mps-sdk/manual/join-session#Reconnect_to_a_session
             var session = await m_MultiplayerServicesFacade.ReconnectToSessionAsync();
             var success = session != null;
             Debug.Log(success ? "Successfully reconnected to Session." : "Failed to reconnect to Session.");
