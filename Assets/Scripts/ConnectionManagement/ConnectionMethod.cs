@@ -23,13 +23,13 @@ namespace Unity.BossRoom.ConnectionManagement
         /// Setup the host connection prior to starting the NetworkManager
         /// </summary>
         /// <returns></returns>
-        public abstract Task SetupHostConnectionAsync();
+        public abstract void SetupHostConnection();
 
         /// <summary>
         /// Setup the client connection prior to starting the NetworkManager
         /// </summary>
         /// <returns></returns>
-        public abstract void SetupClientConnectionAsync();
+        public abstract void SetupClientConnection();
 
         /// <summary>
         /// Setup the client for reconnection prior to reconnecting
@@ -95,7 +95,7 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ConnectionManager = connectionManager;
         }
 
-        public override void SetupClientConnectionAsync()
+        public override void SetupClientConnection()
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName);
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
@@ -108,7 +108,7 @@ namespace Unity.BossRoom.ConnectionManagement
             return (true, true);
         }
 
-        public override async Task SetupHostConnectionAsync()
+        public override void SetupHostConnection()
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
@@ -123,8 +123,6 @@ namespace Unity.BossRoom.ConnectionManagement
     {
         MultiplayerServicesFacade m_MultiplayerServicesFacade;
 
-        bool m_IsPrivate = true;
-
         public ConnectionMethodRelay(MultiplayerServicesFacade multiplayerServicesFacade,
             ConnectionManager connectionManager,
             ProfileManager profileManager,
@@ -135,7 +133,7 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ConnectionManager = connectionManager;
         }
 
-        public override void SetupClientConnectionAsync()
+        public override void SetupClientConnection()
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName);
         }
@@ -159,7 +157,7 @@ namespace Unity.BossRoom.ConnectionManagement
             return (success, true); // return a success if reconnecting to session returns a session
         }
 
-        public override async Task SetupHostConnectionAsync()
+        public override void SetupHostConnection()
         {
             Debug.Log("Setting up Unity Relay host");
 

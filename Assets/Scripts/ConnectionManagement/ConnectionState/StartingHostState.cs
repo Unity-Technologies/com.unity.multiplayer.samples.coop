@@ -64,11 +64,11 @@ namespace Unity.BossRoom.ConnectionManagement
             StartHostFailed();
         }
 
-        async void StartHost()
+        void StartHost()
         {
             try
             {
-                await m_ConnectionMethod.SetupHostConnectionAsync();
+                m_ConnectionMethod.SetupHostConnection();
 
                 if (m_ConnectionMethod is ConnectionMethodIP)
                 {

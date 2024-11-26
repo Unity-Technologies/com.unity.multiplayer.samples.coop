@@ -59,7 +59,7 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             try
             {
-                m_ConnectionMethod.SetupClientConnectionAsync();
+                m_ConnectionMethod.SetupClientConnection();
 
                 if (m_ConnectionMethod is ConnectionMethodIP)
                 {
