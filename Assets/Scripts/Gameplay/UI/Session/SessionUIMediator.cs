@@ -106,8 +106,6 @@ namespace Unity.BossRoom.Gameplay.UI
             var result = await m_MultiplayerServicesFacade.TryCreateSessionAsync(sessionName, k_MaxPlayers, isPrivate);
 
             HandleSessionJoinResult(result);
-
-            UnblockUIAfterLoadingIsComplete();
         }
 
         public async void QuerySessionRequest(bool blockUI)
