@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.BossRoom.Infrastructure;
 using Unity.Services.Authentication;
@@ -406,41 +405,6 @@ namespace Unity.BossRoom.UnityServices.Sessions
             else
             {
                 Debug.LogError("Only the host can delete a session.");
-            }
-        }
-
-        /// <summary>
-        /// Attempt to update the set of key-value pairs associated with a given session and unlocks it so clients can see it.
-        /// </summary>
-        public async Task UpdateSessionPropertiesAndUnlockAsync()
-        {
-            if (!m_LocalUser.IsHost)
-            {
-                return;
-            }
-
-            if (!m_RateLimitQuery.CanCall)
-            {
-                return;
-            }
-
-            var localData = m_LocalSession.GetDataForUnityServices();
-
-            var dataCurr = (Dictionary<string, SessionProperty>)CurrentUnitySession.Properties ?? new Dictionary<string, SessionProperty>();
-
-            foreach (var dataNew in localData)
-            {
-                dataCurr[dataNew.Key] = dataNew.Value;
-            }
-
-            try
-            {
-                CurrentUnitySession.AsHost().SetProperties(dataCurr);
-                await CurrentUnitySession.AsHost().SavePropertiesAsync();
-            }
-            catch (Exception e)
-            {
-                PublishError(e);
             }
         }
 
