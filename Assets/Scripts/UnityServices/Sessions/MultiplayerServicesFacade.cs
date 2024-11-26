@@ -11,7 +11,7 @@ using VContainer.Unity;
 namespace Unity.BossRoom.UnityServices.Sessions
 {
     /// <summary>
-    ///     An abstraction layer between the direct calls into the Multiplayer Services SDK and the outcomes you actually want.
+    /// An abstraction layer between the direct calls into the Multiplayer Services SDK and the outcomes you actually want.
     /// </summary>
     public class MultiplayerServicesFacade : IDisposable, IStartable
     {
@@ -74,7 +74,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        ///     Initiates tracking of joined session's events. The host also starts sending heartbeat pings here.
+        /// Initiates tracking of joined session's events. The host also starts sending heartbeat pings here.
         /// </summary>
         public void BeginTracking()
         {
@@ -86,8 +86,8 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        ///     Ends tracking of joined session's events and leaves or deletes the session. The host also stops sending heartbeat
-        ///     pings here.
+        /// Ends tracking of joined session's events and leaves or deletes the session. The host also stops sending heartbeat
+        /// pings here.
         /// </summary>
         public void EndTracking()
         {
@@ -111,7 +111,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        ///     Attempt to create a new session and then join it.
+        /// Attempt to create a new session and then join it.
         /// </summary>
         public async Task<(bool Success, ISession Session)> TryCreateSessionAsync(string sessionName, int maxPlayers, bool isPrivate)
         {
@@ -139,7 +139,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        ///     Attempt to join an existing session. Will try to join via code, if code is null - will try to join via ID.
+        /// Attempt to join an existing session. Will try to join via code, if code is null - will try to join via ID.
         /// </summary>
         public async Task<(bool Success, ISession Session)> TryJoinSessionAsync(string sessionCode, string sessionId)
         {
@@ -179,7 +179,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        ///     Attempt to join the first session among the available sessions that match the filtered onlineMode.
+        /// Attempt to join the first session among the available sessions that match the filtered onlineMode.
         /// </summary>
         public async Task<(bool Success, ISession Session)> TryQuickJoinSessionAsync()
         {
@@ -313,7 +313,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        ///     Used for getting the list of all active sessions, without needing full info for each.
+        /// Used for getting the list of all active sessions, without needing full info for each.
         /// </summary>
         public async Task RetrieveAndPublishSessionListAsync()
         {
@@ -349,7 +349,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        ///     Attempt to leave a session
+        /// Attempt to leave a session
         /// </summary>
         async void LeaveSessionAsync()
         {
@@ -410,7 +410,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        ///     Attempt to update the set of key-value pairs associated with a given session and unlocks it so clients can see it.
+        /// Attempt to update the set of key-value pairs associated with a given session and unlocks it so clients can see it.
         /// </summary>
         public async Task UpdateSessionPropertiesAndUnlockAsync()
         {

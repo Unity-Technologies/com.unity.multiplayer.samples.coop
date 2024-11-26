@@ -7,7 +7,7 @@ using VContainer;
 namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
-    ///     An individual Session UI in the list of available Sessions.
+    /// An individual Session UI in the list of available Sessions.
     /// </summary>
     public class SessionListItemUI : MonoBehaviour
     {

@@ -7,7 +7,7 @@ using VContainer;
 namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
-    ///     Base class representing a connection state.
+    /// Base class representing a connection state.
     /// </summary>
     abstract class ConnectionState
     {

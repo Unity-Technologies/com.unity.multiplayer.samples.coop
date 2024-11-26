@@ -10,8 +10,8 @@ using VContainer;
 namespace UUnity.BossRoom.ConnectionManagement
 {
     /// <summary>
-    ///     Connection state corresponding to when the NetworkManager is shut down. From this state we can transition to the
-    ///     ClientConnecting sate, if starting as a client, or the StartingHost state, if starting as a host.
+    /// Connection state corresponding to when the NetworkManager is shut down. From this state we can transition to the
+    /// ClientConnecting sate, if starting as a client, or the StartingHost state, if starting as a host.
     /// </summary>
     class OfflineState : ConnectionState
     {

@@ -12,13 +12,13 @@ using Avatar = Unity.BossRoom.Gameplay.Configuration.Avatar;
 namespace Unity.BossRoom.Gameplay.GameState
 {
     /// <summary>
-    ///     Client specialization of the Character Select game state. Mainly controls the UI during character-select.
+    /// Client specialization of the Character Select game state. Mainly controls the UI during character-select.
     /// </summary>
     [RequireComponent(typeof(NetcodeHooks))]
     public class ClientCharSelectState : GameStateBehaviour
     {
         /// <summary>
-        ///     Reference to the scene's state object so that UI can access state
+        /// Reference to the scene's state object so that UI can access state
         /// </summary>
         public static ClientCharSelectState Instance { get; private set; }
 
@@ -99,10 +99,10 @@ namespace Unity.BossRoom.Gameplay.GameState
         Dictionary<Guid, GameObject> m_SpawnedCharacterGraphics = new Dictionary<Guid, GameObject>();
 
         /// <summary>
-        ///     Conceptual modes or stages that the session can be in. We don't actually
-        ///     bother to keep track of what SessionMode we're in at any given time; it's just
-        ///     an abstraction that makes it easier to configure which UI elements should
-        ///     be enabled/disabled in each stage of the session.
+        /// Conceptual modes or stages that the session can be in. We don't actually
+        /// bother to keep track of what SessionMode we're in at any given time; it's just
+        /// an abstraction that makes it easier to configure which UI elements should
+        /// be enabled/disabled in each stage of the session.
         /// </summary>
         enum SessionMode
         {
@@ -179,7 +179,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        ///     Called when our PlayerNumber (e.g. P1, P2, etc.) has been assigned by the server
+        /// Called when our PlayerNumber (e.g. P1, P2, etc.) has been assigned by the server
         /// </summary>
         /// <param name="playerNum"></param>
         void OnAssignedPlayerNumber(int playerNum)
@@ -195,7 +195,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        ///     Called by the server when any of the seats in the session have changed. (Including ours!)
+        /// Called by the server when any of the seats in the session have changed. (Including ours!)
         /// </summary>
         void OnSessionPlayerStateChanged(NetworkListEvent<NetworkCharSelection.SessionPlayerState> changeEvent)
         {
@@ -235,9 +235,9 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        ///     Internal utility that sets the character-graphics and class-info box based on
-        ///     our chosen seat. It also triggers a SessionMode change when it notices that our seat-state
-        ///     is LockedIn.
+        /// Internal utility that sets the character-graphics and class-info box based on
+        /// our chosen seat. It also triggers a SessionMode change when it notices that our seat-state
+        /// is LockedIn.
         /// </summary>
         /// <param name="state">Our current seat state</param>
         /// <param name="seatIdx">Which seat we're sitting in, or -1 if SeatState is Inactive</param>
@@ -303,7 +303,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        ///     Internal utility that sets the graphics for the eight session-seats (based on their current networked state)
+        /// Internal utility that sets the graphics for the eight session-seats (based on their current networked state)
         /// </summary>
         void UpdateSeats()
         {
@@ -332,7 +332,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        ///     Called by the server when the session closes (because all players are seated and locked in)
+        /// Called by the server when the session closes (because all players are seated and locked in)
         /// </summary>
         void OnSessionClosedChanged(bool wasSessionClosed, bool isSessionClosed)
         {
@@ -355,9 +355,9 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        ///     Turns on the UI elements for a specified "session mode", and turns off UI elements for all other modes.
-        ///     It can also disable/enable the session seats and the "Ready" button if they are inappropriate for the
-        ///     given mode.
+        /// Turns on the UI elements for a specified "session mode", and turns off UI elements for all other modes.
+        /// It can also disable/enable the session seats and the "Ready" button if they are inappropriate for the
+        /// given mode.
         /// </summary>
         void ConfigureUIForSessionMode(SessionMode mode)
         {
@@ -416,7 +416,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        ///     Called directly by UI elements!
+        /// Called directly by UI elements!
         /// </summary>
         /// <param name="seatIdx"></param>
         public void OnPlayerClickedSeat(int seatIdx)
@@ -428,7 +428,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        ///     Called directly by UI elements!
+        /// Called directly by UI elements!
         /// </summary>
         public void OnPlayerClickedReady()
         {

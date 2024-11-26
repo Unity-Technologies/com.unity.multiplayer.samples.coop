@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Unity.BossRoom.UnityServices.Sessions
 {
     /// <summary>
-    ///     Wrapper for all the interactions with the Sessions API.
+    /// Wrapper for all the interactions with the Sessions API.
     /// </summary>
     public class MultiplayerServicesInterface
     {

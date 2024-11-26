@@ -6,8 +6,8 @@ using UnityEngine;
 namespace Unity.BossRoom.UnityServices.Sessions
 {
     /// <summary>
-    ///     A local wrapper around a session's remote data, with additional functionality for providing that data to UI
-    ///     elements and tracking local player objects.
+    /// A local wrapper around a session's remote data, with additional functionality for providing that data to UI
+    /// elements and tracking local player objects.
     /// </summary>
     [Serializable]
     public sealed class LocalSession
