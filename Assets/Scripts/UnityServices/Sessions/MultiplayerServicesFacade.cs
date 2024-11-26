@@ -206,7 +206,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         {
             CurrentUnitySession = null;
             m_LocalUser?.ResetState();
-            m_LocalSession?.Reset(m_LocalUser);
+            m_LocalSession?.Reset();
 
             // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
         }

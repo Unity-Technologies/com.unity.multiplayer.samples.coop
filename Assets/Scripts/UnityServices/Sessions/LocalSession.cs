@@ -16,7 +16,6 @@ namespace Unity.BossRoom.UnityServices.Sessions
         public Dictionary<string, LocalSessionUser> sessionUsers => m_SessionUsers;
 
         SessionData m_Data;
-        public SessionData Data => new(m_Data);
 
         public event Action<LocalSession> changed;
 
@@ -46,38 +45,6 @@ namespace Unity.BossRoom.UnityServices.Sessions
             set
             {
                 m_Data.RelayJoinCode = value;
-                OnChanged();
-            }
-        }
-
-        public string SessionName
-        {
-            get => m_Data.SessionName;
-            set
-            {
-                m_Data.SessionName = value;
-                OnChanged();
-            }
-        }
-
-        public bool Private
-        {
-            get => m_Data.Private;
-            set
-            {
-                m_Data.Private = value;
-                OnChanged();
-            }
-        }
-
-        public int PlayerCount => m_SessionUsers.Count;
-
-        public int MaxPlayerCount
-        {
-            get => m_Data.MaxPlayerCount;
-            set
-            {
-                m_Data.MaxPlayerCount = value;
                 OnChanged();
             }
         }
@@ -247,7 +214,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             CopyDataFrom(info, localSessionUsers);
         }
 
-        public void Reset(LocalSessionUser localUser)
+        public void Reset()
         {
             CopyDataFrom(new SessionData(), new Dictionary<string, LocalSessionUser>());
         }
