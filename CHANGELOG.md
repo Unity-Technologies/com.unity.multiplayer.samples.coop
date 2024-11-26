@@ -15,7 +15,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Changed
 * Upgraded Boss Room to Netcode for GameObjects v2.0.0
 * Upgraded editor version to 6000.0.25f1
-* Replaced Lobby and Relay standalone packages with the Multiplayer Services package and the Sessions framework
+* Replaced Lobby and Relay standalone packages with the Multiplayer Services package v1.0.2 and the Sessions framework (#892)
 
 ### Cleanup
 * Removed ParrelSync from the project
