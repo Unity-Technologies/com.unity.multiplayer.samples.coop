@@ -135,7 +135,7 @@ Code is organized in domain-based assemblies. See the [Boss Room architecture do
 
 ### Registering the project with Unity Gaming Services (UGS)
 
-Boss Room leverages several services from UGS to facilitate connectivity between players. To use these services inside your project, you must [create an organization](https://support.unity.com/hc/en-us/articles/208592876-How-do-I-create-a-new-Organization-) inside the Unity Dashboard.. Otherwise, you can still use Boss Room without UGS.
+Boss Room leverages several services from UGS to facilitate connectivity between players. To use these services inside your project, you must [create an organization](https://support.unity.com/hc/en-us/articles/208592876-How-do-I-create-a-new-Organization-) inside the Unity Dashboard. Otherwise, you can still use Boss Room without UGS.
 <br><br><br>
  
 ## Testing multiplayer
