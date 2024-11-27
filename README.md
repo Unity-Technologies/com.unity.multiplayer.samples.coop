@@ -169,7 +169,7 @@ Running the game over internet currently requires setting up a relay.
   
 ### Relay Setup
  
-- Boss Room provides an integration with [Multiplayer Services sessions](https://docs.unity.com/ugs/en-us/manual/mps-sdk/manual) that make use of [Unity Relay](https://docs-multiplayer.unity3d.com/netcode/current/relay/). You can find our Unity Relay setup guide [here](https://docs.unity.com/ugs/en-us/manual/relay/manual/get-started)
+- Boss Room uses the Multiplayer Services Package to integrate [Sessions](https://docs.unity.com/ugs/en-us/manual/mps-sdk/manual) for grouping and connecting players.
 
 - Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers.
 - Boss Room uses `UDP` and needs a `9998` external port to be open. 
