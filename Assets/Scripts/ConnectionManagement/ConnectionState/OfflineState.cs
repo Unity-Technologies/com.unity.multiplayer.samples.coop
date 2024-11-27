@@ -36,12 +36,6 @@ namespace UUnity.BossRoom.ConnectionManagement
 
         public override void Exit() { }
 
-        public override void OnClientConnected(ulong _)
-        {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.Success);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting);
-        }
-
         public override void StartClientIP(string playerName, string ipaddress, int port)
         {
             var connectionMethod = new ConnectionMethodIP(ipaddress, (ushort)port, m_ConnectionManager, m_ProfileManager, playerName);
