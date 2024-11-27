@@ -150,7 +150,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
             m_ConnectionManager.StartClientSession(m_LocalUser.DisplayName);
 
-            var result = await m_MultiplayerServicesFacade.TryJoinSessionAsync(sessionCode, null);
+            var result = await m_MultiplayerServicesFacade.TryJoinSessionByCodeAsync(sessionCode);
 
             HandleSessionJoinResult(result);
         }
@@ -169,7 +169,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
             m_ConnectionManager.StartClientSession(m_LocalUser.DisplayName);
 
-            var result = await m_MultiplayerServicesFacade.TryJoinSessionAsync(null, sessionInfo.Id);
+            var result = await m_MultiplayerServicesFacade.TryJoinSessionByNameAsync(sessionInfo.Id);
 
             HandleSessionJoinResult(result);
         }

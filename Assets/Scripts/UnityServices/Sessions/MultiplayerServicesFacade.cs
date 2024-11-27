@@ -138,9 +138,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Attempt to join an existing session. Will try to join via code, if code is null - will try to join via ID.
+        /// Attempt to join an existing session with a join code.
         /// </summary>
-        public async Task<(bool Success, ISession Session)> TryJoinSessionAsync(string sessionCode, string sessionId)
+        public async Task<(bool Success, ISession Session)> TryJoinSessionByCodeAsync(string sessionCode)
         {
             if (!m_RateLimitJoin.CanCall)
             {
@@ -148,26 +148,50 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 return (false, null);
             }
 
-            if (sessionId == null && sessionCode == null)
+            if (string.IsNullOrEmpty(sessionCode))
             {
-                Debug.LogWarning("Cannot join a Session without a join code or session ID.");
+                Debug.LogWarning("Cannot join a Session without a join code.");
                 return (false, null);
             }
 
-            Debug.Log($"Joining session with session code {sessionCode}");
+            Debug.Log($"Joining session with join code {sessionCode}");
 
             try
             {
-                if (!string.IsNullOrEmpty(sessionCode))
-                {
-                    var session = await m_MultiplayerServicesInterface.JoinSessionByCode(sessionCode, m_LocalUser.GetDataForUnityServices());
-                    return (true, session);
-                }
-                else
-                {
-                    var session = await m_MultiplayerServicesInterface.JoinSessionById(sessionId, m_LocalUser.GetDataForUnityServices());
-                    return (true, session);
-                }
+                var session = await m_MultiplayerServicesInterface.JoinSessionByCode(sessionCode, m_LocalUser.GetDataForUnityServices());
+                return (true, session);
+            }
+            catch (Exception e)
+            {
+                PublishError(e);
+            }
+
+            return (false, null);
+        }
+
+        /// <summary>
+        /// Attempt to join an existing session by name.
+        /// </summary>
+        public async Task<(bool Success, ISession Session)> TryJoinSessionByNameAsync(string sessionName)
+        {
+            if (!m_RateLimitJoin.CanCall)
+            {
+                Debug.LogWarning("Join Session hit the rate limit.");
+                return (false, null);
+            }
+
+            if (string.IsNullOrEmpty(sessionName))
+            {
+                Debug.LogWarning("Cannot join a Session without a session name.");
+                return (false, null);
+            }
+
+            Debug.Log($"Joining session with name {sessionName}");
+
+            try
+            {
+                var session = await m_MultiplayerServicesInterface.JoinSessionById(sessionName, m_LocalUser.GetDataForUnityServices());
+                return (true, session);
             }
             catch (Exception e)
             {
