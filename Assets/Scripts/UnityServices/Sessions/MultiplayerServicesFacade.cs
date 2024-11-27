@@ -236,7 +236,6 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
         void OnSessionChanged()
         {
-            Debug.Log("Session changed.");
             m_LocalSession.ApplyRemoteData(CurrentUnitySession);
 
             // as client, check if host is still in session
