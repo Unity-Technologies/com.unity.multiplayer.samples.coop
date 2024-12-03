@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.BossRoom.Infrastructure;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -10,31 +10,31 @@ using VContainer;
 namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
-    /// Handles the list of LobbyListItemUIs and ensures it stays synchronized with the lobby list from the service.
+    /// Handles the list of SessionListItemUIs and ensures it stays synchronized with the Session list from the service.
     /// </summary>
-    public class LobbyJoiningUI : MonoBehaviour
+    public class SessionJoiningUI : MonoBehaviour
     {
         [SerializeField]
-        LobbyListItemUI m_LobbyListItemPrototype;
+        SessionListItemUI m_SessionListItemPrototype;
         [SerializeField]
         InputField m_JoinCodeField;
         [SerializeField]
         CanvasGroup m_CanvasGroup;
         [SerializeField]
-        Graphic m_EmptyLobbyListLabel;
+        Graphic m_EmptySessionListLabel;
         [SerializeField]
-        Button m_JoinLobbyButton;
+        Button m_JoinSessionButton;
 
         IObjectResolver m_Container;
-        LobbyUIMediator m_LobbyUIMediator;
+        SessionUIMediator m_SessionUIMediator;
         UpdateRunner m_UpdateRunner;
-        ISubscriber<LobbyListFetchedMessage> m_LocalLobbiesRefreshedSub;
+        ISubscriber<SessionListFetchedMessage> m_LocalSessionsRefreshedSub;
 
-        List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
+        List<SessionListItemUI> m_SessionListItems = new List<SessionListItemUI>();
 
         void Awake()
         {
-            m_LobbyListItemPrototype.gameObject.SetActive(false);
+            m_SessionListItemPrototype.gameObject.SetActive(false);
         }
 
         void OnDisable()
@@ -47,24 +47,24 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void OnDestroy()
         {
-            if (m_LocalLobbiesRefreshedSub != null)
+            if (m_LocalSessionsRefreshedSub != null)
             {
-                m_LocalLobbiesRefreshedSub.Unsubscribe(UpdateUI);
+                m_LocalSessionsRefreshedSub.Unsubscribe(UpdateUI);
             }
         }
 
         [Inject]
         void InjectDependenciesAndInitialize(
             IObjectResolver container,
-            LobbyUIMediator lobbyUIMediator,
+            SessionUIMediator sessionUIMediator,
             UpdateRunner updateRunner,
-            ISubscriber<LobbyListFetchedMessage> localLobbiesRefreshedSub)
+            ISubscriber<SessionListFetchedMessage> localSessionsRefreshedSub)
         {
             m_Container = container;
-            m_LobbyUIMediator = lobbyUIMediator;
+            m_SessionUIMediator = sessionUIMediator;
             m_UpdateRunner = updateRunner;
-            m_LocalLobbiesRefreshedSub = localLobbiesRefreshedSub;
-            m_LocalLobbiesRefreshedSub.Subscribe(UpdateUI);
+            m_LocalSessionsRefreshedSub = localSessionsRefreshedSub;
+            m_LocalSessionsRefreshedSub.Subscribe(UpdateUI);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Unity.BossRoom.Gameplay.UI
         public void OnJoinCodeInputTextChanged()
         {
             m_JoinCodeField.text = SanitizeJoinCode(m_JoinCodeField.text);
-            m_JoinLobbyButton.interactable = m_JoinCodeField.text.Length > 0;
+            m_JoinSessionButton.interactable = m_JoinCodeField.text.Length > 0;
         }
 
         string SanitizeJoinCode(string dirtyString)
@@ -83,59 +83,59 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public void OnJoinButtonPressed()
         {
-            m_LobbyUIMediator.JoinLobbyWithCodeRequest(SanitizeJoinCode(m_JoinCodeField.text));
+            m_SessionUIMediator.JoinSessionWithCodeRequest(SanitizeJoinCode(m_JoinCodeField.text));
         }
 
         void PeriodicRefresh(float _)
         {
             //this is a soft refresh without needing to lock the UI and such
-            m_LobbyUIMediator.QueryLobbiesRequest(false);
+            m_SessionUIMediator.QuerySessionRequest(false);
         }
 
         public void OnRefresh()
         {
-            m_LobbyUIMediator.QueryLobbiesRequest(true);
+            m_SessionUIMediator.QuerySessionRequest(true);
         }
 
-        void UpdateUI(LobbyListFetchedMessage message)
+        void UpdateUI(SessionListFetchedMessage message)
         {
-            EnsureNumberOfActiveUISlots(message.LocalLobbies.Count);
+            EnsureNumberOfActiveUISlots(message.LocalSessions.Count);
 
-            for (var i = 0; i < message.LocalLobbies.Count; i++)
+            for (var i = 0; i < message.LocalSessions.Count; i++)
             {
-                var localLobby = message.LocalLobbies[i];
-                m_LobbyListItems[i].SetData(localLobby);
+                var localSession = message.LocalSessions[i];
+                m_SessionListItems[i].SetData(localSession);
             }
 
-            if (message.LocalLobbies.Count == 0)
+            if (message.LocalSessions.Count == 0)
             {
-                m_EmptyLobbyListLabel.enabled = true;
+                m_EmptySessionListLabel.enabled = true;
             }
             else
             {
-                m_EmptyLobbyListLabel.enabled = false;
+                m_EmptySessionListLabel.enabled = false;
             }
         }
 
         void EnsureNumberOfActiveUISlots(int requiredNumber)
         {
-            int delta = requiredNumber - m_LobbyListItems.Count;
+            int delta = requiredNumber - m_SessionListItems.Count;
 
             for (int i = 0; i < delta; i++)
             {
-                m_LobbyListItems.Add(CreateLobbyListItem());
+                m_SessionListItems.Add(CreateSessionListItem());
             }
 
-            for (int i = 0; i < m_LobbyListItems.Count; i++)
+            for (int i = 0; i < m_SessionListItems.Count; i++)
             {
-                m_LobbyListItems[i].gameObject.SetActive(i < requiredNumber);
+                m_SessionListItems[i].gameObject.SetActive(i < requiredNumber);
             }
         }
 
-        LobbyListItemUI CreateLobbyListItem()
+        SessionListItemUI CreateSessionListItem()
         {
-            var listItem = Instantiate(m_LobbyListItemPrototype.gameObject, m_LobbyListItemPrototype.transform.parent)
-                .GetComponent<LobbyListItemUI>();
+            var listItem = Instantiate(m_SessionListItemPrototype.gameObject, m_SessionListItemPrototype.transform.parent)
+                .GetComponent<SessionListItemUI>();
             listItem.gameObject.SetActive(true);
 
             m_Container.Inject(listItem);
@@ -145,7 +145,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public void OnQuickJoinClicked()
         {
-            m_LobbyUIMediator.QuickJoinRequest();
+            m_SessionUIMediator.QuickJoinRequest();
         }
 
         public void Show()

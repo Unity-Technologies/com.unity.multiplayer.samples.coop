@@ -1,6 +1,6 @@
 using System;
 using Unity.BossRoom.Infrastructure;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
@@ -15,9 +15,9 @@ namespace Unity.BossRoom.ConnectionManagement
     class StartingHostState : OnlineState
     {
         [Inject]
-        LobbyServiceFacade m_LobbyServiceFacade;
+        MultiplayerServicesFacade m_MultiplayerServicesFacade;
         [Inject]
-        LocalLobby m_LocalLobby;
+        LocalSession m_LocalSession;
         ConnectionMethodBase m_ConnectionMethod;
 
         public StartingHostState Configure(ConnectionMethodBase baseConnectionMethod)
@@ -43,6 +43,7 @@ namespace Unity.BossRoom.ConnectionManagement
         {
             var connectionData = request.Payload;
             var clientId = request.ClientNetworkId;
+
             // This happens when starting as a host, before the end of the StartHost call. In that case, we simply approve ourselves.
             if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
             {
@@ -63,16 +64,19 @@ namespace Unity.BossRoom.ConnectionManagement
             StartHostFailed();
         }
 
-        async void StartHost()
+        void StartHost()
         {
             try
             {
-                await m_ConnectionMethod.SetupHostConnectionAsync();
+                m_ConnectionMethod.SetupHostConnection();
 
-                // NGO's StartHost launches everything
-                if (!m_ConnectionManager.NetworkManager.StartHost())
+                if (m_ConnectionMethod is ConnectionMethodIP)
                 {
-                    StartHostFailed();
+                    // NGO's StartHost launches everything
+                    if (!m_ConnectionManager.NetworkManager.StartHost())
+                    {
+                        StartHostFailed();
+                    }
                 }
             }
             catch (Exception)

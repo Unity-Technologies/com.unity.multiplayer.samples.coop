@@ -51,21 +51,22 @@ namespace Unity.BossRoom.ConnectionManagement
                 var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
                 m_ConnectStatusPublisher.Publish(connectStatus);
             }
+
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
-
 
         internal async Task ConnectClientAsync()
         {
             try
             {
-                // Setup NGO with current connection method
-                await m_ConnectionMethod.SetupClientConnectionAsync();
+                m_ConnectionMethod.SetupClientConnection();
 
-                // NGO's StartClient launches everything
-                if (!m_ConnectionManager.NetworkManager.StartClient())
+                if (m_ConnectionMethod is ConnectionMethodIP)
                 {
-                    throw new Exception("NetworkManager StartClient failed");
+                    if (!m_ConnectionManager.NetworkManager.StartClient())
+                    {
+                        throw new Exception("NetworkManager StartClient failed");
+                    }
                 }
             }
             catch (Exception e)

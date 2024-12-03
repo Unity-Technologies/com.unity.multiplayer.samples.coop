@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.BossRoom.Utils;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
@@ -40,11 +40,11 @@ namespace Unity.BossRoom.Tests.Runtime
                 builder.RegisterInstance(new BufferedMessageChannel<ConnectStatus>()).AsImplementedInterfaces();
                 builder.RegisterInstance(new MessageChannel<UnityServiceErrorMessage>()).AsImplementedInterfaces();
                 builder.RegisterInstance(new MessageChannel<ReconnectMessage>()).AsImplementedInterfaces();
-                builder.RegisterInstance(new BufferedMessageChannel<LobbyListFetchedMessage>()).AsImplementedInterfaces();
-                builder.Register<LocalLobby>(Lifetime.Singleton);
-                builder.Register<LocalLobbyUser>(Lifetime.Singleton);
+                builder.RegisterInstance(new BufferedMessageChannel<SessionListFetchedMessage>()).AsImplementedInterfaces();
+                builder.Register<LocalSession>(Lifetime.Singleton);
+                builder.Register<LocalSessionUser>(Lifetime.Singleton);
                 builder.Register<ProfileManager>(Lifetime.Singleton);
-                builder.RegisterEntryPoint<LobbyServiceFacade>(Lifetime.Singleton).AsSelf();
+                builder.RegisterEntryPoint<MultiplayerServicesFacade>(Lifetime.Singleton).AsSelf();
             }
         }
 

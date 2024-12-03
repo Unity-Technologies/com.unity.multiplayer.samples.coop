@@ -4,41 +4,54 @@ using TMPro;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices.Auth;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.Services.Core;
+using Unity.Services.Multiplayer;
 using UnityEngine;
 using VContainer;
 
 namespace Unity.BossRoom.Gameplay.UI
 {
-    public class LobbyUIMediator : MonoBehaviour
+    public class SessionUIMediator : MonoBehaviour
     {
-        [SerializeField] CanvasGroup m_CanvasGroup;
-        [SerializeField] LobbyJoiningUI m_LobbyJoiningUI;
-        [SerializeField] LobbyCreationUI m_LobbyCreationUI;
-        [SerializeField] UITinter m_JoinToggleHighlight;
-        [SerializeField] UITinter m_JoinToggleTabBlocker;
-        [SerializeField] UITinter m_CreateToggleHighlight;
-        [SerializeField] UITinter m_CreateToggleTabBlocker;
-        [SerializeField] TextMeshProUGUI m_PlayerNameLabel;
-        [SerializeField] GameObject m_LoadingSpinner;
+        [SerializeField]
+        CanvasGroup m_CanvasGroup;
+        [SerializeField]
+        SessionJoiningUI m_SessionJoiningUI;
+        [SerializeField]
+        SessionCreationUI m_SessionCreationUI;
+        [SerializeField]
+        UITinter m_JoinToggleHighlight;
+        [SerializeField]
+        UITinter m_JoinToggleTabBlocker;
+        [SerializeField]
+        UITinter m_CreateToggleHighlight;
+        [SerializeField]
+        UITinter m_CreateToggleTabBlocker;
+        [SerializeField]
+        TextMeshProUGUI m_PlayerNameLabel;
+        [SerializeField]
+        GameObject m_LoadingSpinner;
 
         AuthenticationServiceFacade m_AuthenticationServiceFacade;
-        LobbyServiceFacade m_LobbyServiceFacade;
-        LocalLobbyUser m_LocalUser;
-        LocalLobby m_LocalLobby;
+        MultiplayerServicesFacade m_MultiplayerServicesFacade;
+        LocalSessionUser m_LocalUser;
+        LocalSession m_LocalSession;
         NameGenerationData m_NameGenerationData;
         ConnectionManager m_ConnectionManager;
         ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
 
-        const string k_DefaultLobbyName = "no-name";
+        const string k_DefaultSessionName = "no-name";
+        const int k_MaxPlayers = 8;
+
+        ISession m_Session;
 
         [Inject]
         void InjectDependenciesAndInitialize(
             AuthenticationServiceFacade authenticationServiceFacade,
-            LobbyServiceFacade lobbyServiceFacade,
-            LocalLobbyUser localUser,
-            LocalLobby localLobby,
+            MultiplayerServicesFacade multiplayerServicesFacade,
+            LocalSessionUser localUser,
+            LocalSession localSession,
             NameGenerationData nameGenerationData,
             ISubscriber<ConnectStatus> connectStatusSub,
             ConnectionManager connectionManager
@@ -47,8 +60,8 @@ namespace Unity.BossRoom.Gameplay.UI
             m_AuthenticationServiceFacade = authenticationServiceFacade;
             m_NameGenerationData = nameGenerationData;
             m_LocalUser = localUser;
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_LocalLobby = localLobby;
+            m_MultiplayerServicesFacade = multiplayerServicesFacade;
+            m_LocalSession = localSession;
             m_ConnectionManager = connectionManager;
             m_ConnectStatusSubscriber = connectStatusSub;
             RegenerateName();
@@ -66,25 +79,21 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void OnDestroy()
         {
-            if (m_ConnectStatusSubscriber != null)
-            {
-                m_ConnectStatusSubscriber.Unsubscribe(OnConnectStatus);
-            }
+            m_ConnectStatusSubscriber?.Unsubscribe(OnConnectStatus);
         }
 
-        //Lobby and Relay calls done from UI
-
-        public async void CreateLobbyRequest(string lobbyName, bool isPrivate)
+        // Multiplayer Services SDK calls done from UI
+        public async void CreateSessionRequest(string sessionName, bool isPrivate)
         {
-            // before sending request to lobby service, populate an empty lobby name, if necessary
-            if (string.IsNullOrEmpty(lobbyName))
+            // before sending request, populate an empty session name, if necessary
+            if (string.IsNullOrEmpty(sessionName))
             {
-                lobbyName = k_DefaultLobbyName;
+                sessionName = k_DefaultSessionName;
             }
 
             BlockUIWhileLoadingIsInProgress();
 
-            bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
+            var playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
 
             if (!playerIsAuthorized)
             {
@@ -92,23 +101,14 @@ namespace Unity.BossRoom.Gameplay.UI
                 return;
             }
 
-            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, m_ConnectionManager.MaxConnectedPlayers, isPrivate);
+            m_ConnectionManager.StartHostSession(m_LocalUser.DisplayName);
 
-            if (lobbyCreationAttempt.Success)
-            {
-                m_LocalUser.IsHost = true;
-                m_LobbyServiceFacade.SetRemoteLobby(lobbyCreationAttempt.Lobby);
+            var result = await m_MultiplayerServicesFacade.TryCreateSessionAsync(sessionName, k_MaxPlayers, isPrivate);
 
-                Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}");
-                m_ConnectionManager.StartHostLobby(m_LocalUser.DisplayName);
-            }
-            else
-            {
-                UnblockUIAfterLoadingIsComplete();
-            }
+            HandleSessionJoinResult(result);
         }
 
-        public async void QueryLobbiesRequest(bool blockUI)
+        public async void QuerySessionRequest(bool blockUI)
         {
             if (Unity.Services.Core.UnityServices.State != ServicesInitializationState.Initialized)
             {
@@ -120,7 +120,7 @@ namespace Unity.BossRoom.Gameplay.UI
                 BlockUIWhileLoadingIsInProgress();
             }
 
-            bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
+            var playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
 
             if (blockUI && !playerIsAuthorized)
             {
@@ -128,7 +128,7 @@ namespace Unity.BossRoom.Gameplay.UI
                 return;
             }
 
-            await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
+            await m_MultiplayerServicesFacade.RetrieveAndPublishSessionListAsync();
 
             if (blockUI)
             {
@@ -136,11 +136,11 @@ namespace Unity.BossRoom.Gameplay.UI
             }
         }
 
-        public async void JoinLobbyWithCodeRequest(string lobbyCode)
+        public async void JoinSessionWithCodeRequest(string sessionCode)
         {
             BlockUIWhileLoadingIsInProgress();
 
-            bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
+            var playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
 
             if (!playerIsAuthorized)
             {
@@ -148,23 +148,18 @@ namespace Unity.BossRoom.Gameplay.UI
                 return;
             }
 
-            var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(null, lobbyCode);
+            m_ConnectionManager.StartClientSession(m_LocalUser.DisplayName);
 
-            if (result.Success)
-            {
-                OnJoinedLobby(result.Lobby);
-            }
-            else
-            {
-                UnblockUIAfterLoadingIsComplete();
-            }
+            var result = await m_MultiplayerServicesFacade.TryJoinSessionByCodeAsync(sessionCode);
+
+            HandleSessionJoinResult(result);
         }
 
-        public async void JoinLobbyRequest(LocalLobby lobby)
+        public async void JoinSessionRequest(ISessionInfo sessionInfo)
         {
             BlockUIWhileLoadingIsInProgress();
 
-            bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
+            var playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
 
             if (!playerIsAuthorized)
             {
@@ -172,23 +167,18 @@ namespace Unity.BossRoom.Gameplay.UI
                 return;
             }
 
-            var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode);
+            m_ConnectionManager.StartClientSession(m_LocalUser.DisplayName);
 
-            if (result.Success)
-            {
-                OnJoinedLobby(result.Lobby);
-            }
-            else
-            {
-                UnblockUIAfterLoadingIsComplete();
-            }
+            var result = await m_MultiplayerServicesFacade.TryJoinSessionByNameAsync(sessionInfo.Id);
+
+            HandleSessionJoinResult(result);
         }
 
         public async void QuickJoinRequest()
         {
             BlockUIWhileLoadingIsInProgress();
 
-            bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
+            var playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
 
             if (!playerIsAuthorized)
             {
@@ -196,24 +186,33 @@ namespace Unity.BossRoom.Gameplay.UI
                 return;
             }
 
-            var result = await m_LobbyServiceFacade.TryQuickJoinLobbyAsync();
+            m_ConnectionManager.StartHostSession(m_LocalUser.DisplayName);
 
+            var result = await m_MultiplayerServicesFacade.TryQuickJoinSessionAsync();
+
+            HandleSessionJoinResult(result);
+        }
+
+        void HandleSessionJoinResult((bool Success, ISession Session) result)
+        {
             if (result.Success)
             {
-                OnJoinedLobby(result.Lobby);
+                OnJoinedSession(result.Session);
             }
             else
             {
+                m_ConnectionManager.RequestShutdown();
                 UnblockUIAfterLoadingIsComplete();
             }
         }
 
-        void OnJoinedLobby(Unity.Services.Lobbies.Models.Lobby remoteLobby)
+        void OnJoinedSession(ISession remoteSession)
         {
-            m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
+            m_MultiplayerServicesFacade.SetRemoteSession(remoteSession);
 
-            Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-            m_ConnectionManager.StartClientLobby(m_LocalUser.DisplayName);
+            Debug.Log($"Joined session with ID: {m_LocalSession.SessionID}");
+
+            m_ConnectionManager.StartClientSession(m_LocalUser.DisplayName);
         }
 
         //show/hide UI
@@ -228,24 +227,24 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;
-            m_LobbyCreationUI.Hide();
-            m_LobbyJoiningUI.Hide();
+            m_SessionCreationUI.Hide();
+            m_SessionJoiningUI.Hide();
         }
 
-        public void ToggleJoinLobbyUI()
+        public void ToggleJoinSessionUI()
         {
-            m_LobbyJoiningUI.Show();
-            m_LobbyCreationUI.Hide();
+            m_SessionJoiningUI.Show();
+            m_SessionCreationUI.Hide();
             m_JoinToggleHighlight.SetToColor(1);
             m_JoinToggleTabBlocker.SetToColor(1);
             m_CreateToggleHighlight.SetToColor(0);
             m_CreateToggleTabBlocker.SetToColor(0);
         }
 
-        public void ToggleCreateLobbyUI()
+        public void ToggleCreateSessionUI()
         {
-            m_LobbyJoiningUI.Hide();
-            m_LobbyCreationUI.Show();
+            m_SessionJoiningUI.Hide();
+            m_SessionCreationUI.Show();
             m_JoinToggleHighlight.SetToColor(0);
             m_JoinToggleTabBlocker.SetToColor(0);
             m_CreateToggleHighlight.SetToColor(1);
@@ -266,8 +265,8 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void UnblockUIAfterLoadingIsComplete()
         {
-            //this callback can happen after we've already switched to a different scene
-            //in that case the canvas group would be null
+            // this callback can happen after we've already switched to a different scene
+            // in that case the canvas group would be null
             if (m_CanvasGroup != null)
             {
                 m_CanvasGroup.interactable = true;
