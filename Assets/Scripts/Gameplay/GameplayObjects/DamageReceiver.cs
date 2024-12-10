@@ -11,6 +11,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public event Action<Collision> CollisionEntered;
 
+        public event Func<int> GetTotalDamageFunc;
+
         [SerializeField]
         NetworkLifeState m_NetworkLifeState;
 
@@ -20,6 +22,16 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 DamageReceived?.Invoke(inflicter, HP);
             }
+        }
+
+        public int GetTotalDamage()
+        {
+            if (!IsDamageable())
+            {
+                return 0;
+            }
+
+            return GetTotalDamageFunc?.Invoke() ?? 0;
         }
 
         public IDamageable.SpecialDamageFlags GetSpecialDamageFlags()

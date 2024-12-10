@@ -116,6 +116,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             }
         }
 
+        public int GetTotalDamage()
+        {
+            return Math.Max(0, m_MaxHealth.Value - m_NetworkHealthState.HitPoints.Value);
+        }
+
         private void Break()
         {
             IsBroken.Value = true;

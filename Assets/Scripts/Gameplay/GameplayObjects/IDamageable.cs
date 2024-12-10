@@ -18,6 +18,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         void ReceiveHP(ServerCharacter inflicter, int HP);
 
         /// <summary>
+        /// Get the total damage value.
+        /// </summary>
+        /// <returns>The return value is your total health minus your current health.</returns>
+        int GetTotalDamage();
+
+        /// <summary>
         /// The NetworkId of this object.
         /// </summary>
         ulong NetworkObjectId { get; }
