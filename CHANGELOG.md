@@ -20,6 +20,9 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Cleanup
 * Removed ParrelSync from the project
 
+### Fixed
+* Fix a Healer ability doesn't work (#893) 
+
 
 ## [2.5.0] - 2024-04-18
 
