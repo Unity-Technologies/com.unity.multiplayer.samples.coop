@@ -20,6 +20,12 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Cleanup
 * Removed ParrelSync from the project
 
+### Fixed
+* Fix a Healer ability doesn't work (#893)
+  * Changed the way characters are oriented when using skills.
+  * Added the GetTotalDamage API to the IDamagble interface. This number is your maximum health minus your current health.
+  * Changed the way MeleeAction selects a target when there are multiple targets to collide with. The target with the highest GetTotalDamage value (mentioned above) will be selected.
+
 
 ## [2.5.0] - 2024-04-18
 

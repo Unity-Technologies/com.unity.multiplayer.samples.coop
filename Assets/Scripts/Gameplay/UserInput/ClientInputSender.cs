@@ -420,7 +420,11 @@ namespace Unity.BossRoom.Gameplay.UserInput
             // figure out the Direction in case we want to send it
             Vector3 offset = hitPoint - m_PhysicsWrapper.Transform.position;
             offset.y = 0;
-            Vector3 direction = offset.normalized;
+
+            //there is a bug where the direction is flipped if the hitPos and current position are almost the same,
+            //so we use the character's direction instead.
+            float directionLength = offset.magnitude;
+            Vector3 direction = 1.0f/*epsilon*/ <= directionLength ? (offset / directionLength) : m_PhysicsWrapper.Transform.forward;
 
             switch (actionConfig.Logic)
             {
