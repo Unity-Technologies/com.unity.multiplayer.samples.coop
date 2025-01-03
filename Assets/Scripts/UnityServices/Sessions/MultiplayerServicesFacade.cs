@@ -39,8 +39,6 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
         bool m_IsTracking;
 
-        SessionEventConnectionState m_SessionEventConnectionState = SessionEventConnectionState.Unknown;
-
         public void Start()
         {
             m_ServiceScope = m_ParentScope.CreateChild(builder =>
@@ -240,7 +238,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             CurrentUnitySession.StateChanged += OnSessionStateChanged;
             CurrentUnitySession.Deleted += OnSessionDeleted;
             CurrentUnitySession.PlayerJoined += OnPlayerJoined;
-            CurrentUnitySession.PlayerLeft += OnPlayerLeft;
+            CurrentUnitySession.PlayerHasLeft += OnPlayerHasLeft;
             CurrentUnitySession.RemovedFromSession += OnRemovedFromSession;
             CurrentUnitySession.PlayerPropertiesChanged += OnPlayerPropertiesChanged;
             CurrentUnitySession.SessionPropertiesChanged += OnSessionPropertiesChanged;
@@ -252,7 +250,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             CurrentUnitySession.StateChanged -= OnSessionStateChanged;
             CurrentUnitySession.Deleted -= OnSessionDeleted;
             CurrentUnitySession.PlayerJoined -= OnPlayerJoined;
-            CurrentUnitySession.PlayerLeft -= OnPlayerLeft;
+            CurrentUnitySession.PlayerHasLeft -= OnPlayerHasLeft;
             CurrentUnitySession.RemovedFromSession -= OnRemovedFromSession;
             CurrentUnitySession.PlayerPropertiesChanged -= OnPlayerPropertiesChanged;
             CurrentUnitySession.SessionPropertiesChanged -= OnSessionPropertiesChanged;
@@ -312,9 +310,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
             Debug.Log($"Player joined: {playerId}");
         }
 
-        void OnPlayerLeft(string playerId)
+        void OnPlayerHasLeft(string playerId)
         {
-            Debug.Log($"Player left: {playerId}");
+            Debug.Log($"Player has left: {playerId}");
         }
 
         void OnRemovedFromSession()
