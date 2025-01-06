@@ -1,4 +1,4 @@
-using Cinemachine;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -6,26 +6,36 @@ namespace Unity.BossRoom.CameraUtils
 {
     public class CameraController : MonoBehaviour
     {
-        private CinemachineFreeLook m_MainCamera;
-
+        const string k_CMCameraTag = "CMCamera";
+        
         void Start()
         {
             AttachCamera();
         }
 
-        private void AttachCamera()
+        void AttachCamera()
         {
-            m_MainCamera = FindAnyObjectByType<CinemachineFreeLook>();
-            Assert.IsNotNull(m_MainCamera, "CameraController.AttachCamera: Couldn't find gameplay freelook camera");
+            var cinemachineCameraGameObject = GameObject.FindGameObjectWithTag(k_CMCameraTag);
+            Assert.IsNotNull(cinemachineCameraGameObject);
+            
+            var cinemachineCamera = cinemachineCameraGameObject.GetComponent<CinemachineCamera>();
+            Assert.IsNotNull(cinemachineCamera, "CameraController.AttachCamera: Couldn't find gameplay CinemachineCamera");
 
-            if (m_MainCamera)
+            if (cinemachineCamera != null)
             {
                 // camera body / aim
-                m_MainCamera.Follow = transform;
-                m_MainCamera.LookAt = transform;
+                cinemachineCamera.Follow = transform;
+                cinemachineCamera.LookAt = transform;
+            }
+            
+            var cinemachineOrbitalFollow = cinemachineCameraGameObject.GetComponent<CinemachineOrbitalFollow>();
+            Assert.IsNotNull(cinemachineOrbitalFollow, "CameraController.AttachCamera: Couldn't find gameplay CinemachineOrbitalFollow");
+            
+            if (cinemachineOrbitalFollow != null)
+            {
                 // default rotation / zoom
-                m_MainCamera.m_Heading.m_Bias = 40f;
-                m_MainCamera.m_YAxis.Value = 0.5f;
+                cinemachineOrbitalFollow.HorizontalAxis.Value = 40f;
+                cinemachineOrbitalFollow.VerticalAxis.Value = 0.5f;
             }
         }
     }
