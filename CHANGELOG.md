@@ -8,22 +8,23 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ## [Unreleased]
 ### Added
-* Added a welcome dialog to guide users on their first time experience
-* Added a Table of Contents with helpful resources, that can be accessed from the `Tutorials > Show Tutorials` menu
-* Added the Multiplayer Play Mode package v1.3.1 to the project 
+* Added a welcome dialog to guide users on their first time experience (#888)
+  * Added a Table of Contents with helpful resources, that can be accessed from the `Tutorials > Show Tutorials` menu
+* Added the Multiplayer Play Mode package v1.3.1 to the project (#890)
 
 ### Changed
-* Upgraded Boss Room to Netcode for GameObjects v2.0.0
-* Upgraded editor version to 6000.0.25f1
+* Upgraded editor version to 6000.0.25f1 and upgraded Boss Room to Netcode for GameObjects v2.0.0 (#890)
 * Replaced Lobby and Relay standalone packages with the Multiplayer Services package v1.0.2 and the Sessions framework (#892)
+* Upgraded editor version to 6000.0.32f1 and Multiplayer Services package to v1.1.0 (#894)
+  * Removed usage of ISession's deprecated PlayerLeft callback to the new PlayerHasLeft callback
 
 ### Cleanup
-* Removed ParrelSync from the project
+* Removed ParrelSync from the project (#890)
 
 ### Fixed
 * Fix a Healer ability doesn't work (#893)
   * Changed the way characters are oriented when using skills.
-  * Added the GetTotalDamage API to the IDamagble interface. This number is your maximum health minus your current health.
+  * Added the GetTotalDamage API to the IDamageable interface. This number is your maximum health minus your current health.
   * Changed the way MeleeAction selects a target when there are multiple targets to collide with. The target with the highest GetTotalDamage value (mentioned above) will be selected.
 
 
