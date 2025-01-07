@@ -102,10 +102,10 @@ namespace Unity.BossRoom.ConnectionManagement
             utp.SetConnectionData(m_Ipaddress, m_Port);
         }
 
-        public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
+        public override Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
         {
             // Nothing to do here
-            return (true, true);
+            return Task.FromResult((true, true));
         }
 
         public override void SetupHostConnection()
