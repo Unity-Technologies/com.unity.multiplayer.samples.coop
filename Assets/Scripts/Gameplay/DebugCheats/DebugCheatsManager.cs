@@ -55,11 +55,12 @@ namespace Unity.BossRoom.DebugCheats
 
         void Update()
         {
-            if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
+            // TODO: make into action
+            /*if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
                 m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
             {
                 m_DebugCheatsPanel.SetActive(!m_DebugCheatsPanel.activeSelf);
-            }
+            }*/
         }
 
         static bool AnyTouchDown()

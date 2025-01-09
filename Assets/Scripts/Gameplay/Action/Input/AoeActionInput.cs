@@ -44,11 +44,12 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         void Update()
         {
-            if (PlaneRaycast(k_Plane, m_Camera.ScreenPointToRay(Input.mousePosition), out Vector3 pointOnPlane) &&
+            // TODO: convert to mouse position using new input system
+            /*if (PlaneRaycast(k_Plane, m_Camera.ScreenPointToRay(Input.mousePosition), out Vector3 pointOnPlane) &&
                 NavMesh.SamplePosition(pointOnPlane, out m_NavMeshHit, 2f, NavMesh.AllAreas))
             {
                 transform.position = m_NavMeshHit.position;
-            }
+            }*/
 
             float range = GameDataSource.Instance.GetActionPrototypeByID(m_ActionPrototypeID).Config.Range;
             bool isInRange = (m_Origin - transform.position).sqrMagnitude <= range * range;

@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 namespace Unity.BossRoom.Gameplay.UserInput
 {
@@ -41,6 +42,21 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
         [SerializeField]
         ServerCharacter m_ServerCharacter;
+
+        [SerializeField]
+        InputActionReference m_Action1;
+        [SerializeField]
+        InputActionReference m_Action2;
+        [SerializeField]
+        InputActionReference m_Action3;
+        [SerializeField]
+        InputActionReference m_Action5;
+        [SerializeField]
+        InputActionReference m_Action6;
+        [SerializeField]
+        InputActionReference m_Action7;
+        [SerializeField]
+        InputActionReference m_Action8;
 
         /// <summary>
         /// This event fires at the time when an action request is sent to the server.
@@ -477,7 +493,8 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1) && CharacterClass.Skill1)
+            // TODO: convert to actions
+            /*if (Input.GetKeyDown(KeyCode.Alpha1) && CharacterClass.Skill1)
             {
                 RequestAction(actionState1.actionID, SkillTriggerStyle.Keyboard);
             }
@@ -537,7 +554,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 {
                     m_MoveRequest = true;
                 }
-            }
+            }*/
         }
 
         void UpdateAction1()

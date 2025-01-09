@@ -1,5 +1,7 @@
+using System;
 using Unity.Multiplayer.Tools.NetStatsMonitor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
@@ -7,34 +9,26 @@ namespace Unity.Multiplayer.Samples.Utilities
     {
         [SerializeField]
         RuntimeNetStatsMonitor m_Monitor;
-
-        const int k_NbTouchesToOpenWindow = 3;
+        
+        [SerializeField]
+        InputActionReference m_ToggleNetworkStatsAction;
 
         void Start()
         {
             m_Monitor.Visible = false;
+            
+            m_ToggleNetworkStatsAction.action.performed += OnToggleNetworkStatsActionperformed;
         }
 
-        void Update()
+        void OnDestroy()
         {
-            if (Input.GetKeyUp(KeyCode.S) || Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown())
-            {
-                m_Monitor.Visible = !m_Monitor.Visible; // toggle. Using "Visible" instead of "Enabled" to make sure RNSM keeps updating in the background
-                // while not visible. This way, when bring it back visible, we can make sure values are up to date.
-            }
+            m_ToggleNetworkStatsAction.action.performed -= OnToggleNetworkStatsActionperformed;
         }
 
-        static bool AnyTouchDown()
+        void OnToggleNetworkStatsActionperformed(InputAction.CallbackContext obj)
         {
-            foreach (var touch in Input.touches)
-            {
-                if (touch.phase == TouchPhase.Began)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            m_Monitor.Visible = !m_Monitor.Visible; // toggle. Using "Visible" instead of "Enabled" to make sure RNSM keeps updating in the background
+            // while not visible. This way, when bring it back visible, we can make sure values are up to date.
         }
     }
 }

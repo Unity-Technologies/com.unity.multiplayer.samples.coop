@@ -13,7 +13,7 @@ namespace Unity.BossRoom.Gameplay.UI
     /// - the main camera in the scene has a PhysicsRaycaster component
     /// - if you're attaching this to a UI element such as an Image, make sure you check the "Raycast Target" checkbox
     /// </remarks>
-    public class UITooltipDetector : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+    public class UITooltipDetector : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler*/
     {
         [SerializeField]
         [Tooltip("The actual Tooltip that should be triggered")]

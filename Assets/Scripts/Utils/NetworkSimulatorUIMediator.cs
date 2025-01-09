@@ -206,11 +206,12 @@ namespace Unity.BossRoom.Utils
         {
             if (m_NetworkSimulator.IsAvailable)
             {
-                if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
+                // TODO: make action
+                /*if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
                     m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
                 {
                     ToggleVisibility();
-                }
+                }*/
 
                 var selectedPreset = m_PresetsDropdown.options[m_PresetsDropdown.value].text;
                 if (selectedPreset != m_NetworkSimulator.CurrentPreset.Name)
