@@ -6,6 +6,7 @@ using Unity.Multiplayer.Tools.NetworkSimulator.Runtime;
 using Unity.Multiplayer.Tools.NetworkSimulator.Runtime.BuiltInScenarios;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Unity.BossRoom.Utils
@@ -36,7 +37,7 @@ namespace Unity.BossRoom.Utils
         TMP_InputField m_LagSpikeDuration;
 
         [SerializeField]
-        KeyCode m_OpenWindowKeyCode = KeyCode.Tilde;
+        InputActionReference m_ToggleNetworkSimulatorAction;
 
         [SerializeField]
         List<ConnectionsCycle.Configuration> m_ConnectionsCycleConfigurations;
@@ -46,8 +47,6 @@ namespace Unity.BossRoom.Utils
 
         [SerializeField]
         int m_RandomConnectionsSwapChangeIntervalMilliseconds;
-
-        const int k_NbTouchesToOpenWindow = 5;
 
         Dictionary<string, INetworkSimulatorPreset> m_SimulatorPresets = new Dictionary<string, INetworkSimulatorPreset>();
 #endif
@@ -81,8 +80,10 @@ namespace Unity.BossRoom.Utils
         {
             NetworkManager.Singleton.OnClientStarted += OnNetworkManagerStarted;
             NetworkManager.Singleton.OnServerStarted += OnNetworkManagerStarted;
+            
+            m_ToggleNetworkSimulatorAction.action.performed += OnToggleNetworkSimulatorActionPerformed;
         }
-
+        
         void OnDestroy()
         {
             if (NetworkManager.Singleton is not null)
@@ -90,6 +91,8 @@ namespace Unity.BossRoom.Utils
                 NetworkManager.Singleton.OnClientStarted -= OnNetworkManagerStarted;
                 NetworkManager.Singleton.OnServerStarted -= OnNetworkManagerStarted;
             }
+            
+            m_ToggleNetworkSimulatorAction.action.performed -= OnToggleNetworkSimulatorActionPerformed;
         }
 
         void OnNetworkManagerStarted()
@@ -206,13 +209,6 @@ namespace Unity.BossRoom.Utils
         {
             if (m_NetworkSimulator.IsAvailable)
             {
-                // TODO: make action
-                /*if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
-                    m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
-                {
-                    ToggleVisibility();
-                }*/
-
                 var selectedPreset = m_PresetsDropdown.options[m_PresetsDropdown.value].text;
                 if (selectedPreset != m_NetworkSimulator.CurrentPreset.Name)
                 {
@@ -234,19 +230,12 @@ namespace Unity.BossRoom.Utils
                 }
             }
         }
-
-        static bool AnyTouchDown()
+        
+        void OnToggleNetworkSimulatorActionPerformed(InputAction.CallbackContext obj)
         {
-            foreach (var touch in Input.touches)
-            {
-                if (touch.phase == TouchPhase.Began)
-                {
-                    return true;
-                }
-            }
-            return false;
+            ToggleVisibility();
         }
-
+        
         public void SimulateDisconnect()
         {
             m_NetworkSimulator.Disconnect();

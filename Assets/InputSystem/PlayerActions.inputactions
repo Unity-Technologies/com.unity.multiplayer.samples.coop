@@ -175,6 +175,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ToggleNetworkSimulator",
+                    "type": "Button",
+                    "id": "8b27e946-68af-4c4d-ba82-d2cb4a866217",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -681,6 +690,28 @@
                     "processors": "",
                     "groups": ";Touch",
                     "action": "ToggleNetworkStats",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a2f7fe81-4374-49f6-ac91-31f25ff7695f",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleNetworkSimulator",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b1533cc3-511d-496b-ba9a-8d5606061c26",
+                    "path": "<Touchscreen>/touch4/tap",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "ToggleNetworkSimulator",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
