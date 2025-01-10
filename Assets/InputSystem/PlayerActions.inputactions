@@ -184,6 +184,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ToggleCheats",
+                    "type": "Button",
+                    "id": "d406d43c-a802-4adc-8a61-c7f0745ed4df",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -712,6 +721,17 @@
                     "processors": "",
                     "groups": ";Touch",
                     "action": "ToggleNetworkSimulator",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9b456d39-4b33-4bed-b1aa-c4d648dd523c",
+                    "path": "<Keyboard>/slash",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleCheats",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -8,7 +8,7 @@
         "Unity.BossRoom.ConnectionManagement",
         "Unity.Multiplayer.Samples.Utilities",
         "VContainer",
-        "VContainer.EnableCodeGen"
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

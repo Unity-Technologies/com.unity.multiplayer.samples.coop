@@ -7,6 +7,7 @@ using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using VContainer;
 
 namespace Unity.BossRoom.DebugCheats
@@ -28,10 +29,10 @@ namespace Unity.BossRoom.DebugCheats
         [SerializeField]
         [Tooltip("Boss to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
         NetworkObject m_BossPrefab;
-
+        
         [SerializeField]
-        KeyCode m_OpenWindowKeyCode = KeyCode.Slash;
-
+        InputActionReference m_ToggleCheatsAction;
+        
         SwitchedDoor m_SwitchedDoor;
 
         SwitchedDoor SwitchedDoor
@@ -46,33 +47,25 @@ namespace Unity.BossRoom.DebugCheats
             }
         }
 
-        const int k_NbTouchesToOpenWindow = 4;
-
         bool m_DestroyPortalsOnNextToggle = true;
 
         [Inject]
         IPublisher<CheatUsedMessage> m_CheatUsedMessagePublisher;
 
-        void Update()
+        void Start()
         {
-            // TODO: make into action
-            /*if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
-                m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
-            {
-                m_DebugCheatsPanel.SetActive(!m_DebugCheatsPanel.activeSelf);
-            }*/
+            m_ToggleCheatsAction.action.performed += OnToggleCheatsActionPerformed;
         }
 
-        static bool AnyTouchDown()
+        public override void OnDestroy()
         {
-            foreach (var touch in Input.touches)
-            {
-                if (touch.phase == TouchPhase.Began)
-                {
-                    return true;
-                }
-            }
-            return false;
+            base.OnDestroy();
+            m_ToggleCheatsAction.action.performed -= OnToggleCheatsActionPerformed;
+        }
+
+        void OnToggleCheatsActionPerformed(InputAction.CallbackContext obj)
+        {
+            m_DebugCheatsPanel.SetActive(!m_DebugCheatsPanel.activeSelf);
         }
 
         public void SpawnEnemy()
