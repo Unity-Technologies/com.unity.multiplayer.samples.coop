@@ -292,10 +292,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   m_ServerCharacter: {fileID: 741733315856861890}
+  m_TargetAction: {fileID: -2762237389118783121, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_Skill1Action: {fileID: 2701198716142841280, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_PointAction: {fileID: -1959881153152325168, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
   m_Action1: {fileID: 916937064669491580, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
   m_Action2: {fileID: 2288820758043559878, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
   m_Action3: {fileID: 6071755229503605740, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
-  m_Action4: {fileID: -4952775069611586389, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
   m_Action5: {fileID: -1289729065238941167, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
   m_Action6: {fileID: -1072022056946843674, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
   m_Action7: {fileID: 5111210855846757706, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
