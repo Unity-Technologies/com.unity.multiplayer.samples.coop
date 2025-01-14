@@ -4,7 +4,6 @@ using Unity.Tutorials.Core.Editor;
 
 namespace Unity.Netcode.Samples.BossRoom
 {
-
     /// <summary>
     /// Implement your Tutorial callbacks here.
     /// </summary>
@@ -39,36 +38,15 @@ namespace Unity.Netcode.Samples.BossRoom
         {
             TutorialWindow.StartTutorial(tutorial);
         }
-
-        public void FocusGameView()
+        
+        public bool IsConnectedToUgs()
         {
-            /*
-             * note: this solution is a bit weak, but it's the best we can do without accessing internal APIs.
-             * we'll need to check that it works for Unity 6 as well
-             */
-            EditorApplication.ExecuteMenuItem("Window/General/Game");
+            return CloudProjectSettings.projectBound;
         }
-
-        public void FocusSceneView()
+        
+        public void ShowServicesSettings()
         {
-            EditorApplication.ExecuteMenuItem("Window/General/Scene");
-        }
-
-        public bool IsRunningAsHost()
-        {
-            return NetworkManager.Singleton && NetworkManager.Singleton.IsHost;
-        }
-
-        public bool IsRunningAsServerOnly()
-        {
-            return NetworkManager.Singleton && NetworkManager.Singleton.IsServer
-                                            && !NetworkManager.Singleton.IsClient;
-        }
-
-        public bool IsRunningAsClientOnly()
-        {
-            return NetworkManager.Singleton && !NetworkManager.Singleton.IsServer
-                                            && NetworkManager.Singleton.IsClient;
+            SettingsService.OpenProjectSettings("Project/Services");
         }
 
         public void OpenURL(string url)
