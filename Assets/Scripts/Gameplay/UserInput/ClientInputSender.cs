@@ -203,8 +203,8 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 m_TargetServerCharacter.NetLifeState.LifeState.OnValueChanged -= OnTargetLifeStateChanged;
             }
             
-            m_Action2.action.started -= OnAction1Started;
-            m_Action2.action.canceled -= OnAction1Canceled;
+            m_Action1.action.started -= OnAction1Started;
+            m_Action1.action.canceled -= OnAction1Canceled;
             m_Action2.action.started -= OnAction2Started;
             m_Action2.action.canceled -= OnAction2Canceled;
             m_Action3.action.started -= OnAction3Started;
