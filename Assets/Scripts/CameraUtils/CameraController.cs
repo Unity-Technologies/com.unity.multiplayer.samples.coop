@@ -7,7 +7,7 @@ namespace Unity.BossRoom.CameraUtils
     public class CameraController : MonoBehaviour
     {
         const string k_CMCameraTag = "CMCamera";
-        
+
         void Start()
         {
             AttachCamera();
@@ -17,7 +17,7 @@ namespace Unity.BossRoom.CameraUtils
         {
             var cinemachineCameraGameObject = GameObject.FindGameObjectWithTag(k_CMCameraTag);
             Assert.IsNotNull(cinemachineCameraGameObject);
-            
+
             var cinemachineCamera = cinemachineCameraGameObject.GetComponent<CinemachineCamera>();
             Assert.IsNotNull(cinemachineCamera, "CameraController.AttachCamera: Couldn't find gameplay CinemachineCamera");
 
@@ -27,10 +27,10 @@ namespace Unity.BossRoom.CameraUtils
                 cinemachineCamera.Follow = transform;
                 cinemachineCamera.LookAt = transform;
             }
-            
+
             var cinemachineOrbitalFollow = cinemachineCameraGameObject.GetComponent<CinemachineOrbitalFollow>();
             Assert.IsNotNull(cinemachineOrbitalFollow, "CameraController.AttachCamera: Couldn't find gameplay CinemachineOrbitalFollow");
-            
+
             if (cinemachineOrbitalFollow != null)
             {
                 // default rotation / zoom
