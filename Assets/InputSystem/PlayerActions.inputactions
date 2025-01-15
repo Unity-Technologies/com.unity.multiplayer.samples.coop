@@ -399,7 +399,7 @@
                     "path": "<Touchscreen>/touch1/press",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Touch",
                     "action": "ScrollWheel",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -409,7 +409,7 @@
                     "id": "02294441-af70-4095-af64-d2ec6a4590dd",
                     "path": "<Touchscreen>/delta",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "InvertVector2",
                     "groups": ";Touch",
                     "action": "ScrollWheel",
                     "isComposite": false,
