@@ -17,6 +17,11 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Replaced Lobby and Relay standalone packages with the Multiplayer Services package v1.0.2 and the Sessions framework (#892)
 * Upgraded editor version to 6000.0.32f1 and Multiplayer Services package to v1.1.0 (#894)
   * Removed usage of ISession's deprecated PlayerLeft callback to the new PlayerHasLeft callback
+* Upgraded several packages to their recommended versions (#895) They include:
+  * com.unity.cinemachine from v2.10.3 to v3.1.2. Camera using deprecated CinemachineFreeLook component has been re-implemented with CinemachineCamera component
+  * com.unity.multiplayer.playmode from v1.3.2 to v1.3.3
+  * com.unity.multiplayer.tools from v2.2.1 to v2.2.3
+  * com.unity.netcode.gameobjects from v2.0.0 to v2.1.1
 
 ### Cleanup
 * Removed ParrelSync from the project (#890)
@@ -26,7 +31,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * Changed the way characters are oriented when using skills.
   * Added the GetTotalDamage API to the IDamageable interface. This number is your maximum health minus your current health.
   * Changed the way MeleeAction selects a target when there are multiple targets to collide with. The target with the highest GetTotalDamage value (mentioned above) will be selected.
-
 
 ## [2.5.0] - 2024-04-18
 
