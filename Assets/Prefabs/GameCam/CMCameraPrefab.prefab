@@ -292,7 +292,7 @@ MonoBehaviour:
       Enabled: 1
       Input:
         LegacyInput: Mouse ScrollWheel
-        LegacyGain: 5
+        LegacyGain: -50
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
