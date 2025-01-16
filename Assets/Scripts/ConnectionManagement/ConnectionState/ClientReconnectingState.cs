@@ -122,8 +122,7 @@ namespace Unity.BossRoom.ConnectionManagement
             if (!reconnectingSetupTask.IsFaulted && reconnectingSetupTask.Result.success)
             {
                 // If this fails, the OnClientDisconnect callback will be invoked by Netcode
-                var connectingTask = ConnectClientAsync();
-                yield return new WaitUntil(() => connectingTask.IsCompleted);
+                ConnectClientAsync();
             }
             else
             {

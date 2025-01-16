@@ -23,7 +23,7 @@
     "com.unity.toolchain.macos-x86_64-linux-x86_64": "2.0.10",
     "com.unity.transport": "2.4.0",
     "com.unity.ugui": "2.0.0",
-    "jp.hadashikick.vcontainer": "1.11.0",
+    "jp.hadashikick.vcontainer": "1.14.0",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",

@@ -22,9 +22,13 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * com.unity.multiplayer.playmode from v1.3.2 to v1.3.3
   * com.unity.multiplayer.tools from v2.2.1 to v2.2.3
   * com.unity.netcode.gameobjects from v2.0.0 to v2.1.1
+* VContainer package upgraded from v1.11.0 to v1.14.0 (#896) This upgrade removes warning messages related to IL weaving as code gen is refactored in v1.14.0
 
 ### Cleanup
 * Removed ParrelSync from the project (#890)
+* Removed warnings on first project launch (#896) Included:
+  * Asset meta files with merge conflicts resolved
+  * RenderGraph compatibility mode disabled
 
 ### Fixed
 * Fix a Healer ability doesn't work (#893)
