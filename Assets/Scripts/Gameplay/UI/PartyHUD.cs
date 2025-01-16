@@ -215,7 +215,6 @@ namespace Unity.BossRoom.Gameplay.UI
         }
 
         // Helper to change name appearance for selected or unselected party members
-        // also updates m_CurrentTarget
         void SetHeroSelectFX(ulong target, bool selected)
         {
             // check id against all party slots
