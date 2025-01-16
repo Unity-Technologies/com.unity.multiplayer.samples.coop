@@ -2,7 +2,7 @@ using System;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices;
 using Unity.BossRoom.Utils;
-using Unity.Services.Lobbies;
+using Unity.Services.Multiplayer;
 using UnityEngine;
 using VContainer;
 
@@ -29,9 +29,9 @@ namespace Unity.BossRoom.Gameplay.UI
             var errorMessage = error.Message;
             switch (error.AffectedService)
             {
-                case UnityServiceErrorMessage.Service.Lobby:
+                case UnityServiceErrorMessage.Service.Session:
                 {
-                    HandleLobbyError(error);
+                    HandleSessionError(error);
                     break;
                 }
                 case UnityServiceErrorMessage.Service.Authentication:
@@ -49,37 +49,24 @@ namespace Unity.BossRoom.Gameplay.UI
             }
         }
 
-        void HandleLobbyError(UnityServiceErrorMessage error)
+        void HandleSessionError(UnityServiceErrorMessage error)
         {
-            var exception = error.OriginalException as LobbyServiceException;
-            if (exception != null)
+            if (error.OriginalException is AggregateException { InnerException: SessionException sessionException })
             {
-                switch (exception.Reason)
+                switch (sessionException.Error)
                 {
-                    // If the error is one of the following, the player needs to know about it, so show in a popup message. Otherwise, the log in the console is sufficient.
-                    case LobbyExceptionReason.ValidationError:
-                        PopupManager.ShowPopupPanel("Validation Error", "Validation check failed on Lobby. Is the join code correctly formatted?");
+                    case SessionError.SessionNotFound:
+                        PopupManager.ShowPopupPanel("Session Not Found", "Requested Session not found. The join code is incorrect or the Session has ended.");
                         break;
-                    case LobbyExceptionReason.LobbyNotFound:
-                        PopupManager.ShowPopupPanel("Lobby Not Found", "Requested lobby not found. The join code is incorrect or the lobby has ended.");
+                    case SessionError.NotAuthorized:
+                        PopupManager.ShowPopupPanel("Session error", "Received HTTP error 401 Unauthorized from Session Service.");
                         break;
-                    case LobbyExceptionReason.LobbyConflict:
-                        // LobbyConflict can have multiple causes. Let's add other solutions here if there's other situations that arise for this.
-                        Debug.LogError($"Got service error {error.Message} with LobbyConflict. Possible conflict cause: Trying to play with two builds on the " +
-                            $"same machine. Please change profile in-game or use command line arg '{ProfileManager.AuthProfileCommandLineArg} someName' to set a different auth profile.\n");
-                        PopupManager.ShowPopupPanel("Failed to join Lobby", "Failed to join Lobby due to a conflict. If trying to connect two local builds to the same lobby, they need to have different profiles. See logs for more details.");
+                    case SessionError.MatchmakerAssignmentTimeout: // this can happen when using quick join
+                        PopupManager.ShowPopupPanel("Session error", "Received HTTP error 408 Request timed out from Session Service.");
                         break;
-                    case LobbyExceptionReason.NoOpenLobbies:
-                        PopupManager.ShowPopupPanel("Failed to join Lobby", "No accessible lobbies are currently available for quick-join.");
-                        break;
-                    case LobbyExceptionReason.LobbyFull:
-                        PopupManager.ShowPopupPanel("Failed to join Lobby", "Lobby is full and can't accept more players.");
-                        break;
-                    case LobbyExceptionReason.Unauthorized:
-                        PopupManager.ShowPopupPanel("Lobby error", "Received HTTP error 401 Unauthorized from Lobby Service.");
-                        break;
-                    case LobbyExceptionReason.RequestTimeOut:
-                        PopupManager.ShowPopupPanel("Lobby error", "Received HTTP error 408 Request timed out from Lobby Service.");
+                    case SessionError.Unknown:
+                    default:
+                        PopupManager.ShowPopupPanel("Unknown Error", sessionException.Message);
                         break;
                 }
             }

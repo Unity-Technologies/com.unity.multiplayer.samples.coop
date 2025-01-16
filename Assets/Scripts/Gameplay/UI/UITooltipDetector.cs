@@ -100,7 +100,7 @@ namespace Unity.BossRoom.Gameplay.UI
                 if (!m_TooltipPopup)
                 {
                     // typically there's only one tooltip popup in the scene, so pick that
-                    m_TooltipPopup = FindObjectOfType<UITooltipPopup>();
+                    m_TooltipPopup = FindAnyObjectByType<UITooltipPopup>();
                 }
             }
         }

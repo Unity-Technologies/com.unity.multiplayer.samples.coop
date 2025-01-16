@@ -5,8 +5,8 @@
 ###  Made with and Including Utilities for Netcode for GameObjects
 <br>
 
-[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-2022.3%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/whats-new/2022.3.0)
-[![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-1.8.1-57b9d3.svg?logo=unity&color=2196F3)](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/releases/tag/ngo%2F1.8.1)
+[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-6000.0.32f1%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/whats-new/6000.0.32)
+[![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-2.1.1-57b9d3.svg?logo=unity&color=2196F3)](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/releases/tag/ngo%2F2.1.1)
 [![LatestRelease](https://img.shields.io/badge/Latest%20Github%20Release:-v2.5.0-57b9d3.svg?logo=github&color=brightgreen)](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases/tag/v2.5.0)
 <br><br>
 
@@ -15,7 +15,7 @@ Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. I
 
 # Boss Room Sample Overview
 
-Boss Room is designed to be used in its entirety to help you explore the concepts and patterns behind a multiplayer game flow; such as character abilities, casting animations to hide latency, replicated objects, RPCs, and integration with the [Relay](https://unity.com/products/relay), [Lobby](https://unity.com/products/lobby), and [Authentication](https://unity.com/products/authentication) services.
+Boss Room is designed to be used in its entirety to help you explore the concepts and patterns behind a multiplayer game flow; such as character abilities, casting animations to hide latency, replicated objects, RPCs, and integration with [Multiplayer Services sessions](https://docs.unity.com/ugs/en-us/manual/mps-sdk/manual) and [Authentication](https://unity.com/products/authentication) services.
 
 You can use the project as a reference starting point for your own Unity game or use elements individually.
 <br><br>
@@ -86,7 +86,7 @@ For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/A
 
 ## Requirements
 
-BossRoom is compatible with the latest Unity Long Term Support (LTS) editor version, currently [2022 LTS](https://unity.com/releases/editor/qa/lts-releases?version=2022.3). Please include standalone support for Windows/Mac in your installation.
+BossRoom is compatible with the latest Unity Long Term Support (LTS) editor version, currently [6000.0 LTS](https://unity.com/releases/editor/archive). Please include standalone support for Windows/Mac in your installation.
 
 **PLEASE NOTE:** You will also need Netcode for Game Objects to use these samples. See the [Installation Documentation](https://docs-multiplayer.unity3d.com/netcode/current/installation) to prepare your environment. You can also complete the [Get Started With NGO](https://docs-multiplayer.unity3d.com/netcode/current/tutorials/get-started-ngo) tutorial to familiarize yourself with Netcode For Game Objects.
 <br><br>
@@ -112,7 +112,7 @@ Boss Room uses Git Large Files Support (LFS) to handle all large assets required
 ## Opening the project for the first time
 
 Once you have downloaded the project, follow the steps below to get up and running:
- - Check that you have installed the most recent [LTS editor version](https://unity.com/releases/2021-lts).
+ - Check that you have installed the most recent [LTS editor version](https://unity.com/releases/unity-6-releases).
  	- Include standalone support for Windows/Mac in your installation. 
  - Add the project to the _Unity Hub_ by clicking on the **Add** button and pointing it to the root folder of the downloaded project.
  	- __Please note :__ the first time you open the project Unity will import all assets, which will take longer than usual.
@@ -135,12 +135,12 @@ Code is organized in domain-based assemblies. See the [Boss Room architecture do
 
 ### Registering the project with Unity Gaming Services (UGS)
 
-Boss Room leverages several services from UGS to facilitate connectivity between players. To use these services inside your project, you must [create an organization](https://support.unity.com/hc/en-us/articles/208592876-How-do-I-create-a-new-Organization-) inside the Unity Dashboard, and enable the [Relay](https://docs.unity.com/relay/get-started.html) and [Lobby](https://docs.unity.com/lobby/game-lobby-sample.html) services. Otherwise, you can still use Boss Room without UGS.
+Boss Room leverages several services from UGS to facilitate connectivity between players. To use these services inside your project, you must [create an organization](https://support.unity.com/hc/en-us/articles/208592876-How-do-I-create-a-new-Organization-) inside the Unity Dashboard. Otherwise, you can still use Boss Room without UGS.
 <br><br><br>
  
 ## Testing multiplayer
 
-In order to see the multiplayer functionality in action we can either run multiple instances of the game locally on your computer - using either ParrelSync or builds - or choose to connect to a friend over the internet. See [how to test](https://docs-multiplayer.unity3d.com/netcode/current/tutorials/testing/testing_locally) for more info.
+In order to see the multiplayer functionality in action we can either run multiple instances of the game locally on your computer - using either Multiplayer Play Mode or builds - or choose to connect to a friend over the internet. See [how to test](https://docs-multiplayer.unity3d.com/netcode/current/tutorials/testing/testing_locally) for more info.
 <br><br>
 
 ### Local multiplayer setup
@@ -169,7 +169,7 @@ Running the game over internet currently requires setting up a relay.
   
 ### Relay Setup
  
-- Boss Room provides an integration with [Unity Relay](https://docs-multiplayer.unity3d.com/netcode/current/relay/). You can find our Unity Relay setup guide [here](https://docs.unity.com/ugs/en-us/manual/relay/manual/get-started)
+- Boss Room uses the Multiplayer Services Package to integrate [Sessions](https://docs.unity.com/ugs/en-us/manual/mps-sdk/manual) for grouping and connecting players.
 
 - Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers.
 - Boss Room uses `UDP` and needs a `9998` external port to be open. 
@@ -230,15 +230,15 @@ Running the game over internet currently requires setting up a relay.
 * Session manager - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/SessionManager.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/SessionManager.cs)
 * RTT stats - [Assets/Scripts/Utils/NetworkOverlay/NetworkStats.cs](Assets/Scripts/Utils/NetworkOverlay/NetworkStats.cs)
 
-### Services (Lobby, Relay, etc)
-* Lobby and relay - host creation - CreateLobbyRequest() in [Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs ](Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs)
-* Lobby and relay - client join - JoinLobbyRequest() in [Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs ](Assets/Scripts/Gameplay/UI/Lobby/LobbyUIMediator.cs)
-* Relay Join - StartClientLobby() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
-* Relay Create - StartHostLobby() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
-* Subscribing to LobbyEvents - SubscribeToJoinedLobby() in [Assets/Scripts/UnityServices/Lobbies/LobbyServiceFacade.cs ](Assets/Scripts/UnityServices/Lobbies/LobbyServiceFacade.cs)
+### Services (Sessions and Authentication)
+* Session - host creation - CreateSessionRequest() in [Assets/Scripts/Gameplay/UI/Session/SessionUIMediator.cs ](Assets/Scripts/Gameplay/UI/Session/SessionUIMediator.cs)
+* Session - client join - JoinSessionRequest() in [Assets/Scripts/Gameplay/UI/Session/SessionUIMediator.cs ](Assets/Scripts/Gameplay/UI/Session/SessionUIMediator.cs)
+* Session Join with Relay - StartClientSession() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
+* Session Create with Relay - StartHostSession() in [Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/OfflineState.cs)
+* Subscribing to SessionEvents - SubscribeToJoinedSessionAsync() in [Assets/Scripts/UnityServices/Sessions/MultiplayerServicesFacade.cs ](Assets/Scripts/UnityServices/Sessions/MultiplayerServicesFacade.cs)
 * Authentication - EnsurePlayerIsAuthorized() in [Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs ](Assets/Scripts/UnityServices/Auth/AuthenticationServiceFacade.cs)
-* Authentication - Profile management for ParrelSync/local instances - GetProfile() in [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
-* Profile manager for ParrelSync and local play [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
+* Authentication - Profile management for local instances - GetProfile() in [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
+* Profile manager for local play [Assets/Scripts/Utils/ProfileManager.cs](Assets/Scripts/Utils/ProfileManager.cs)
 
 ### Tools and Utilities
 * Networked message channel (inter-class and networked messaging) - [Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs](Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs)
@@ -253,7 +253,7 @@ Running the game over internet currently requires setting up a relay.
 * Scene utils with synced loading screens - [Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/ ](Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/)
 * RNSM custom config - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset)
 * NetworkSimulator usage through UI - [Assets/Scripts/Utils/NetworkSimulatorUIMediator.cs ](Assets/Scripts/Utils/NetworkSimulatorUIMediator.cs)
-* ParrelSync - [ Packages/manifest.json ](Packages/manifest.json)
+* Multiplayer Play Mode - [ Packages/manifest.json ](Packages/manifest.json)
 </details>
 
 -------

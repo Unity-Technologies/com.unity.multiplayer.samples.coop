@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.BossRoom.Utils;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
@@ -15,6 +15,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using VContainer;
 using VContainer.Unity;
+using Object = UnityEngine.Object;
 
 namespace Unity.BossRoom.Tests.Runtime
 {
@@ -39,11 +40,11 @@ namespace Unity.BossRoom.Tests.Runtime
                 builder.RegisterInstance(new BufferedMessageChannel<ConnectStatus>()).AsImplementedInterfaces();
                 builder.RegisterInstance(new MessageChannel<UnityServiceErrorMessage>()).AsImplementedInterfaces();
                 builder.RegisterInstance(new MessageChannel<ReconnectMessage>()).AsImplementedInterfaces();
-                builder.RegisterInstance(new BufferedMessageChannel<LobbyListFetchedMessage>()).AsImplementedInterfaces();
-                builder.Register<LocalLobby>(Lifetime.Singleton);
-                builder.Register<LocalLobbyUser>(Lifetime.Singleton);
+                builder.RegisterInstance(new BufferedMessageChannel<SessionListFetchedMessage>()).AsImplementedInterfaces();
+                builder.Register<LocalSession>(Lifetime.Singleton);
+                builder.Register<LocalSessionUser>(Lifetime.Singleton);
                 builder.Register<ProfileManager>(Lifetime.Singleton);
-                builder.RegisterEntryPoint<LobbyServiceFacade>(Lifetime.Singleton).AsSelf();
+                builder.RegisterEntryPoint<MultiplayerServicesFacade>(Lifetime.Singleton).AsSelf();
             }
         }
 
@@ -149,9 +150,9 @@ namespace Unity.BossRoom.Tests.Runtime
                 m_ClientScopes[i].Dispose();
             }
 
-            foreach (var sceneGameObject in GameObject.FindObjectsOfType<GameObject>())
+            foreach (var sceneGameObject in Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
             {
-                GameObject.DestroyImmediate(sceneGameObject);
+                Object.DestroyImmediate(sceneGameObject);
             }
 
             yield return base.OnTearDown();
@@ -194,11 +195,12 @@ namespace Unity.BossRoom.Tests.Runtime
             }
         }
 
-        [Test]
-        public void StartHost_Success()
+        [UnityTest]
+        public IEnumerator StartHost_Success()
         {
             StartHost();
             AssertHostIsListening();
+            yield return null;
         }
 
         [UnityTest]

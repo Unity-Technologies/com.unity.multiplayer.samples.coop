@@ -6,6 +6,7 @@ using UnityEditor.SceneManagement;
 #endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// Allows setting a scene as a root scene and setting its child scenes. To use this, drag this component on any object in a scene to make that scene a root scene. In the background, ChildSceneLoader will automatically manage this.
@@ -88,7 +89,7 @@ public class ChildSceneLoader
     {
         if (mode != OpenSceneMode.Single || BuildPipeline.isBuildingPlayer) return; // try to load child scenes only for root scenes or if not building
 
-        var scenesToLoadObjects = GameObject.FindObjectsOfType<EditorChildSceneLoader>();
+        var scenesToLoadObjects = Object.FindObjectsByType<EditorChildSceneLoader>(FindObjectsSortMode.None);
         if (scenesToLoadObjects.Length > 1)
         {
             throw new Exception("Should only have one root scene at once loaded");

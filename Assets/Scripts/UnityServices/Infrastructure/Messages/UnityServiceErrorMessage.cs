@@ -7,7 +7,7 @@ namespace Unity.BossRoom.UnityServices
         public enum Service
         {
             Authentication,
-            Lobby,
+            Session,
         }
 
         public string Title;

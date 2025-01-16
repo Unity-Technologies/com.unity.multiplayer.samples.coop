@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using VContainer;
+using Object = UnityEngine.Object;
 
 namespace Unity.BossRoom.Tests.Runtime
 {
@@ -81,13 +82,13 @@ namespace Unity.BossRoom.Tests.Runtime
         IEnumerator WaitUntilDisconnectedAndMainMenuSceneIsLoaded()
         {
             // once loaded into BossRoom scene, disconnect
-            var uiSettingsCanvas = GameObject.FindObjectOfType<UISettingsCanvas>();
+            var uiSettingsCanvas = Object.FindAnyObjectByType<UISettingsCanvas>();
             Assert.That(uiSettingsCanvas != null, $"{nameof(UISettingsCanvas)} component not found!");
             uiSettingsCanvas.OnClickQuitButton();
 
             yield return new WaitForFixedUpdate();
 
-            var uiQuitPanel = GameObject.FindObjectOfType<UIQuitPanel>(true);
+            var uiQuitPanel = Object.FindAnyObjectByType<UIQuitPanel>(FindObjectsInactive.Include);
             Assert.That(uiQuitPanel != null, $"{nameof(UIQuitPanel)} component not found!");
             uiQuitPanel.Quit();
 
@@ -114,7 +115,7 @@ namespace Unity.BossRoom.Tests.Runtime
         {
             yield return WaitUntilMainMenuSceneIsLoaded();
 
-            var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
+            var clientMainMenuState = Object.FindAnyObjectByType<ClientMainMenuState>();
 
             Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
 
@@ -156,9 +157,9 @@ namespace Unity.BossRoom.Tests.Runtime
         [UnityTearDown]
         public IEnumerator DestroySceneGameObjects()
         {
-            foreach (var sceneGameObject in GameObject.FindObjectsOfType<GameObject>())
+            foreach (var sceneGameObject in Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
             {
-                GameObject.DestroyImmediate(sceneGameObject);
+                Object.DestroyImmediate(sceneGameObject);
             }
             yield break;
         }

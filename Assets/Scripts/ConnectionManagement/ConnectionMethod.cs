@@ -1,19 +1,16 @@
-using System;
 using System.Threading.Tasks;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.BossRoom.Utils;
 using Unity.Netcode.Transports.UTP;
-using Unity.Networking.Transport.Relay;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
-using Unity.Services.Relay;
-using Unity.Services.Relay.Models;
 using UnityEngine;
 
 namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
-    /// ConnectionMethod contains all setup needed to setup NGO to be ready to start a connection, either host or client side.
+    /// ConnectionMethod contains all setup needed to setup NGO to be ready to start a connection, either host or client
+    /// side.
     /// Please override this abstract class to add a new transport or way of connecting.
     /// </summary>
     public abstract class ConnectionMethodBase
@@ -21,20 +18,18 @@ namespace Unity.BossRoom.ConnectionManagement
         protected ConnectionManager m_ConnectionManager;
         readonly ProfileManager m_ProfileManager;
         protected readonly string m_PlayerName;
-        protected const string k_DtlsConnType = "dtls";
 
         /// <summary>
         /// Setup the host connection prior to starting the NetworkManager
         /// </summary>
         /// <returns></returns>
-        public abstract Task SetupHostConnectionAsync();
-
+        public abstract void SetupHostConnection();
 
         /// <summary>
         /// Setup the client connection prior to starting the NetworkManager
         /// </summary>
         /// <returns></returns>
-        public abstract Task SetupClientConnectionAsync();
+        public abstract void SetupClientConnection();
 
         /// <summary>
         /// Setup the client for reconnection prior to reconnecting
@@ -54,7 +49,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
         protected void SetConnectionPayload(string playerId, string playerName)
         {
-            var payload = JsonUtility.ToJson(new ConnectionPayload()
+            var payload = JsonUtility.ToJson(new ConnectionPayload
             {
                 playerId = playerId,
                 playerName = playerName,
@@ -100,20 +95,20 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ConnectionManager = connectionManager;
         }
 
-        public override async Task SetupClientConnectionAsync()
+        public override void SetupClientConnection()
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName);
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(m_Ipaddress, m_Port);
         }
 
-        public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
+        public override Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
         {
             // Nothing to do here
-            return (true, true);
+            return Task.FromResult((true, true));
         }
 
-        public override async Task SetupHostConnectionAsync()
+        public override void SetupHostConnection()
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
@@ -122,90 +117,51 @@ namespace Unity.BossRoom.ConnectionManagement
     }
 
     /// <summary>
-    /// UTP's Relay connection setup using the Lobby integration
+    /// UTP's Relay connection setup using the Session integration
     /// </summary>
     class ConnectionMethodRelay : ConnectionMethodBase
     {
-        LobbyServiceFacade m_LobbyServiceFacade;
-        LocalLobby m_LocalLobby;
+        MultiplayerServicesFacade m_MultiplayerServicesFacade;
 
-        public ConnectionMethodRelay(LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
+        public ConnectionMethodRelay(MultiplayerServicesFacade multiplayerServicesFacade,
+            ConnectionManager connectionManager,
+            ProfileManager profileManager,
+            string playerName)
             : base(connectionManager, profileManager, playerName)
         {
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_LocalLobby = localLobby;
+            m_MultiplayerServicesFacade = multiplayerServicesFacade;
             m_ConnectionManager = connectionManager;
         }
 
-        public override async Task SetupClientConnectionAsync()
+        public override void SetupClientConnection()
         {
-            Debug.Log("Setting up Unity Relay client");
-
             SetConnectionPayload(GetPlayerId(), m_PlayerName);
-
-            if (m_LobbyServiceFacade.CurrentUnityLobby == null)
-            {
-                throw new Exception("Trying to start relay while Lobby isn't set");
-            }
-
-            Debug.Log($"Setting Unity Relay client with join code {m_LocalLobby.RelayJoinCode}");
-
-            // Create client joining allocation from join code
-            var joinedAllocation = await RelayService.Instance.JoinAllocationAsync(m_LocalLobby.RelayJoinCode);
-            Debug.Log($"client: {joinedAllocation.ConnectionData[0]} {joinedAllocation.ConnectionData[1]}, " +
-                $"host: {joinedAllocation.HostConnectionData[0]} {joinedAllocation.HostConnectionData[1]}, " +
-                $"client: {joinedAllocation.AllocationId}");
-
-            await m_LobbyServiceFacade.UpdatePlayerDataAsync(joinedAllocation.AllocationId.ToString(), m_LocalLobby.RelayJoinCode);
-
-            // Configure UTP with allocation
-            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(joinedAllocation, k_DtlsConnType));
         }
 
         public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
         {
-            if (m_LobbyServiceFacade.CurrentUnityLobby == null)
+            if (m_MultiplayerServicesFacade.CurrentUnitySession == null)
             {
-                Debug.Log("Lobby does not exist anymore, stopping reconnection attempts.");
+                Debug.Log("Session does not exist anymore, stopping reconnection attempts.");
                 return (false, false);
             }
 
-            // When using Lobby with Relay, if a user is disconnected from the Relay server, the server will notify the
-            // Lobby service and mark the user as disconnected, but will not remove them from the lobby. They then have
+            // When using Session with Relay, if a user is disconnected from the Relay server, the server will notify the
+            // Session service and mark the user as disconnected, but will not remove them from the Session. They then have
             // some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on the dashboard),
-            // after which they will be removed from the lobby completely.
-            // See https://docs.unity.com/lobby/reconnect-to-lobby.html
-            var lobby = await m_LobbyServiceFacade.ReconnectToLobbyAsync();
-            var success = lobby != null;
-            Debug.Log(success ? "Successfully reconnected to Lobby." : "Failed to reconnect to Lobby.");
-            return (success, true); // return a success if reconnecting to lobby returns a lobby
+            // after which they will be removed from the Session completely.
+            // See https://docs.unity.com/ugs/en-us/manual/mps-sdk/manual/join-session#Reconnect_to_a_session
+            var session = await m_MultiplayerServicesFacade.ReconnectToSessionAsync();
+            var success = session != null;
+            Debug.Log(success ? "Successfully reconnected to Session." : "Failed to reconnect to Session.");
+            return (success, true); // return a success if reconnecting to session returns a session
         }
 
-        public override async Task SetupHostConnectionAsync()
+        public override void SetupHostConnection()
         {
             Debug.Log("Setting up Unity Relay host");
 
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
-
-            // Create relay allocation
-            Allocation hostAllocation = await RelayService.Instance.CreateAllocationAsync(m_ConnectionManager.MaxConnectedPlayers, region: null);
-            var joinCode = await RelayService.Instance.GetJoinCodeAsync(hostAllocation.AllocationId);
-
-            Debug.Log($"server: connection data: {hostAllocation.ConnectionData[0]} {hostAllocation.ConnectionData[1]}, " +
-                $"allocation ID:{hostAllocation.AllocationId}, region:{hostAllocation.Region}");
-
-            m_LocalLobby.RelayJoinCode = joinCode;
-
-            // next line enables lobby and relay services integration
-            await m_LobbyServiceFacade.UpdateLobbyDataAndUnlockAsync();
-            await m_LobbyServiceFacade.UpdatePlayerDataAsync(hostAllocation.AllocationIdBytes.ToString(), joinCode);
-
-            // Setup UTP with relay connection info
-            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-            utp.SetRelayServerData(new RelayServerData(hostAllocation, k_DtlsConnType)); // This is with DTLS enabled for a secure connection
-
-            Debug.Log($"Created relay allocation with join code {m_LocalLobby.RelayJoinCode}");
         }
     }
 }

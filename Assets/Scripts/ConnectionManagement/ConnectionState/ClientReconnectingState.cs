@@ -108,8 +108,8 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, m_ConnectionManager.NbReconnectAttempts));
 
             // If first attempt, wait some time before attempting to reconnect to give time to services to update
-            // (i.e. if in a Lobby and the host shuts down unexpectedly, this will give enough time for the lobby to be
-            // properly deleted so that we don't reconnect to an empty lobby
+            // (i.e. if in a Session and the host shuts down unexpectedly, this will give enough time for the Session to be
+            // properly deleted so that we don't reconnect to an empty Session
             if (m_NbAttempts == 0)
             {
                 yield return new WaitForSeconds(k_TimeBeforeFirstAttempt);
@@ -122,8 +122,7 @@ namespace Unity.BossRoom.ConnectionManagement
             if (!reconnectingSetupTask.IsFaulted && reconnectingSetupTask.Result.success)
             {
                 // If this fails, the OnClientDisconnect callback will be invoked by Netcode
-                var connectingTask = ConnectClientAsync();
-                yield return new WaitUntil(() => connectingTask.IsCompleted);
+                ConnectClientAsync();
             }
             else
             {
