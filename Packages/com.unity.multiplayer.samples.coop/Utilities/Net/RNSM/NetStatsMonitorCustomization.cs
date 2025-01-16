@@ -9,14 +9,14 @@ namespace Unity.Multiplayer.Samples.Utilities
     {
         [SerializeField]
         RuntimeNetStatsMonitor m_Monitor;
-        
+
         [SerializeField]
         InputActionReference m_ToggleNetworkStatsAction;
 
         void Start()
         {
             m_Monitor.Visible = false;
-            
+
             m_ToggleNetworkStatsAction.action.performed += OnToggleNetworkStatsActionperformed;
         }
 

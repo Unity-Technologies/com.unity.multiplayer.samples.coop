@@ -19,7 +19,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         [SerializeField]
         GameObject m_OutOfRangeVisualization;
-        
+
         [SerializeField]
         InputActionReference m_PointAction;
 
@@ -82,6 +82,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                     };
                     m_SendInput(data);
                 }
+
                 Destroy(gameObject);
                 return;
             }

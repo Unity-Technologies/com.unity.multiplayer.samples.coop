@@ -63,6 +63,7 @@ namespace Unity.BossRoom.Utils
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             InitializeUI();
 #endif
+
             // Hide UI until ready
             Hide();
         }
@@ -80,10 +81,10 @@ namespace Unity.BossRoom.Utils
         {
             NetworkManager.Singleton.OnClientStarted += OnNetworkManagerStarted;
             NetworkManager.Singleton.OnServerStarted += OnNetworkManagerStarted;
-            
+
             m_ToggleNetworkSimulatorAction.action.performed += OnToggleNetworkSimulatorActionPerformed;
         }
-        
+
         void OnDestroy()
         {
             if (NetworkManager.Singleton is not null)
@@ -91,7 +92,7 @@ namespace Unity.BossRoom.Utils
                 NetworkManager.Singleton.OnClientStarted -= OnNetworkManagerStarted;
                 NetworkManager.Singleton.OnServerStarted -= OnNetworkManagerStarted;
             }
-            
+
             m_ToggleNetworkSimulatorAction.action.performed -= OnToggleNetworkSimulatorActionPerformed;
         }
 
@@ -125,6 +126,7 @@ namespace Unity.BossRoom.Utils
                     {
                         connectionsCyleScenario.Configurations.Add(configuration);
                     }
+
                     m_PresetsDropdown.captionText.color = m_PresetsDropdown.colors.disabledColor;
                     m_PresetsDropdown.interactable = false;
                     scenario = connectionsCyleScenario;
@@ -136,6 +138,7 @@ namespace Unity.BossRoom.Utils
                     {
                         randomConnectionsSwapScenario.Configurations.Add(configuration);
                     }
+
                     m_PresetsDropdown.captionText.color = m_PresetsDropdown.colors.disabledColor;
                     m_PresetsDropdown.interactable = false;
                     scenario = randomConnectionsSwapScenario;
@@ -146,6 +149,7 @@ namespace Unity.BossRoom.Utils
                     m_PresetsDropdown.interactable = true;
                     break;
             }
+
             m_NetworkSimulator.Scenario = scenario;
             if (m_NetworkSimulator.Scenario != null)
             {
@@ -180,12 +184,14 @@ namespace Unity.BossRoom.Utils
         {
             // Initialize connection presets dropdown
             var optionData = new List<TMP_Dropdown.OptionData>();
+
             // Adding all available presets
             foreach (var networkSimulatorPreset in NetworkSimulatorPresets.Values)
             {
                 m_SimulatorPresets[networkSimulatorPreset.Name] = networkSimulatorPreset;
                 optionData.Add(new TMP_Dropdown.OptionData(networkSimulatorPreset.Name));
             }
+
             m_PresetsDropdown.AddOptions(optionData);
             m_PresetsDropdown.onValueChanged.AddListener(OnPresetChanged);
 
@@ -220,7 +226,6 @@ namespace Unity.BossRoom.Utils
                         }
                     }
                 }
-
             }
             else
             {
@@ -230,12 +235,12 @@ namespace Unity.BossRoom.Utils
                 }
             }
         }
-        
+
         void OnToggleNetworkSimulatorActionPerformed(InputAction.CallbackContext obj)
         {
             ToggleVisibility();
         }
-        
+
         public void SimulateDisconnect()
         {
             m_NetworkSimulator.Disconnect();

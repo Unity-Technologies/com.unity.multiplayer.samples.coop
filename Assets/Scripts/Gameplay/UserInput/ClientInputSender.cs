@@ -24,7 +24,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
         //upstream network conservation. This matters when holding down your mouse button to move.
         const float k_MoveSendRateSeconds = 0.04f; //25 fps.
 
-        const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
+        const float k_TargetMoveTimeout = 0.45f; //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
 
         float m_LastSentMove;
 
@@ -75,12 +75,12 @@ namespace Unity.BossRoom.Gameplay.UserInput
         /// </summary>
         public enum SkillTriggerStyle
         {
-            None,        //no skill was triggered.
-            MouseClick,  //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
-            Keyboard,    //skill was triggered via a Keyboard press, implying target should be taken from the active target.
+            None, //no skill was triggered.
+            MouseClick, //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
+            Keyboard, //skill was triggered via a Keyboard press, implying target should be taken from the active target.
             KeyboardRelease, //represents a released key.
-            UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target.
-            UIRelease,   //represents letting go of the mouse-button on a UI button
+            UI, //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target.
+            UIRelease, //represents letting go of the mouse-button on a UI button
         }
 
         bool IsReleaseStyle(SkillTriggerStyle style)
@@ -150,6 +150,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
             if (!IsClient || !IsOwner)
             {
                 enabled = false;
+
                 // dont need to do anything else if not the owner
                 return;
             }
@@ -162,17 +163,19 @@ namespace Unity.BossRoom.Gameplay.UserInput
             {
                 actionState1 = new ActionState() { actionID = action1.ActionID, selectable = true };
             }
+
             if (CharacterClass.Skill2 &&
                 GameDataSource.Instance.TryGetActionPrototypeByID(CharacterClass.Skill2.ActionID, out var action2))
             {
                 actionState2 = new ActionState() { actionID = action2.ActionID, selectable = true };
             }
+
             if (CharacterClass.Skill3 &&
                 GameDataSource.Instance.TryGetActionPrototypeByID(CharacterClass.Skill3.ActionID, out var action3))
             {
                 actionState3 = new ActionState() { actionID = action3.ActionID, selectable = true };
             }
-            
+
             m_Action1.action.started += OnAction1Started;
             m_Action1.action.canceled += OnAction1Canceled;
             m_Action2.action.started += OnAction2Started;
@@ -202,7 +205,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
             {
                 m_TargetServerCharacter.NetLifeState.LifeState.OnValueChanged -= OnTargetLifeStateChanged;
             }
-            
+
             m_Action1.action.started -= OnAction1Started;
             m_Action1.action.canceled -= OnAction1Canceled;
             m_Action2.action.started -= OnAction2Started;
@@ -468,7 +471,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
             //there is a bug where the direction is flipped if the hitPos and current position are almost the same,
             //so we use the character's direction instead.
             float directionLength = offset.magnitude;
-            Vector3 direction = 1.0f/*epsilon*/ <= directionLength ? (offset / directionLength) : m_PhysicsWrapper.Transform.forward;
+            Vector3 direction = 1.0f /*epsilon*/ <= directionLength ? (offset / directionLength) : m_PhysicsWrapper.Transform.forward;
 
             switch (actionConfig.Logic)
             {
@@ -518,52 +521,52 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 m_ActionRequestCount++;
             }
         }
-        
+
         void OnAction1Started(InputAction.CallbackContext obj)
         {
             RequestAction(actionState1.actionID, SkillTriggerStyle.Keyboard);
         }
-        
+
         void OnAction1Canceled(InputAction.CallbackContext obj)
         {
             RequestAction(actionState1.actionID, SkillTriggerStyle.KeyboardRelease);
         }
-        
+
         void OnAction2Started(InputAction.CallbackContext obj)
         {
             RequestAction(actionState2.actionID, SkillTriggerStyle.Keyboard);
         }
-        
+
         void OnAction2Canceled(InputAction.CallbackContext obj)
         {
             RequestAction(actionState2.actionID, SkillTriggerStyle.KeyboardRelease);
         }
-        
+
         void OnAction3Started(InputAction.CallbackContext obj)
         {
             RequestAction(actionState3.actionID, SkillTriggerStyle.Keyboard);
         }
-        
+
         void OnAction3Canceled(InputAction.CallbackContext obj)
         {
             RequestAction(actionState3.actionID, SkillTriggerStyle.KeyboardRelease);
         }
-        
+
         void OnAction5Performed(InputAction.CallbackContext obj)
         {
             RequestAction(GameDataSource.Instance.Emote1ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
         }
-        
+
         void OnAction6Performed(InputAction.CallbackContext obj)
         {
             RequestAction(GameDataSource.Instance.Emote2ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
         }
-        
+
         void OnAction7Performed(InputAction.CallbackContext obj)
         {
             RequestAction(GameDataSource.Instance.Emote3ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
         }
-        
+
         void OnAction8Performed(InputAction.CallbackContext obj)
         {
             RequestAction(GameDataSource.Instance.Emote4ActionPrototype.ActionID, SkillTriggerStyle.Keyboard);
@@ -580,7 +583,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 {
                     RequestAction(CharacterClass.Skill1.ActionID, SkillTriggerStyle.MouseClick);
                 }
-                
+
                 if (m_TargetAction.action.WasPressedThisFrame())
                 {
                     RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype.ActionID, SkillTriggerStyle.MouseClick);
@@ -609,19 +612,19 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 actionState1.actionID = GameDataSource.Instance.DropActionPrototype.ActionID;
             }
             else if ((m_ServerCharacter.TargetId.Value != 0
-                    && selection != null
-                    && selection.TryGetComponent(out PickUpState pickUpState))
-               )
+                         && selection != null
+                         && selection.TryGetComponent(out PickUpState pickUpState))
+                    )
             {
                 // special case: targeting a pickup-able item or holding a pickup object
 
                 actionState1.actionID = GameDataSource.Instance.PickUpActionPrototype.ActionID;
             }
             else if (m_ServerCharacter.TargetId.Value != 0
-                && selection != null
-                && selection.NetworkObjectId != m_ServerCharacter.NetworkObjectId
-                && selection.TryGetComponent(out ServerCharacter charState)
-                && !charState.IsNpc)
+                     && selection != null
+                     && selection.NetworkObjectId != m_ServerCharacter.NetworkObjectId
+                     && selection.TryGetComponent(out ServerCharacter charState)
+                     && !charState.IsNpc)
             {
                 // special case: when we have a player selected, we change the meaning of the basic action
                 // we have another player selected! In that case we want to reflect that our basic Action is a Revive, not an attack!

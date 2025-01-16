@@ -29,10 +29,10 @@ namespace Unity.BossRoom.DebugCheats
         [SerializeField]
         [Tooltip("Boss to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
         NetworkObject m_BossPrefab;
-        
+
         [SerializeField]
         InputActionReference m_ToggleCheatsAction;
-        
+
         SwitchedDoor m_SwitchedDoor;
 
         SwitchedDoor SwitchedDoor
@@ -43,6 +43,7 @@ namespace Unity.BossRoom.DebugCheats
                 {
                     m_SwitchedDoor = FindAnyObjectByType<SwitchedDoor>();
                 }
+
                 return m_SwitchedDoor;
             }
         }
@@ -160,7 +161,6 @@ namespace Unity.BossRoom.DebugCheats
                         UnityEngine.Debug.Log($"Target {targetId} has no IDamageable component or cannot be damaged.");
                     }
                 }
-
             }
         }
 
@@ -177,6 +177,7 @@ namespace Unity.BossRoom.DebugCheats
                     }
                 }
             }
+
             PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "KillAllEnemies");
         }
 
@@ -211,6 +212,7 @@ namespace Unity.BossRoom.DebugCheats
                         damageable.ReceiveHP(null, baseHp);
                     }
                 }
+
                 PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "HealPlayer");
             }
         }
@@ -227,6 +229,7 @@ namespace Unity.BossRoom.DebugCheats
                     break;
                 }
             }
+
             PublishCheatUsedMessage(clientId, "ToggleSuperSpeed");
         }
 
@@ -242,6 +245,7 @@ namespace Unity.BossRoom.DebugCheats
                     break;
                 }
             }
+
             PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "ToggleTeleportMode");
         }
 

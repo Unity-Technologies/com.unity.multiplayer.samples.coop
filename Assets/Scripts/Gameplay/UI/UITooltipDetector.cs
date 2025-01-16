@@ -18,7 +18,7 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         InputActionReference m_PointAction;
-        
+
         [SerializeField]
         [Tooltip("The actual Tooltip that should be triggered")]
         UITooltipPopup m_TooltipPopup;
