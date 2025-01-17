@@ -280,8 +280,8 @@ MonoBehaviour:
       Owner: {fileID: 2134312450369994339}
       Enabled: 1
       Input:
-        LegacyInput: 
-        LegacyGain: 300
+        InputAction: {fileID: 0}
+        Gain: 1
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
@@ -291,8 +291,8 @@ MonoBehaviour:
       Owner: {fileID: 2134312450369994339}
       Enabled: 1
       Input:
-        LegacyInput: Mouse ScrollWheel
-        LegacyGain: -50
+        InputAction: {fileID: -5536139033653354306, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+        Gain: -50
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
@@ -302,13 +302,15 @@ MonoBehaviour:
       Owner: {fileID: 2134312450369994339}
       Enabled: 1
       Input:
-        LegacyInput: Mouse ScrollWheel
-        LegacyGain: 200
+        InputAction: {fileID: 0}
+        Gain: 1
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
         AccelTime: 0
         DecelTime: 0
+  PlayerIndex: -1
+  AutoEnableInputs: 1
 --- !u!1 &2167489802469618434
 GameObject:
   m_ObjectHideFlags: 0
