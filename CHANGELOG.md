@@ -11,6 +11,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Added a welcome dialog to guide users on their first time experience (#888)
   * Added a Table of Contents with helpful resources, that can be accessed from the `Tutorials > Show Tutorials` menu
 * Added the Multiplayer Play Mode package v1.3.1 to the project (#890)
+* An In-Editor Tutorial walking through the process of associating your Unity project with a Unity Cloud ID has been added (#898)
 
 ### Changed
 * Upgraded editor version to 6000.0.25f1 and upgraded Boss Room to Netcode for GameObjects v2.0.0 (#890)
@@ -23,6 +24,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * com.unity.multiplayer.tools from v2.2.1 to v2.2.3
   * com.unity.netcode.gameobjects from v2.0.0 to v2.1.1
 * VContainer package upgraded from v1.11.0 to v1.14.0 (#896) This upgrade removes warning messages related to IL weaving as code gen is refactored in v1.14.0
+* Upgraded the project to the New Input System v1.11.2 (#897) Compatibility mode with the previous version has been disabled.
 
 ### Cleanup
 * Removed ParrelSync from the project (#890)
