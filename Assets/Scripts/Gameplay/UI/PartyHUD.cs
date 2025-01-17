@@ -147,6 +147,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
             ulong id = serverCharacter.NetworkObjectId;
             int slot = FindOrAddAlly(id);
+
             // do nothing if not in a slot
             if (slot == -1)
             {
@@ -187,11 +188,13 @@ namespace Unity.BossRoom.Gameplay.UI
         void SetAllyGodModeStatus(ulong id, bool newValue)
         {
             int slot = FindOrAddAlly(id, true);
+
             // do nothing if not in a slot
             if (slot == -1)
             {
                 return;
             }
+
             m_PartyHealthGodModeImages[slot].gameObject.SetActive(newValue);
         }
 #endif
@@ -199,6 +202,7 @@ namespace Unity.BossRoom.Gameplay.UI
         void SetAllyHealth(ulong id, int hp)
         {
             int slot = FindOrAddAlly(id, true);
+
             // do nothing if not in a slot
             if (slot == -1)
             {
@@ -260,7 +264,7 @@ namespace Unity.BossRoom.Gameplay.UI
                 // special case: id of 0 is uninitialized party id
                 return -1;
             }
-            
+
             int openslot = -1;
             for (int i = 0; i < m_PartyIds.Length; i++)
             {
@@ -269,6 +273,7 @@ namespace Unity.BossRoom.Gameplay.UI
                 {
                     return i;
                 }
+
                 // otherwise, record the first open slot (not slot 0 thats for the Hero)
                 if (openslot == -1 && i > 0 && m_PartyIds[i] == 0)
                 {
@@ -284,6 +289,7 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 // activeate the correct ally panel
                 m_AllyPanel[openslot - 1].SetActive(true);
+
                 // and save ally ID to party array
                 m_PartyIds[openslot] = id;
                 return openslot;
@@ -314,13 +320,14 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             // remove potential selected state of party member UI
             SetHeroSelectFX(id, false);
-            
+
             for (int i = 0; i < m_PartyIds.Length; i++)
             {
                 // if this ID is in the list, return the slot index
                 if (m_PartyIds[i] == id)
                 {
                     m_AllyPanel[i - 1].SetActive(false);
+
                     // and save ally ID to party array
                     m_PartyIds[i] = 0;
                 }
