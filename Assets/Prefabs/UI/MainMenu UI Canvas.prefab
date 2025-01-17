@@ -1269,6 +1269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79e7ca3e19eb99c4f97ff06a95ef7dac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_PointAction: {fileID: -1959881153152325168, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
   m_TooltipPopup: {fileID: 5331930138599208077}
   m_TooltipText: Unity Gaming Services ProjectID not set up. Click the Readme file
     in the Assets Folder within the Project window in-editor to follow "How to set

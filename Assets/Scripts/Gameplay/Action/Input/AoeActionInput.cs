@@ -1,6 +1,7 @@
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 namespace Unity.BossRoom.Gameplay.Actions
 {
@@ -18,6 +19,12 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         [SerializeField]
         GameObject m_OutOfRangeVisualization;
+
+        [SerializeField]
+        InputActionReference m_PointAction;
+
+        [SerializeField]
+        InputActionReference m_TargetAction;
 
         Camera m_Camera;
 
@@ -44,7 +51,8 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         void Update()
         {
-            if (PlaneRaycast(k_Plane, m_Camera.ScreenPointToRay(Input.mousePosition), out Vector3 pointOnPlane) &&
+            // TODO: convert to mouse position using new input system
+            if (PlaneRaycast(k_Plane, m_Camera.ScreenPointToRay(m_PointAction.action.ReadValue<Vector2>()), out Vector3 pointOnPlane) &&
                 NavMesh.SamplePosition(pointOnPlane, out m_NavMeshHit, 2f, NavMesh.AllAreas))
             {
                 transform.position = m_NavMeshHit.position;
@@ -56,12 +64,12 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_OutOfRangeVisualization.SetActive(!isInRange);
 
             // wait for the player to click down and then release the mouse button before actually taking the input
-            if (Input.GetMouseButtonDown(0))
+            if (m_TargetAction.action.WasPressedThisFrame())
             {
                 m_ReceivedMouseDownEvent = true;
             }
 
-            if (Input.GetMouseButtonUp(0) && m_ReceivedMouseDownEvent)
+            if (m_TargetAction.action.WasReleasedThisFrame() && m_ReceivedMouseDownEvent)
             {
                 if (isInRange)
                 {
@@ -74,6 +82,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                     };
                     m_SendInput(data);
                 }
+
                 Destroy(gameObject);
                 return;
             }

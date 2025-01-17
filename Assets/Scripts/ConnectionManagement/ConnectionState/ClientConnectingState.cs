@@ -55,7 +55,7 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
-        internal async Task ConnectClientAsync()
+        internal void ConnectClientAsync()
         {
             try
             {

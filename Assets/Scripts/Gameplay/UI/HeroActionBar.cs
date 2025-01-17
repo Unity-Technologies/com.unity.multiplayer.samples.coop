@@ -4,6 +4,7 @@ using Unity.BossRoom.Gameplay.UserInput;
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Action = Unity.BossRoom.Gameplay.Actions.Action;
 using SkillTriggerStyle = Unity.BossRoom.Gameplay.UserInput.ClientInputSender.SkillTriggerStyle;
 
@@ -39,6 +40,9 @@ namespace Unity.BossRoom.Gameplay.UI
         /// Our input-sender. Initialized in RegisterInputSender()
         /// </summary>
         ClientInputSender m_InputSender;
+
+        [SerializeField]
+        InputActionReference m_ToggleEmoteBarAction;
 
         /// <summary>
         /// Identifiers for the buttons on the action bar.
@@ -129,6 +133,7 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState1.actionID, out action1);
             }
+
             UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], action1);
 
             Action action2 = null;
@@ -136,6 +141,7 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState2.actionID, out action2);
             }
+
             UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], action2);
 
             Action action3 = null;
@@ -143,6 +149,7 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState3.actionID, out action3);
             }
+
             UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], action3);
         }
 
@@ -161,6 +168,7 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 m_InputSender.action1ModifiedCallback -= Action1ModifiedCallback;
             }
+
             m_InputSender = null;
         }
 
@@ -173,6 +181,8 @@ namespace Unity.BossRoom.Gameplay.UI
                 [ActionButtonType.Special2] = new ActionButtonInfo(ActionButtonType.Special2, m_SpecialAction2Button, this),
                 [ActionButtonType.EmoteBar] = new ActionButtonInfo(ActionButtonType.EmoteBar, m_EmoteBarButton, this),
             };
+
+            m_ToggleEmoteBarAction.action.performed += OnToggleEmoteBarPerformed;
 
             ClientPlayerAvatar.LocalClientSpawned += RegisterInputSender;
             ClientPlayerAvatar.LocalClientDespawned += DeregisterInputSender;
@@ -198,13 +208,15 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             DeregisterInputSender();
 
+            m_ToggleEmoteBarAction.action.performed -= OnToggleEmoteBarPerformed;
+
             ClientPlayerAvatar.LocalClientSpawned -= RegisterInputSender;
             ClientPlayerAvatar.LocalClientDespawned -= DeregisterInputSender;
         }
 
-        void Update()
+        void OnToggleEmoteBarPerformed(InputAction.CallbackContext obj)
         {
-            if (Input.GetKeyUp(KeyCode.Alpha4))
+            if (obj.performed)
             {
                 m_ButtonInfo[ActionButtonType.EmoteBar].Button.OnPointerUpEvent.Invoke();
             }

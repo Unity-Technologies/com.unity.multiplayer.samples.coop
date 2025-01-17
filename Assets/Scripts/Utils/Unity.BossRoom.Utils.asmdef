@@ -6,7 +6,8 @@
         "Unity.Netcode.Runtime",
         "Unity.Multiplayer.Tools.NetworkSimulator.Runtime",
         "Unity.Networking.Transport",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
