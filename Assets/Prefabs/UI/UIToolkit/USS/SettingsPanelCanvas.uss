@@ -27,14 +27,6 @@
     height: 100px;
 }
 
-.settingsLabel {
-    -unity-font-definition: url("project://database/Library/unity%20default%20resources?fileID=10102&guid=0000000000000000e000000000000000&type=0#LegacyRuntime");
-    -unity-font-style: bold-and-italic;
-    color: rgb(235, 209, 63);
-    font-size: 50px;
-    -unity-text-align: upper-center;
-}
-
 .slider .unity-base-slider__dragger {
     background-color: rgb(253, 247, 2);
     border-radius: 6px;
@@ -64,10 +56,66 @@
     -unity-text-align: upper-left;
     border-radius: 8px;
     font-size: 20px;
+    margin-bottom: 10px;
+    margin-top: 4px;
+    padding-top: 3px;
+}
+
+.label {
+    -unity-font-definition: url("project://database/Library/unity%20default%20resources?fileID=10102&guid=0000000000000000e000000000000000&type=0#LegacyRuntime");
+    -unity-font-style: bold-and-italic;
+    color: rgb(235, 209, 63);
+    font-size: 40px;
+    -unity-text-align: upper-center;
+    margin-bottom: 32px;
+    margin-top: 30px;
 }
 
 .unity-base-slider__fill {
     background-color: rgb(222, 198, 60);
     border-bottom-left-radius: 4px;
     border-top-left-radius: 4px;
+}
+
+.menuButton {
+    background-image: url("project://database/Assets/Textures/UI/ui_btn_blank.png?fileID=2800000&guid=41948b4cc6087644b983dce55b466d50&type=3#ui_btn_blank");
+    background-size: 408px 90px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
+    color: rgb(247, 213, 32);
+    width: 374px;
+    height: 90px;
+    align-self: center;
+    font-size: 44px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    margin-bottom: 30px;
+}
+
+.panel {
+    background-image: url("project://database/Assets/Textures/UI/ui_dialog.png?fileID=2800000&guid=222f76e9081efb6428be38c0e10f7bde&type=3#ui_dialog");
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
+    background-size: 100% 100%;
+    width: 420px;
+    height: 376px;
+    position: absolute;
+    top: -156px;
+    right: 111px;
+}
+
+.menuButton {
+    background-image: url("project://database/Assets/Textures/UI/ui_btn_blank.png?fileID=2800000&guid=41948b4cc6087644b983dce55b466d50&type=3#ui_btn_blank");
+    background-size: 435px 75px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
+    color: rgb(247, 213, 32);
+    width: 320px;
+    height: 65px;
+    align-self: center;
+    font-size: 44px;
+    margin-top: 10px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
 }

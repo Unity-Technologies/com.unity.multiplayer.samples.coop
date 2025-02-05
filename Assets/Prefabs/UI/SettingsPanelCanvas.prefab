@@ -90,7 +90,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 294265330276786214}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BossRoom.Visual.UISettingsCanvas, BossRoom.Client
         m_MethodName: OnClickSettingsButton
         m_Mode: 1
@@ -144,7 +144,7 @@ GameObject:
   - component: {fileID: 294265330276786216}
   - component: {fileID: 294265330276786219}
   - component: {fileID: 294265330276786218}
-  - component: {fileID: 294265330276786214}
+  - component: {fileID: 6740915811087831969}
   m_Layer: 5
   m_Name: SettingsPanelCanvas
   m_TagString: Untagged
@@ -238,7 +238,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &294265330276786214
+--- !u!114 &6740915811087831969
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -247,7 +247,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 294265330276786221}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 190bc18b6f6f06340acb887d88806593, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b86c208fa760224e852eef9dfe1f4f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_SettingsPanelRoot: {fileID: 6417648243838381817}
@@ -1676,7 +1676,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 294265330276786214}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Unity.Multiplayer.Samples.BossRoom.Visual.UISettingsCanvas,
           Unity.Multiplayer.Samples.BossRoom.Client
         m_MethodName: OnClickQuitButton
