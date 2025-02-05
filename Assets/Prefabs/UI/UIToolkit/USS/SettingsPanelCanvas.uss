@@ -1,0 +1,73 @@
+.simpleButton {
+    width: 100px;
+    height: 100px;
+    margin-top: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    margin-left: 8px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.settingsButton {
+    background-image: url("project://database/Assets/Textures/UI/ui_sound_settings.png?fileID=2800000&guid=66a470aa734e32040b424353a0f0de39&type=3#ui_sound_settings");
+}
+
+.ExitButton {
+    background-color: rgba(188, 188, 188, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-image: url("project://database/Assets/Textures/UI/ui_btn_exit.png?fileID=2800000&guid=60ca69669387e034393c7f486bf3ae19&type=3#ui_btn_exit");
+    width: 100px;
+    height: 100px;
+}
+
+.settingsLabel {
+    -unity-font-definition: url("project://database/Library/unity%20default%20resources?fileID=10102&guid=0000000000000000e000000000000000&type=0#LegacyRuntime");
+    -unity-font-style: bold-and-italic;
+    color: rgb(235, 209, 63);
+    font-size: 50px;
+    -unity-text-align: upper-center;
+}
+
+.slider .unity-base-slider__dragger {
+    background-color: rgb(253, 247, 2);
+    border-radius: 6px;
+    border-width: 0;
+    height: 70%;
+    top: 20px;
+}
+
+.slider .unity-base-slider__tracker {
+    background-color: rgb(95, 83, 20);
+    border-radius: 5px;
+    height: 14px;
+    border-color: transparent;
+    -unity-text-outline-color: rgb(0, 0, 0);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    --unity-progress-bar__background-color: rgb(255, 99, 71);
+}
+
+.slider {
+    -unity-font-definition: url("project://database/Library/unity%20default%20resources?fileID=10102&guid=0000000000000000e000000000000000&type=0#LegacyRuntime");
+    -unity-font-style: bold;
+    color: rgb(222, 198, 60);
+    white-space: pre-wrap;
+    -unity-text-align: upper-left;
+    border-radius: 8px;
+    font-size: 20px;
+}
+
+.unity-base-slider__fill {
+    background-color: rgb(222, 198, 60);
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+}

@@ -1,0 +1,19 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Prefabs/UI/UIToolkit/USS/SettingsPanelCanvas.uss?fileID=7433441132597879392&amp;guid=d5e6eac383531594b983eb9318a78a8a&amp;type=3#SettingsPanelCanvas" />
+    <engine:VisualElement name="root" style="flex-grow: 1;">
+        <engine:VisualElement name="settingsPanelRoot" style="background-image: url(&quot;project://database/Assets/Textures/UI/ui_dialog.png?fileID=2800000&amp;guid=222f76e9081efb6428be38c0e10f7bde&amp;type=3#ui_dialog&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.75); background-size: 100% 100%;">
+            <engine:Label text="Settings" name="settingsLabel" class="settingsLabel" style="margin-bottom: 8px;" />
+            <engine:Button name="closeButton" class="ExitButton" style="position: absolute; top: -10px; right: -10px;" />
+            <engine:Label text="Overall Volume" name="masterVolumeLabel" class="slider" style="translate: 7.5% 50%; transform-origin: center 40%;" />
+            <engine:Slider high-value="100" name="masterVolume" fill="true" show-input-field="false" enabled="true" inverted="false" value="50" class="slider" style="-unity-background-image-tint-color: rgba(255, 4, 4, 0.96); width: 85%; translate: 7.5% 0; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px;" />
+            <engine:Label text="Music Volume" name="musicVolumeLabel" class="slider" style="translate: 7.5% 50%; transform-origin: center 40%;" />
+            <engine:Slider high-value="100" name="musicVolume" enabled="true" show-input-field="false" fill="true" low-value="0" value="50" class="slider" style="width: 85%; translate: 7.5% 0;" />
+            <engine:Button text="Low" name="settingPanelButton" style="background-image: url(&quot;project://database/Assets/Textures/UI/ui_btn_blank.png?fileID=2800000&amp;guid=41948b4cc6087644b983dce55b466d50&amp;type=3#ui_btn_blank&quot;); background-size: 408px 90px; -unity-font-definition: url(&quot;project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&amp;guid=b8a509d3b3ce60847bbafb5a38462ecf&amp;type=3#Bungee-Regular&quot;); color: rgb(247, 213, 32); width: 407px; height: 90px; align-self: center; font-size: 44px; margin-top: 10px; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;" />
+        </engine:VisualElement>
+        <engine:VisualElement name="quitPanelRoot" style="flex-grow: 1;" />
+    </engine:VisualElement>
+    <engine:VisualElement name="buttonRoot" style="height: 161px; width: 118px; align-items: center; transform-origin: right top; right: -90%; top: 0;">
+        <engine:Button name="quitButton" class="simpleButton ExitButton" style="background-size: 70% 70%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+        <engine:Button name="settingsButton" class="simpleButton settingsButton" style="background-size: 70% 70%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+    </engine:VisualElement>
+</engine:UXML>
