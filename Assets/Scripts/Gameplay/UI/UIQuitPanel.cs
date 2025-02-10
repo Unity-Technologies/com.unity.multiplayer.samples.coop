@@ -24,6 +24,18 @@ namespace Unity.BossRoom.Gameplay.UI
         [Inject]
         IPublisher<QuitApplicationMessage> m_QuitApplicationPub;
 
+        void Awake()
+        {
+            if (m_ConnectionManager == null)
+            {
+                Debug.LogError("ConnectionManager is null! Ensure that dependency injection is set up correctly.");
+            }
+            else
+            {
+                Debug.Log("ConnectionManager successfully injected into UIQuitPanel.");
+            }
+        }
+        
         public void Quit()
         {
             switch (m_QuitMode)
