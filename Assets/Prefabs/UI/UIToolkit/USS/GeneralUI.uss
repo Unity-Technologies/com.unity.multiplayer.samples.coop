@@ -1,15 +1,3 @@
-.menuButton {
-    background-image: url("project://database/Assets/Textures/UI/ui_btn_blank.png?fileID=2800000&guid=41948b4cc6087644b983dce55b466d50&type=3#ui_btn_blank");
-    background-size: 435px 75px;
-    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
-    color: rgb(247, 213, 32);
-    width: 320px;
-    height: 65px;
-    align-self: center;
-    font-size: 44px;
-    margin-top: 10px;
-}
-
 .menuButton:hover {
     background-image: url("project://database/Assets/Textures/UI/ui_btn_blank.png?fileID=2800000&guid=41948b4cc6087644b983dce55b466d50&type=3#ui_btn_blank");
     background-size: 435px 75px;
@@ -45,4 +33,29 @@
     border-bottom-width: 0;
     border-left-width: 0;
     background-color: rgba(0, 0, 0, 0);
+}
+
+.gameText {
+    color: rgb(129, 255, 47);
+    font-size: 115px;
+    position: absolute;
+    -unity-text-outline-width: 10px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
+    -unity-text-outline-color: rgb(0, 0, 0);
+    top: 39%;
+    left: 23%;
+}
+
+.menuButton {
+    background-image: url("project://database/Assets/Textures/UI/ui_btn_blank.png?fileID=2800000&guid=41948b4cc6087644b983dce55b466d50&type=3#ui_btn_blank");
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
+    color: rgb(247, 213, 32);
+    font-size: 190%;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    width: 408px;
+    height: 90px;
 }

@@ -1,0 +1,25 @@
+.message-feed {
+    width: 480%;
+    height: 250px;
+    border-radius: 5px;
+    border: solid 1px rgb(204, 204, 204);
+    overflow: auto;
+    padding: 10px;
+    position: absolute;
+    left: 64px;
+    top: 500px;
+}
+
+.message-item {
+    font-size: 14px;
+    color: rgb(51, 51, 51);
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    word-wrap: break-word;
+    width: 480px;
+    height: 50px;
+    position: absolute;
+    top: 500px;
+    left: 64px;
+}
