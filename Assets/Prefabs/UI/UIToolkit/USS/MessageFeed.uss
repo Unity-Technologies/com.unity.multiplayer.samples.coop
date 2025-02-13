@@ -3,7 +3,6 @@
     height: 250px;
     border-radius: 5px;
     border: solid 1px rgb(204, 204, 204);
-    overflow: auto;
     padding: 10px;
     position: absolute;
     left: 64px;
