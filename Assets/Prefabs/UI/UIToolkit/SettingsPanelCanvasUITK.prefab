@@ -76,7 +76,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8673277459071735180}
   - component: {fileID: 8607712241056528212}
-  - component: {fileID: 4923764729715591813}
   m_Layer: 5
   m_Name: UIQuitPanel
   m_TagString: Untagged
@@ -112,19 +111,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_QuitMode: 0
---- !u!114 &4923764729715591813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4153888348426691229}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b2c62ac3bcd44fb9e09835581422057, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parentReference:
-    TypeName: Unity.BossRoom.ApplicationLifecycle.ApplicationController
-  autoRun: 1
-  autoInjectGameObjects: []

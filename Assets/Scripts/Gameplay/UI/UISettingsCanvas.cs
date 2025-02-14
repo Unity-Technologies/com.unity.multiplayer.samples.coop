@@ -34,7 +34,7 @@ namespace Unity.BossRoom.Gameplay.UI
             // Retrieve the root VisualElement from the UIDocument
             var root = uiDocument.rootVisualElement;
             // get UIQuitPanel component which is attached to the same GameObject
-            uiQuitPanel = GetComponent<UIQuitPanel>();
+            uiQuitPanel = GetComponentInChildren<UIQuitPanel>();
             // Query the panels by their names or assigned USS classes
             settingsPanelRoot = root.Q<VisualElement>("settingsPanelRoot");
             quitPanelRoot = root.Q<VisualElement>("quitPanelRoot");
