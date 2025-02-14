@@ -1,7 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Prefabs/UI/UIToolkit/USS/GeneralUI.uss?fileID=7433441132597879392&amp;guid=36bef7d47f6ca284f8a33439946d6dfe&amp;type=3#GeneralUI" />
     <Style src="project://database/Assets/Prefabs/UI/UIToolkit/USS/MessageFeed.uss?fileID=7433441132597879392&amp;guid=daa8504d262853748b8d7c2a377261a3&amp;type=3#MessageFeed" />
-    <engine:VisualElement name="root" style="flex-grow: 1; flex-shrink: 5;">
+    <engine:VisualElement name="postRoot" style="flex-grow: 1; flex-shrink: 5;">
         <engine:Label name="title" style="background-image: url(&quot;project://database/Assets/Textures/UI/ui_title_logo.png?fileID=2800000&amp;guid=240734f1e1c8daa4b9bd0593e767fb3f&amp;type=3#ui_title_logo&quot;); width: 50%; height: 50%; -unity-text-align: upper-center; justify-content: center; align-items: center; top: -2%; left: 25%;" />
         <engine:Label text="YOU WON!" name="gameWinText" class="gameText" />
         <engine:Label text="Try Again" name="gameLostText" class="gameText" style="color: rgb(245, 90, 22);" />

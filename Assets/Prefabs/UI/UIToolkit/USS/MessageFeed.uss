@@ -22,3 +22,30 @@
     top: 500px;
     left: 64px;
 }
+
+.message {
+    color: rgb(255, 193, 21);
+    font-size: 32px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=55ec8ee3b059fbf4d98bc372920c05e2&type=3#Roboto-Bold");
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(0, 0, 0);
+}
+
+.messageBox {
+    flex-grow: 1;
+    background-image: url("project://database/Assets/Textures/UI/ui_healthbar_bg.png?fileID=2800000&guid=ac1ab0ffbf410094088db89d509a3a4a&type=3#ui_healthbar_bg");
+    flex-direction: column;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 420px;
+    height: 60px;
+    transition-property: position;
+    transition-duration: 2s;
+}
+
+.messageList {
+}
+
+.messageBoxMove {
+    left: 10%;
+}

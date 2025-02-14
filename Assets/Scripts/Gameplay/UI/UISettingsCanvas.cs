@@ -49,18 +49,6 @@ namespace Unity.BossRoom.Gameplay.UI
 
             // Ensure panels are hidden at startup
             DisablePanels();
-            
-            settingsButton.SetEnabled(true);
-            quitButton.SetEnabled(true);
-            qualityButton.SetEnabled(true);
-            confirmQuitButton.SetEnabled(true);
-            closeButton.SetEnabled(true);
-            cancelButton.SetEnabled(true);
-            masterVolumeSlider.SetEnabled(true);
-            musicVolumeSlider.SetEnabled(true);
-            
-            musicVolumeSlider.value = ClientPrefs.GetMusicVolume();
-            masterVolumeSlider.value = ClientPrefs.GetMasterVolume();
 
             // Bind buttons to their respective methods
             settingsButton.clicked += OnClickSettingsButton;
