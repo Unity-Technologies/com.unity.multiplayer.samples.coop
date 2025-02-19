@@ -13,7 +13,10 @@ namespace Unity.BossRoom.Gameplay.UI
     public class PostGameUI : MonoBehaviour
     {
         [SerializeField]
-        UIDocument uiDocument;
+        UIDocument m_PostGameUIDocument;
+        
+        [SerializeField]
+        UIDocument m_MessageFeedDocument;
 
         ServerPostGameState m_PostGameState;
         
@@ -21,17 +24,23 @@ namespace Unity.BossRoom.Gameplay.UI
         Label m_LoseGameMessage;
         Button m_ReplayButton;
         Button m_WaitOnHostMsg;
+        VisualElement m_MessageFeed;
+        ListView m_MessageList;
         /*VisualElement m_SceneLight;
         Color m_WinLightColor;
         Color m_LoseLightColor;*/
 
         void Awake()
         {
-            var root = uiDocument.rootVisualElement;
+            var root = m_PostGameUIDocument.rootVisualElement;
+            var messageFeedRoot = m_MessageFeedDocument.rootVisualElement;
             m_WinEndMessage = root.Q<Label>("gameWinText");
             m_LoseGameMessage = root.Q<Label>("gameLostText");
             m_ReplayButton = root.Q<Button>("playAgainBtn");
             m_WaitOnHostMsg = root.Q<Button>("waitOnHostBtn");
+            m_MessageFeed = messageFeedRoot.Q<VisualElement>("messageFeed");
+            m_MessageList = m_MessageFeed.Q<ListView>("messageList");
+            
             /*m_SceneLight = root.Q<VisualElement>("sceneLight");
             m_WinLightColor = root.Q<Color>("winLightColor");
             m_LoseLightColor = root.Q<Color>("loseLightColor");*/
@@ -62,16 +71,16 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void Start()
         {
-            //m_PostGameState.NetworkPostGame.WinState.OnValueChanged += OnWinStateChanged;
+            m_PostGameState.NetworkPostGame.WinState.OnValueChanged += OnWinStateChanged;
             SetPostGameUI(m_PostGameState.NetworkPostGame.WinState.Value);
         }
 
         void OnDestroy()
         {
-            /*if (m_PostGameState != null)
+            if (m_PostGameState != null)
             {
                 m_PostGameState.NetworkPostGame.WinState.OnValueChanged -= OnWinStateChanged;
-            }*/
+            }
         }
 
         void OnWinStateChanged(WinState previousValue, WinState newValue)

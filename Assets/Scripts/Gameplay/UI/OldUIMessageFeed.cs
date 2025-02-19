@@ -6,23 +6,24 @@ using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.Gameplay.Messages;
 using Unity.BossRoom.Infrastructure;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 using VContainer;
 
 namespace Unity.BossRoom.Gameplay.UI
 {
-    public class UIMessageFeed : MonoBehaviour
+    /// <summary>
+    /// Handles the display of in-game messages in a message feed
+    /// </summary>
+    public class OldUIMessageFeed : MonoBehaviour
     {
         [SerializeField]
-        UIDocument uiDocument; // Reference to the main UI Document.
+        List<OldUIMessageSlot> m_MessageSlots;
 
         [SerializeField]
-        VisualTreeAsset messageItemAsset; // The UXML template for a single message item.
+        GameObject m_MessageSlotPrefab;
 
-        VisualElement m_MessageFeedContainer; // The container for all message slots.
-        List<UIMessageSlot> m_UIMessageSlots; // List of all active message slots.
-
-        const int k_DefaultHideDelay = 10;
+        [SerializeField]
+        VerticalLayoutGroup m_VerticalLayoutGroup;
 
         DisposableGroup m_Subscriptions;
 
@@ -96,53 +97,38 @@ namespace Unity.BossRoom.Gameplay.UI
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-
                     break;
             }
         }
 
-        void OnEnable()
+        void DisplayMessage(string text)
         {
-            // Get the root VisualElement
-            var root = uiDocument.rootVisualElement;
-
-            // Find the container in the UXML by name (ensure it exists in the "MessageFeed" UXML file)
-            m_MessageFeedContainer = root.Q<VisualElement>("messageFeed");
-            if (m_MessageFeedContainer == null)
-            {
-                Debug.LogError("MessageFeed container not found in UXML.");
-                return;
-            }
-
-            // Initialize the message slot list
-            m_UIMessageSlots = new List<UIMessageSlot>();
-        }
-
-        public void DisplayMessage(string text)
-        {
-            // Find an available slot or create a new one
             var messageSlot = GetAvailableSlot();
             messageSlot.Display(text);
         }
 
-        UIMessageSlot GetAvailableSlot()
+        OldUIMessageSlot GetAvailableSlot()
         {
-            // Reuse an existing slot if one is available
-            foreach (var slot in m_UIMessageSlots)
+            foreach (var slot in m_MessageSlots)
             {
                 if (!slot.IsDisplaying)
                 {
                     return slot;
                 }
             }
-
-            // Otherwise, create a new slot dynamically
-            var newMessageElement = messageItemAsset.Instantiate(); // Clone the UXML template
-            m_MessageFeedContainer.Add(newMessageElement); // Add to the container
-
-            var newSlot = gameObject.AddComponent<UIMessageSlot>();
-            m_UIMessageSlots.Add(newSlot);
-            return newSlot;
+            var go = Instantiate(m_MessageSlotPrefab, m_VerticalLayoutGroup.transform);
+            var messageSlot = go.GetComponentInChildren<OldUIMessageSlot>();
+            m_MessageSlots.Add(messageSlot);
+            return messageSlot;
         }
+
+        void OnDestroy()
+        {
+            if (m_Subscriptions != null)
+            {
+                m_Subscriptions.Dispose();
+            }
+        }
+
     }
 }
