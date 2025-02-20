@@ -30,38 +30,34 @@ namespace Unity.BossRoom.Gameplay.UI
         Color m_WinLightColor;
         Color m_LoseLightColor;*/
 
-        void Awake()
+        void OnEnable()
         {
             var root = m_PostGameUIDocument.rootVisualElement;
-            var messageFeedRoot = m_MessageFeedDocument.rootVisualElement;
+            
             m_WinEndMessage = root.Q<Label>("gameWinText");
             m_LoseGameMessage = root.Q<Label>("gameLostText");
             m_ReplayButton = root.Q<Button>("playAgainBtn");
             m_WaitOnHostMsg = root.Q<Button>("waitOnHostBtn");
-            m_MessageFeed = messageFeedRoot.Q<VisualElement>("messageFeed");
-            m_MessageList = m_MessageFeed.Q<ListView>("messageList");
             
-            /*m_SceneLight = root.Q<VisualElement>("sceneLight");
-            m_WinLightColor = root.Q<Color>("winLightColor");
-            m_LoseLightColor = root.Q<Color>("loseLightColor");*/
-            
-            // Ensure labels are hidden at startup
             m_WinEndMessage.style.display = DisplayStyle.None;
             m_LoseGameMessage.style.display = DisplayStyle.None;
-            
         }
 
         [Inject]
         void Inject(ServerPostGameState postGameState)
         {
             m_PostGameState = postGameState;
+        }
 
+        public void Initialize(bool isHost)
+        {
             // only hosts can restart the game, other players see a wait message
-            if (NetworkManager.Singleton.IsHost)
+            if (isHost)
             {
                 m_ReplayButton.SetEnabled(true);
                 m_WaitOnHostMsg.SetEnabled(false);
             }
+            
             else
             {
                 m_ReplayButton.SetEnabled(false);

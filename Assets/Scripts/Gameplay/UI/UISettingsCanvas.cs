@@ -108,14 +108,6 @@ namespace Unity.BossRoom.Gameplay.UI
             }
         }
         
-        float SliderToDecibel(float sliderValue)
-        {
-            float minDB = -40f; // Silent floor
-            float maxDB = 0f;   // Maximum volume
-            sliderValue = Mathf.Pow(Mathf.Clamp(sliderValue, 0.0001f, 1f), 2.0f); // Exponential curve
-            return Mathf.Lerp(minDB, maxDB, sliderValue);
-        }
-
         /// <summary>
         /// Called when the Master Volume slider's value is adjusted.
         /// </summary>
