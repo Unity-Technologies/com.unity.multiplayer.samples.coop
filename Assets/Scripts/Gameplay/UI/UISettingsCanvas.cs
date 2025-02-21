@@ -2,8 +2,6 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Unity.BossRoom.Utils;
 using Unity.BossRoom.Audio;
-using Unity.BossRoom.Gameplay.UI; // Reference for UIQuitPanel
-using VContainer;                 // Needed for the dependency injection setup
 
 namespace Unity.BossRoom.Gameplay.UI
 {
@@ -14,55 +12,51 @@ namespace Unity.BossRoom.Gameplay.UI
     public class UISettingsCanvas : MonoBehaviour
     {
         [SerializeField]
-        UIDocument uiDocument; // Reference to the UIDocument asset
+        UIDocument uiDocument;
 
         // Panels and Buttons
-        VisualElement settingsPanelRoot;
-        VisualElement quitPanelRoot;
-        Button settingsButton;
-        Button quitButton;
-        Button qualityButton;
-        Button confirmQuitButton;
-        Button closeButton;
-        Button cancelButton;
-        Slider masterVolumeSlider;
-        Slider musicVolumeSlider;
-        UIQuitPanel uiQuitPanel;
+        VisualElement m_SettingsPanelRoot;
+        VisualElement m_QuitPanelRoot;
+        Button m_SettingsButton;
+        Button m_QuitButton;
+        Button m_QualityButton;
+        Button m_ConfirmQuitButton;
+        Button m_CloseButton;
+        Button m_CancelButton;
+        Slider m_MasterVolumeSlider;
+        Slider m_MusicVolumeSlider;
+        UIQuitPanel m_UIQuitPanel;
 
         void Awake()
         {
-            // Retrieve the root VisualElement from the UIDocument
             var root = uiDocument.rootVisualElement;
-            // get UIQuitPanel component which is attached to the same GameObject
-            uiQuitPanel = GetComponentInChildren<UIQuitPanel>();
-            // Query the panels by their names or assigned USS classes
-            settingsPanelRoot = root.Q<VisualElement>("settingsPanelRoot");
-            quitPanelRoot = root.Q<VisualElement>("quitPanelRoot");
-            quitButton = root.Q<Button>("quitButton");
-            settingsButton = root.Q<Button>("settingsButton");
-            qualityButton = root.Q<Button>("qualityButton");
-            closeButton = root.Q<Button>("closeButton");
-            cancelButton = root.Q<Button>("cancelButton");
-            confirmQuitButton = root.Q<Button>("confirmButton");
-            masterVolumeSlider = root.Q<Slider>("masterVolume");
-            musicVolumeSlider = root.Q<Slider>("musicVolume");
+            m_UIQuitPanel = GetComponentInChildren<UIQuitPanel>();
+            m_SettingsPanelRoot = root.Q<VisualElement>("settingsPanelRoot");
+            m_QuitPanelRoot = root.Q<VisualElement>("quitPanelRoot");
+            m_QuitButton = root.Q<Button>("quitButton");
+            m_SettingsButton = root.Q<Button>("settingsButton");
+            m_QualityButton = root.Q<Button>("qualityButton");
+            m_CloseButton = root.Q<Button>("closeButton");
+            m_CancelButton = root.Q<Button>("cancelButton");
+            m_ConfirmQuitButton = root.Q<Button>("confirmButton");
+            m_MasterVolumeSlider = root.Q<Slider>("masterVolume");
+            m_MusicVolumeSlider = root.Q<Slider>("musicVolume");
 
             // Ensure panels are hidden at startup
             DisablePanels();
 
-            // Bind buttons to their respective methods
-            settingsButton.clicked += OnClickSettingsButton;
-            quitButton.clicked += OnClickQuitButton;
-            qualityButton.clicked += SetQualitySettings;
-            confirmQuitButton.clicked += ExecuteQuitAction;
-            closeButton.clicked += OnClickCloseButton;
-            cancelButton.clicked += OnClickCancelButton;
+            m_SettingsButton.clicked += OnClickSettingsButton;
+            m_QuitButton.clicked += OnClickQuitButton;
+            m_QualityButton.clicked += SetQualitySettings;
+            m_ConfirmQuitButton.clicked += ExecuteQuitAction;
+            m_CloseButton.clicked += OnClickCloseButton;
+            m_CancelButton.clicked += OnClickCancelButton;
 
             // Bind sliders to their respective methods
-            masterVolumeSlider.value = ClientPrefs.GetMasterVolume();
-            masterVolumeSlider.RegisterValueChangedCallback(evt => OnMasterVolumeSliderChanged(evt.newValue));
-            musicVolumeSlider.value = ClientPrefs.GetMusicVolume();
-            musicVolumeSlider.RegisterValueChangedCallback(evt => OnMusicVolumeSliderChanged(evt.newValue));
+            m_MasterVolumeSlider.value = ClientPrefs.GetMasterVolume();
+            m_MasterVolumeSlider.RegisterValueChangedCallback(evt => OnMasterVolumeSliderChanged(evt.newValue));
+            m_MusicVolumeSlider.value = ClientPrefs.GetMusicVolume();
+            m_MusicVolumeSlider.RegisterValueChangedCallback(evt => OnMusicVolumeSliderChanged(evt.newValue));
         }
 
         /// <summary>
@@ -70,8 +64,8 @@ namespace Unity.BossRoom.Gameplay.UI
         /// </summary>
         void DisablePanels()
         {
-            settingsPanelRoot.style.display = DisplayStyle.None;
-            quitPanelRoot.style.display = DisplayStyle.None;
+            m_SettingsPanelRoot.style.display = DisplayStyle.None;
+            m_QuitPanelRoot.style.display = DisplayStyle.None;
         }
 
         /// <summary>
@@ -79,15 +73,15 @@ namespace Unity.BossRoom.Gameplay.UI
         /// </summary>
         public void OnClickSettingsButton()
         {
-            if (settingsPanelRoot != null)
+            if (m_SettingsPanelRoot != null)
             {
-                bool isVisible = settingsPanelRoot.style.display == DisplayStyle.Flex;
-                settingsPanelRoot.style.display = isVisible ? DisplayStyle.None : DisplayStyle.Flex;
+                bool isVisible = m_SettingsPanelRoot.style.display == DisplayStyle.Flex;
+                m_SettingsPanelRoot.style.display = isVisible ? DisplayStyle.None : DisplayStyle.Flex;
             }
 
-            if (quitPanelRoot != null)
+            if (m_QuitPanelRoot != null)
             {
-                quitPanelRoot.style.display = DisplayStyle.None;
+                m_QuitPanelRoot.style.display = DisplayStyle.None;
             }
         }
 
@@ -96,28 +90,26 @@ namespace Unity.BossRoom.Gameplay.UI
         /// </summary>
         public void OnClickQuitButton()
         {
-            if (quitPanelRoot != null)
+            if (m_QuitPanelRoot != null)
             {
-                bool isVisible = quitPanelRoot.style.display == DisplayStyle.Flex;
-                quitPanelRoot.style.display = isVisible ? DisplayStyle.None : DisplayStyle.Flex;
+                bool isVisible = m_QuitPanelRoot.style.display == DisplayStyle.Flex;
+                m_QuitPanelRoot.style.display = isVisible ? DisplayStyle.None : DisplayStyle.Flex;
             }
 
-            if (settingsPanelRoot != null)
+            if (m_SettingsPanelRoot != null)
             {
-                settingsPanelRoot.style.display = DisplayStyle.None;
+                m_SettingsPanelRoot.style.display = DisplayStyle.None;
             }
         }
-        
+
         /// <summary>
         /// Called when the Master Volume slider's value is adjusted.
         /// </summary>
         /// <param name="newValue">New slider value.</param>
         void OnMasterVolumeSliderChanged(float newValue)
         {
-           // newValue = Mathf.Clamp(newValue, 0, 100);
             ClientPrefs.SetMasterVolume(newValue);
             AudioMixerConfigurator.Instance.Configure();
-            Debug.Log("Master Volume set to: " + newValue);
         }
 
         /// <summary>
@@ -126,12 +118,8 @@ namespace Unity.BossRoom.Gameplay.UI
         /// <param name="newValue">New slider value.</param>
         void OnMusicVolumeSliderChanged(float newValue)
         {
-            //float dB= SliderToDecibel(newValue);
-            // clamp the value to the range [0, 1]
-            //newValue = Mathf.Clamp(newValue, 0, 1);
             ClientPrefs.SetMusicVolume(newValue);
             AudioMixerConfigurator.Instance.Configure();
-            Debug.Log("Music Volume set to: " + newValue);
         }
 
         /// <summary>
@@ -152,7 +140,7 @@ namespace Unity.BossRoom.Gameplay.UI
             }
 
             // Dynamically update the button text with the current quality level
-            qualityButton.text = QualitySettings.names[QualitySettings.GetQualityLevel()];
+            m_QualityButton.text = QualitySettings.names[QualitySettings.GetQualityLevel()];
         }
 
         /// <summary>
@@ -160,31 +148,26 @@ namespace Unity.BossRoom.Gameplay.UI
         /// </summary>
         void ExecuteQuitAction()
         {
-            Debug.Log("Confirm button pressed");
-            
-            if (uiQuitPanel != null)
+            if (m_UIQuitPanel != null)
             {
-                uiQuitPanel.Quit();
-                Debug.Log("Quit executed.");
+                m_UIQuitPanel.Quit();
             }
             else
             {
                 Debug.LogError("UIQuitPanel is not assigned!");
             }
         }
-        
+
         void OnClickCloseButton()
         {
             // Close the settings panel
-            settingsPanelRoot.style.display = DisplayStyle.None;
+            m_SettingsPanelRoot.style.display = DisplayStyle.None;
         }
-        
+
         void OnClickCancelButton()
         {
             // Close the quit panel
-            quitPanelRoot.style.display = DisplayStyle.None;
+            m_QuitPanelRoot.style.display = DisplayStyle.None;
         }
     }
 }
-
-

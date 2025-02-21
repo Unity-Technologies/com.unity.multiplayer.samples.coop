@@ -14,33 +14,34 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         UIDocument m_PostGameUIDocument;
-        
-        [SerializeField]
-        UIDocument m_MessageFeedDocument;
 
         ServerPostGameState m_PostGameState;
-        
+
         Label m_WinEndMessage;
         Label m_LoseGameMessage;
         Button m_ReplayButton;
-        Button m_WaitOnHostMsg;
+        Button m_WaitOnHostButton;
+        Button m_MainMenuButton;
+
         VisualElement m_MessageFeed;
         ListView m_MessageList;
-        /*VisualElement m_SceneLight;
-        Color m_WinLightColor;
-        Color m_LoseLightColor;*/
 
         void Awake()
         {
             var root = m_PostGameUIDocument.rootVisualElement;
-            
+
             m_WinEndMessage = root.Q<Label>("gameWinText");
             m_LoseGameMessage = root.Q<Label>("gameLostText");
             m_ReplayButton = root.Q<Button>("playAgainBtn");
-            m_WaitOnHostMsg = root.Q<Button>("waitOnHostBtn");
-            
-            m_WinEndMessage.style.display = DisplayStyle.None;
-            m_LoseGameMessage.style.display = DisplayStyle.None;
+            m_WaitOnHostButton = root.Q<Button>("waitOnHostBtn");
+            m_MainMenuButton = root.Q<Button>("menuBtn");
+
+            m_WaitOnHostButton.SetEnabled(false);
+            m_ReplayButton.SetEnabled(true);
+            m_MainMenuButton.SetEnabled(true);
+
+            m_ReplayButton.clicked += OnPlayAgainClicked;
+            m_MainMenuButton.clicked += OnMainMenuClicked;
         }
 
         [Inject]
@@ -54,14 +55,16 @@ namespace Unity.BossRoom.Gameplay.UI
             // only hosts can restart the game, other players see a wait message
             if (isHost)
             {
-                m_ReplayButton.SetEnabled(true);
-                m_WaitOnHostMsg.SetEnabled(false);
+                m_ReplayButton.style.display = DisplayStyle.Flex;
+                m_WaitOnHostButton.style.display = DisplayStyle.None;
+                m_MainMenuButton.style.display = DisplayStyle.Flex;
             }
-            
+
             else
             {
-                m_ReplayButton.SetEnabled(false);
-                m_WaitOnHostMsg.SetEnabled(true);
+                m_ReplayButton.style.display = DisplayStyle.None;
+                m_WaitOnHostButton.style.display = DisplayStyle.Flex;
+                m_MainMenuButton.style.display = DisplayStyle.Flex;
             }
         }
 
@@ -88,14 +91,11 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             switch (winState)
             {
-                // Set end message and background color based last game outcome
                 case WinState.Win:
-                   // m_SceneLight.color = m_WinLightColor;
                     m_WinEndMessage.SetEnabled(true);
                     m_LoseGameMessage.SetEnabled(false);
                     break;
                 case WinState.Loss:
-                    //m_SceneLight.color = m_LoseLightColor;
                     m_WinEndMessage.SetEnabled(false);
                     m_LoseGameMessage.SetEnabled(true);
                     break;

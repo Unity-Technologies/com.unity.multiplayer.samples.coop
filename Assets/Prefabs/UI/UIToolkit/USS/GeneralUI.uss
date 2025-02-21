@@ -48,10 +48,26 @@
     border-left-width: 0;
     width: 408px;
     height: 90px;
+    -unity-text-align: middle-center;
 }
 
 .menuButton:active {
     -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
     color: rgb(247, 213, 32);
-    -unity-background-image-tint-color: rgb(128, 128, 128);
+    -unity-background-image-tint-color: rgb(144, 144, 144);
+}
+
+.menuButton:disabled {
+    background-image: url("project://database/Assets/Textures/UI/ui_btn_blank.png?fileID=2800000&guid=41948b4cc6087644b983dce55b466d50&type=3#ui_btn_blank");
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
+    color: rgb(247, 213, 32);
+    font-size: 190%;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    width: 408px;
+    height: 90px;
+    -unity-background-image-tint-color: rgb(164, 164, 164);
 }

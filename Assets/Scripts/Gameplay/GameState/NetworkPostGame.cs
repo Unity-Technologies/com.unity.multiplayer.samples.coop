@@ -1,6 +1,7 @@
 using System;
 using Unity.BossRoom.Gameplay.UI;
 using Unity.Netcode;
+using UnityEngine;
 using VContainer;
 
 namespace Unity.BossRoom.Gameplay.GameState
@@ -11,7 +12,7 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         [Inject]
         PostGameUI m_PostGameUI;
-        
+
         [Inject]
         PersistentGameState m_PersistentGameState;
 
@@ -19,7 +20,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             // only hosts can restart the game, other players see a wait message
             m_PostGameUI.Initialize(IsHost);
-            
+
             if (IsServer)
             {
                 WinState.Value = m_PersistentGameState.WinState;
