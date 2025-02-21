@@ -43,8 +43,10 @@
     transition-property: position;
     transition-duration: 2s;
     position: relative;
-    top: 100px;
+    top: -537px;
     left: 10px;
+    overflow: scroll;
+    flex-direction: column;
 }
 
 .messageList {

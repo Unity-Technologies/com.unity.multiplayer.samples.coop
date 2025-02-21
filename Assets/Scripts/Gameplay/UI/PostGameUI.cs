@@ -92,15 +92,17 @@ namespace Unity.BossRoom.Gameplay.UI
             switch (winState)
             {
                 case WinState.Win:
-                    m_WinEndMessage.SetEnabled(true);
-                    m_LoseGameMessage.SetEnabled(false);
+                    m_WinEndMessage.style.display = DisplayStyle.Flex;
+                    m_LoseGameMessage.style.display = DisplayStyle.None;
                     break;
                 case WinState.Loss:
-                    m_WinEndMessage.SetEnabled(false);
-                    m_LoseGameMessage.SetEnabled(true);
+                    m_WinEndMessage.style.display = DisplayStyle.None;
+                    m_LoseGameMessage.style.display = DisplayStyle.Flex;
                     break;
                 case WinState.Invalid:
                     Debug.LogWarning("PostGameUI encountered Invalid WinState");
+                    m_WinEndMessage.style.display = DisplayStyle.None;
+                    m_LoseGameMessage.style.display = DisplayStyle.None;
                     break;
             }
         }

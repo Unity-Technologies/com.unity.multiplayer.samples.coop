@@ -23,6 +23,9 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         [SerializeField]
         PostGameUI m_PostGameUI;
+        
+        [SerializeField]
+        MessageFeed m_MessageFeed;
 
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
@@ -44,6 +47,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             base.Configure(builder);
             builder.RegisterComponent(m_NetworkPostGame);
             builder.RegisterComponent(m_PostGameUI);
+            builder.RegisterComponent(m_MessageFeed);
         }
 
         void OnNetworkSpawn()
