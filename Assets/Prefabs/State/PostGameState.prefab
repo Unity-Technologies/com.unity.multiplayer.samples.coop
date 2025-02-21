@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 4221458659
+  GlobalObjectIdHash: 2751448866
   InScenePlacedSourceGlobalObjectIdHash: 2795900295
   DeferredDespawnTick: 0
   Ownership: 1
@@ -79,7 +79,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   m_NetcodeHooks: {fileID: 6576822806953781696}
-  networkPostGame: {fileID: 6889826313803109754}
+  m_NetworkPostGame: {fileID: 6889826313803109754}
+  m_PostGameUI: {fileID: 0}
 --- !u!114 &6576822806953781696
 MonoBehaviour:
   m_ObjectHideFlags: 0

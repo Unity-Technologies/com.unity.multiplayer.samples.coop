@@ -30,7 +30,7 @@ namespace Unity.BossRoom.Gameplay.UI
         Color m_WinLightColor;
         Color m_LoseLightColor;*/
 
-        void OnEnable()
+        void Awake()
         {
             var root = m_PostGameUIDocument.rootVisualElement;
             

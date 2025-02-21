@@ -14,13 +14,6 @@ namespace Unity.BossRoom.Gameplay.GameState
         
         [Inject]
         PersistentGameState m_PersistentGameState;
-        
-        [Inject]
-        public void Construct(PersistentGameState persistentGameState, PostGameUI postGameUI)
-        {
-            m_PostGameUI = postGameUI;
-            m_PersistentGameState = persistentGameState;
-        }
 
         public override void OnNetworkSpawn()
         {
