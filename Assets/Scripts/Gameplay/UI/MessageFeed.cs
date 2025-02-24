@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -8,16 +9,15 @@ using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.Gameplay.Messages;
 using Unity.BossRoom.Infrastructure;
 using VContainer;
-using System.Linq;
 
 public class MessageFeed : MonoBehaviour
 {
     [SerializeField]
     UIDocument doc;
 
-    List<Message> m_messages;
+    List<Message> m_Messages;
 
-    VisualElement messageContainer;
+    VisualElement m_MessageContainer;
 
     DisposableGroup m_Subscriptions;
 
@@ -106,15 +106,15 @@ public class MessageFeed : MonoBehaviour
         templateLabel.style.display = DisplayStyle.None;
         templateBox.style.display = DisplayStyle.None;
 
-        m_messages = new List<Message>();
+        m_Messages = new List<Message>();
 
         // Create a container for all messages
-        messageContainer = new VisualElement();
-        messageContainer.style.flexDirection = FlexDirection.Column; // Arrange messages vertically
+        m_MessageContainer = new VisualElement();
+        m_MessageContainer.style.flexDirection = FlexDirection.Column; // Arrange messages vertically
 
         // make sure other visual elements don't get pushed down by the message container
-        messageContainer.style.position = Position.Absolute;
-        doc.rootVisualElement.Add(messageContainer);
+        m_MessageContainer.style.position = Position.Absolute;
+        doc.rootVisualElement.Add(m_MessageContainer);
     }
 
     void OnDestroy()
@@ -125,72 +125,140 @@ public class MessageFeed : MonoBehaviour
         }
     }
 
-    static void StartFadeout(Message message, float opacity)
+    void Update()
     {
-        message.messageBox.style.opacity = opacity;
-        message.messageBox.schedule.Execute(() =>
+        foreach (var m in m_Messages)
         {
-            opacity -= 0.01f;
-            message.messageBox.style.opacity = opacity;
-            if (opacity <= 0)
+            if (m.isShown)
             {
-                message.messageBox.style.display = DisplayStyle.None;
-                message.startTime = 0;
+                // Check if a message should begin fading out
+                if (Time.realtimeSinceStartup - m.startTime > 5 && m.messageBox.style.opacity == 1)
+                {
+                    StartFadeout(m, 1f);
+                    m.isShown = false;
+                }
             }
-        }).Every((long)0.1f).Until(() => opacity <= 0);
+        }
     }
 
     void ShowMessage(string message)
     {
-        // Limit maximum number of active messages
-        int maxMessages = 10;
-        if (m_messages.Count(m => m.isShown) >= maxMessages)
-        {
-            // Find the oldest active message and start fading it out
-            var oldestMessage = m_messages.FirstOrDefault(m => m.isShown && m.startTime > 0);
-            if (oldestMessage != null)
-            {
-                StartFadeout(oldestMessage, 1f);
-                oldestMessage.isShown = false;
-            }
-        }
+        const float messageHeight = 40f; // Approximate height of a message (adjust based on UI)
+        const float verticalSpacing = 10f; // Spacing between stacked messages
 
         // Reuse or create a new message
-        foreach (var m in m_messages)
+        Message newMessage = null;
+
+        foreach (var m in m_Messages)
         {
             if (!m.isShown)
             {
-                m.isShown = true;
-                m.Label.text = message;
-                m.messageBox.style.display = DisplayStyle.Flex;
-                m.startTime = Time.realtimeSinceStartup;
-
-                return;
+                // Reuse the hidden message
+                newMessage = m;
+                break;
             }
         }
 
-        // Create a new message container
-        var newBox = new VisualElement();
-        newBox.AddToClassList("messageBox");
-
-        var newLabel = new Label();
-        newLabel.text = message;
-        newLabel.AddToClassList("message");
-
-        newBox.Add(newLabel);
-
-        var newMessage = new Message()
+        if (newMessage == null)
         {
-            isShown = true,
-            startTime = Time.realtimeSinceStartup,
-            messageBox = newBox,
-            Label = newLabel
-        };
+            // Create a new message if no reusable messages are available
+            var newBox = new VisualElement();
+            newBox.AddToClassList("messageBox");
+            newBox.style.position = Position.Absolute; // Explicitly position it
+            // Position the new message box below the last message
+            //newBox.style.top = m_MessageContainer.childCount * (messageHeight + verticalSpacing);
 
-        messageContainer.Add(newBox);
-        m_messages.Add(newMessage);
+            var newLabel = new Label();
+            newLabel.AddToClassList("message");
+            newBox.Add(newLabel);
+
+            newMessage = new Message()
+            {
+                isShown = true,
+                startTime = Time.realtimeSinceStartup,
+                messageBox = newBox,
+                Label = newLabel
+            };
+
+            m_MessageContainer.Add(newBox); // Add the message box to the parent container
+            m_Messages.Add(newMessage); // Add to the list of messages
+        }
+
+        // Set the properties of the reused or new message
+        newMessage.isShown = true;
+        newMessage.Label.text = message;
+        newMessage.startTime = Time.realtimeSinceStartup;
+        newMessage.messageBox.style.opacity = 1;
+        newMessage.messageBox.style.display = DisplayStyle.Flex;
+        
+        // Start a fly-in animation
+        StartCoroutine(FlyInWithBounce(newMessage.messageBox, -300, 50, 0.2f, 0.2f));
     }
     
+    IEnumerator FlyInWithBounce(VisualElement element, float startLeft, float targetLeft, float duration, float bounceDuration)
+    {
+        float elapsedTime = 0;
+        element.style.opacity = 0;
+
+        // Main fly-in animation (linear movement from off-screen)
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration; // Normalized time (0 to 1)
+
+            // Linearly interpolate left position
+            float newLeft = Mathf.Lerp(startLeft, targetLeft, t);
+            element.style.left = newLeft;
+
+            // Gradually fade in
+            element.style.opacity = t;
+
+            yield return null;
+        }
+
+        // Ensure the message is at the target final position
+        element.style.left = targetLeft;
+        element.style.opacity = 1;
+
+        // Bounce Animation: Overshoot to the right and come back
+        float overshootAmount = 20;
+        float bounceElapsedTime = 0;
+
+        while (bounceElapsedTime < bounceDuration)
+        {
+            bounceElapsedTime += Time.deltaTime;
+            float t = bounceElapsedTime / bounceDuration;
+
+            // Use a simple sine easing for the bounce effect
+            float bounceT = Mathf.Sin(t * Mathf.PI);
+
+            // Interpolate between targetLeft and overshoot position
+            float bounceLeft = Mathf.Lerp(targetLeft, targetLeft + overshootAmount, bounceT);
+
+            element.style.left = bounceLeft;
+            yield return null;
+        }
+
+        // Finally snap back to the exact target position
+        element.style.left = targetLeft;
+    }
+
+    static void StartFadeout(Message message, float opacity)
+    {
+        message.messageBox.schedule.Execute(() =>
+        {
+            opacity -= 0.01f;
+            message.messageBox.style.opacity = opacity;
+
+            if (opacity <= 0)
+            {
+                // Once faded out fully, hide the message and reset state
+                message.messageBox.style.display = DisplayStyle.None;
+                message.isShown = false;
+                message.startTime = 0;
+            }
+        }).Every((long)0.1f).Until(() => opacity <= 0);
+    }
 
     class Message
     {
