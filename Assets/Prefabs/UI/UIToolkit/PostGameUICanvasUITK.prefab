@@ -76,6 +76,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2100339957089282678}
   - component: {fileID: 1286002055205536738}
+  - component: {fileID: 7623313333782190830}
   m_Layer: 5
   m_Name: MessageFeed
   m_TagString: Untagged
@@ -118,6 +119,19 @@ MonoBehaviour:
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
   m_WorldSpaceHeight: 1080
+--- !u!114 &7623313333782190830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5550880791410142769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5972d28314a4d794cbe88ba0120b39c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doc: {fileID: 2063287831439623020}
 --- !u!1 &8225198564806970540
 GameObject:
   m_ObjectHideFlags: 0
@@ -128,7 +142,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5886284794912537810}
   - component: {fileID: 6577115012106585769}
-  - component: {fileID: 8405269881768119238}
   m_Layer: 5
   m_Name: MessageItem
   m_TagString: Untagged
@@ -164,23 +177,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: 30704bc49d34869449e8bfdb3ab57841, type: 2}
-  m_ParentUI: {fileID: 2063287831439623020}
+  m_ParentUI: {fileID: 1286002055205536738}
   sourceAsset: {fileID: 9197481963319205126, guid: 67ec44aea0b0f484c86c6489932cfcad, type: 3}
   m_SortingOrder: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
   m_WorldSpaceHeight: 1080
---- !u!114 &8405269881768119238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8225198564806970540}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5972d28314a4d794cbe88ba0120b39c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  doc: {fileID: 6577115012106585769}
-  AddMessage: 0

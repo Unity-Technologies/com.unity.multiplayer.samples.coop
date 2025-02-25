@@ -9,6 +9,7 @@ using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.Gameplay.Messages;
 using Unity.BossRoom.Infrastructure;
 using VContainer;
+using Random = System.Random;
 
 public class MessageFeed : MonoBehaviour
 {
@@ -96,9 +97,20 @@ public class MessageFeed : MonoBehaviour
         }
     }
 
+    [ContextMenu("Add RandomMessage")]
+    public void AddRandomMessage()
+    {
+        var rand = new Random(nameof(AddRandomMessage).GetHashCode());
+        m_Messages.Add(new Message { isShown = true, startTime = Time.realtimeSinceStartup, message = rand.Next().ToString() });
+    }
+
     void Start()
     {
         var root = doc.rootVisualElement;
+
+        // you could load this template from a template uxml, don't need to be a part of the visual tree
+        // could make it a prop on this monobehaviour 
+        // VisualTreeAsset messageTempalte; or load it via Resources api, than you don't need to hide them  
         var templateLabel = root.Q<Label>("messageLabel");
         var templateBox = root.Q<VisualElement>("messageBox");
 
@@ -108,13 +120,45 @@ public class MessageFeed : MonoBehaviour
 
         m_Messages = new List<Message>();
 
-        // Create a container for all messages
-        m_MessageContainer = new VisualElement();
+        // Create a container for all messages 
+        var listView = root.Q<ListView>("messageList");
+        listView.makeItem += () =>
+        {
+            // Create a new message if no reusable messages are available
+            var newBox = new VisualElement();
+            newBox.AddToClassList("messageBox");
+            //newBox.style.position = Position.Absolute; // Explicitly position it
+
+            // Position the new message box below the last message
+            //newBox.style.top = m_MessageContainer.childCount * (messageHeight + verticalSpacing);
+
+            var newLabel = new Label();
+            newLabel.AddToClassList("message");
+            newBox.Add(newLabel);
+
+
+            newBox.style.opacity = 1;
+            newBox.style.display = DisplayStyle.Flex;            
+
+            newBox.RegisterCallback<AttachToPanelEvent>((e)=> StartCoroutine(FlyInWithBounce(e.target as VisualElement, -300, 50, 0.2f, 0.2f)));
+            
+            return newBox;
+        };
+
+        listView.bindItem += (element, i) =>
+        {
+            element.Q<Label>().text = m_Messages[i].message;
+        };
+
+        // collection change events will take care of creating and disposing items
+        listView.itemsSource = m_Messages;
+        
+
+        m_MessageContainer = listView;
         m_MessageContainer.style.flexDirection = FlexDirection.Column; // Arrange messages vertically
 
         // make sure other visual elements don't get pushed down by the message container
         m_MessageContainer.style.position = Position.Absolute;
-        doc.rootVisualElement.Add(m_MessageContainer);
     }
 
     void OnDestroy()
@@ -132,11 +176,11 @@ public class MessageFeed : MonoBehaviour
             if (m.isShown)
             {
                 // Check if a message should begin fading out
-                if (Time.realtimeSinceStartup - m.startTime > 5 && m.messageBox.style.opacity == 1)
-                {
-                    StartFadeout(m, 1f);
-                    m.isShown = false;
-                }
+                // if (Time.realtimeSinceStartup - m.startTime > 5 && m.style.opacity == 1)
+                //{
+                //StartFadeout(m, 1f);
+                //    m.isShown = false;
+                //}
             }
         }
     }
@@ -161,40 +205,22 @@ public class MessageFeed : MonoBehaviour
 
         if (newMessage == null)
         {
-            // Create a new message if no reusable messages are available
-            var newBox = new VisualElement();
-            newBox.AddToClassList("messageBox");
-            newBox.style.position = Position.Absolute; // Explicitly position it
-            // Position the new message box below the last message
-            //newBox.style.top = m_MessageContainer.childCount * (messageHeight + verticalSpacing);
-
-            var newLabel = new Label();
-            newLabel.AddToClassList("message");
-            newBox.Add(newLabel);
-
             newMessage = new Message()
             {
                 isShown = true,
                 startTime = Time.realtimeSinceStartup,
-                messageBox = newBox,
-                Label = newLabel
             };
 
-            m_MessageContainer.Add(newBox); // Add the message box to the parent container
             m_Messages.Add(newMessage); // Add to the list of messages
         }
 
         // Set the properties of the reused or new message
         newMessage.isShown = true;
-        newMessage.Label.text = message;
+
         newMessage.startTime = Time.realtimeSinceStartup;
-        newMessage.messageBox.style.opacity = 1;
-        newMessage.messageBox.style.display = DisplayStyle.Flex;
-        
-        // Start a fly-in animation
-        StartCoroutine(FlyInWithBounce(newMessage.messageBox, -300, 50, 0.2f, 0.2f));
+        newMessage.message = message;
     }
-    
+
     IEnumerator FlyInWithBounce(VisualElement element, float startLeft, float targetLeft, float duration, float bounceDuration)
     {
         float elapsedTime = 0;
@@ -243,6 +269,7 @@ public class MessageFeed : MonoBehaviour
         element.style.left = targetLeft;
     }
 
+    /*
     static void StartFadeout(Message message, float opacity)
     {
         message.messageBox.schedule.Execute(() =>
@@ -259,12 +286,13 @@ public class MessageFeed : MonoBehaviour
             }
         }).Every((long)0.1f).Until(() => opacity <= 0);
     }
+    */
 
+    // if you bind the itemsource to the list you don't actually have to manually do this
     class Message
     {
         public bool isShown;
         public float startTime; // The time when the message was shown
-        public VisualElement messageBox;
-        public Label Label;
+        public string message;
     }
 }
