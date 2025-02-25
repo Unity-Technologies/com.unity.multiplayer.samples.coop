@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -16,7 +15,7 @@ public class MessageFeed : MonoBehaviour
     [SerializeField]
     UIDocument doc;
 
-    List<Message> m_Messages;
+    List<MessageViewModel> m_Messages;
 
     VisualElement m_MessageContainer;
 
@@ -96,37 +95,30 @@ public class MessageFeed : MonoBehaviour
                 break;
         }
     }
+    
 
-    [ContextMenu("Add RandomMessage")]
-    public void AddRandomMessage()
+    [ContextMenu("Add Message")]
+    public void AddMessage()
     {
-        var rand = new Random(nameof(AddRandomMessage).GetHashCode());
-        m_Messages.Add(new Message { isShown = true, startTime = Time.realtimeSinceStartup, message = rand.Next().ToString() });
+        ShowMessage("Hello!");
     }
 
     void Start()
     {
         var root = doc.rootVisualElement;
 
-        // you could load this template from a template uxml, don't need to be a part of the visual tree
-        // could make it a prop on this monobehaviour 
-        // VisualTreeAsset messageTempalte; or load it via Resources api, than you don't need to hide them  
-        var templateLabel = root.Q<Label>("messageLabel");
-        var templateBox = root.Q<VisualElement>("messageBox");
+        m_Messages = new List<MessageViewModel>();
 
-        // Hide the default template elements
-        templateLabel.style.display = DisplayStyle.None;
-        templateBox.style.display = DisplayStyle.None;
-
-        m_Messages = new List<Message>();
-
-        // Create a container for all messages 
+        // Find the container of all messages 
         var listView = root.Q<ListView>("messageList");
+        
+        // Since you've added an item template in the UXML this is not really necessary here
         listView.makeItem += () =>
         {
             // Create a new message if no reusable messages are available
             var newBox = new VisualElement();
             newBox.AddToClassList("messageBox");
+
             //newBox.style.position = Position.Absolute; // Explicitly position it
 
             // Position the new message box below the last message
@@ -136,29 +128,38 @@ public class MessageFeed : MonoBehaviour
             newLabel.AddToClassList("message");
             newBox.Add(newLabel);
 
+            // the even when the control get's added to the "UI Canvas"
+            newBox.RegisterCallback<AttachToPanelEvent>((e) =>
+                (e.target as VisualElement)?.AddToClassList("messageBoxMove"));
 
-            newBox.style.opacity = 1;
-            newBox.style.display = DisplayStyle.Flex;            
+            // fires before the element is actually removed
+            newBox.RegisterCallback<DetachFromPanelEvent>((e) =>
+            {
+                if (e.target is VisualElement)
+                {
+                    
+                }
+            });
 
-            newBox.RegisterCallback<AttachToPanelEvent>((e)=> StartCoroutine(FlyInWithBounce(e.target as VisualElement, -300, 50, 0.2f, 0.2f)));
-            
             return newBox;
         };
 
         listView.bindItem += (element, i) =>
         {
-            element.Q<Label>().text = m_Messages[i].message;
+            element.Q<Label>().text = m_Messages[i].Message;
         };
 
         // collection change events will take care of creating and disposing items
         listView.itemsSource = m_Messages;
-        
 
-        m_MessageContainer = listView;
-        m_MessageContainer.style.flexDirection = FlexDirection.Column; // Arrange messages vertically
+        // [IMPORTANT!] try to set as much of the style related logic as you can in the USS files instead.
+        /*
+         m_MessageContainer = listView;
+         m_MessageContainer.style.flexDirection = FlexDirection.Column; // Arrange messages vertically
 
         // make sure other visual elements don't get pushed down by the message container
         m_MessageContainer.style.position = Position.Absolute;
+        */
     }
 
     void OnDestroy()
@@ -171,28 +172,36 @@ public class MessageFeed : MonoBehaviour
 
     void Update()
     {
+        var messagesToRemove = new List<MessageViewModel>();
         foreach (var m in m_Messages)
         {
-            if (m.isShown)
+            if (m.ShouldDispose())
             {
-                // Check if a message should begin fading out
-                // if (Time.realtimeSinceStartup - m.startTime > 5 && m.style.opacity == 1)
-                //{
-                //StartFadeout(m, 1f);
-                //    m.isShown = false;
-                //}
+                messagesToRemove.Add(m);
             }
+
+            // Check if a message should begin fading out
+            // if (Time.realtimeSinceStartup - m.startTime > 5 && m.style.opacity == 1)
+            //{
+            //StartFadeout(m, 1f);
+            //    m.isShown = false;
+            //}
+        }
+
+        // TODO: start animation via events
+        foreach (var m in messagesToRemove)
+        {
+            m_Messages.Remove(m);
         }
     }
 
     void ShowMessage(string message)
     {
-        const float messageHeight = 40f; // Approximate height of a message (adjust based on UI)
-        const float verticalSpacing = 10f; // Spacing between stacked messages
-
         // Reuse or create a new message
-        Message newMessage = null;
+        MessageViewModel newMessage = null;
 
+        // a list view's virtualization logic actually takes care of this by default
+        /*
         foreach (var m in m_Messages)
         {
             if (!m.isShown)
@@ -202,71 +211,10 @@ public class MessageFeed : MonoBehaviour
                 break;
             }
         }
+        */
+        newMessage = new MessageViewModel(message, TimeSpan.FromSeconds(5));
 
-        if (newMessage == null)
-        {
-            newMessage = new Message()
-            {
-                isShown = true,
-                startTime = Time.realtimeSinceStartup,
-            };
-
-            m_Messages.Add(newMessage); // Add to the list of messages
-        }
-
-        // Set the properties of the reused or new message
-        newMessage.isShown = true;
-
-        newMessage.startTime = Time.realtimeSinceStartup;
-        newMessage.message = message;
-    }
-
-    IEnumerator FlyInWithBounce(VisualElement element, float startLeft, float targetLeft, float duration, float bounceDuration)
-    {
-        float elapsedTime = 0;
-        element.style.opacity = 0;
-
-        // Main fly-in animation (linear movement from off-screen)
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / duration; // Normalized time (0 to 1)
-
-            // Linearly interpolate left position
-            float newLeft = Mathf.Lerp(startLeft, targetLeft, t);
-            element.style.left = newLeft;
-
-            // Gradually fade in
-            element.style.opacity = t;
-
-            yield return null;
-        }
-
-        // Ensure the message is at the target final position
-        element.style.left = targetLeft;
-        element.style.opacity = 1;
-
-        // Bounce Animation: Overshoot to the right and come back
-        float overshootAmount = 20;
-        float bounceElapsedTime = 0;
-
-        while (bounceElapsedTime < bounceDuration)
-        {
-            bounceElapsedTime += Time.deltaTime;
-            float t = bounceElapsedTime / bounceDuration;
-
-            // Use a simple sine easing for the bounce effect
-            float bounceT = Mathf.Sin(t * Mathf.PI);
-
-            // Interpolate between targetLeft and overshoot position
-            float bounceLeft = Mathf.Lerp(targetLeft, targetLeft + overshootAmount, bounceT);
-
-            element.style.left = bounceLeft;
-            yield return null;
-        }
-
-        // Finally snap back to the exact target position
-        element.style.left = targetLeft;
+        m_Messages.Add(newMessage); // Add to the list of messages
     }
 
     /*
@@ -289,10 +237,23 @@ public class MessageFeed : MonoBehaviour
     */
 
     // if you bind the itemsource to the list you don't actually have to manually do this
-    class Message
+    private class MessageViewModel
     {
-        public bool isShown;
-        public float startTime; // The time when the message was shown
-        public string message;
+        private readonly TimeSpan _autoDispose;
+        private DateTime _createdAt;
+
+        public string Message { get; }
+
+        public MessageViewModel(string message, TimeSpan timeout = default)
+        {
+            _createdAt = DateTime.Now;
+            _autoDispose = timeout;
+            Message = message;
+        }
+
+        public bool ShouldDispose()
+        {
+            return _createdAt + _autoDispose < DateTime.Now;
+        }
     }
 }

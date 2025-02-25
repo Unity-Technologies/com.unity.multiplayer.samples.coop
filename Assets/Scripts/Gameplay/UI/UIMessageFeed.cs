@@ -11,6 +11,7 @@ using VContainer;
 
 namespace Unity.BossRoom.Gameplay.UI
 {
+    // if we already have a message feed implementation why do we want to add another?
     public class UIMessageFeed : MonoBehaviour
     {
         [SerializeField]
