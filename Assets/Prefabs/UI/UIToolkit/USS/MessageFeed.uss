@@ -43,8 +43,10 @@
     margin-bottom: 8px;
     width: auto;
     height: 26px;
-    transition-property: position;
-    transition-duration: 2s;
+    translate: -150% 0 0;
+    transition-property: translate, opacity;
+    transition-timing-function: ease-out-bounce, ease-in;
+    transition-duration: 2s, 1s;
     position: relative;
     top: -537px;
     left: 10px;
@@ -52,11 +54,16 @@
     flex-direction: column;
 }
 
-.messageList {
+.messageBoxMove {
+    translate: 0 0 0;
 }
 
-.messageBoxMove {
-    left: 10%;
+.message:hover{
+    left: 10px;
+}
+
+.messageBoxFadeOut{
+    opacity: 0;
 }
 
 #messageList{

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -8,7 +9,6 @@ using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.Gameplay.Messages;
 using Unity.BossRoom.Infrastructure;
 using VContainer;
-using Random = System.Random;
 
 public class MessageFeed : MonoBehaviour
 {
@@ -17,7 +17,7 @@ public class MessageFeed : MonoBehaviour
 
     List<MessageViewModel> m_Messages;
 
-    VisualElement m_MessageContainer;
+    ListView m_MessageContainer;
 
     DisposableGroup m_Subscriptions;
 
@@ -95,12 +95,11 @@ public class MessageFeed : MonoBehaviour
                 break;
         }
     }
-    
 
     [ContextMenu("Add Message")]
     public void AddMessage()
     {
-        ShowMessage("Hello!");
+        ShowMessage($"Hello! {DateTime.Now.Millisecond}");
     }
 
     void Start()
@@ -111,7 +110,7 @@ public class MessageFeed : MonoBehaviour
 
         // Find the container of all messages 
         var listView = root.Q<ListView>("messageList");
-        
+
         // Since you've added an item template in the UXML this is not really necessary here
         listView.makeItem += () =>
         {
@@ -130,23 +129,34 @@ public class MessageFeed : MonoBehaviour
 
             // the even when the control get's added to the "UI Canvas"
             newBox.RegisterCallback<AttachToPanelEvent>((e) =>
-                (e.target as VisualElement)?.AddToClassList("messageBoxMove"));
+            {
+                if (e.target is VisualElement element)
+                {
+                    element.RemoveFromClassList("messageBoxMove");
+                    StartCoroutine(ToggleClassWithDelay(element, "messageBoxMove", TimeSpan.FromSeconds(0.02)));
+                }
+            });
 
             // fires before the element is actually removed
             newBox.RegisterCallback<DetachFromPanelEvent>((e) =>
             {
-                if (e.target is VisualElement)
-                {
-                    
-                }
+                if (e.target is VisualElement) { }
             });
 
             return newBox;
         };
+        
+        
+        listView.destroyItem += (element) =>
+        {
+            
+        };
 
+        // use this to set bindings / values on your view components
         listView.bindItem += (element, i) =>
         {
-            element.Q<Label>().text = m_Messages[i].Message;
+            var label = element.Q<Label>();
+            label.text = m_Messages[i].Message; 
         };
 
         // collection change events will take care of creating and disposing items
@@ -160,6 +170,8 @@ public class MessageFeed : MonoBehaviour
         // make sure other visual elements don't get pushed down by the message container
         m_MessageContainer.style.position = Position.Absolute;
         */
+
+        m_MessageContainer = listView;
     }
 
     void OnDestroy()
@@ -170,35 +182,45 @@ public class MessageFeed : MonoBehaviour
         }
     }
 
+    List<MessageViewModel> _messagesToRemove = new List<MessageViewModel>();
+
     void Update()
     {
-        var messagesToRemove = new List<MessageViewModel>();
+        if (m_Messages == null)
+            return;
+
         foreach (var m in m_Messages)
         {
-            if (m.ShouldDispose())
+            if (m.ShouldDispose() && !_messagesToRemove.Contains(m))
             {
-                messagesToRemove.Add(m);
+                _messagesToRemove.Add(m);
             }
-
-            // Check if a message should begin fading out
-            // if (Time.realtimeSinceStartup - m.startTime > 5 && m.style.opacity == 1)
-            //{
-            //StartFadeout(m, 1f);
-            //    m.isShown = false;
-            //}
         }
 
-        // TODO: start animation via events
-        foreach (var m in messagesToRemove)
+        foreach (var m in _messagesToRemove)
         {
-            m_Messages.Remove(m);
+            var fadeOutClassName = "messageBoxFadeOut";
+
+            var child = m_MessageContainer.Query<VisualElement>().Class("messageBox")
+                .AtIndex(m_Messages.IndexOf(m));
+            
+            if (!child.ClassListContains(fadeOutClassName))
+            {
+                child.AddToClassList(fadeOutClassName);
+                child.RegisterCallback<TransitionEndEvent>((e) =>
+                {
+                    m_Messages.Remove(m);
+                    _messagesToRemove.Remove(m);
+                    child.RemoveFromClassList(fadeOutClassName);
+                });
+            }
         }
     }
 
     void ShowMessage(string message)
     {
         // Reuse or create a new message
-        MessageViewModel newMessage = null;
+        // MessageViewModel newMessage = null;
 
         // a list view's virtualization logic actually takes care of this by default
         /*
@@ -212,29 +234,34 @@ public class MessageFeed : MonoBehaviour
             }
         }
         */
-        newMessage = new MessageViewModel(message, TimeSpan.FromSeconds(5));
+        var newMessage = new MessageViewModel(message, TimeSpan.FromSeconds(5));
 
         m_Messages.Add(newMessage); // Add to the list of messages
     }
 
-    /*
-    static void StartFadeout(Message message, float opacity)
+    IEnumerator ToggleClassWithDelay(VisualElement element, string className, TimeSpan delay)
     {
-        message.messageBox.schedule.Execute(() =>
+        yield return new WaitForSeconds((float)delay.TotalSeconds);
+
+        element.ToggleInClassList(className);
+    }
+
+    
+    static void StartFadeout(VisualElement message, float opacity)
+    {
+        message.schedule.Execute(() =>
         {
             opacity -= 0.01f;
-            message.messageBox.style.opacity = opacity;
+            message.style.opacity = opacity;
 
             if (opacity <= 0)
             {
                 // Once faded out fully, hide the message and reset state
-                message.messageBox.style.display = DisplayStyle.None;
-                message.isShown = false;
-                message.startTime = 0;
+                message.style.display = DisplayStyle.None;
             }
         }).Every((long)0.1f).Until(() => opacity <= 0);
     }
-    */
+    
 
     // if you bind the itemsource to the list you don't actually have to manually do this
     private class MessageViewModel
@@ -251,6 +278,7 @@ public class MessageFeed : MonoBehaviour
             Message = message;
         }
 
+        // probably an event would be nicer
         public bool ShouldDispose()
         {
             return _createdAt + _autoDispose < DateTime.Now;
