@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Unity.BossRoom.ConnectionManagement;
@@ -9,6 +10,7 @@ using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.Gameplay.Messages;
 using Unity.BossRoom.Infrastructure;
 using VContainer;
+using Debug = UnityEngine.Debug;
 
 public class MessageFeed : MonoBehaviour
 {
@@ -123,6 +125,7 @@ public class MessageFeed : MonoBehaviour
             var newLabel = new Label();
             newLabel.AddToClassList("message");
             newBox.Add(newLabel);
+            Debug.Log("Creating new message box" + newLabel);
 
             // the event when the control get's added to the "UI Canvas"
             newBox.RegisterCallback<AttachToPanelEvent>((e) =>
@@ -195,6 +198,7 @@ public class MessageFeed : MonoBehaviour
 
         foreach (var m in _messagesToRemove)
         {
+            Debug.Log($"Removing message: {m.Message}");;
             var fadeOutClassName = "messageBoxFadeOut";
 
             var child = m_MessageContainer.Query<VisualElement>().Class("messageBox")
@@ -229,10 +233,10 @@ public class MessageFeed : MonoBehaviour
 
 
     // if you bind the itemsource to the list you don't actually have to manually do this
-    private class MessageViewModel
+    class MessageViewModel
     {
-        private readonly TimeSpan _autoDispose;
-        private DateTime _createdAt;
+        readonly TimeSpan _autoDispose;
+        DateTime _createdAt;
 
         public string Message { get; }
 
