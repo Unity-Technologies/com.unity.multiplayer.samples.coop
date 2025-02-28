@@ -1,0 +1,20 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Prefabs/UI/UIToolkit/USS/GeneralUI.uss?fileID=7433441132597879392&amp;guid=36bef7d47f6ca284f8a33439946d6dfe&amp;type=3#GeneralUI" />
+    <engine:VisualElement name="root" style="flex-grow: 1;">
+        <engine:VisualElement name="title" class="title" style="flex-grow: 1;" />
+        <engine:VisualElement name="logos" style="flex-grow: 1;">
+            <engine:VisualElement name="SFLogo" class="SFLogo" />
+            <engine:VisualElement name="JHLogo" class="JHLogo" />
+            <engine:VisualElement name="room8Logo" class="room8Logo" />
+            <engine:VisualElement name="unityLogo" class="unityLogo" />
+        </engine:VisualElement>
+        <engine:VisualElement name="signInSpinner" class="signInSpinner" />
+        <engine:Button text="Start Session" name="sessionStartButton" class="menuButton" />
+        <engine:Button text="Start with direct ip" name="IPStartButton" class="menuButton" />
+        <engine:Button text="change profile" name="profileButton" class="menuButton" />
+        <engine:VisualElement name="sessionPopup" style="flex-grow: 1;" />
+        <engine:VisualElement name="IPPopup" style="flex-grow: 1;" />
+        <engine:VisualElement name="profilePopup" style="flex-grow: 1;" />
+        <engine:VisualElement name="tooltip" style="flex-grow: 1;" />
+    </engine:VisualElement>
+</engine:UXML>

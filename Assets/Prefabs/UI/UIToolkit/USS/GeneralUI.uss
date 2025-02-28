@@ -71,3 +71,59 @@
     height: 90px;
     -unity-background-image-tint-color: rgb(164, 164, 164);
 }
+
+.title {
+    background-image: url("project://database/Assets/Textures/UI/ui_title_logo.png?fileID=2800000&guid=240734f1e1c8daa4b9bd0593e767fb3f&type=3#ui_title_logo");
+    width: 50%;
+    height: 50%;
+    -unity-text-align: upper-center;
+    justify-content: center;
+    align-items: center;
+    top: -2%;
+    left: 25%;
+}
+
+.JHLogo {
+    flex-grow: 1;
+    background-image: url("project://database/Assets/Textures/UI/JHayesMnS_logo.png?fileID=2800000&guid=9212dfff105ad2c4b95ace52ae931384&type=3#JHayesMnS_logo");
+    width: 25%;
+    height: 34px;
+    top: 343px;
+    left: 229px;
+}
+
+.SFLogo {
+    flex-grow: 1;
+    background-image: url("project://database/Assets/Textures/UI/StormFlag_logo.png?fileID=2800000&guid=8b704eb1afcdb4b469679f41a7f6e07e&type=3#StormFlag_logo");
+    width: 25%;
+    height: 34px;
+    top: 356px;
+    left: 366px;
+}
+
+.room8Logo {
+    flex-grow: 1;
+    background-image: url("project://database/Assets/Textures/UI/Room8_logo.png?fileID=2800000&guid=db4fcca0a37980a43a5f38ff7323ae9f&type=3#Room8_logo");
+    top: 327px;
+    left: 82px;
+    width: 25%;
+    height: 34px;
+}
+
+.unityLogo {
+    flex-grow: 1;
+    background-image: url("project://database/Assets/Textures/UI/Unity/U_Logo_T1_LearnWith_White_RGB_resized.png?fileID=2800000&guid=5ce11ff850f11b84bad8017ff4ce5aaa&type=3#U_Logo_T1_LearnWith_White_RGB_resized");
+    width: 30%;
+    height: 48px;
+    top: 307px;
+    left: -63px;
+}
+
+.signInSpinner {
+    flex-grow: 1;
+    background-image: url("project://database/Assets/Textures/UI/ui_connecting.png?fileID=2800000&guid=d881ecf63d92e9947a1dc2849e3dc2de&type=3#ui_connecting");
+    width: 10%;
+    height: 15%;
+    top: -6px;
+    left: 156px;
+}
