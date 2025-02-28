@@ -54,11 +54,15 @@ MonoBehaviour:
   parentReference:
     TypeName: Unity.BossRoom.ApplicationLifecycle.ApplicationController
   autoRun: 1
-  autoInjectGameObjects: []
+  autoInjectGameObjects:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   m_NameGenerationData: {fileID: 11400000, guid: cc0e4025ad893614a8db0d9c10bf7c4f, type: 2}
-  m_LobbyUIMediator: {fileID: 0}
+  m_SessionUIMediator: {fileID: 0}
   m_IPUIMediator: {fileID: 0}
-  m_LobbyButton: {fileID: 0}
+  m_SessionButton: {fileID: 0}
   m_SignInSpinner: {fileID: 0}
   m_UIProfileSelector: {fileID: 0}
   m_UGSSetupTooltipDetector: {fileID: 0}

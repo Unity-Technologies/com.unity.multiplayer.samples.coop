@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Unity.BossRoom.ConnectionManagement;
@@ -10,7 +9,6 @@ using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.Gameplay.Messages;
 using Unity.BossRoom.Infrastructure;
 using VContainer;
-using Debug = UnityEngine.Debug;
 
 public class MessageFeed : MonoBehaviour
 {
@@ -125,7 +123,6 @@ public class MessageFeed : MonoBehaviour
             var newLabel = new Label();
             newLabel.AddToClassList("message");
             newBox.Add(newLabel);
-            Debug.Log("Creating new message box" + newLabel);
 
             // the event when the control get's added to the "UI Canvas"
             newBox.RegisterCallback<AttachToPanelEvent>((e) =>
@@ -145,32 +142,18 @@ public class MessageFeed : MonoBehaviour
 
             return newBox;
         };
-        
-        
-        listView.destroyItem += (element) =>
-        {
-            
-        };
+
+        listView.destroyItem += (element) => { };
 
         // use this to set bindings / values on your view components
         listView.bindItem += (element, i) =>
         {
             var label = element.Q<Label>();
-            label.text = m_Messages[i].Message; 
+            label.text = m_Messages[i].Message;
         };
 
         // collection change events will take care of creating and disposing items
         listView.itemsSource = m_Messages;
-
-        // [IMPORTANT!] try to set as much of the style related logic as you can in the USS files instead.
-        /*
-         m_MessageContainer = listView;
-         m_MessageContainer.style.flexDirection = FlexDirection.Column; // Arrange messages vertically
-
-        // make sure other visual elements don't get pushed down by the message container
-        m_MessageContainer.style.position = Position.Absolute;
-        */
-
         m_MessageContainer = listView;
     }
 
@@ -181,7 +164,6 @@ public class MessageFeed : MonoBehaviour
             m_Subscriptions.Dispose();
         }
     }
-
 
     void Update()
     {
@@ -198,15 +180,14 @@ public class MessageFeed : MonoBehaviour
 
         foreach (var m in _messagesToRemove)
         {
-            Debug.Log($"Removing message: {m.Message}");;
             var fadeOutClassName = "messageBoxFadeOut";
 
             var child = m_MessageContainer.Query<VisualElement>().Class("messageBox")
                 .AtIndex(m_Messages.IndexOf(m));
-            
+
             if (!child.ClassListContains(fadeOutClassName))
             {
-                child.AddToClassList(fadeOutClassName);
+                StartCoroutine(ApplyFadeOutWithDelay(child, 4f)); // Delay depends on your animation timing
                 child.RegisterCallback<TransitionEndEvent>((e) =>
                 {
                     m_Messages.Remove(m);
@@ -215,6 +196,12 @@ public class MessageFeed : MonoBehaviour
                 });
             }
         }
+    }
+
+    IEnumerator ApplyFadeOutWithDelay(VisualElement element, float delay)
+    {
+        yield return new WaitForSeconds(delay); // Wait for the `messageBox` animation to finish
+        element.AddToClassList("messageBoxFadeOut");
     }
 
     void ShowMessage(string message)
@@ -230,7 +217,6 @@ public class MessageFeed : MonoBehaviour
 
         element.ToggleInClassList(className);
     }
-
 
     // if you bind the itemsource to the list you don't actually have to manually do this
     class MessageViewModel

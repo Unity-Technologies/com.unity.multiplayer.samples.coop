@@ -56,30 +56,27 @@
     translate: 0 0 0;
 }
 
-.message:hover{
+.message:hover {
     left: 10px;
 }
 
-.messageBoxFadeOut{
+.messageBoxFadeOut {
     opacity: 0;
 }
 
-#messageList{
+#messageList {
     flex-direction: column;
     position: absolute;
     top: -537px;
-    left: 10px;
 }
 
 /* since we are using absolute position with a list view in this case
    we need to make sure to override the default scroll view behaviors */
-#messageList .unity-scroll-view__content-viewport
-{
-    overflow: visible;
+#messageList .unity-scroll-view__content-viewport {
+    overflow: hidden;
 }
 
-#messageList .unity-scroll-view__content-container
-{
-    overflow: visible;
+#messageList .unity-scroll-view__content-container {
+    overflow: hidden;
 }
 
