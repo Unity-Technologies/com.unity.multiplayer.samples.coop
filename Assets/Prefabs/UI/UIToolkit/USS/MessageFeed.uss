@@ -32,6 +32,9 @@
     margin-left: 10px;
     margin-top: 0;
     -unity-font-style: bold;
+    transition-property: translate;
+    transition-timing-function: ease-in-bounce;
+    transition-duration: 4s;
 }
 
 .messageBox {
@@ -40,18 +43,40 @@
     margin-bottom: 8px;
     width: auto;
     height: 26px;
-    transition-property: position;
-    transition-duration: 2s;
+    translate: -150% 0 0;
+    transition-property: translate, opacity;
+    transition-timing-function: ease-in-out-back, ease-in;
+    transition-duration: 0.5s, 1s;
     position: relative;
-    top: -537px;
-    left: 10px;
     overflow: scroll;
     flex-direction: column;
 }
 
-.messageList {
+.messageBoxMove {
+    translate: 0 0 0;
 }
 
-.messageBoxMove {
-    left: 10%;
+.message:hover {
+    left: 10px;
 }
+
+.messageBoxFadeOut {
+    opacity: 0;
+}
+
+#messageList {
+    flex-direction: column;
+    position: absolute;
+    top: -537px;
+}
+
+/* since we are using absolute position with a list view in this case
+   we need to make sure to override the default scroll view behaviors */
+#messageList .unity-scroll-view__content-viewport {
+    overflow: hidden;
+}
+
+#messageList .unity-scroll-view__content-container {
+    overflow: hidden;
+}
+

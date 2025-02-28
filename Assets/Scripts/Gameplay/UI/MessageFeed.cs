@@ -15,9 +15,10 @@ public class MessageFeed : MonoBehaviour
     [SerializeField]
     UIDocument doc;
 
-    List<Message> m_Messages;
+    List<MessageViewModel> m_Messages;
+    List<MessageViewModel> _messagesToRemove = new List<MessageViewModel>();
 
-    VisualElement m_MessageContainer;
+    ListView m_MessageContainer;
 
     DisposableGroup m_Subscriptions;
 
@@ -96,25 +97,64 @@ public class MessageFeed : MonoBehaviour
         }
     }
 
+    [ContextMenu("Add Message")]
+    public void AddMessage()
+    {
+        ShowMessage($"Hello! {DateTime.Now.Millisecond}");
+    }
+
+    //would be much nicer if this would be a custom control, and we'd do this in an attach to panel event
     void Start()
     {
         var root = doc.rootVisualElement;
-        var templateLabel = root.Q<Label>("messageLabel");
-        var templateBox = root.Q<VisualElement>("messageBox");
 
-        // Hide the default template elements
-        templateLabel.style.display = DisplayStyle.None;
-        templateBox.style.display = DisplayStyle.None;
+        m_Messages = new List<MessageViewModel>();
 
-        m_Messages = new List<Message>();
+        // Find the container of all messages 
+        var listView = root.Q<ListView>("messageList");
 
-        // Create a container for all messages
-        m_MessageContainer = new VisualElement();
-        m_MessageContainer.style.flexDirection = FlexDirection.Column; // Arrange messages vertically
+        // Since you've added an item template in the UXML this is not really necessary here
+        listView.makeItem += () =>
+        {
+            // Create a new message if no reusable messages are available
+            var newBox = new VisualElement();
+            newBox.AddToClassList("messageBox");
 
-        // make sure other visual elements don't get pushed down by the message container
-        m_MessageContainer.style.position = Position.Absolute;
-        doc.rootVisualElement.Add(m_MessageContainer);
+            var newLabel = new Label();
+            newLabel.AddToClassList("message");
+            newBox.Add(newLabel);
+
+            // the event when the control get's added to the "UI Canvas"
+            newBox.RegisterCallback<AttachToPanelEvent>((e) =>
+            {
+                if (e.target is VisualElement element)
+                {
+                    element.RemoveFromClassList("messageBoxMove");
+                    StartCoroutine(ToggleClassWithDelay(element, "messageBoxMove", TimeSpan.FromSeconds(0.02)));
+                }
+            });
+
+            // fires just before the element is actually removed
+            newBox.RegisterCallback<DetachFromPanelEvent>((e) =>
+            {
+                if (e.target is VisualElement) { }
+            });
+
+            return newBox;
+        };
+
+        listView.destroyItem += (element) => { };
+
+        // use this to set bindings / values on your view components
+        listView.bindItem += (element, i) =>
+        {
+            var label = element.Q<Label>();
+            label.text = m_Messages[i].Message;
+        };
+
+        // collection change events will take care of creating and disposing items
+        listView.itemsSource = m_Messages;
+        m_MessageContainer = listView;
     }
 
     void OnDestroy()
@@ -127,144 +167,76 @@ public class MessageFeed : MonoBehaviour
 
     void Update()
     {
+        if (m_Messages == null)
+            return;
+
         foreach (var m in m_Messages)
         {
-            if (m.isShown)
+            if (m.ShouldDispose() && !_messagesToRemove.Contains(m))
             {
-                // Check if a message should begin fading out
-                if (Time.realtimeSinceStartup - m.startTime > 5 && m.messageBox.style.opacity == 1)
-                {
-                    StartFadeout(m, 1f);
-                    m.isShown = false;
-                }
+                _messagesToRemove.Add(m);
             }
         }
+
+        foreach (var m in _messagesToRemove)
+        {
+            var fadeOutClassName = "messageBoxFadeOut";
+
+            var child = m_MessageContainer.Query<VisualElement>().Class("messageBox")
+                .AtIndex(m_Messages.IndexOf(m));
+
+            if (!child.ClassListContains(fadeOutClassName))
+            {
+                StartCoroutine(ApplyFadeOutWithDelay(child, 4f)); // Delay depends on your animation timing
+                child.RegisterCallback<TransitionEndEvent>((e) =>
+                {
+                    m_Messages.Remove(m);
+                    _messagesToRemove.Remove(m);
+                    child.RemoveFromClassList(fadeOutClassName);
+                });
+            }
+        }
+    }
+
+    IEnumerator ApplyFadeOutWithDelay(VisualElement element, float delay)
+    {
+        yield return new WaitForSeconds(delay); // Wait for the `messageBox` animation to finish
+        element.AddToClassList("messageBoxFadeOut");
     }
 
     void ShowMessage(string message)
     {
-        const float messageHeight = 40f; // Approximate height of a message (adjust based on UI)
-        const float verticalSpacing = 10f; // Spacing between stacked messages
+        var newMessage = new MessageViewModel(message, TimeSpan.FromSeconds(5));
 
-        // Reuse or create a new message
-        Message newMessage = null;
-
-        foreach (var m in m_Messages)
-        {
-            if (!m.isShown)
-            {
-                // Reuse the hidden message
-                newMessage = m;
-                break;
-            }
-        }
-
-        if (newMessage == null)
-        {
-            // Create a new message if no reusable messages are available
-            var newBox = new VisualElement();
-            newBox.AddToClassList("messageBox");
-            newBox.style.position = Position.Absolute; // Explicitly position it
-            // Position the new message box below the last message
-            //newBox.style.top = m_MessageContainer.childCount * (messageHeight + verticalSpacing);
-
-            var newLabel = new Label();
-            newLabel.AddToClassList("message");
-            newBox.Add(newLabel);
-
-            newMessage = new Message()
-            {
-                isShown = true,
-                startTime = Time.realtimeSinceStartup,
-                messageBox = newBox,
-                Label = newLabel
-            };
-
-            m_MessageContainer.Add(newBox); // Add the message box to the parent container
-            m_Messages.Add(newMessage); // Add to the list of messages
-        }
-
-        // Set the properties of the reused or new message
-        newMessage.isShown = true;
-        newMessage.Label.text = message;
-        newMessage.startTime = Time.realtimeSinceStartup;
-        newMessage.messageBox.style.opacity = 1;
-        newMessage.messageBox.style.display = DisplayStyle.Flex;
-        
-        // Start a fly-in animation
-        StartCoroutine(FlyInWithBounce(newMessage.messageBox, -300, 50, 0.2f, 0.2f));
-    }
-    
-    IEnumerator FlyInWithBounce(VisualElement element, float startLeft, float targetLeft, float duration, float bounceDuration)
-    {
-        float elapsedTime = 0;
-        element.style.opacity = 0;
-
-        // Main fly-in animation (linear movement from off-screen)
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / duration; // Normalized time (0 to 1)
-
-            // Linearly interpolate left position
-            float newLeft = Mathf.Lerp(startLeft, targetLeft, t);
-            element.style.left = newLeft;
-
-            // Gradually fade in
-            element.style.opacity = t;
-
-            yield return null;
-        }
-
-        // Ensure the message is at the target final position
-        element.style.left = targetLeft;
-        element.style.opacity = 1;
-
-        // Bounce Animation: Overshoot to the right and come back
-        float overshootAmount = 20;
-        float bounceElapsedTime = 0;
-
-        while (bounceElapsedTime < bounceDuration)
-        {
-            bounceElapsedTime += Time.deltaTime;
-            float t = bounceElapsedTime / bounceDuration;
-
-            // Use a simple sine easing for the bounce effect
-            float bounceT = Mathf.Sin(t * Mathf.PI);
-
-            // Interpolate between targetLeft and overshoot position
-            float bounceLeft = Mathf.Lerp(targetLeft, targetLeft + overshootAmount, bounceT);
-
-            element.style.left = bounceLeft;
-            yield return null;
-        }
-
-        // Finally snap back to the exact target position
-        element.style.left = targetLeft;
+        m_Messages.Add(newMessage); // Add to the list of messages
     }
 
-    static void StartFadeout(Message message, float opacity)
+    IEnumerator ToggleClassWithDelay(VisualElement element, string className, TimeSpan delay)
     {
-        message.messageBox.schedule.Execute(() =>
-        {
-            opacity -= 0.01f;
-            message.messageBox.style.opacity = opacity;
+        yield return new WaitForSeconds((float)delay.TotalSeconds);
 
-            if (opacity <= 0)
-            {
-                // Once faded out fully, hide the message and reset state
-                message.messageBox.style.display = DisplayStyle.None;
-                message.isShown = false;
-                message.startTime = 0;
-            }
-        }).Every((long)0.1f).Until(() => opacity <= 0);
+        element.ToggleInClassList(className);
     }
 
-    class Message
+    // if you bind the itemsource to the list you don't actually have to manually do this
+    class MessageViewModel
     {
-        public bool isShown;
-        public float startTime; // The time when the message was shown
-        public VisualElement messageBox;
-        public Label Label;
+        readonly TimeSpan _autoDispose;
+        DateTime _createdAt;
+
+        public string Message { get; }
+
+        public MessageViewModel(string message, TimeSpan timeout = default)
+        {
+            _createdAt = DateTime.Now;
+            _autoDispose = timeout;
+            Message = message;
+        }
+
+        // probably an event would be nicer
+        public bool ShouldDispose()
+        {
+            return _createdAt + _autoDispose < DateTime.Now;
+        }
     }
 }
