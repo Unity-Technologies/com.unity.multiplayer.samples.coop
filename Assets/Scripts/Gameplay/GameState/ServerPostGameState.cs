@@ -25,7 +25,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         PostGameUI m_PostGameUI;
         
         [SerializeField]
-        MessageFeed m_MessageFeed;
+        UIMessageFeed m_MessageFeed;
 
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
