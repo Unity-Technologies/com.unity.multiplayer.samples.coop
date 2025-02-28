@@ -97,6 +97,7 @@ namespace Unity.BossRoom.Gameplay.UI
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
+
                     break;
             }
         }
@@ -116,6 +117,7 @@ namespace Unity.BossRoom.Gameplay.UI
                     return slot;
                 }
             }
+
             var go = Instantiate(m_MessageSlotPrefab, m_VerticalLayoutGroup.transform);
             var messageSlot = go.GetComponentInChildren<OldUIMessageSlot>();
             m_MessageSlots.Add(messageSlot);
@@ -129,6 +131,5 @@ namespace Unity.BossRoom.Gameplay.UI
                 m_Subscriptions.Dispose();
             }
         }
-
     }
 }

@@ -23,7 +23,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         [Inject]
         IPublisher<QuitApplicationMessage> m_QuitApplicationPub;
-        
+
         public void Quit()
         {
             switch (m_QuitMode)

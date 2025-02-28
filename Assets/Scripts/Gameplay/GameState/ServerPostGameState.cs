@@ -23,11 +23,14 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         [SerializeField]
         PostGameUI m_PostGameUI;
-        
+
         [SerializeField]
         UIMessageFeed m_MessageFeed;
 
-        public override GameState ActiveState { get { return GameState.PostGame; } }
+        public override GameState ActiveState
+        {
+            get { return GameState.PostGame; }
+        }
 
         [Inject]
         ConnectionManager m_ConnectionManager;
@@ -41,7 +44,7 @@ namespace Unity.BossRoom.Gameplay.GameState
 
             m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
         }
-        
+
         protected override void Configure(IContainerBuilder builder)
         {
             base.Configure(builder);
