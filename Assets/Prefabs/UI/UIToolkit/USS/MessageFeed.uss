@@ -1,28 +1,3 @@
-.message-feed {
-    width: 480%;
-    height: 250px;
-    border-radius: 5px;
-    border: solid 1px rgb(204, 204, 204);
-    padding: 10px;
-    position: absolute;
-    left: 64px;
-    top: 500px;
-}
-
-.message-item {
-    font-size: 14px;
-    color: rgb(51, 51, 51);
-    padding: 8px;
-    margin-bottom: 8px;
-    border-radius: 4px;
-    word-wrap: break-word;
-    width: 480px;
-    height: 50px;
-    position: absolute;
-    top: 500px;
-    left: 64px;
-}
-
 .message {
     color: rgb(255, 193, 21);
     font-size: 14px;
@@ -39,8 +14,6 @@
 
 .messageBox {
     background-image: url("project://database/Assets/Textures/UI/ui_healthbar_bg.png?fileID=2800000&guid=ac1ab0ffbf410094088db89d509a3a4a&type=3#ui_healthbar_bg");
-    margin-top: 8px;
-    margin-bottom: 8px;
     width: auto;
     height: 26px;
     translate: -150% 0 0;
@@ -48,8 +21,8 @@
     transition-timing-function: ease-in-out-back, ease-in;
     transition-duration: 0.5s, 1s;
     position: relative;
-    overflow: scroll;
-    flex-direction: column;
+    overflow: hidden;
+    flex-direction: column;    
 }
 
 .messageBoxMove {
@@ -60,7 +33,7 @@
     opacity: 0;
 }
 
-#messageList {
+#messageFeed {
     flex-direction: column;
     position: absolute;
     top: -537px;

@@ -1,6 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Unity.BossRoom.ConnectionManagement;
@@ -20,10 +21,10 @@ public class MessageFeed : MonoBehaviour
     [SerializeField]
     UIDocument doc;
 
-    List<MessageViewModel> m_Messages;
+    ObservableCollection<MessageViewModel> m_Messages;
     List<MessageViewModel> m_MessagesToRemove = new List<MessageViewModel>();
 
-    ListView m_MessageContainer;
+    VisualElement m_MessageContainer;
 
     DisposableGroup m_Subscriptions;
 
@@ -108,56 +109,18 @@ public class MessageFeed : MonoBehaviour
         ShowMessage($"Hello! {DateTime.Now.Millisecond}");
     }
 
-    //would be much nicer if this would be a custom control, and we'd do this in an attach to panel event
+    // would be much nicer if this would be a custom control, and we'd do this in an attach to panel event
     void Start()
     {
         var root = doc.rootVisualElement;
 
-        m_Messages = new List<MessageViewModel>();
+        m_Messages = new ObservableCollection<MessageViewModel>();
 
         // Find the container of all messages 
-        var listView = root.Q<ListView>("messageList");
+        m_MessageContainer = root.Q<VisualElement>("messageFeed");
 
-        // Since you've added an item template in the UXML this is not really necessary here
-        listView.makeItem += () =>
-        {
-            // Create a new message if no reusable messages are available
-            var newBox = new VisualElement();
-            newBox.AddToClassList(k_MessageBoxClassName);
-
-            var newLabel = new Label();
-            newLabel.AddToClassList(k_MessageClassName);
-            newBox.Add(newLabel);
-
-            // the event when the control get's added to the "UI Canvas"
-            newBox.RegisterCallback<AttachToPanelEvent>((e) =>
-            {
-                if (e.target is VisualElement element)
-                {
-                    element.RemoveFromClassList(k_MessageBoxMovementClassName);
-                    StartCoroutine(ToggleClassWithDelay(element, k_MessageBoxMovementClassName, TimeSpan.FromSeconds(0.02)));
-                }
-            });
-
-            // fires just before the element is actually removed
-            newBox.RegisterCallback<DetachFromPanelEvent>((e) =>
-            {
-                if (e.target is VisualElement) { }
-            });
-
-            return newBox;
-        };
-
-        // use this to set bindings / values on your view components
-        listView.bindItem += (element, i) =>
-        {
-            var label = element.Q<Label>();
-            label.text = m_Messages[i].Message;
-        };
-
-        // collection change events will take care of creating and disposing items
-        listView.itemsSource = m_Messages;
-        m_MessageContainer = listView;
+        // This will handle the addition and removal of the message presenters
+        m_Messages.CollectionChanged += OnMessageCollectionChanged;
     }
 
     void OnDestroy()
@@ -184,39 +147,19 @@ public class MessageFeed : MonoBehaviour
         foreach (var message in m_MessagesToRemove)
         {
             var childQuery = m_MessageContainer.Query<VisualElement>().Class(k_MessageBoxClassName);
-            var child = childQuery.AtIndex(m_Messages.IndexOf(message));
+            var child = childQuery.Where(a => a.Q<Label>().text == message.Message).First();
 
             if (!child.ClassListContains(k_FadeOutClassName))
             {
                 child.AddToClassList(k_FadeOutClassName);
                 child.RegisterCallback<TransitionEndEvent>(OnTransitionEndEvent);
-                child.RegisterCallback<TransitionCancelEvent>(OnTransitionCancelEvent);
             }
 
-            void OnTransitionCancelEvent(TransitionCancelEvent e)
-            {
-                m_Messages.Remove(message);
-                m_MessagesToRemove.Remove(message);
-                if (e.target is VisualElement element)
-                {
-                    element.RemoveFromClassList(k_FadeOutClassName);
-                }
-            }
-            
             // local event handler function
             void OnTransitionEndEvent(TransitionEndEvent e)
             {
-                if (e.target is VisualElement element) 
+                if (e.target is VisualElement element)
                 {
-                    // remove subscription
-                    element.UnregisterCallback<TransitionEndEvent>(OnTransitionEndEvent);
-                    
-                    element.RemoveFromClassList(k_FadeOutClassName);
-
-                    // moving the message to be the last visualized in the container
-                    // effectively stopping the list view virtualization caused animation issues
-                    m_MessageContainer.viewController.Move(m_Messages.IndexOf(message), m_Messages.Count - 1);
-                    
                     m_Messages.Remove(message);
                     m_MessagesToRemove.Remove(message);
                 }
@@ -226,19 +169,81 @@ public class MessageFeed : MonoBehaviour
 
     void ShowMessage(string message)
     {
+        // we create a new message view model that will time out in 5 seconds
         var newMessage = new MessageViewModel(message, TimeSpan.FromSeconds(5));
-
+        // we add the message to the observable collection, triggering the visualization
         m_Messages.Add(newMessage); // Add to the list of messages
     }
 
-    IEnumerator ToggleClassWithDelay(VisualElement element, string className, TimeSpan delay)
+    private void OnMessageCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
     {
-        yield return new WaitForSeconds((float)delay.TotalSeconds);
-
-        element.ToggleInClassList(className);
+        switch (eventArgs.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                OnMessagesAdded(eventArgs);
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                OnMessagesRemoved(eventArgs);
+                break;
+            default:
+                Debug.LogWarning("Collection was modified in an unexpected way");
+                break;
+        }
     }
 
-    // if you bind the itemsource to the list you don't actually have to manually do this
+    private void OnMessagesRemoved(NotifyCollectionChangedEventArgs eventArgs)
+    {
+        foreach (var itemToRemove in eventArgs.OldItems)
+        {
+            if (itemToRemove is MessageViewModel messageViewModel)
+            {
+                var childQuery = m_MessageContainer.Query<VisualElement>().Class(k_MessageBoxClassName);
+                var child = childQuery.Where(a => a.Q<Label>().text == messageViewModel.Message).First();
+                // manually removing the child item from the message feed
+                m_MessageContainer.contentContainer.Remove(child);
+            }
+        }
+    }
+
+    private void OnMessagesAdded(NotifyCollectionChangedEventArgs eventArgs)
+    {
+        foreach (var message in eventArgs.NewItems)
+        {
+            if (message is not MessageViewModel messageViewModel)
+                return;
+
+            // Create a new messageBox
+            var messageBox = new VisualElement();
+            messageBox.AddToClassList(k_MessageBoxClassName);
+
+            var messagePresenter = new Label();
+            messagePresenter.AddToClassList(k_MessageClassName);
+            messagePresenter.text = messageViewModel.Message;
+            // Add the message presenter into the box
+            messageBox.Add(messagePresenter);
+
+            // the event when the control get's added to the "UI Canvas"
+            messageBox.RegisterCallback<AttachToPanelEvent>(OnAttachToPanelEvent);
+            
+            // Add the message box to the message Feed
+            m_MessageContainer.contentContainer.Add(messageBox);
+
+            return;
+
+            void OnAttachToPanelEvent(AttachToPanelEvent evt)
+            {
+                if (evt.target is VisualElement element)
+                {
+                    // we set up the control in a way that it starts with an offset.
+                    // we schedule the transition for the message to snap in back to it's intended position
+                    element.schedule
+                        .Execute(() => element.ToggleInClassList(k_MessageBoxMovementClassName))
+                        .ExecuteLater(200);
+                }
+            }
+        }
+    }
+
     class MessageViewModel
     {
         readonly TimeSpan _autoDispose;

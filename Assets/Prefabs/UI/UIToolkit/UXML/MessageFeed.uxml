@@ -1,6 +1,4 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Prefabs/UI/UIToolkit/USS/MessageFeed.uss?fileID=7433441132597879392&amp;guid=daa8504d262853748b8d7c2a377261a3&amp;type=3#MessageFeed" />
-    <engine:VisualElement name="messageFeed" style="flex-grow: 1;">
-        <engine:ListView item-template="project://database/Assets/Prefabs/UI/UIToolkit/UXML/MessageItem.uxml?fileID=9197481963319205126&amp;guid=67ec44aea0b0f484c86c6489932cfcad&amp;type=3#MessageItem" name="messageList" virtualization-method="FixedHeight" binding-source-selection-mode="AutoAssign" selection-type="None" show-bound-collection-size="true" allow-remove="true" class="messageList" />
-    </engine:VisualElement>
+    <engine:VisualElement name="messageFeed" picking-mode="Ignore" />
 </engine:UXML>
