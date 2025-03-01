@@ -10,5 +10,7 @@
         <engine:Button text="return to menu" name="menuBtn" class="menuButton" style="left: 32%; top: 75%; position: absolute;" />
         <engine:Button text="Waiting on host &#10;to play again" name="waitOnHostBtn" class="menuButton" style="position: absolute; top: 60%; left: 32%;" />
     </engine:VisualElement>
-    <engine:Instance template="MessageFeed" />
+    <engine:Instance template="MessageFeed">
+        <AttributeOverrides element-name="messageList" virtualization-method="FixedHeight" selection-type="None" />
+    </engine:Instance>
 </engine:UXML>

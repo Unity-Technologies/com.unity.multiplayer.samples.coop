@@ -12,11 +12,16 @@ using VContainer;
 
 public class MessageFeed : MonoBehaviour
 {
+    private const string k_MessageBoxMovementClassName = "messageBoxMove";
+    private const string k_FadeOutClassName = "messageBoxFadeOut";
+    private const string k_MessageBoxClassName = "messageBox";
+    private const string k_MessageClassName = "message";
+
     [SerializeField]
     UIDocument doc;
 
     List<MessageViewModel> m_Messages;
-    List<MessageViewModel> _messagesToRemove = new List<MessageViewModel>();
+    List<MessageViewModel> m_MessagesToRemove = new List<MessageViewModel>();
 
     ListView m_MessageContainer;
 
@@ -118,10 +123,10 @@ public class MessageFeed : MonoBehaviour
         {
             // Create a new message if no reusable messages are available
             var newBox = new VisualElement();
-            newBox.AddToClassList("messageBox");
+            newBox.AddToClassList(k_MessageBoxClassName);
 
             var newLabel = new Label();
-            newLabel.AddToClassList("message");
+            newLabel.AddToClassList(k_MessageClassName);
             newBox.Add(newLabel);
 
             // the event when the control get's added to the "UI Canvas"
@@ -129,8 +134,8 @@ public class MessageFeed : MonoBehaviour
             {
                 if (e.target is VisualElement element)
                 {
-                    element.RemoveFromClassList("messageBoxMove");
-                    StartCoroutine(ToggleClassWithDelay(element, "messageBoxMove", TimeSpan.FromSeconds(0.02)));
+                    element.RemoveFromClassList(k_MessageBoxMovementClassName);
+                    StartCoroutine(ToggleClassWithDelay(element, k_MessageBoxMovementClassName, TimeSpan.FromSeconds(0.02)));
                 }
             });
 
@@ -142,8 +147,6 @@ public class MessageFeed : MonoBehaviour
 
             return newBox;
         };
-
-        listView.destroyItem += (element) => { };
 
         // use this to set bindings / values on your view components
         listView.bindItem += (element, i) =>
@@ -172,28 +175,51 @@ public class MessageFeed : MonoBehaviour
 
         foreach (var m in m_Messages)
         {
-            if (m.ShouldDispose() && !_messagesToRemove.Contains(m))
+            if (m.ShouldDispose() && !m_MessagesToRemove.Contains(m))
             {
-                _messagesToRemove.Add(m);
+                m_MessagesToRemove.Add(m);
             }
         }
 
-        foreach (var m in _messagesToRemove)
+        foreach (var message in m_MessagesToRemove)
         {
-            var fadeOutClassName = "messageBoxFadeOut";
+            var childQuery = m_MessageContainer.Query<VisualElement>().Class(k_MessageBoxClassName);
+            var child = childQuery.AtIndex(m_Messages.IndexOf(message));
 
-            var child = m_MessageContainer.Query<VisualElement>().Class("messageBox")
-                .AtIndex(m_Messages.IndexOf(m));
-
-            if (!child.ClassListContains(fadeOutClassName))
+            if (!child.ClassListContains(k_FadeOutClassName))
             {
-                child.AddToClassList(fadeOutClassName);
-                child.RegisterCallback<TransitionEndEvent>((e) =>
+                child.AddToClassList(k_FadeOutClassName);
+                child.RegisterCallback<TransitionEndEvent>(OnTransitionEndEvent);
+                child.RegisterCallback<TransitionCancelEvent>(OnTransitionCancelEvent);
+            }
+
+            void OnTransitionCancelEvent(TransitionCancelEvent e)
+            {
+                m_Messages.Remove(message);
+                m_MessagesToRemove.Remove(message);
+                if (e.target is VisualElement element)
                 {
-                    m_Messages.Remove(m);
-                    _messagesToRemove.Remove(m);
-                    child.RemoveFromClassList(fadeOutClassName);
-                });
+                    element.RemoveFromClassList(k_FadeOutClassName);
+                }
+            }
+            
+            // local event handler function
+            void OnTransitionEndEvent(TransitionEndEvent e)
+            {
+                if (e.target is VisualElement element) 
+                {
+                    // remove subscription
+                    element.UnregisterCallback<TransitionEndEvent>(OnTransitionEndEvent);
+                    
+                    element.RemoveFromClassList(k_FadeOutClassName);
+
+                    // moving the message to be the last visualized in the container
+                    // effectively stopping the list view virtualization caused animation issues
+                    m_MessageContainer.viewController.Move(m_Messages.IndexOf(message), m_Messages.Count - 1);
+                    
+                    m_Messages.Remove(message);
+                    m_MessagesToRemove.Remove(message);
+                }
             }
         }
     }
