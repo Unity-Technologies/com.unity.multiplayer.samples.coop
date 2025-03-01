@@ -187,7 +187,7 @@ public class MessageFeed : MonoBehaviour
 
             if (!child.ClassListContains(fadeOutClassName))
             {
-                StartCoroutine(ApplyFadeOutWithDelay(child, 4f)); // Delay depends on your animation timing
+                child.AddToClassList(fadeOutClassName);
                 child.RegisterCallback<TransitionEndEvent>((e) =>
                 {
                     m_Messages.Remove(m);
@@ -196,12 +196,6 @@ public class MessageFeed : MonoBehaviour
                 });
             }
         }
-    }
-
-    IEnumerator ApplyFadeOutWithDelay(VisualElement element, float delay)
-    {
-        yield return new WaitForSeconds(delay); // Wait for the `messageBox` animation to finish
-        element.AddToClassList("messageBoxFadeOut");
     }
 
     void ShowMessage(string message)
