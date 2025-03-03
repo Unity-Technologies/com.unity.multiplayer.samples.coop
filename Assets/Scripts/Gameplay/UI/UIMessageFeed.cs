@@ -1,6 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Unity.BossRoom.ConnectionManagement;
@@ -10,233 +11,260 @@ using Unity.BossRoom.Gameplay.Messages;
 using Unity.BossRoom.Infrastructure;
 using VContainer;
 
-public class UIMessageFeed : MonoBehaviour
+namespace Unity.BossRoom.Gameplay.UI
 {
-    [SerializeField]
-    UIDocument doc;
+    public class UIMessageFeed : MonoBehaviour
+    {
+        const string k_MessageBoxMovementClassName = "messageBoxMove";
+        const string k_FadeOutClassName = "messageBoxFadeOut";
+        const string k_MessageBoxClassName = "messageBox";
+        const string k_MessageClassName = "message";
 
-    List<MessageViewModel> m_Messages;
-    List<MessageViewModel> _messagesToRemove = new List<MessageViewModel>();
+        [SerializeField]
+        UIDocument doc;
 
-    ListView m_MessageContainer;
+        ObservableCollection<MessageViewModel> m_Messages;
+        List<MessageViewModel> m_MessagesToRemove = new List<MessageViewModel>();
 
-    DisposableGroup m_Subscriptions;
+        VisualElement m_MessageContainer;
+        DisposableGroup m_Subscriptions;
 
-    [Inject]
-    void InjectDependencies(
+        [Inject]
+        void InjectDependencies(
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        ISubscriber<CheatUsedMessage> cheatUsedMessageSubscriber,
+            ISubscriber<CheatUsedMessage> cheatUsedMessageSubscriber,
 #endif
-        ISubscriber<DoorStateChangedEventMessage> doorStateChangedSubscriber,
-        ISubscriber<ConnectionEventMessage> connectionEventSubscriber,
-        ISubscriber<LifeStateChangedEventMessage> lifeStateChangedEventSubscriber
-    )
-    {
-        m_Subscriptions = new DisposableGroup();
+            ISubscriber<DoorStateChangedEventMessage> doorStateChangedSubscriber,
+            ISubscriber<ConnectionEventMessage> connectionEventSubscriber,
+            ISubscriber<LifeStateChangedEventMessage> lifeStateChangedEventSubscriber
+        )
+        {
+            m_Subscriptions = new DisposableGroup();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        m_Subscriptions.Add(cheatUsedMessageSubscriber.Subscribe(OnCheatUsedEvent));
+            m_Subscriptions.Add(cheatUsedMessageSubscriber.Subscribe(OnCheatUsedEvent));
 #endif
-        m_Subscriptions.Add(doorStateChangedSubscriber.Subscribe(OnDoorStateChangedEvent));
-        m_Subscriptions.Add(connectionEventSubscriber.Subscribe(OnConnectionEvent));
-        m_Subscriptions.Add(lifeStateChangedEventSubscriber.Subscribe(OnLifeStateChangedEvent));
-    }
+            m_Subscriptions.Add(doorStateChangedSubscriber.Subscribe(OnDoorStateChangedEvent));
+            m_Subscriptions.Add(connectionEventSubscriber.Subscribe(OnConnectionEvent));
+            m_Subscriptions.Add(lifeStateChangedEventSubscriber.Subscribe(OnLifeStateChangedEvent));
+        }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-    void OnCheatUsedEvent(CheatUsedMessage eventMessage)
-    {
-        ShowMessage($"Cheat {eventMessage.CheatUsed} used by {eventMessage.CheaterName}");
-    }
+        void OnCheatUsedEvent(CheatUsedMessage eventMessage)
+        {
+            ShowMessage($"Cheat {eventMessage.CheatUsed} used by {eventMessage.CheaterName}");
+        }
 #endif
 
-    void OnDoorStateChangedEvent(DoorStateChangedEventMessage eventMessage)
-    {
-        ShowMessage(eventMessage.IsDoorOpen ? "The Door has been opened!" : "The Door is closing.");
-    }
-
-    void OnConnectionEvent(ConnectionEventMessage eventMessage)
-    {
-        switch (eventMessage.ConnectStatus)
+        void OnDoorStateChangedEvent(DoorStateChangedEventMessage eventMessage)
         {
-            case ConnectStatus.Success:
-                ShowMessage($"{eventMessage.PlayerName} has joined the game!");
-                break;
-            case ConnectStatus.ServerFull:
-            case ConnectStatus.LoggedInAgain:
-            case ConnectStatus.UserRequestedDisconnect:
-            case ConnectStatus.GenericDisconnect:
-            case ConnectStatus.IncompatibleBuildType:
-            case ConnectStatus.HostEndedSession:
-                ShowMessage($"{eventMessage.PlayerName} has left the game!");
-                break;
+            ShowMessage(eventMessage.IsDoorOpen ? "The Door has been opened!" : "The Door is closing.");
         }
-    }
 
-    void OnLifeStateChangedEvent(LifeStateChangedEventMessage eventMessage)
-    {
-        switch (eventMessage.CharacterType)
+        void OnConnectionEvent(ConnectionEventMessage eventMessage)
         {
-            case CharacterTypeEnum.Tank:
-            case CharacterTypeEnum.Archer:
-            case CharacterTypeEnum.Mage:
-            case CharacterTypeEnum.Rogue:
-            case CharacterTypeEnum.ImpBoss:
-                switch (eventMessage.NewLifeState)
-                {
-                    case LifeState.Alive:
-                        ShowMessage($"{eventMessage.CharacterName} has been reanimated!");
-                        break;
-                    case LifeState.Fainted:
-                    case LifeState.Dead:
-                        ShowMessage($"{eventMessage.CharacterName} has been defeated!");
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                break;
-        }
-    }
-
-    [ContextMenu("Add Message")]
-    public void AddMessage()
-    {
-        ShowMessage($"Hello! {DateTime.Now.Millisecond}");
-    }
-
-    //would be much nicer if this would be a custom control, and we'd do this in an attach to panel event
-    void Start()
-    {
-        var root = doc.rootVisualElement;
-
-        m_Messages = new List<MessageViewModel>();
-
-        // Find the container of all messages 
-        var listView = root.Q<ListView>("messageList");
-
-        // Since you've added an item template in the UXML this is not really necessary here
-        listView.makeItem += () =>
-        {
-            // Create a new message if no reusable messages are available
-            var newBox = new VisualElement();
-            newBox.AddToClassList("messageBox");
-
-            var newLabel = new Label();
-            newLabel.AddToClassList("message");
-            newBox.Add(newLabel);
-
-            // the event when the control get's added to the "UI Canvas"
-            newBox.RegisterCallback<AttachToPanelEvent>((e) =>
+            switch (eventMessage.ConnectStatus)
             {
-                if (e.target is VisualElement element)
-                {
-                    element.RemoveFromClassList("messageBoxMove");
-                    StartCoroutine(ToggleClassWithDelay(element, "messageBoxMove", TimeSpan.FromSeconds(0.02)));
-                }
-            });
-
-            // fires just before the element is actually removed
-            newBox.RegisterCallback<DetachFromPanelEvent>((e) =>
-            {
-                if (e.target is VisualElement) { }
-            });
-
-            return newBox;
-        };
-
-        listView.destroyItem += (element) => { };
-
-        // use this to set bindings / values on your view components
-        listView.bindItem += (element, i) =>
-        {
-            var label = element.Q<Label>();
-            label.text = m_Messages[i].Message;
-        };
-
-        // collection change events will take care of creating and disposing items
-        listView.itemsSource = m_Messages;
-        m_MessageContainer = listView;
-    }
-
-    void OnDestroy()
-    {
-        if (m_Subscriptions != null)
-        {
-            m_Subscriptions.Dispose();
-        }
-    }
-
-    void Update()
-    {
-        if (m_Messages == null)
-            return;
-
-        foreach (var m in m_Messages)
-        {
-            if (m.ShouldDispose() && !_messagesToRemove.Contains(m))
-            {
-                _messagesToRemove.Add(m);
+                case ConnectStatus.Success:
+                    ShowMessage($"{eventMessage.PlayerName} has joined the game!");
+                    break;
+                case ConnectStatus.ServerFull:
+                case ConnectStatus.LoggedInAgain:
+                case ConnectStatus.UserRequestedDisconnect:
+                case ConnectStatus.GenericDisconnect:
+                case ConnectStatus.IncompatibleBuildType:
+                case ConnectStatus.HostEndedSession:
+                    ShowMessage($"{eventMessage.PlayerName} has left the game!");
+                    break;
             }
         }
 
-        foreach (var m in _messagesToRemove)
+        void OnLifeStateChangedEvent(LifeStateChangedEventMessage eventMessage)
         {
-            var fadeOutClassName = "messageBoxFadeOut";
-
-            var child = m_MessageContainer.Query<VisualElement>().Class("messageBox")
-                .AtIndex(m_Messages.IndexOf(m));
-
-            if (!child.ClassListContains(fadeOutClassName))
+            switch (eventMessage.CharacterType)
             {
-                StartCoroutine(ApplyFadeOutWithDelay(child, 4f)); // Delay depends on your animation timing
-                child.RegisterCallback<TransitionEndEvent>((e) =>
-                {
-                    m_Messages.Remove(m);
-                    _messagesToRemove.Remove(m);
-                    child.RemoveFromClassList(fadeOutClassName);
-                });
+                case CharacterTypeEnum.Tank:
+                case CharacterTypeEnum.Archer:
+                case CharacterTypeEnum.Mage:
+                case CharacterTypeEnum.Rogue:
+                case CharacterTypeEnum.ImpBoss:
+                    switch (eventMessage.NewLifeState)
+                    {
+                        case LifeState.Alive:
+                            ShowMessage($"{eventMessage.CharacterName} has been reanimated!");
+                            break;
+                        case LifeState.Fainted:
+                        case LifeState.Dead:
+                            ShowMessage($"{eventMessage.CharacterName} has been defeated!");
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    break;
             }
         }
-    }
 
-    IEnumerator ApplyFadeOutWithDelay(VisualElement element, float delay)
-    {
-        yield return new WaitForSeconds(delay); // Wait for the `messageBox` animation to finish
-        element.AddToClassList("messageBoxFadeOut");
-    }
-
-    void ShowMessage(string message)
-    {
-        var newMessage = new MessageViewModel(message, TimeSpan.FromSeconds(5));
-
-        m_Messages.Add(newMessage); // Add to the list of messages
-    }
-
-    IEnumerator ToggleClassWithDelay(VisualElement element, string className, TimeSpan delay)
-    {
-        yield return new WaitForSeconds((float)delay.TotalSeconds);
-
-        element.ToggleInClassList(className);
-    }
-
-    // if you bind the itemsource to the list you don't actually have to manually do this
-    class MessageViewModel
-    {
-        readonly TimeSpan _autoDispose;
-        DateTime _createdAt;
-
-        public string Message { get; }
-
-        public MessageViewModel(string message, TimeSpan timeout = default)
+        [ContextMenu("Add Message")]
+        public void AddMessage()
         {
-            _createdAt = DateTime.Now;
-            _autoDispose = timeout;
-            Message = message;
+            ShowMessage($"Hello! {DateTime.Now.Millisecond}");
         }
 
-        // probably an event would be nicer
-        public bool ShouldDispose()
+        void Start()
         {
-            return _createdAt + _autoDispose < DateTime.Now;
+            var root = doc.rootVisualElement;
+
+            m_Messages = new ObservableCollection<MessageViewModel>();
+
+            // Find the container of all messages 
+            m_MessageContainer = root.Q<VisualElement>("messageFeed");
+
+            // This will handle the addition and removal of the message presenters
+            m_Messages.CollectionChanged += OnMessageCollectionChanged;
+        }
+
+        void OnDestroy()
+        {
+            if (m_Subscriptions != null)
+            {
+                m_Subscriptions.Dispose();
+            }
+        }
+
+        void Update()
+        {
+            if (m_Messages == null)
+                return;
+
+            foreach (var m in m_Messages)
+            {
+                if (m.ShouldDispose() && !m_MessagesToRemove.Contains(m))
+                {
+                    m_MessagesToRemove.Add(m);
+                }
+            }
+
+            foreach (var message in m_MessagesToRemove)
+            {
+                var childQuery = m_MessageContainer.Query<VisualElement>().Class(k_MessageBoxClassName);
+                var child = childQuery.Where(a => a.Q<Label>().text == message.Message).First();
+
+                if (!child.ClassListContains(k_FadeOutClassName))
+                {
+                    child.AddToClassList(k_FadeOutClassName);
+                    child.RegisterCallback<TransitionEndEvent>(OnTransitionEndEvent);
+                }
+
+                // local event handler function
+                void OnTransitionEndEvent(TransitionEndEvent e)
+                {
+                    if (e.target is VisualElement element)
+                    {
+                        m_Messages.Remove(message);
+                        m_MessagesToRemove.Remove(message);
+                    }
+                }
+            }
+        }
+
+        void ShowMessage(string message)
+        {
+            var newMessage = new MessageViewModel(message, TimeSpan.FromSeconds(5));
+
+            m_Messages.Add(newMessage); // Add to the list of messages
+        }
+
+        void OnMessageCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
+        {
+            switch (eventArgs.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    OnMessagesAdded(eventArgs);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    OnMessagesRemoved(eventArgs);
+                    break;
+                default:
+                    Debug.LogWarning("Collection was modified in an unexpected way");
+                    break;
+            }
+        }
+
+        void OnMessagesRemoved(NotifyCollectionChangedEventArgs eventArgs)
+        {
+            foreach (var itemToRemove in eventArgs.OldItems)
+            {
+                if (itemToRemove is MessageViewModel messageViewModel)
+                {
+                    var childQuery = m_MessageContainer.Query<VisualElement>().Class(k_MessageBoxClassName);
+                    var child = childQuery.Where(a => a.Q<Label>().text == messageViewModel.Message).First();
+
+                    // manually removing the child item from the message feed
+                    m_MessageContainer.contentContainer.Remove(child);
+                }
+            }
+        }
+
+        void OnMessagesAdded(NotifyCollectionChangedEventArgs eventArgs)
+        {
+            foreach (var message in eventArgs.NewItems)
+            {
+                if (message is not MessageViewModel messageViewModel)
+                    return;
+
+                // Create a new messageBox
+                var messageBox = new VisualElement();
+                messageBox.AddToClassList(k_MessageBoxClassName);
+
+                var messagePresenter = new Label();
+                messagePresenter.AddToClassList(k_MessageClassName);
+                messagePresenter.text = messageViewModel.Message;
+
+                // Add the message presenter into the box
+                messageBox.Add(messagePresenter);
+
+                // the event when the control get's added to the "UI Canvas"
+                messageBox.RegisterCallback<AttachToPanelEvent>(OnAttachToPanelEvent);
+
+                // Add the message box to the message Feed
+                m_MessageContainer.contentContainer.Add(messageBox);
+
+                return;
+
+                void OnAttachToPanelEvent(AttachToPanelEvent evt)
+                {
+                    if (evt.target is VisualElement element)
+                    {
+                        // we set up the control in a way that it starts with an offset.
+                        // we schedule the transition for the message to snap in back to it's intended position
+                        element.schedule
+                            .Execute(() => element.ToggleInClassList(k_MessageBoxMovementClassName))
+                            .ExecuteLater(200);
+                    }
+                }
+            }
+        }
+
+        // if you bind the itemsource to the list you don't actually have to manually do this
+        class MessageViewModel
+        {
+            readonly TimeSpan _autoDispose;
+            DateTime _createdAt;
+
+            public string Message { get; }
+
+            public MessageViewModel(string message, TimeSpan timeout = default)
+            {
+                _createdAt = DateTime.Now;
+                _autoDispose = timeout;
+                Message = message;
+            }
+
+            // probably an event would be nicer
+            public bool ShouldDispose()
+            {
+                return _createdAt + _autoDispose < DateTime.Now;
+            }
         }
     }
 }
