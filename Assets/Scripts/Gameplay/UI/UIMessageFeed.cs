@@ -104,12 +104,6 @@ namespace Unity.BossRoom.Gameplay.UI
             }
         }
 
-        [ContextMenu("Add Message")]
-        public void AddMessage()
-        {
-            ShowMessage($"Hello! {DateTime.Now.Millisecond}");
-        }
-
         void Start()
         {
             var root = doc.rootVisualElement;
