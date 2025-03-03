@@ -71,3 +71,14 @@
     height: 90px;
     -unity-background-image-tint-color: rgb(164, 164, 164);
 }
+
+.title {
+    background-image: url("project://database/Assets/Textures/UI/ui_title_logo.png?fileID=2800000&guid=240734f1e1c8daa4b9bd0593e767fb3f&type=3#ui_title_logo");
+    width: 50%;
+    height: 50%;
+    -unity-text-align: upper-center;
+    justify-content: center;
+    align-items: center;
+    top: -2%;
+    left: 25%;
+}
