@@ -138,8 +138,7 @@ k9A+Xa+xtHFMpPprTokPPfkeizt52plBjP9X09a9KSq8PLMtaLsQGmcAXV6hmG71
 -----END CERTIFICATE-----";
 
         // this will be required for DTLS and WSS, removed for security purpose, saved locally
-        private string PrivateKey1 =
-            "";
+        private string PrivateKey1 = "";
 
         public ConnectionMethodIP(string ip, ushort port, ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
             : base(connectionManager, profileManager, playerName)
@@ -266,6 +265,22 @@ k9A+Xa+xtHFMpPprTokPPfkeizt52plBjP9X09a9KSq8PLMtaLsQGmcAXV6hmG71
             if (ConnectionTypeDropdown.connectionType == "wss")
             {
                 utp.UseWebSockets = true;
+                utp.UseEncryption = true;
+            }
+            else if (ConnectionTypeDropdown.connectionType == "ws")
+            {
+                utp.UseWebSockets = true;
+                utp.UseEncryption = false;
+            }
+            else if (ConnectionTypeDropdown.connectionType == "dtls")
+            {
+                utp.UseWebSockets = false;
+                utp.UseEncryption = true;
+            }
+            else if (ConnectionTypeDropdown.connectionType == "udp")
+            {
+                utp.UseWebSockets = false;
+                utp.UseEncryption = false;
             }
 
             utp.SetRelayServerData(new RelayServerData(joinedAllocation, ConnectionTypeDropdown.connectionType));
@@ -316,6 +331,22 @@ k9A+Xa+xtHFMpPprTokPPfkeizt52plBjP9X09a9KSq8PLMtaLsQGmcAXV6hmG71
             if (ConnectionTypeDropdown.connectionType == "wss")
             {
                 utp.UseWebSockets = true;
+                utp.UseEncryption = true;
+            }
+            else if (ConnectionTypeDropdown.connectionType == "ws")
+            {
+                utp.UseWebSockets = true;
+                utp.UseEncryption = false;
+            }
+            else if (ConnectionTypeDropdown.connectionType == "dtls")
+            {
+                utp.UseWebSockets = false;
+                utp.UseEncryption = true;
+            }
+            else if (ConnectionTypeDropdown.connectionType == "udp")
+            {
+                utp.UseWebSockets = false;
+                utp.UseEncryption = false;
             }
 
             utp.SetRelayServerData(new RelayServerData(hostAllocation, ConnectionTypeDropdown.connectionType)); // This is with DTLS enabled for a secure connection
