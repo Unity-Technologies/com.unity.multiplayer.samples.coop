@@ -25,6 +25,16 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * com.unity.netcode.gameobjects from v2.0.0 to v2.1.1
 * VContainer package upgraded from v1.11.0 to v1.14.0 (#896) This upgrade removes warning messages related to IL weaving as code gen is refactored in v1.14.0
 * Upgraded the project to the New Input System v1.11.2 (#897) Compatibility mode with the previous version has been disabled.
+* Upgraded editor version to 6000.0.42f1 and upgraded packages (#901):
+ * com.unity.ai.navigation from v2.0.5 to v2.0.6
+ * com.unity.collab-proxy from v2.6.0 to v2.7.1
+ * com.unity.inputsystem from v1.11.2 to v1.13.1
+ * com.unity.learn.iet-framework from v4.0.3 to v4.0.4
+ * com.unity.memoryprofiler from v1.1.3 to v1.1.5
+ * com.unity.netcode.gameobjects from v2.1.1 to v2.2.0
+ * com.unity.render-pipelines-universal from v17.0.3 to v17.0.4
+ * com.unity.services.multiplayer from v1.1.0 to v1.1.1
+ * com.unity.test-framework from v1.4.5 to v1.4.6
 
 ### Cleanup
 * Removed ParrelSync from the project (#890)
@@ -38,6 +48,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * Added the GetTotalDamage API to the IDamageable interface. This number is your maximum health minus your current health.
   * Changed the way MeleeAction selects a target when there are multiple targets to collide with. The target with the highest GetTotalDamage value (mentioned above) will be selected.
 * Fixed a visual issue where a selected party member's party HUD slot would be displayed as selected (green) when the same or new party member joins the session in-game (#899)
+* Fixed Render Graph API compatibility mode warning and switched active input handling settings to "both" for removing InvalidOperationException (#901) 
 
 ## [2.5.0] - 2024-04-18
 
