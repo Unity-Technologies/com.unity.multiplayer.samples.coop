@@ -40,6 +40,9 @@ Additional documentation and release notes are available at [Multiplayer Documen
  * com.unity.services.multiplayer from v1.1.1 to v1.1.2
  * com.unity.test-framework from v1.4.6 to v1.5.1
  * com.unity.transport from v2.4.0 to v2.5.0
+ * com.unity.cinemachine from v.3.1.2 to 3.1.3
+ * com.unity.services.authentication from 3.4.0 to 3.4.1
+ * jp.hadashikick.vcontainer from 1.14.0 to 1.16.8
 
 ### Cleanup
 * Removed ParrelSync from the project (#890)
