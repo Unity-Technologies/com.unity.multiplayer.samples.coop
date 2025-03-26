@@ -43,6 +43,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
  * com.unity.cinemachine from v.3.1.2 to 3.1.3
  * com.unity.services.authentication from 3.4.0 to 3.4.1
  * jp.hadashikick.vcontainer from 1.14.0 to 1.16.8
+ * com.unity.memoryprofiler from 1.1.5 to 1.1.6
+ * com.unity.timeline from 1.8.7 to 1.8.8
 
 ### Cleanup
 * Removed ParrelSync from the project (#890)

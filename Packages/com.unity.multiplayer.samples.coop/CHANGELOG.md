@@ -5,6 +5,12 @@
 ### Changed
 * Replaced Lobby and Relay standalone packages with the Multiplayer Services package v1.0.2
 * Removed UnityRelayUtilities
+* Upgrading Editor version dependency to 6000.0
+* Upgrading package dependencies:
+ *   Tutorial Framework upgraded to  v4.0.4
+ *   Multiplayer Tools to v2.2.3
+ *   Netcode for GameObjects to v2.2.0 
+
 
 ## [1.9.0] - 2024-04-18
 
