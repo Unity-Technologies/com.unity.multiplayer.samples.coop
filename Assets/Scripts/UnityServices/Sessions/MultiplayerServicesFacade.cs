@@ -78,7 +78,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             if (!m_IsTracking)
             {
                 m_IsTracking = true;
-                SubscribeToJoinedSessionAsync();
+                SubscribeToJoinedSession();
             }
         }
 
@@ -91,11 +91,11 @@ namespace Unity.BossRoom.UnityServices.Sessions
             if (m_IsTracking)
             {
                 m_IsTracking = false;
-                UnsubscribeFromJoinedSessionAsync();
             }
 
             if (CurrentUnitySession != null)
             {
+                UnsubscribeFromJoinedSession();
                 if (m_LocalUser.IsHost)
                 {
                     DeleteSessionAsync();
@@ -232,7 +232,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
         }
 
-        void SubscribeToJoinedSessionAsync()
+        void SubscribeToJoinedSession()
         {
             CurrentUnitySession.Changed += OnSessionChanged;
             CurrentUnitySession.StateChanged += OnSessionStateChanged;
@@ -244,7 +244,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             CurrentUnitySession.SessionPropertiesChanged += OnSessionPropertiesChanged;
         }
 
-        void UnsubscribeFromJoinedSessionAsync()
+        void UnsubscribeFromJoinedSession()
         {
             CurrentUnitySession.Changed -= OnSessionChanged;
             CurrentUnitySession.StateChanged -= OnSessionStateChanged;
