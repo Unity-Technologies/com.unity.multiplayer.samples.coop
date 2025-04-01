@@ -59,6 +59,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * Changed the way MeleeAction selects a target when there are multiple targets to collide with. The target with the highest GetTotalDamage value (mentioned above) will be selected.
 * Fixed a visual issue where a selected party member's party HUD slot would be displayed as selected (green) when the same or new party member joins the session in-game (#899)
 * Fixed Render Graph API compatibility mode warning and switched active input handling settings to "both" for removing InvalidOperationException (#901) 
+* Fixed error logged when unsubscribing from Session events when removed from a Session (#905)
 
 ## [2.5.0] - 2024-04-18
 
