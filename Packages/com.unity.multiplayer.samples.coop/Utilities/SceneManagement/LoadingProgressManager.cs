@@ -143,7 +143,10 @@ namespace Unity.Multiplayer.Samples.Utilities
                 {
                     var tracker = ProgressTrackers[clientId];
                     ProgressTrackers.Remove(clientId);
-                    tracker.NetworkObject.Despawn();
+                    if (tracker.NetworkObject.IsSpawned)
+                    {
+                        tracker.NetworkObject.Despawn();
+                    }
                     ClientUpdateTrackersRpc();
                 }
             }
