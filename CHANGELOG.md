@@ -45,6 +45,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
  * jp.hadashikick.vcontainer from 1.14.0 to 1.16.8
  * com.unity.memoryprofiler from 1.1.5 to 1.1.6
  * com.unity.timeline from 1.8.7 to 1.8.8
+* Upgraded Unity Transport package to 2.5.1 (#906)
 
 ### Cleanup
 * Removed ParrelSync from the project (#890)
