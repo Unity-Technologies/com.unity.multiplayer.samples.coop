@@ -93,8 +93,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
             m_CurrentState = m_Offline;
 
-            NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
-            NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
+            NetworkManager.OnConnectionEvent += OnConnectionEvent;
             NetworkManager.OnServerStarted += OnServerStarted;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
             NetworkManager.OnTransportFailure += OnTransportFailure;
@@ -103,8 +102,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
         void OnDestroy()
         {
-            NetworkManager.OnClientConnectedCallback -= OnClientConnectedCallback;
-            NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+            NetworkManager.OnConnectionEvent -= OnConnectionEvent;
             NetworkManager.OnServerStarted -= OnServerStarted;
             NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
             NetworkManager.OnTransportFailure -= OnTransportFailure;
@@ -123,14 +121,17 @@ namespace Unity.BossRoom.ConnectionManagement
             m_CurrentState.Enter();
         }
 
-        void OnClientDisconnectCallback(ulong clientId)
+        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
         {
-            m_CurrentState.OnClientDisconnect(clientId);
-        }
-
-        void OnClientConnectedCallback(ulong clientId)
-        {
-            m_CurrentState.OnClientConnected(clientId);
+            switch (connectionEventData.EventType)
+            {
+                case ConnectionEvent.ClientConnected:
+                    m_CurrentState.OnClientConnected(connectionEventData.ClientId);
+                    break;
+                case ConnectionEvent.ClientDisconnected:
+                    m_CurrentState.OnClientDisconnect(connectionEventData.ClientId);
+                    break;
+            }
         }
 
         void OnServerStarted()

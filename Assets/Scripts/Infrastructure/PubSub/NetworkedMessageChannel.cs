@@ -26,7 +26,7 @@ namespace Unity.BossRoom.Infrastructure
         void InjectDependencies(NetworkManager networkManager)
         {
             m_NetworkManager = networkManager;
-            m_NetworkManager.OnClientConnectedCallback += OnClientConnected;
+            m_NetworkManager.OnConnectionEvent += OnConnectionEvent;
             if (m_NetworkManager.IsListening)
             {
                 RegisterHandler();
@@ -40,14 +40,18 @@ namespace Unity.BossRoom.Infrastructure
                 if (m_NetworkManager != null && m_NetworkManager.CustomMessagingManager != null)
                 {
                     m_NetworkManager.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
+                    m_NetworkManager.OnConnectionEvent -= OnConnectionEvent;
                 }
             }
             base.Dispose();
         }
 
-        void OnClientConnected(ulong clientId)
+        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
         {
-            RegisterHandler();
+            if (connectionEventData.EventType == ConnectionEvent.ClientConnected)
+            {
+                RegisterHandler();
+            }
         }
 
         void RegisterHandler()

@@ -184,11 +184,11 @@ namespace Unity.BossRoom.Gameplay.GameState
             SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true);
         }
 
-        public void OnNetworkDespawn()
+        void OnNetworkDespawn()
         {
             if (NetworkManager.Singleton)
             {
-                NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+                NetworkManager.Singleton.OnConnectionEvent -= OnConnectionEvent;
                 NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
             if (networkCharSelection)
@@ -197,7 +197,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
         }
 
-        public void OnNetworkSpawn()
+        void OnNetworkSpawn()
         {
             if (!NetworkManager.Singleton.IsServer)
             {
@@ -205,7 +205,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
             else
             {
-                NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
+                NetworkManager.Singleton.OnConnectionEvent += OnConnectionEvent;
                 networkCharSelection.OnClientChangedSeat += OnClientChangedSeat;
 
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
@@ -276,22 +276,25 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
         }
 
-        void OnClientDisconnectCallback(ulong clientId)
+        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
         {
-            // clear this client's PlayerNumber and any associated visuals (so other players know they're gone).
-            for (int i = 0; i < networkCharSelection.sessionPlayers.Count; ++i)
+            if (connectionEventData.EventType == ConnectionEvent.ClientDisconnected)
             {
-                if (networkCharSelection.sessionPlayers[i].ClientId == clientId)
+                // clear this client's PlayerNumber and any associated visuals (so other players know they're gone).
+                for (int i = 0; i < networkCharSelection.sessionPlayers.Count; ++i)
                 {
-                    networkCharSelection.sessionPlayers.RemoveAt(i);
-                    break;
+                    if (networkCharSelection.sessionPlayers[i].ClientId == connectionEventData.ClientId)
+                    {
+                        networkCharSelection.sessionPlayers.RemoveAt(i);
+                        break;
+                    }
                 }
-            }
 
-            if (!networkCharSelection.IsSessionClosed.Value)
-            {
-                // If the Session is not already closing, close if the remaining players are all ready
-                CloseSessionIfReady();
+                if (!networkCharSelection.IsSessionClosed.Value)
+                {
+                    // If the Session is not already closing, close if the remaining players are all ready
+                    CloseSessionIfReady();
+                }
             }
         }
     }

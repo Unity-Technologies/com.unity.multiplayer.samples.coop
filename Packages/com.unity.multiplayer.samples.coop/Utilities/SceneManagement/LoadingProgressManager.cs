@@ -69,17 +69,14 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsServer)
             {
-                NetworkManager.OnClientConnectedCallback += AddTracker;
-                NetworkManager.OnClientDisconnectCallback += RemoveTracker;
-                AddTracker(NetworkManager.LocalClientId);
+                NetworkManager.OnConnectionEvent += OnConnectionEvent;
             }
         }
         public override void OnNetworkDespawn()
         {
             if (IsServer)
             {
-                NetworkManager.OnClientConnectedCallback -= AddTracker;
-                NetworkManager.OnClientDisconnectCallback -= RemoveTracker;
+                NetworkManager.OnConnectionEvent -= OnConnectionEvent;
             }
             ProgressTrackers.Clear();
             onTrackersUpdated?.Invoke();
@@ -122,6 +119,26 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
             onTrackersUpdated?.Invoke();
         }
+        
+        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
+        {
+            if (IsServer)
+            {
+                switch (connectionEventData.EventType)
+                {
+                    case ConnectionEvent.ClientConnected:
+                    {
+                        AddTracker(connectionEventData.ClientId);
+                        break;
+                    }
+                    case ConnectionEvent.ClientDisconnected:
+                    {
+                        RemoveTracker(connectionEventData.ClientId);
+                        break;
+                    }
+                }
+            }
+        }
 
         void AddTracker(ulong clientId)
         {
@@ -141,9 +158,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 if (ProgressTrackers.ContainsKey(clientId))
                 {
-                    var tracker = ProgressTrackers[clientId];
                     ProgressTrackers.Remove(clientId);
-                    tracker.NetworkObject.Despawn();
                     ClientUpdateTrackersRpc();
                 }
             }

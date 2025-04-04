@@ -54,7 +54,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 // Adding this to remove all pending references to a specific client when they disconnect, since objects
                 // that are destroyed do not generate OnTriggerExit events.
-                NetworkManager.OnClientDisconnectCallback += RemovePlayer;
+                NetworkManager.OnConnectionEvent += OnConnectionEvent;
 
                 NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
                 m_PlayersInTrigger = new List<ulong>();
@@ -65,7 +65,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsServer)
             {
-                NetworkManager.OnClientDisconnectCallback -= RemovePlayer;
+                NetworkManager.OnConnectionEvent -= OnConnectionEvent;
                 NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
         }
@@ -136,11 +136,14 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        void RemovePlayer(ulong clientId)
+        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
         {
-            // remove all references to this clientId. There could be multiple references if a single client owns
-            // multiple NetworkObjects with the m_PlayerTag, or if this script's GameObject has overlapping colliders
-            while (m_PlayersInTrigger.Remove(clientId)) { }
+            if (connectionEventData.EventType == ConnectionEvent.ClientDisconnected)
+            {
+                // remove all references to this clientId. There could be multiple references if a single client owns
+                // multiple NetworkObjects with the m_PlayerTag, or if this script's GameObject has overlapping colliders
+                while (m_PlayersInTrigger.Remove(connectionEventData.ClientId)) { }
+            }
         }
 
         IEnumerator WaitToUnloadCoroutine()
