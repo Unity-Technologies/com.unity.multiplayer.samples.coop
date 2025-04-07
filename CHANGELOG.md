@@ -26,26 +26,27 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * VContainer package upgraded from v1.11.0 to v1.14.0 (#896) This upgrade removes warning messages related to IL weaving as code gen is refactored in v1.14.0
 * Upgraded the project to the New Input System v1.11.2 (#897) Compatibility mode with the previous version has been disabled.
 * Upgraded editor version to 6000.0.42f1 and upgraded packages (#901):
- * com.unity.ai.navigation from v2.0.5 to v2.0.6
- * com.unity.collab-proxy from v2.6.0 to v2.7.1
- * com.unity.inputsystem from v1.11.2 to v1.13.1
- * com.unity.learn.iet-framework from v4.0.3 to v4.0.4
- * com.unity.memoryprofiler from v1.1.3 to v1.1.5
- * com.unity.netcode.gameobjects from v2.1.1 to v2.2.0
- * com.unity.render-pipelines-universal from v17.0.3 to v17.0.4
- * com.unity.services.multiplayer from v1.1.0 to v1.1.1
- * com.unity.test-framework from v1.4.5 to v1.4.6
+  * com.unity.ai.navigation from v2.0.5 to v2.0.6
+  * com.unity.collab-proxy from v2.6.0 to v2.7.1
+  * com.unity.inputsystem from v1.11.2 to v1.13.1
+  * com.unity.learn.iet-framework from v4.0.3 to v4.0.4
+  * com.unity.memoryprofiler from v1.1.3 to v1.1.5
+  * com.unity.netcode.gameobjects from v2.1.1 to v2.2.0
+  * com.unity.render-pipelines-universal from v17.0.3 to v17.0.4
+  * com.unity.services.multiplayer from v1.1.0 to v1.1.1
+  * com.unity.test-framework from v1.4.5 to v1.4.6
 * Upgraded editor version to 6000.0.44f1 and upgraded packages (#902):
- * com.unity.ide.rider from v3.0.34 to v3.0.35
- * com.unity.services.multiplayer from v1.1.1 to v1.1.2
- * com.unity.test-framework from v1.4.6 to v1.5.1
- * com.unity.transport from v2.4.0 to v2.5.0
- * com.unity.cinemachine from v.3.1.2 to 3.1.3
- * com.unity.services.authentication from 3.4.0 to 3.4.1
- * jp.hadashikick.vcontainer from 1.14.0 to 1.16.8
- * com.unity.memoryprofiler from 1.1.5 to 1.1.6
- * com.unity.timeline from 1.8.7 to 1.8.8
+  * com.unity.ide.rider from v3.0.34 to v3.0.35
+  * com.unity.services.multiplayer from v1.1.1 to v1.1.2
+  * com.unity.test-framework from v1.4.6 to v1.5.1
+  * com.unity.transport from v2.4.0 to v2.5.0
+  * com.unity.cinemachine from v.3.1.2 to 3.1.3
+  * com.unity.services.authentication from 3.4.0 to 3.4.1
+  * jp.hadashikick.vcontainer from 1.14.0 to 1.16.8
+  * com.unity.memoryprofiler from 1.1.5 to 1.1.6
+  * com.unity.timeline from 1.8.7 to 1.8.8
 * Upgraded Unity Transport package to 2.5.1 (#906)
+* Upgraded the project to use Netcode for GameObject's recommended OnConnectionEvent callback (#907)
 
 ### Cleanup
 * Removed ParrelSync from the project (#890)
@@ -61,6 +62,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Fixed a visual issue where a selected party member's party HUD slot would be displayed as selected (green) when the same or new party member joins the session in-game (#899)
 * Fixed Render Graph API compatibility mode warning and switched active input handling settings to "both" for removing InvalidOperationException (#901) 
 * Fixed error logged when unsubscribing from Session events when removed from a Session (#905)
+* Fixed error logged when attempting to despawn an already despawned LoadingProgressTracker NetworkObject (#907)
 
 ## [2.5.0] - 2024-04-18
 

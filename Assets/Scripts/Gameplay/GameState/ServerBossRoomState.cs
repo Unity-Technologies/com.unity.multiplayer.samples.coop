@@ -79,7 +79,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             m_PersistentGameState.Reset();
             m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
 
-            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
+            NetworkManager.Singleton.OnConnectionEvent += OnConnectionEvent;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
             NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += OnSynchronizeComplete;
 
@@ -93,7 +93,7 @@ namespace Unity.BossRoom.Gameplay.GameState
                 m_LifeStateChangedEventMessageSubscriber.Unsubscribe(OnLifeStateChangedEventMessage);
             }
 
-            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+            NetworkManager.Singleton.OnConnectionEvent -= OnConnectionEvent;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
             NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnSynchronizeComplete;
         }
@@ -138,12 +138,15 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
         }
 
-        void OnClientDisconnect(ulong clientId)
+        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
         {
-            if (clientId != NetworkManager.Singleton.LocalClientId)
+            if (connectionEventData.EventType == ConnectionEvent.ClientDisconnected)
             {
-                // If a client disconnects, check for game over in case all other players are already down
-                StartCoroutine(WaitToCheckForGameOver());
+                if (connectionEventData.ClientId != networkManager.LocalClientId)
+                {
+                    // If a client disconnects, check for game over in case all other players are already down
+                    StartCoroutine(WaitToCheckForGameOver());
+                }
             }
         }
 
