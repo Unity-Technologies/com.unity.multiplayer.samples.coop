@@ -50,8 +50,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// </summary>
         public float LocalProgress
         {
-            get => IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) ?
-                ProgressTrackers[NetworkManager.LocalClientId].Progress.Value : m_LocalProgress;
+            get => IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) ? ProgressTrackers[NetworkManager.LocalClientId].Progress.Value : m_LocalProgress;
             private set
             {
                 if (IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) && ProgressTrackers[NetworkManager.LocalClientId].IsSpawned)
@@ -72,12 +71,14 @@ namespace Unity.Multiplayer.Samples.Utilities
                 NetworkManager.OnConnectionEvent += OnConnectionEvent;
             }
         }
+
         public override void OnNetworkDespawn()
         {
             if (IsServer)
             {
                 NetworkManager.OnConnectionEvent -= OnConnectionEvent;
             }
+
             ProgressTrackers.Clear();
             onTrackersUpdated?.Invoke();
         }
@@ -117,9 +118,10 @@ namespace Unity.Multiplayer.Samples.Utilities
                     }
                 }
             }
+
             onTrackersUpdated?.Invoke();
         }
-        
+
         void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
         {
             if (IsServer)
