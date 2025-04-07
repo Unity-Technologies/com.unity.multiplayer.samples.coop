@@ -61,6 +61,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Fixed a visual issue where a selected party member's party HUD slot would be displayed as selected (green) when the same or new party member joins the session in-game (#899)
 * Fixed Render Graph API compatibility mode warning and switched active input handling settings to "both" for removing InvalidOperationException (#901) 
 * Fixed error logged when unsubscribing from Session events when removed from a Session (#905)
+* Fixed error logged when attempting to despawn an already despawned LoadingProgressTracker NetworkObject (#907)
 
 ## [2.5.0] - 2024-04-18
 
