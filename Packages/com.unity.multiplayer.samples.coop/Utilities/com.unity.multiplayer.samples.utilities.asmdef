@@ -5,7 +5,8 @@
         "Unity.Netcode.Components",
         "Unity.Netcode.Runtime",
         "Unity.Services.Relay",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.Services.Multiplayer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

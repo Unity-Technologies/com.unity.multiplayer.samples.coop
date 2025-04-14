@@ -12,7 +12,8 @@
         "Unity.Services.Lobbies",
         "Unity.Networking.Transport",
         "VContainer",
-        "Unity.Services.Relay"
+        "Unity.Services.Relay",
+        "Unity.Services.Multiplayer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

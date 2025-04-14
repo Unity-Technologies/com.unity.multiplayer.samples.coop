@@ -303,7 +303,9 @@ namespace Unity.BossRoom.UnityServices.Lobbies
 #if UNITY_EDITOR
                 try
                 {
+                    Debug.Log("Unsubscribing");
                     await m_LobbyEvents.UnsubscribeAsync();
+                    Debug.Log("Unsubscribed");
                 }
                 catch (WebSocketException e)
                 {

@@ -22,7 +22,8 @@
         "VContainer",
         "Unity.BossRoom.VisualEffects",
         "Unity.BossRoom.CameraUtils",
-        "Unity.Multiplayer.Tools.NetworkSimulator.Runtime"
+        "Unity.Multiplayer.Tools.NetworkSimulator.Runtime",
+        "Unity.Services.Multiplayer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
