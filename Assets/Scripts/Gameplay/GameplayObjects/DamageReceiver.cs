@@ -16,11 +16,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         [SerializeField]
         NetworkLifeState m_NetworkLifeState;
 
-        public void ReceiveHP(ServerCharacter inflicter, int HP)
+        public void ReceiveHitPoints(ServerCharacter inflicter, int hitPoints)
         {
             if (IsDamageable())
             {
-                DamageReceived?.Invoke(inflicter, HP);
+                DamageReceived?.Invoke(inflicter, hitPoints);
             }
         }
 

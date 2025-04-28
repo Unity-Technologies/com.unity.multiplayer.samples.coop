@@ -103,7 +103,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
             if (foe != null)
             {
-                foe.ReceiveHP(parent, -Config.Amount);
+                foe.ReceiveHitPoints(parent, -Config.Amount);
             }
         }
 

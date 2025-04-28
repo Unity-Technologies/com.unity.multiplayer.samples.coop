@@ -72,7 +72,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 var foe = DetectFoe(clientCharacter, m_ProvisionalTarget);
                 if (foe != null)
                 {
-                    foe.ReceiveHP(clientCharacter, -Config.Amount);
+                    foe.ReceiveHitPoints(clientCharacter, -Config.Amount);
                 }
             }
 

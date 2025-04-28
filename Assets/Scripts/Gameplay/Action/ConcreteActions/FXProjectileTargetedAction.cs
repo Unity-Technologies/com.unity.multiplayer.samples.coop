@@ -74,7 +74,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 m_ImpactedTarget = true;
                 if (m_DamageableTarget != null)
                 {
-                    m_DamageableTarget.ReceiveHP(clientCharacter, -Config.Projectiles[0].Damage);
+                    m_DamageableTarget.ReceiveHitPoints(clientCharacter, -Config.Projectiles[0].Damage);
                 }
             }
             return true;
