@@ -63,6 +63,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Fixed Render Graph API compatibility mode warning and switched active input handling settings to "both" for removing InvalidOperationException (#901) 
 * Fixed error logged when unsubscribing from Session events when removed from a Session (#905)
 * Fixed error logged when attempting to despawn an already despawned LoadingProgressTracker NetworkObject (#907)
+* Fixed error logged when a Melee action was acted on a Breakable object (#908)
 
 ## [2.5.0] - 2024-04-18
 
