@@ -32,29 +32,31 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         [Header("Visualization")]
         [SerializeField]
-        private GameObject m_BrokenPrefab;
+        GameObject m_BrokenPrefab;
 
         [SerializeField]
         [Tooltip("If set, will be used instead of BrokenPrefab when new players join, skipping transition effects.")]
-        private GameObject m_PrebrokenPrefab;
+        GameObject m_PrebrokenPrefab;
 
         [SerializeField]
         [Tooltip("We use this transform's position and rotation when creating the prefab. (Defaults to self)")]
-        private Transform m_BrokenPrefabPos;
+        Transform m_BrokenPrefabPos;
 
         [SerializeField]
-        private GameObject[] m_UnbrokenGameObjects;
+        GameObject[] m_UnbrokenGameObjects;
 
         /// <summary>
         /// Is the item broken or not?
         /// </summary>
-        public NetworkVariable<bool> IsBroken;
+        public bool IsBroken => m_NetworkHealthState.HitPoints.Value == 0;
+        
+        public event Action OnBroken;
 
-        public bool IsNpc { get { return true; } }
+        public bool IsNpc => true;
 
-        public bool IsValidTarget { get { return !IsBroken.Value; } }
+        public bool IsValidTarget => !IsBroken;
 
-        private GameObject m_CurrentBrokenVisualization;
+        GameObject m_CurrentBrokenVisualization;
 
         public override void OnNetworkSpawn()
         {
@@ -68,9 +70,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
             if (IsClient)
             {
-                IsBroken.OnValueChanged += OnBreakableStateChanged;
+                m_NetworkHealthState.HitPoints.OnValueChanged += OnHPChanged;
 
-                if (IsBroken.Value == true)
+                if (IsBroken)
                 {
                     PerformBreakVisualization(true);
                 }
@@ -81,13 +83,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         {
             if (IsClient)
             {
-                IsBroken.OnValueChanged -= OnBreakableStateChanged;
+                m_NetworkHealthState.HitPoints.OnValueChanged -= OnHPChanged;
             }
         }
 
-        public void ReceiveHP(ServerCharacter inflicter, int HP)
+        public void ReceiveHP(ServerCharacter inflicter, int hitPoints)
         {
-            if (HP < 0)
+            if (hitPoints < 0)
             {
                 if (inflicter && !inflicter.IsNpc)
                 {
@@ -102,16 +104,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 if (m_NetworkHealthState)
                 {
                     m_NetworkHealthState.HitPoints.Value =
-                        Mathf.Clamp(m_NetworkHealthState.HitPoints.Value + HP, 0, m_MaxHealth.Value);
-                    if (m_NetworkHealthState.HitPoints.Value <= 0)
-                    {
-                        Break();
-                    }
-                }
-                else
-                {
-                    //any damage at all is enough to slay me.
-                    Break();
+                        Mathf.Clamp(m_NetworkHealthState.HitPoints.Value + hitPoints, 0, m_MaxHealth.Value);
                 }
             }
         }
@@ -121,20 +114,14 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             return Math.Max(0, m_MaxHealth.Value - m_NetworkHealthState.HitPoints.Value);
         }
 
-        private void Break()
+        public void Break()
         {
-            IsBroken.Value = true;
-            if (m_Collider)
-                m_Collider.enabled = false;
+            m_NetworkHealthState.HitPoints.Value = 0;
         }
 
         public void Unbreak()
         {
-            IsBroken.Value = false;
-            if (m_Collider)
-                m_Collider.enabled = true;
-            if (m_MaxHealth && m_NetworkHealthState)
-                m_NetworkHealthState.HitPoints.Value = m_MaxHealth.Value;
+            m_NetworkHealthState.HitPoints.Value = m_MaxHealth.Value;
         }
 
         public IDamageable.SpecialDamageFlags GetSpecialDamageFlags()
@@ -145,22 +132,31 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         public bool IsDamageable()
         {
             // you can damage this breakable until it's broken!
-            return !IsBroken.Value;
+            return !IsBroken;
         }
 
-        private void OnBreakableStateChanged(bool wasBroken, bool isBroken)
+        void OnHPChanged(int previousValue, int newValue)
         {
-            if (!wasBroken && isBroken)
+            if (IsServer)
             {
+                if (m_Collider)
+                {
+                    m_Collider.enabled = !IsBroken;
+                }
+            }
+            
+            if (previousValue > 0 && newValue >= 0)
+            {
+                OnBroken?.Invoke();
                 PerformBreakVisualization(false);
             }
-            else if (wasBroken && !isBroken)
+            else if (previousValue == 0 && newValue > 0)
             {
                 PerformUnbreakVisualization();
             }
         }
 
-        private void PerformBreakVisualization(bool onStart)
+        void PerformBreakVisualization(bool onStart)
         {
             foreach (var unbrokenGameObject in m_UnbrokenGameObjects)
             {
@@ -180,7 +176,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             }
         }
 
-        private void PerformUnbreakVisualization()
+        void PerformUnbreakVisualization()
         {
             if (m_CurrentBrokenVisualization)
             {
@@ -196,7 +192,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        void OnValidate()
         {
             if (!m_Collider)
                 m_Collider = GetComponent<Collider>();

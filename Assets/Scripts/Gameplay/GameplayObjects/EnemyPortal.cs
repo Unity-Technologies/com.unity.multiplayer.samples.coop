@@ -33,9 +33,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         [SerializeField]
         Breakable m_Breakable;
 
-        public bool IsNpc { get { return true; } }
+        public bool IsNpc => true;
 
-        public bool IsValidTarget { get { return !m_Breakable.IsBroken.Value; } }
+        public bool IsValidTarget => !m_Breakable.IsBroken;
 
         // cached reference to our components
         [SerializeField]
@@ -54,7 +54,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
             foreach (var breakable in m_BreakableElements)
             {
-                breakable.IsBroken.OnValueChanged += OnBreakableBroken;
+                breakable.OnBroken += OnBreakableBroken;
             }
 
             MaintainState();
@@ -68,29 +68,37 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             foreach (var breakable in m_BreakableElements)
             {
                 if (breakable)
-                    breakable.IsBroken.OnValueChanged -= OnBreakableBroken;
+                {
+                    breakable.OnBroken -= OnBreakableBroken;
+                }
             }
         }
 
-        private void OnBreakableBroken(bool wasBroken, bool isBroken)
+        void OnBreakableBroken()
         {
-            if (!wasBroken && isBroken)
-                MaintainState();
+            MaintainState();
         }
 
-        private void MaintainState()
+        void MaintainState()
         {
             bool hasUnbrokenBreakables = false;
             foreach (var breakable in m_BreakableElements)
             {
-                if (breakable && !breakable.IsBroken.Value)
+                if (breakable && !breakable.IsBroken)
                 {
                     hasUnbrokenBreakables = true;
                     break;
                 }
             }
 
-            m_Breakable.IsBroken.Value = !hasUnbrokenBreakables;
+            if (!hasUnbrokenBreakables)
+            {
+                m_Breakable.Break();
+            }
+            else
+            {
+                m_Breakable.Unbreak();
+            }
             m_WaveSpawner.SetSpawnerEnabled(hasUnbrokenBreakables);
             if (!hasUnbrokenBreakables && m_CoroDormant == null)
             {
@@ -117,7 +125,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 }
             }
 
-            m_Breakable.IsBroken.Value = false;
+            m_Breakable.Unbreak();
             m_WaveSpawner.SetSpawnerEnabled(true);
             m_CoroDormant = null;
         }
