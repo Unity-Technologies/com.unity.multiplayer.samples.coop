@@ -49,8 +49,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         /// Is the item broken or not?
         /// </summary>
         public bool IsBroken => m_NetworkHealthState.HitPoints.Value == 0;
-        
-        public event Action OnBroken;
+
+        public event Action Broken;
 
         public bool IsNpc => true;
 
@@ -70,7 +70,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
             if (IsClient)
             {
-                m_NetworkHealthState.HitPoints.OnValueChanged += OnHPChanged;
+                if (m_NetworkHealthState)
+                {
+                    m_NetworkHealthState.HitPoints.OnValueChanged += OnHPChanged;
+                }
 
                 if (IsBroken)
                 {
@@ -81,13 +84,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public override void OnNetworkDespawn()
         {
-            if (IsClient)
+            if (IsClient && m_NetworkHealthState)
             {
                 m_NetworkHealthState.HitPoints.OnValueChanged -= OnHPChanged;
             }
         }
 
-        public void ReceiveHP(ServerCharacter inflicter, int hitPoints)
+        public void ReceiveHitPoints(ServerCharacter inflicter, int hitPoints)
         {
             if (hitPoints < 0)
             {
@@ -101,7 +104,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                     }
                 }
 
-                if (m_NetworkHealthState)
+                if (m_NetworkHealthState && m_MaxHealth)
                 {
                     m_NetworkHealthState.HitPoints.Value =
                         Mathf.Clamp(m_NetworkHealthState.HitPoints.Value + hitPoints, 0, m_MaxHealth.Value);
@@ -144,10 +147,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                     m_Collider.enabled = !IsBroken;
                 }
             }
-            
+
             if (previousValue > 0 && newValue >= 0)
             {
-                OnBroken?.Invoke();
+                Broken?.Invoke();
                 PerformBreakVisualization(false);
             }
             else if (previousValue == 0 && newValue > 0)
@@ -182,6 +185,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 Destroy(m_CurrentBrokenVisualization);
             }
+
             foreach (var unbrokenGameObject in m_UnbrokenGameObjects)
             {
                 if (unbrokenGameObject)
@@ -203,7 +207,4 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         }
 #endif
     }
-
-
 }
-

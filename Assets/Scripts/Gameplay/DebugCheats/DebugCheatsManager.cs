@@ -153,7 +153,7 @@ namespace Unity.BossRoom.DebugCheats
                     var damageable = obj.GetComponent<IDamageable>();
                     if (damageable != null && damageable.IsDamageable())
                     {
-                        damageable.ReceiveHP(playerServerCharacter, int.MinValue);
+                        damageable.ReceiveHitPoints(playerServerCharacter, int.MinValue);
                         PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "KillTarget");
                     }
                     else
@@ -173,7 +173,7 @@ namespace Unity.BossRoom.DebugCheats
                 {
                     if (serverCharacter.gameObject.TryGetComponent(out IDamageable damageable))
                     {
-                        damageable.ReceiveHP(null, -serverCharacter.HitPoints);
+                        damageable.ReceiveHitPoints(null, -serverCharacter.HitPoints);
                     }
                 }
             }
@@ -209,7 +209,7 @@ namespace Unity.BossRoom.DebugCheats
                 {
                     if (playerServerCharacter.gameObject.TryGetComponent(out IDamageable damageable))
                     {
-                        damageable.ReceiveHP(null, baseHp);
+                        damageable.ReceiveHitPoints(null, baseHp);
                     }
                 }
 

@@ -69,7 +69,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 if (enemy != null)
                 {
                     // actually deal the damage
-                    enemy.ReceiveHP(parent, -Config.Amount);
+                    enemy.ReceiveHitPoints(parent, -Config.Amount);
                 }
             }
         }

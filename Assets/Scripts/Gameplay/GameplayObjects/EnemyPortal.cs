@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Serialization;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
@@ -31,11 +32,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         float m_DormantCooldown;
 
         [SerializeField]
-        Breakable m_Breakable;
+        Breakable m_PortalBreakable;
 
         public bool IsNpc => true;
 
-        public bool IsValidTarget => !m_Breakable.IsBroken;
+        public bool IsValidTarget => !m_PortalBreakable.IsBroken;
 
         // cached reference to our components
         [SerializeField]
@@ -54,7 +55,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
             foreach (var breakable in m_BreakableElements)
             {
-                breakable.OnBroken += OnBreakableBroken;
+                breakable.Broken += OnBreakableBroken;
             }
 
             MaintainState();
@@ -69,7 +70,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 if (breakable)
                 {
-                    breakable.OnBroken -= OnBreakableBroken;
+                    breakable.Broken -= OnBreakableBroken;
                 }
             }
         }
@@ -93,11 +94,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
             if (!hasUnbrokenBreakables)
             {
-                m_Breakable.Break();
+                m_PortalBreakable.Break();
             }
             else
             {
-                m_Breakable.Unbreak();
+                m_PortalBreakable.Unbreak();
             }
             m_WaveSpawner.SetSpawnerEnabled(hasUnbrokenBreakables);
             if (!hasUnbrokenBreakables && m_CoroDormant == null)
@@ -125,7 +126,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 }
             }
 
-            m_Breakable.Unbreak();
+            m_PortalBreakable.Unbreak();
             m_WaveSpawner.SetSpawnerEnabled(true);
             m_CoroDormant = null;
         }
@@ -148,7 +149,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 {
                     var serverComponent = state.GetComponent<Breakable>();
                     Assert.IsNotNull(serverComponent);
-                    serverComponent.ReceiveHP(null, Int32.MinValue);
+                    serverComponent.Break();
                 }
             }
         }

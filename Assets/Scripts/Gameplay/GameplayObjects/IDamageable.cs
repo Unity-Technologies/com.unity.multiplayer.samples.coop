@@ -14,8 +14,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         /// Receives HP damage or healing.
         /// </summary>
         /// <param name="inflicter">The Character responsible for the damage. May be null.</param>
-        /// <param name="HP">The damage done. Negative value is damage, positive is healing.</param>
-        void ReceiveHP(ServerCharacter inflicter, int HP);
+        /// <param name="hitPoints">The damage done. Negative value is damage, positive is healing.</param>
+        void ReceiveHitPoints(ServerCharacter inflicter, int hitPoints);
 
         /// <summary>
         /// Get the total damage value.
