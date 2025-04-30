@@ -70,6 +70,10 @@ namespace Unity.BossRoom.Gameplay.UI
                         break;
                 }
             }
+            else
+            {
+                PopupManager.ShowPopupPanel("Unknown Issue", error.Message);
+            }
         }
 
         void OnDestroy()

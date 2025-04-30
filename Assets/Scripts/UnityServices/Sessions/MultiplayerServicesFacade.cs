@@ -188,6 +188,11 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
             try
             {
+                var joinedSessionList = await MultiplayerService.Instance.GetJoinedSessionIdsAsync();
+                if (joinedSessionList.Contains(sessionName))
+                {
+                    throw new Exception($"Already joined session {sessionName}") ;
+                }
                 var session = await m_MultiplayerServicesInterface.JoinSessionById(sessionName, m_LocalUser.GetDataForUnityServices());
                 return (true, session);
             }
