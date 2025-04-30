@@ -64,6 +64,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Fixed error logged when unsubscribing from Session events when removed from a Session (#905)
 * Fixed error logged when attempting to despawn an already despawned LoadingProgressTracker NetworkObject (#907)
 * Fixed error logged when a Melee action was acted on a Breakable object (#908)
+* Fixed rate limit exceeded error popping up when trying to join session with already used profile (#909)
 
 ## [2.5.0] - 2024-04-18
 
