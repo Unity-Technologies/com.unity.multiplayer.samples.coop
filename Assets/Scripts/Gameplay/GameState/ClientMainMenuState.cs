@@ -71,7 +71,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             builder.RegisterComponent(m_IPUIMediator);
         }
 
-        private async void TrySignIn()
+        async void TrySignIn()
         {
             try
             {
@@ -88,16 +88,21 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
         }
 
-        private void OnAuthSignIn()
+        void OnAuthSignIn()
         {
             m_SessionButton.interactable = true;
             m_UGSSetupTooltipDetector.enabled = false;
             m_SignInSpinner.SetActive(false);
 
             Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
+            
+            m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
+            
+            // The local LobbyUser object will be hooked into UI before the LocalSession is populated during session join, so the LocalSession must know about it already when that happens.
+            m_LocalSession.AddUser(m_LocalUser);
         }
 
-        private void OnSignInFailed()
+        void OnSignInFailed()
         {
             if (m_SessionButton)
             {
@@ -113,7 +118,11 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         protected override void OnDestroy()
         {
-            m_ProfileManager.onProfileChanged -= OnProfileChanged;
+            if (m_ProfileManager != null)
+            {
+                m_ProfileManager.onProfileChanged -= OnProfileChanged;
+            }
+
             base.OnDestroy();
         }
 

@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Unity.BossRoom.Infrastructure;
-using Unity.Services.Authentication;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 using VContainer;
@@ -168,9 +167,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         /// <summary>
-        /// Attempt to join an existing session by name.
+        /// Attempt to join an existing session by ID.
         /// </summary>
-        public async Task<(bool Success, ISession Session)> TryJoinSessionByNameAsync(string sessionName)
+        public async Task<(bool Success, ISession Session)> TryJoinSessionByIdAsync(string sessionId)
         {
             if (!m_RateLimitJoin.CanCall)
             {
@@ -178,17 +177,17 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 return (false, null);
             }
 
-            if (string.IsNullOrEmpty(sessionName))
+            if (string.IsNullOrEmpty(sessionId))
             {
-                Debug.LogWarning("Cannot join a Session without a session name.");
+                Debug.LogWarning("Cannot join a Session without a session ID.");
                 return (false, null);
             }
 
-            Debug.Log($"Joining session with name {sessionName}");
+            Debug.Log($"Joining session with ID {sessionId}");
 
             try
             {
-                var session = await m_MultiplayerServicesInterface.JoinSessionById(sessionName, m_LocalUser.GetDataForUnityServices());
+                var session = await m_MultiplayerServicesInterface.JoinSessionById(sessionId, m_LocalUser.GetDataForUnityServices());
                 return (true, session);
             }
             catch (Exception e)
@@ -227,7 +226,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         {
             CurrentUnitySession = null;
             m_LocalUser?.ResetState();
-            m_LocalSession?.Reset();
+            m_LocalSession?.Reset(m_LocalUser);
 
             // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
         }
