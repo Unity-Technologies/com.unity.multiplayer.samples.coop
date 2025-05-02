@@ -169,7 +169,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
             m_ConnectionManager.StartClientSession(m_LocalUser.DisplayName);
 
-            var result = await m_MultiplayerServicesFacade.TryJoinSessionByNameAsync(sessionInfo.Id);
+            var result = await m_MultiplayerServicesFacade.TryJoinSessionByIdAsync(sessionInfo.Id);
 
             HandleSessionJoinResult(result);
         }
