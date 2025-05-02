@@ -59,7 +59,10 @@ namespace Unity.BossRoom.UnityServices.Auth
                 AuthenticationService.Instance.SignOut();
             }
 
-            AuthenticationService.Instance.SwitchProfile(profile);
+            // TODO: why does authentication need to be initiated again, when the line below used to work
+            //AuthenticationService.Instance.SwitchProfile(profile);
+            var unityAuthenticationInitOptions = GenerateAuthenticationOptions(profile);
+            await Unity.Services.Core.UnityServices.InitializeAsync(unityAuthenticationInitOptions);
 
             try
             {
