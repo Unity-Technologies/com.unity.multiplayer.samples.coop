@@ -95,6 +95,11 @@ namespace Unity.BossRoom.Gameplay.GameState
             m_SignInSpinner.SetActive(false);
 
             Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
+            
+            m_LocalUser.ID = AuthenticationService.Instance.PlayerId; 
+            
+            // The local LobbyUser object will be hooked into UI before the LocalSession is populated during session join, so the LocalSession must know about it already when that happens.
+            m_LocalSession.AddUser(m_LocalUser);
         }
 
         private void OnSignInFailed()
