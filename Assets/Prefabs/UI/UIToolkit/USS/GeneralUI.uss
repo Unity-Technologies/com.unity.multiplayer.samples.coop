@@ -1,0 +1,84 @@
+.menuButton:hover {
+    -unity-background-image-tint-color: rgb(255, 245, 235);
+}
+
+.exitButton {
+    background-color: rgba(188, 188, 188, 0);
+    background-image: url("project://database/Assets/Textures/UI/ui_btn_exit.png?fileID=2800000&guid=60ca69669387e034393c7f486bf3ae19&type=3#ui_btn_exit");
+    width: 100px;
+    height: 100px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+.settingsButton {
+    background-image: url("project://database/Assets/Textures/UI/ui_sound_settings.png?fileID=2800000&guid=66a470aa734e32040b424353a0f0de39&type=3#ui_sound_settings");
+    width: 100px;
+    height: 100px;
+    background-size: 100% 100%;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.gameText {
+    color: rgb(129, 255, 47);
+    font-size: 115px;
+    position: absolute;
+    -unity-text-outline-width: 10px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
+    -unity-text-outline-color: rgb(0, 0, 0);
+    top: 39%;
+    left: 23%;
+}
+
+.menuButton {
+    background-image: url("project://database/Assets/Textures/UI/ui_btn_blank.png?fileID=2800000&guid=41948b4cc6087644b983dce55b466d50&type=3#ui_btn_blank");
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
+    color: rgb(247, 213, 32);
+    font-size: 190%;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    width: 408px;
+    height: 90px;
+    -unity-text-align: middle-center;
+}
+
+.menuButton:active {
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
+    color: rgb(247, 213, 32);
+    -unity-background-image-tint-color: rgb(144, 144, 144);
+}
+
+.menuButton:disabled {
+    background-image: url("project://database/Assets/Textures/UI/ui_btn_blank.png?fileID=2800000&guid=41948b4cc6087644b983dce55b466d50&type=3#ui_btn_blank");
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Fonts/Bungee-Regular.ttf?fileID=12800000&guid=b8a509d3b3ce60847bbafb5a38462ecf&type=3#Bungee-Regular");
+    color: rgb(247, 213, 32);
+    font-size: 190%;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    width: 408px;
+    height: 90px;
+    -unity-background-image-tint-color: rgb(164, 164, 164);
+}
+
+.title {
+    background-image: url("project://database/Assets/Textures/UI/ui_title_logo.png?fileID=2800000&guid=240734f1e1c8daa4b9bd0593e767fb3f&type=3#ui_title_logo");
+    width: 50%;
+    height: 50%;
+    -unity-text-align: upper-center;
+    justify-content: center;
+    align-items: center;
+    top: -2%;
+    left: 25%;
+}

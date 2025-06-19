@@ -1,5 +1,7 @@
 using System;
+using Unity.BossRoom.Gameplay.UI;
 using Unity.Netcode;
+using UnityEngine;
 using VContainer;
 
 namespace Unity.BossRoom.Gameplay.GameState
@@ -9,11 +11,19 @@ namespace Unity.BossRoom.Gameplay.GameState
         public NetworkVariable<WinState> WinState = new NetworkVariable<WinState>();
 
         [Inject]
-        public void Construct(PersistentGameState persistentGameState)
+        PostGameUI m_PostGameUI;
+
+        [Inject]
+        PersistentGameState m_PersistentGameState;
+
+        public override void OnNetworkSpawn()
         {
-            if (NetworkManager.Singleton.IsServer)
+            // only hosts can restart the game, other players see a wait message
+            m_PostGameUI.Initialize(IsHost);
+
+            if (IsServer)
             {
-                WinState.Value = persistentGameState.WinState;
+                WinState.Value = m_PersistentGameState.WinState;
             }
         }
     }

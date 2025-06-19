@@ -1,0 +1,14 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Template name="MessageFeed" src="project://database/Assets/Prefabs/UI/UIToolkit/UXML/MessageFeed.uxml?fileID=9197481963319205126&amp;guid=79e0526232b7b2246a02c77f935c2b2a&amp;type=3#MessageFeed" />
+    <Style src="project://database/Assets/Prefabs/UI/UIToolkit/USS/GeneralUI.uss?fileID=7433441132597879392&amp;guid=36bef7d47f6ca284f8a33439946d6dfe&amp;type=3#GeneralUI" />
+    <Style src="project://database/Assets/Prefabs/UI/UIToolkit/USS/MessageFeed.uss?fileID=7433441132597879392&amp;guid=daa8504d262853748b8d7c2a377261a3&amp;type=3#MessageFeed" />
+    <engine:VisualElement name="postRoot" style="flex-grow: 1; flex-shrink: 5;">
+        <engine:Label name="title" class="title" />
+        <engine:Label text="YOU WON!" name="gameWinText" class="gameText" />
+        <engine:Label text="Try Again" name="gameLostText" class="gameText" style="color: rgb(245, 90, 22);" />
+        <engine:Button text="Play Again" name="playAgainBtn" class="menuButton" style="position: absolute; top: 60%; left: 32%;" />
+        <engine:Button text="return to menu" name="menuBtn" class="menuButton" style="left: 32%; top: 75%; position: absolute;" />
+        <engine:Button text="Waiting on host &#10;to play again" name="waitOnHostBtn" class="menuButton" style="position: absolute; top: 60%; left: 32%;" />
+    </engine:VisualElement>
+    <engine:Instance template="MessageFeed" name="messageList" />
+</engine:UXML>
