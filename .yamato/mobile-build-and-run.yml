@@ -74,6 +74,7 @@ mobile_test_ios_{{ project.name }}_{{ editor }}:
     name: {{ project.name }} mobile project tests - {{ editor }} on iOS
     agent:
         type: Unity::mobile::iPhone
+        model: SE-Gen3
         image: package-ci/macos-13:v4
         flavor: b1.medium
 
