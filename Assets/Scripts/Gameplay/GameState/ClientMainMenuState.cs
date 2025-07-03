@@ -98,7 +98,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             
             m_LocalUser.ID = AuthenticationService.Instance.PlayerId; 
             
-            // The local LobbyUser object will be hooked into UI before the LocalSession is populated during session join, so the LocalSession must know about it already when that happens.
+            // The local SessionUser object will be hooked into UI before the LocalSession is populated during session join, so the LocalSession must know about it already when that happens.
             m_LocalSession.AddUser(m_LocalUser);
         }
 
