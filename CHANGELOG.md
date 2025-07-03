@@ -12,6 +12,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * Added a Table of Contents with helpful resources, that can be accessed from the `Tutorials > Show Tutorials` menu
 * Added the Multiplayer Play Mode package v1.3.1 to the project (#890)
 * An In-Editor Tutorial walking through the process of associating your Unity project with a Unity Cloud ID has been added (#898)
+* Boss Room's assembly definitions now include Unity.Netcode.Runtime.Tests (#914)
 
 ### Changed
 * Upgraded editor version to 6000.0.25f1 and upgraded Boss Room to Netcode for GameObjects v2.0.0 (#890)
