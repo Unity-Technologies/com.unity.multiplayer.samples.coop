@@ -1,0 +1,58 @@
+.slider .unity-base-slider__dragger {
+    background-color: rgb(253, 247, 2);
+    border-radius: 6px;
+    height: 70%;
+    top: 20px;
+}
+
+.slider .unity-base-slider__tracker {
+    background-color: rgb(95, 83, 20);
+    border-radius: 5px;
+    height: 14px;
+    border-color: transparent;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    --unity-progress-bar__background-color: rgb(255, 99, 71);
+}
+
+.slider {
+    -unity-font-definition: url("project://database/Library/unity%20default%20resources?fileID=10102&guid=0000000000000000e000000000000000&type=0#LegacyRuntime");
+    -unity-font-style: bold;
+    color: rgb(222, 198, 60);
+    white-space: pre-wrap;
+    -unity-text-align: upper-left;
+    border-radius: 8px;
+    font-size: 20px;
+    margin-bottom: 10px;
+    margin-top: 4px;
+    padding-top: 3px;
+}
+
+.label {
+    -unity-font-definition: url("project://database/Library/unity%20default%20resources?fileID=10102&guid=0000000000000000e000000000000000&type=0#LegacyRuntime");
+    -unity-font-style: bold-and-italic;
+    color: rgb(235, 209, 63);
+    font-size: 40px;
+    -unity-text-align: upper-center;
+    margin-bottom: 32px;
+    margin-top: 30px;
+}
+
+.unity-base-slider__fill {
+    background-color: rgb(222, 198, 60);
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+}
+
+.panel {
+    background-image: url("project://database/Assets/Textures/UI/ui_dialog.png?fileID=2800000&guid=222f76e9081efb6428be38c0e10f7bde&type=3#ui_dialog");
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
+    background-size: 100% 100%;
+    width: 415px;
+    height: 376px;
+    position: absolute;
+    top: -156px;
+    right: -764px;
+}

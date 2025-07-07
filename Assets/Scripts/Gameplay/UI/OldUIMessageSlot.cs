@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unity.BossRoom.Gameplay.UI
 {
-    public class UIMessageSlot : MonoBehaviour
+    public class OldUIMessageSlot : MonoBehaviour
     {
         [SerializeField]
         Animator m_Animator;

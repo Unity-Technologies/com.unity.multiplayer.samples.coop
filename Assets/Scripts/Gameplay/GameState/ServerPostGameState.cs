@@ -1,12 +1,13 @@
 using System;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Gameplay.Actions;
+using Unity.BossRoom.Gameplay.UI;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VContainer;
+using VContainer.Unity;
 
 namespace Unity.BossRoom.Gameplay.GameState
 {
@@ -16,12 +17,20 @@ namespace Unity.BossRoom.Gameplay.GameState
         [SerializeField]
         NetcodeHooks m_NetcodeHooks;
 
-        [FormerlySerializedAs("synchronizedStateData")]
         [SerializeField]
-        NetworkPostGame networkPostGame;
-        public NetworkPostGame NetworkPostGame => networkPostGame;
+        NetworkPostGame m_NetworkPostGame;
+        public NetworkPostGame NetworkPostGame => m_NetworkPostGame;
 
-        public override GameState ActiveState { get { return GameState.PostGame; } }
+        [SerializeField]
+        PostGameUI m_PostGameUI;
+
+        [SerializeField]
+        UIMessageFeed m_MessageFeed;
+
+        public override GameState ActiveState
+        {
+            get { return GameState.PostGame; }
+        }
 
         [Inject]
         ConnectionManager m_ConnectionManager;
@@ -36,6 +45,14 @@ namespace Unity.BossRoom.Gameplay.GameState
             m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
         }
 
+        protected override void Configure(IContainerBuilder builder)
+        {
+            base.Configure(builder);
+            builder.RegisterComponent(m_NetworkPostGame);
+            builder.RegisterComponent(m_PostGameUI);
+            builder.RegisterComponent(m_MessageFeed);
+        }
+
         void OnNetworkSpawn()
         {
             if (!NetworkManager.Singleton.IsServer)
@@ -45,7 +62,6 @@ namespace Unity.BossRoom.Gameplay.GameState
             else
             {
                 SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
-                networkPostGame.WinState.Value = m_PersistentGameState.WinState;
             }
         }
 
