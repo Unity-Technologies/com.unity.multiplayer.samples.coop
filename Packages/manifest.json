@@ -18,7 +18,7 @@
     "com.unity.postprocessing": "3.5.0",
     "com.unity.render-pipelines.universal": "17.0.4",
     "com.unity.services.authentication": "3.4.1",
-    "com.unity.services.multiplayer": "1.1.2",
+    "com.unity.services.multiplayer": "1.1.4",
     "com.unity.test-framework": "1.5.1",
     "com.unity.timeline": "1.8.8",
     "com.unity.toolchain.macos-x86_64-linux-x86_64": "2.0.10",
