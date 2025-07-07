@@ -15,7 +15,8 @@
         "Unity.Netcode.TestHelpers.Runtime",
         "VContainer",
         "VContainer.EnableCodeGen",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.Netcode.Runtime.Tests"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
