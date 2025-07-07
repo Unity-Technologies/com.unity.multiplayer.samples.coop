@@ -20,8 +20,9 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
         - chmod +x ./utr
         - ./utr --suite=playmode --platform=iOS --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --build-only --testfilter=Unity.BossRoom.Tests.Runtime
     variables:
-      UNITY_TESTS_XCODEBUILD_TIMEOUT: 60
-      XCODE_XCCONFIG_FILE: ~/XcodeBuildConfig.xcconfig
+        UNITY_HANDLEUIINTERRUPTIONS: 1
+        UNITY_TESTS_XCODEBUILD_TIMEOUT: 60
+        XCODE_XCCONFIG_FILE: ~/XcodeBuildConfig.xcconfig
     artifacts:
         players:
             paths:
@@ -73,6 +74,7 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
 mobile_test_ios_{{ project.name }}_{{ editor }}:
     name: {{ project.name }} mobile project tests - {{ editor }} on iOS
     agent:
+        model: SE-Gen3
         type: Unity::mobile::iPhone
         image: package-ci/macos-13:v4
         flavor: b1.medium
