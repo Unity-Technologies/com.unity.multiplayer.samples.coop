@@ -13,7 +13,7 @@
     "com.unity.multiplayer.center": "1.0.0",
     "com.unity.multiplayer.playmode": "1.5.0",
     "com.unity.multiplayer.tools": "2.2.4",
-    "com.unity.netcode.gameobjects": "2.2.0",
+    "com.unity.netcode.gameobjects": "2.4.3",
     "com.unity.performance.profile-analyzer": "1.2.3",
     "com.unity.postprocessing": "3.5.0",
     "com.unity.render-pipelines.universal": "17.0.4",

@@ -176,7 +176,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "2.2.0",
+      "version": "2.4.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
