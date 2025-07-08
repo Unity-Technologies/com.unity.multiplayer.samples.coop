@@ -49,6 +49,12 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * com.unity.timeline from 1.8.7 to 1.8.8
 * Upgraded Unity Transport package to 2.5.1 (#906)
 * Upgraded the project to use Netcode for GameObject's recommended OnConnectionEvent callback (#907)
+* Upgraded the project to the latest releases of packages and editor (#918) Changes include:
+  * Unity editor upgrade to 6000.0.52f1
+    * com.unity.multiplayer.tools upgraded to v2.2.4
+    * com.unity.multiplayer.playmode v1.5.0
+  * Netcode for GameObjects upgraded to v2.4.3
+  * Multiplayer Services upgraded to v1.1.4
 
 ### Cleanup
 * Removed ParrelSync from the project (#890)
