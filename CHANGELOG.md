@@ -52,7 +52,9 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Upgraded the project to the latest releases of packages and editor (#918) Changes include:
   * Unity editor upgrade to 6000.0.52f1
     * com.unity.multiplayer.tools upgraded to v2.2.4
-    * com.unity.multiplayer.playmode v1.5.0
+    * com.unity.multiplayer.playmode upgraded to v1.5.0
+    * com.unity.inputsystem upgraded to v1.14.0
+    * com.unity.postprocessing upgraded to v3.5.0
   * Netcode for GameObjects upgraded to v2.4.3
   * Multiplayer Services upgraded to v1.1.4
 
