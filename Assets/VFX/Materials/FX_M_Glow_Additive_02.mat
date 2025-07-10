@@ -14,6 +14,7 @@ Material:
   m_ValidKeywords:
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords:
+  - _EMISSION
   - _USE_ALPHA_ON
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
@@ -90,6 +91,7 @@ Material:
     - Boolean_236a513c11c34f97b3d22cc5b0fdd0bd: 0
     - _AlphaClip: 0
     - _AlphaCutoff: 0.5
+    - _AlphaToMask: 0
     - _Blend: 2
     - _BumpScale: 1
     - _CastShadows: 0
@@ -142,4 +144,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 9
+  version: 10
