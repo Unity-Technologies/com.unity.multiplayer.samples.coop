@@ -14,6 +14,7 @@ Material:
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _CHANGEMASKTOX_ON
+  - _EMISSION
   - _HASMASK_ON
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
@@ -139,4 +140,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 9
+  version: 10

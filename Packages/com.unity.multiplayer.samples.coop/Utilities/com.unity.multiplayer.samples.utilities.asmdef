@@ -2,9 +2,7 @@
     "name": "Unity.Multiplayer.Samples.Utilities",
     "rootNamespace": "",
     "references": [
-        "Unity.Netcode.Components",
         "Unity.Netcode.Runtime",
-        "Unity.Services.Relay",
         "Unity.Collections"
     ],
     "includePlatforms": [],

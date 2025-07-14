@@ -14,6 +14,7 @@ Material:
   m_ValidKeywords:
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords:
+  - _EMISSION
   - _SWITCH_ALPHA_ON
   - _USE_ALPHA_ON
   m_LightmapFlags: 2
@@ -91,11 +92,13 @@ Material:
     - Boolean_236a513c11c34f97b3d22cc5b0fdd0bd: 1
     - _AlphaClip: 0
     - _AlphaCutoff: 0.5
+    - _AlphaToMask: 0
     - _Blend: 0
     - _BumpScale: 1
     - _CastShadows: 0
     - _Cull: 2
     - _Cutoff: 0.5
+    - _Depth_Blend: 0
     - _DstBlend: 10
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
@@ -114,6 +117,7 @@ Material:
     - _Surface: 1
     - _Switch_Alpha: 1
     - _UseAlpha: 1
+    - _UseSoftParticles: 0
     - _Use_alpha: 1
     - _WorkflowMode: 1
     - _ZTest: 4
@@ -143,4 +147,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 9
+  version: 10
