@@ -58,6 +58,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
   * Netcode for GameObjects upgraded to v2.4.3
   * Multiplayer Services upgraded to v1.1.4
 * Upgraded to Authentication package v3.5.1, fixing switching profile issues (#920)
+* Navigation of In-Editor Tutorials improved and resource links updated (#919)
 
 ### Cleanup
 * Removed ParrelSync from the project (#890)
