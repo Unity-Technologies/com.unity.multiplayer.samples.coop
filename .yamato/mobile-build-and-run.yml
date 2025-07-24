@@ -18,7 +18,8 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
         - curl -s https://artifactory-slo.bf.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
         - chmod +x ./utr
         - ./utr --suite=playmode --platform=iOS --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --build-only --testfilter=Unity.BossRoom.Tests.Runtime
-
+    variables:
+        UNITY_HANDLEUIINTERRUPTIONS: 1
     artifacts:
         players:
             paths:
@@ -69,6 +70,7 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
 mobile_test_ios_{{ project.name }}_{{ editor }}:
     name: {{ project.name }} mobile project tests - {{ editor }} on iOS
     agent:
+        model: SE-Gen3
         type: Unity::mobile::iPhone
         image: package-ci/macos-12:v4
         flavor: b1.medium
