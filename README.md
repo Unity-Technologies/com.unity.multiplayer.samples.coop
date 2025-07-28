@@ -5,9 +5,9 @@
 ###  Made with and Including Utilities for Netcode for GameObjects
 <br>
 
-[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-6000.0.44f1%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/whats-new/6000.0.44)
-[![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-2.2.0-57b9d3.svg?logo=unity&color=2196F3)](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/releases/tag/ngo%2F2.2.0)
-[![LatestRelease](https://img.shields.io/badge/Latest%20Github%20Release:-v2.6.0-57b9d3.svg?logo=github&color=brightgreen)](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases/tag/v2.6.0)
+[![UnityVersion](https://img.shields.io/badge/Unity%20Version:-6000.0.52f1%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/whats-new/6000.0.52)
+[![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-2.4.3-57b9d3.svg?logo=unity&color=2196F3)](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/releases/tag/v2.4.3)
+[![LatestRelease](https://img.shields.io/badge/Latest%20Github%20Release:-v2.5.0-57b9d3.svg?logo=github&color=brightgreen)](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases/tag/v2.5.0)
 <br><br>
 
 Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. It is an educational sample designed to showcase typical netcode [patterns](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom-actions/index.html) that are frequently featured in similar multiplayer games.
@@ -56,12 +56,12 @@ For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/A
 - ### [Testing multiplayer](#testing-multiplayer-1) 
   - [Local Multiplayer Setup](#local-multiplayer-setup)
   - [Multiplayer over Internet](#multiplayer-over-internet)
-  - [Relay Setup](#relay-setup) 
+  - [Multiplayer Services Setup](#multiplayer-services-setup) 
 - ### [Index of resources in this project](#index-of-resources-in-this-project-1)
   - [Gameplay](#gameplay)
   - [Game Flow](#game-flow)
   - [Connectivity](#connectivity)
-  - [Services (Lobby, Relay, etc)](#services-lobby-relay-etc)
+  - [Services (Sessions and Authentication)](#services-sessions-authentication)
   - [Tools and Utilities](#tools-and-utilities)
 - ### [Troubleshooting](#troubleshooting-1)
   - [Bugs](#bugs)
@@ -71,7 +71,7 @@ For more information on the art of Boss Room, see [ART_NOTES.md](Documentation/A
 - ### [Community](#community-1)
 - ### [Feedback Form](#feedback-form-1)
 - ### [Other samples](#other-samples-1)
-  - [Bite-size Samples](#bite-size-samples)
+  - [Bitesize Samples](#bitesize-samples)
 </details>
 
 ------
@@ -167,7 +167,7 @@ It is possible to connect between multiple instances of the same executable OR b
 Running the game over internet currently requires setting up a relay. 
   
   
-### Relay Setup
+### Multiplayer Services Setup
  
 - Boss Room uses the Multiplayer Services Package to integrate [Sessions](https://docs.unity.com/ugs/en-us/manual/mps-sdk/manual) for grouping and connecting players.
 
@@ -248,7 +248,6 @@ Running the game over internet currently requires setting up a relay.
 * Netcode hooks - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetcodeHooks.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetcodeHooks.cs)
 * Spawner for in-scene objects - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs)
 * Session manager for reconnection - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/SessionManager.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/SessionManager.cs)
-* Relay utils - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/UnityRelayUtilities.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/UnityRelayUtilities.cs)
 * Client authority - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/ClientAuthority/](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/ClientAuthority/)
 * Scene utils with synced loading screens - [Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/ ](Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/)
 * RNSM custom config - [Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/RNSM/CustomNetStatsMonitorConfiguration.asset)
@@ -303,7 +302,7 @@ Thank you for cloning Boss Room and taking a look at the project. To help us imp
 <br><br>
 
 ## Other samples
-### Bite-size Samples
+### Bitesize Samples
 - The [Bitesize Samples](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.bitesize)  repository is currently being expanded and contains a collection of smaller samples and games, showcasing sub-features of NGO. You can review these samples with documentation to understand our APIs and features better.
 <br><br>
 
