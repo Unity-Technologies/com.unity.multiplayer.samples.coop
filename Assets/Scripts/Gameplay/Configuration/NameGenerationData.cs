@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,8 +18,8 @@ namespace Unity.BossRoom.Gameplay.Configuration
 
         public string GenerateName()
         {
-            var firstWord = FirstWordList[Random.Range(0, FirstWordList.Length - 1)];
-            var secondWord = SecondWordList[Random.Range(0, SecondWordList.Length - 1)];
+            var firstWord = FirstWordList[Random.Range(0, FirstWordList.Length)];
+            var secondWord = SecondWordList[Random.Range(0, SecondWordList.Length)];
 
             return firstWord + " " + secondWord;
         }

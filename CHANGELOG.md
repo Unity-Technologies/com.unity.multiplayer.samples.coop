@@ -77,6 +77,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Fixed error logged when attempting to despawn an already despawned LoadingProgressTracker NetworkObject (#907)
 * Fixed error logged when a Melee action was acted on a Breakable object (#908)
 * Internal standards job fix (#915)
+* Fixed last index of names not being used (#922)
 
 ## [2.5.0] - 2024-04-18
 
