@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [unreleased] yyyy-mm-dd
+## [3.0.0] 2025-08-07
 
 ### Added
 * Added a welcome dialog to guide users on their first time experience (#888)

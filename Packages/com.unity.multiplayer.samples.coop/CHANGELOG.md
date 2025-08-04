@@ -1,6 +1,6 @@
 # Multiplayer Samples Co-op Changelog
 
-## [Unreleased]
+## [2.0.0] - 2025-08-07
 
 ### Changed
 * Replaced Lobby and Relay standalone packages with the Multiplayer Services package v1.0.2 (#892)
