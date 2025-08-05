@@ -155,7 +155,6 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.learn.iet-framework": "4.0.4",
         "com.unity.multiplayer.tools": "2.2.3",
         "com.unity.netcode.gameobjects": "2.2.0"
       }
