@@ -6,10 +6,78 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [unreleased] yyyy-mm-dd
+## [3.0.0] 2025-08-06
+
+### Added
+* Added a welcome dialog to guide users on their first time experience (#888)
+  * Added a Table of Contents with helpful resources, that can be accessed from the `Tutorials > Show Tutorials` menu
+* Added the Multiplayer Play Mode package v1.3.1 to the project (#890)
+* An In-Editor Tutorial walking through the process of associating your Unity project with a Unity Cloud ID has been added (#898)
+* Boss Room's assembly definitions now include Unity.Netcode.Runtime.Tests (#914)
+
+### Changed
+* Upgraded editor version to 6000.0.25f1 and upgraded Boss Room to Netcode for GameObjects v2.0.0 (#890)
+* Replaced Lobby and Relay standalone packages with the Multiplayer Services package v1.0.2 and the Sessions framework (#892)
+* Upgraded editor version to 6000.0.32f1 and Multiplayer Services package to v1.1.0 (#894)
+  * Removed usage of ISession's deprecated PlayerLeft callback to the new PlayerHasLeft callback
+* Upgraded several packages to their recommended versions (#895) They include:
+  * com.unity.cinemachine from v2.10.3 to v3.1.2. Camera using deprecated CinemachineFreeLook component has been re-implemented with CinemachineCamera component
+  * com.unity.multiplayer.playmode from v1.3.2 to v1.3.3
+  * com.unity.multiplayer.tools from v2.2.1 to v2.2.3
+  * com.unity.netcode.gameobjects from v2.0.0 to v2.1.1
+* VContainer package upgraded from v1.11.0 to v1.14.0 (#896) This upgrade removes warning messages related to IL weaving as code gen is refactored in v1.14.0
+* Upgraded the project to the New Input System v1.11.2 (#897) Compatibility mode with the previous version has been disabled.
+* Upgraded editor version to 6000.0.42f1 and upgraded packages (#901):
+  * com.unity.ai.navigation from v2.0.5 to v2.0.6
+  * com.unity.collab-proxy from v2.6.0 to v2.7.1
+  * com.unity.inputsystem from v1.11.2 to v1.13.1
+  * com.unity.learn.iet-framework from v4.0.3 to v4.0.4
+  * com.unity.memoryprofiler from v1.1.3 to v1.1.5
+  * com.unity.netcode.gameobjects from v2.1.1 to v2.2.0
+  * com.unity.render-pipelines-universal from v17.0.3 to v17.0.4
+  * com.unity.services.multiplayer from v1.1.0 to v1.1.1
+  * com.unity.test-framework from v1.4.5 to v1.4.6
+* Upgraded editor version to 6000.0.44f1 and upgraded packages (#902):
+  * com.unity.ide.rider from v3.0.34 to v3.0.35
+  * com.unity.services.multiplayer from v1.1.1 to v1.1.2
+  * com.unity.test-framework from v1.4.6 to v1.5.1
+  * com.unity.transport from v2.4.0 to v2.5.0
+  * com.unity.cinemachine from v.3.1.2 to 3.1.3
+  * com.unity.services.authentication from 3.4.0 to 3.4.1
+  * jp.hadashikick.vcontainer from 1.14.0 to 1.16.8
+  * com.unity.memoryprofiler from 1.1.5 to 1.1.6
+  * com.unity.timeline from 1.8.7 to 1.8.8
+* Upgraded Unity Transport package to 2.5.1 (#906)
+* Upgraded the project to use Netcode for GameObject's recommended OnConnectionEvent callback (#907)
+* Upgraded the project to the latest releases of packages and editor (#918) Changes include:
+  * Unity editor upgrade to 6000.0.52f1
+    * com.unity.multiplayer.tools upgraded to v2.2.4
+    * com.unity.multiplayer.playmode upgraded to v1.5.0
+    * com.unity.inputsystem upgraded to v1.14.0
+    * com.unity.postprocessing upgraded to v3.5.0
+  * Netcode for GameObjects upgraded to v2.4.3
+  * Multiplayer Services upgraded to v1.1.4
+* Upgraded to Authentication package v3.5.1, fixing switching profile issues (#920)
+* Navigation of In-Editor Tutorials improved and resource links updated (#919)
+
+### Cleanup
+* Removed ParrelSync from the project (#890)
+* Removed warnings on first project launch (#896) Included:
+  * Asset meta files with merge conflicts resolved
+  * RenderGraph compatibility mode disabled
 
 ### Fixed
+* Fix a Healer ability doesn't work (#893)
+  * Changed the way characters are oriented when using skills.
+  * Added the GetTotalDamage API to the IDamageable interface. This number is your maximum health minus your current health.
+  * Changed the way MeleeAction selects a target when there are multiple targets to collide with. The target with the highest GetTotalDamage value (mentioned above) will be selected.
+* Fixed a visual issue where a selected party member's party HUD slot would be displayed as selected (green) when the same or new party member joins the session in-game (#899)
+* Fixed Render Graph API compatibility mode warning and switched active input handling settings to "both" for removing InvalidOperationException (#901) 
+* Fixed error logged when unsubscribing from Session events when removed from a Session (#905)
+* Fixed error logged when attempting to despawn an already despawned LoadingProgressTracker NetworkObject (#907)
+* Fixed error logged when a Melee action was acted on a Breakable object (#908)
 * Internal standards job fix (#915)
+* Fixed last index of names not being used (#922)
 
 ## [2.5.0] - 2024-04-18
 

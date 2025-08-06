@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -8668463530818694599}
   - component: {fileID: -8903857516321632127}
   - component: {fileID: 8991873088713291135}
+  - component: {fileID: 5185361255833847072}
   m_Layer: 6
   m_Name: BreakablePot
   m_TagString: Untagged
@@ -26,6 +27,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 884761565141663561}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -33,7 +35,6 @@ Transform:
   m_Children:
   - {fileID: 1927651668276376163}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-8668463530818694599
 MonoBehaviour:
@@ -47,10 +48,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 951099334
+  GlobalObjectIdHash: 2007482658
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 0
   AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &-8903857516321632127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,8 +73,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb44a31731a459546bdf01f1af48173c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxHealth: {fileID: 0}
-  m_NetworkHealthState: {fileID: 0}
+  ShowTopMostFoldoutHeaderGroup: 1
+  m_MaxHealth: {fileID: 11400000, guid: 0ea073444920f455e9b4769e970d81d8, type: 2}
+  m_NetworkHealthState: {fileID: 5185361255833847072}
   m_Collider: {fileID: 8991873088713291135}
   m_SpecialDamageFlags: 0
   m_BrokenPrefab: {fileID: 1001931975397017578, guid: 03e282e700b05664daab32d4e7965212, type: 3}
@@ -72,8 +83,6 @@ MonoBehaviour:
   m_BrokenPrefabPos: {fileID: 1927651668276376163}
   m_UnbrokenGameObjects:
   - {fileID: 598843305552521647}
-  IsBroken:
-    m_InternalValue: 0
 --- !u!136 &8991873088713291135
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -82,17 +91,42 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 884761565141663561}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
+  serializedVersion: 2
   m_Radius: 1
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &5185361255833847072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 884761565141663561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6733907396f36c44891916e5c62f25a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  HitPoints:
+    m_InternalValue: 0
 --- !u!1001 &3811502052812393529
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 4505851899529102149}
     m_Modifications:
     - target: {fileID: -2116509465241817417, guid: e5e46d03def7870439c2e42d5601394c, type: 3}
@@ -153,6 +187,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -2116509465241817417, guid: e5e46d03def7870439c2e42d5601394c, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e5e46d03def7870439c2e42d5601394c, type: 3}
 --- !u!1 &598843305552521647 stripped
 GameObject:

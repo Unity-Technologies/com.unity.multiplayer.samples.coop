@@ -19,9 +19,10 @@ Material:
   - _CUSTOMDATA_ON
   - _DISSOLVETYPE_CUSTOM
   - _DISTYPE_UV
+  - _EMISSION
   - _GLOWWAVE_ON
   - _SLASHUVCLAMP_ON
-  m_LightmapFlags: 0
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3000
@@ -30,6 +31,7 @@ Material:
   disabledShaderPasses:
   - DepthOnly
   - SHADOWCASTER
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -152,6 +154,7 @@ Material:
     - _Panner: {r: 0, g: 0.01, b: 0, a: 0}
     - _Tint: {r: 1.1509433, g: 1.5869627, b: 4, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &9095613563911183581
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -164,4 +167,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 7
+  version: 10

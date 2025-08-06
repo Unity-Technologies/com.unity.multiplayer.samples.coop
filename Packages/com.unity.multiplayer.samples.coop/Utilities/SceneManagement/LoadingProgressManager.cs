@@ -50,8 +50,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// </summary>
         public float LocalProgress
         {
-            get => IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) ?
-                ProgressTrackers[NetworkManager.LocalClientId].Progress.Value : m_LocalProgress;
+            get => IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) ? ProgressTrackers[NetworkManager.LocalClientId].Progress.Value : m_LocalProgress;
             private set
             {
                 if (IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) && ProgressTrackers[NetworkManager.LocalClientId].IsSpawned)
@@ -69,18 +68,17 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsServer)
             {
-                NetworkManager.OnClientConnectedCallback += AddTracker;
-                NetworkManager.OnClientDisconnectCallback += RemoveTracker;
-                AddTracker(NetworkManager.LocalClientId);
+                NetworkManager.OnConnectionEvent += OnConnectionEvent;
             }
         }
+
         public override void OnNetworkDespawn()
         {
             if (IsServer)
             {
-                NetworkManager.OnClientConnectedCallback -= AddTracker;
-                NetworkManager.OnClientDisconnectCallback -= RemoveTracker;
+                NetworkManager.OnConnectionEvent -= OnConnectionEvent;
             }
+
             ProgressTrackers.Clear();
             onTrackersUpdated?.Invoke();
         }
@@ -107,7 +105,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             if (!IsHost)
             {
                 ProgressTrackers.Clear();
-                foreach (var tracker in FindObjectsOfType<NetworkedLoadingProgressTracker>())
+                foreach (var tracker in FindObjectsByType<NetworkedLoadingProgressTracker>(FindObjectsSortMode.None))
                 {
                     // If a tracker is despawned but not destroyed yet, don't add it
                     if (tracker.IsSpawned)
@@ -120,7 +118,28 @@ namespace Unity.Multiplayer.Samples.Utilities
                     }
                 }
             }
+
             onTrackersUpdated?.Invoke();
+        }
+
+        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
+        {
+            if (IsServer)
+            {
+                switch (connectionEventData.EventType)
+                {
+                    case ConnectionEvent.ClientConnected:
+                    {
+                        AddTracker(connectionEventData.ClientId);
+                        break;
+                    }
+                    case ConnectionEvent.ClientDisconnected:
+                    {
+                        RemoveTracker(connectionEventData.ClientId);
+                        break;
+                    }
+                }
+            }
         }
 
         void AddTracker(ulong clientId)
@@ -141,9 +160,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 if (ProgressTrackers.ContainsKey(clientId))
                 {
-                    var tracker = ProgressTrackers[clientId];
                     ProgressTrackers.Remove(clientId);
-                    tracker.NetworkObject.Despawn();
                     ClientUpdateTrackersRpc();
                 }
             }

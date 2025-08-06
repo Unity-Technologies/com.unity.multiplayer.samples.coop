@@ -12,10 +12,9 @@
         "Unity.BossRoom.UnityServices",
         "Unity.BossRoom.Utils",
         "Unity.Netcode.Runtime",
-        "Unity.Netcode.TestHelpers.Runtime",
         "VContainer",
-        "VContainer.EnableCodeGen",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.Netcode.Runtime.Tests"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

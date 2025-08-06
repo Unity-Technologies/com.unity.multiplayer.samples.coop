@@ -72,7 +72,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 var foe = DetectFoe(clientCharacter, m_ProvisionalTarget);
                 if (foe != null)
                 {
-                    foe.ReceiveHP(clientCharacter, -Config.Amount);
+                    foe.ReceiveHitPoints(clientCharacter, -Config.Amount);
                 }
             }
 
@@ -85,7 +85,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <returns></returns>
         private IDamageable DetectFoe(ServerCharacter parent, ulong foeHint = 0)
         {
-            return GetIdealMeleeFoe(Config.IsFriendly ^ parent.IsNpc, parent.physicsWrapper.DamageCollider, Config.Range, foeHint);
+            return GetIdealMeleeFoe(Config.IsFriendly ^ parent.IsNpc, parent.physicsWrapper.DamageCollider, Config.Range, Config.Radius, foeHint);
         }
 
         /// <summary>
@@ -96,25 +96,48 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <param name="isNPC">true if the attacker is an NPC (and therefore should hit PCs). False for the reverse.</param>
         /// <param name="ourCollider">The collider of the attacking GameObject.</param>
         /// <param name="meleeRange">The range in meters to check for foes.</param>
+        /// <param name="meleeRadius">The radius in meters to check for foes.</param>
         /// <param name="preferredTargetNetworkId">The NetworkObjectId of our preferred foe, or 0 if no preference</param>
         /// <returns>ideal target's IDamageable, or null if no valid target found</returns>
-        public static IDamageable GetIdealMeleeFoe(bool isNPC, Collider ourCollider, float meleeRange, ulong preferredTargetNetworkId)
+        /// <remarks>
+        /// If a Radius value is set (greater than 0), collision checking will be done with a Sphere the size of the Radius, not the size of the Box.
+        /// Also, if multiple targets collide as a result, the target with the highest total damage is prioritized.
+        /// </remarks>
+        public static IDamageable GetIdealMeleeFoe(bool isNPC, Collider ourCollider, float meleeRange, float meleeRadius, ulong preferredTargetNetworkId)
         {
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectMeleeFoe(isNPC, ourCollider, meleeRange, out results);
+            int numResults = 0.0f < meleeRadius
+                ? ActionUtils.DetectNearbyEntitiesUseSphere(isNPC, !isNPC, ourCollider, meleeRange, meleeRadius, out results)
+                : ActionUtils.DetectNearbyEntities(isNPC, !isNPC, ourCollider, meleeRange, out results);
 
             IDamageable foundFoe = null;
 
             //everything that got hit by the raycast should have an IDamageable component, so we can retrieve that and see if they're appropriate targets.
             //we always prefer the hinted foe. If he's still in range, he should take the damage, because he's who the client visualization
             //system will play the hit-react on (in case there's any ambiguity).
+            //if that is not the case, we prioritize the target with the highest total damage.
+            int maxDamage = int.MinValue;
+
             for (int i = 0; i < numResults; i++)
             {
                 var damageable = results[i].collider.GetComponent<IDamageable>();
-                if (damageable != null && damageable.IsDamageable() &&
-                    (damageable.NetworkObjectId == preferredTargetNetworkId || foundFoe == null))
+                if (damageable == null || !damageable.IsDamageable())
+                {
+                    continue;
+                }
+
+                if (damageable.NetworkObjectId == preferredTargetNetworkId)
                 {
                     foundFoe = damageable;
+                    maxDamage = int.MaxValue;
+                    continue;
+                }
+
+                var totalDamage = damageable.GetTotalDamage();
+                if (foundFoe == null || maxDamage < totalDamage)
+                {
+                    foundFoe = damageable;
+                    maxDamage = totalDamage;
                 }
             }
 

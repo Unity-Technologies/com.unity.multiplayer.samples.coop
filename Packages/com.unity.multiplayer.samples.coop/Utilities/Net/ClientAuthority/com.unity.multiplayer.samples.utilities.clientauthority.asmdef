@@ -2,7 +2,6 @@
     "name": "Unity.Multiplayer.Samples.Utilities.ClientAuthority",
     "rootNamespace": "",
     "references": [
-        "Unity.Netcode.Components",
         "Unity.Netcode.Runtime"
     ],
     "includePlatforms": [],

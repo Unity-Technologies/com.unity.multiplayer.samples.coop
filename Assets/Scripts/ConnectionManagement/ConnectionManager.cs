@@ -93,8 +93,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
             m_CurrentState = m_Offline;
 
-            NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
-            NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
+            NetworkManager.OnConnectionEvent += OnConnectionEvent;
             NetworkManager.OnServerStarted += OnServerStarted;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
             NetworkManager.OnTransportFailure += OnTransportFailure;
@@ -103,8 +102,7 @@ namespace Unity.BossRoom.ConnectionManagement
 
         void OnDestroy()
         {
-            NetworkManager.OnClientConnectedCallback -= OnClientConnectedCallback;
-            NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+            NetworkManager.OnConnectionEvent -= OnConnectionEvent;
             NetworkManager.OnServerStarted -= OnServerStarted;
             NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
             NetworkManager.OnTransportFailure -= OnTransportFailure;
@@ -123,14 +121,17 @@ namespace Unity.BossRoom.ConnectionManagement
             m_CurrentState.Enter();
         }
 
-        void OnClientDisconnectCallback(ulong clientId)
+        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
         {
-            m_CurrentState.OnClientDisconnect(clientId);
-        }
-
-        void OnClientConnectedCallback(ulong clientId)
-        {
-            m_CurrentState.OnClientConnected(clientId);
+            switch (connectionEventData.EventType)
+            {
+                case ConnectionEvent.ClientConnected:
+                    m_CurrentState.OnClientConnected(connectionEventData.ClientId);
+                    break;
+                case ConnectionEvent.ClientDisconnected:
+                    m_CurrentState.OnClientDisconnect(connectionEventData.ClientId);
+                    break;
+            }
         }
 
         void OnServerStarted()
@@ -153,9 +154,9 @@ namespace Unity.BossRoom.ConnectionManagement
             m_CurrentState.OnServerStopped();
         }
 
-        public void StartClientLobby(string playerName)
+        public void StartClientSession(string playerName)
         {
-            m_CurrentState.StartClientLobby(playerName);
+            m_CurrentState.StartClientSession(playerName);
         }
 
         public void StartClientIp(string playerName, string ipaddress, int port)
@@ -163,9 +164,9 @@ namespace Unity.BossRoom.ConnectionManagement
             m_CurrentState.StartClientIP(playerName, ipaddress, port);
         }
 
-        public void StartHostLobby(string playerName)
+        public void StartHostSession(string playerName)
         {
-            m_CurrentState.StartHostLobby(playerName);
+            m_CurrentState.StartHostSession(playerName);
         }
 
         public void StartHostIp(string playerName, string ipaddress, int port)

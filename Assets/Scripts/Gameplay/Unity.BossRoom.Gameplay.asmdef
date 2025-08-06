@@ -3,13 +3,10 @@
     "rootNamespace": "",
     "references": [
         "Unity.Netcode.Runtime",
-        "Unity.Netcode.Components",
         "Unity.Collections",
         "Unity.TextMeshPro",
         "Unity.Services.Core",
         "Unity.Services.Authentication",
-        "Unity.Services.Relay",
-        "Unity.Services.Lobbies",
         "Unity.Networking.Transport",
         "Unity.BossRoom.Infrastructure",
         "Unity.BossRoom.UnityServices",
@@ -22,7 +19,9 @@
         "VContainer",
         "Unity.BossRoom.VisualEffects",
         "Unity.BossRoom.CameraUtils",
-        "Unity.Multiplayer.Tools.NetworkSimulator.Runtime"
+        "Unity.Multiplayer.Tools.NetworkSimulator.Runtime",
+        "Unity.Services.Multiplayer",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

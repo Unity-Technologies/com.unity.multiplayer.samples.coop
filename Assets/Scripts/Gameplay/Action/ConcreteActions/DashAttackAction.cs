@@ -98,12 +98,12 @@ namespace Unity.BossRoom.Gameplay.Actions
             // perform a typical melee-hit. But note that we are using the Radius field for range, not the Range field!
             IDamageable foe = MeleeAction.GetIdealMeleeFoe(Config.IsFriendly ^ parent.IsNpc,
                 parent.physicsWrapper.DamageCollider,
-                                                            Config.Radius,
+                                                            Config.Radius, 0.0f,
                                                             (Data.TargetIds != null && Data.TargetIds.Length > 0 ? Data.TargetIds[0] : 0));
 
             if (foe != null)
             {
-                foe.ReceiveHP(parent, -Config.Amount);
+                foe.ReceiveHitPoints(parent, -Config.Amount);
             }
         }
 

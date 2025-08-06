@@ -30,20 +30,35 @@ namespace Unity.BossRoom.Gameplay.Actions
         const float k_VeryCloseTeleportRange = k_CloseDistanceOffset + 1;
 
         /// <summary>
-        /// Does a melee foe hit detect.
+        /// Detects friends and/or foes near us.
         /// </summary>
-        /// <param name="isNPC">true if the attacker is an NPC (and therefore should hit PCs). False for the reverse.</param>
+        /// <param name="wantPcs">true if we should detect PCs</param>
+        /// <param name="wantNpcs">true if we should detect NPCs</param>
         /// <param name="attacker">The collider of the attacking GameObject.</param>
-        /// <param name="range">The range in meters to check for foes.</param>
+        /// <param name="range">The range in meters to check.</param>
+        /// <param name="radius">The radius in meters to check.</param>
         /// <param name="results">Place an uninitialized RayCastHit[] ref in here. It will be set to the results array. </param>
-        /// <remarks>
-        /// This method does not alloc. It returns a maximum of 4 results. Consume the results immediately, as the array will be overwritten with
-        /// the next similar query.
-        /// </remarks>
-        /// <returns>Total number of foes encountered. </returns>
-        public static int DetectMeleeFoe(bool isNPC, Collider attacker, float range, out RaycastHit[] results)
+        /// <returns></returns>
+        public static int DetectNearbyEntitiesUseSphere(bool wantPcs, bool wantNpcs, Collider attacker, float range, float radius, out RaycastHit[] results)
         {
-            return DetectNearbyEntities(isNPC, !isNPC, attacker, range, out results);
+            var myBounds = attacker.bounds;
+
+            if (s_PCLayer == -1)
+                s_PCLayer = LayerMask.NameToLayer("PCs");
+            if (s_NpcLayer == -1)
+                s_NpcLayer = LayerMask.NameToLayer("NPCs");
+
+            int mask = 0;
+            if (wantPcs)
+                mask |= (1 << s_PCLayer);
+            if (wantNpcs)
+                mask |= (1 << s_NpcLayer);
+
+            int numResults = Physics.SphereCastNonAlloc(attacker.transform.position, radius,
+                attacker.transform.forward, s_Hits, range, mask);
+
+            results = s_Hits;
+            return numResults;
         }
 
         /// <summary>

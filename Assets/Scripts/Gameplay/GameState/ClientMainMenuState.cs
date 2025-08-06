@@ -2,10 +2,9 @@ using System;
 using Unity.BossRoom.Gameplay.Configuration;
 using Unity.BossRoom.Gameplay.UI;
 using Unity.BossRoom.UnityServices.Auth;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.BossRoom.Utils;
 using Unity.Services.Authentication;
-using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -27,11 +26,11 @@ namespace Unity.BossRoom.Gameplay.GameState
         [SerializeField]
         NameGenerationData m_NameGenerationData;
         [SerializeField]
-        LobbyUIMediator m_LobbyUIMediator;
+        SessionUIMediator m_SessionUIMediator;
         [SerializeField]
         IPUIMediator m_IPUIMediator;
         [SerializeField]
-        Button m_LobbyButton;
+        Button m_SessionButton;
         [SerializeField]
         GameObject m_SignInSpinner;
         [SerializeField]
@@ -42,9 +41,9 @@ namespace Unity.BossRoom.Gameplay.GameState
         [Inject]
         AuthenticationServiceFacade m_AuthServiceFacade;
         [Inject]
-        LocalLobbyUser m_LocalUser;
+        LocalSessionUser m_LocalUser;
         [Inject]
-        LocalLobby m_LocalLobby;
+        LocalSession m_LocalSession;
         [Inject]
         ProfileManager m_ProfileManager;
 
@@ -52,8 +51,8 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             base.Awake();
 
-            m_LobbyButton.interactable = false;
-            m_LobbyUIMediator.Hide();
+            m_SessionButton.interactable = false;
+            m_SessionUIMediator.Hide();
 
             if (string.IsNullOrEmpty(Application.cloudProjectId))
             {
@@ -68,11 +67,11 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             base.Configure(builder);
             builder.RegisterComponent(m_NameGenerationData);
-            builder.RegisterComponent(m_LobbyUIMediator);
+            builder.RegisterComponent(m_SessionUIMediator);
             builder.RegisterComponent(m_IPUIMediator);
         }
 
-        private async void TrySignIn()
+        async void TrySignIn()
         {
             try
             {
@@ -89,9 +88,9 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
         }
 
-        private void OnAuthSignIn()
+        void OnAuthSignIn()
         {
-            m_LobbyButton.interactable = true;
+            m_SessionButton.interactable = true;
             m_UGSSetupTooltipDetector.enabled = false;
             m_SignInSpinner.SetActive(false);
 
@@ -99,15 +98,15 @@ namespace Unity.BossRoom.Gameplay.GameState
 
             m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
 
-            // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
-            m_LocalLobby.AddUser(m_LocalUser);
+            // The local SessionUser object will be hooked into UI before the LocalSession is populated during session join, so the LocalSession must know about it already when that happens.
+            m_LocalSession.AddUser(m_LocalUser);
         }
 
-        private void OnSignInFailed()
+        void OnSignInFailed()
         {
-            if (m_LobbyButton)
+            if (m_SessionButton)
             {
-                m_LobbyButton.interactable = false;
+                m_SessionButton.interactable = false;
                 m_UGSSetupTooltipDetector.enabled = true;
             }
 
@@ -125,30 +124,30 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         async void OnProfileChanged()
         {
-            m_LobbyButton.interactable = false;
+            m_SessionButton.interactable = false;
             m_SignInSpinner.SetActive(true);
             await m_AuthServiceFacade.SwitchProfileAndReSignInAsync(m_ProfileManager.Profile);
 
-            m_LobbyButton.interactable = true;
+            m_SessionButton.interactable = true;
             m_SignInSpinner.SetActive(false);
 
             Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
-            // Updating LocalUser and LocalLobby
-            m_LocalLobby.RemoveUser(m_LocalUser);
+            // Updating LocalUser and LocalSession
+            m_LocalSession.RemoveUser(m_LocalUser);
             m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
-            m_LocalLobby.AddUser(m_LocalUser);
+            m_LocalSession.AddUser(m_LocalUser);
         }
 
         public void OnStartClicked()
         {
-            m_LobbyUIMediator.ToggleJoinLobbyUI();
-            m_LobbyUIMediator.Show();
+            m_SessionUIMediator.ToggleJoinSessionUI();
+            m_SessionUIMediator.Show();
         }
 
         public void OnDirectIPClicked()
         {
-            m_LobbyUIMediator.Hide();
+            m_SessionUIMediator.Hide();
             m_IPUIMediator.Show();
         }
 

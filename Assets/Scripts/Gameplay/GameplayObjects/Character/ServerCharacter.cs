@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Gameplay.Actions;
@@ -156,6 +157,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 NetLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
                 m_DamageReceiver.DamageReceived += ReceiveHP;
                 m_DamageReceiver.CollisionEntered += CollisionEntered;
+                m_DamageReceiver.GetTotalDamageFunc += GetTotalDamage;
 
                 if (IsNpc)
                 {
@@ -179,6 +181,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             {
                 m_DamageReceiver.DamageReceived -= ReceiveHP;
                 m_DamageReceiver.CollisionEntered -= CollisionEntered;
+                m_DamageReceiver.GetTotalDamageFunc -= GetTotalDamage;
             }
         }
 
@@ -391,6 +394,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             {
                 m_ServerActionPlayer.CollisionEntered(collision);
             }
+        }
+
+        int GetTotalDamage()
+        {
+            return Math.Max(0, CharacterClass.BaseHP.Value - HitPoints);
         }
 
         /// <summary>

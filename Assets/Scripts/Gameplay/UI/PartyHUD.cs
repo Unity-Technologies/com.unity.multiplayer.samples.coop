@@ -22,36 +22,33 @@ namespace Unity.BossRoom.Gameplay.UI
         ClientPlayerAvatarRuntimeCollection m_PlayerAvatars;
 
         [SerializeField]
-        private Image m_HeroPortrait;
+        Image m_HeroPortrait;
 
         [SerializeField]
-        private GameObject[] m_AllyPanel;
+        GameObject[] m_AllyPanel;
 
         [SerializeField]
-        private TextMeshProUGUI[] m_PartyNames;
+        TextMeshProUGUI[] m_PartyNames;
 
         [SerializeField]
-        private Image[] m_PartyClassSymbols;
+        Image[] m_PartyClassSymbols;
 
         [SerializeField]
-        private Slider[] m_PartyHealthSliders;
+        Slider[] m_PartyHealthSliders;
 
         [SerializeField]
-        private Image[] m_PartyHealthGodModeImages;
+        Image[] m_PartyHealthGodModeImages;
 
         // track a list of hero (slot 0) + allies
-        private ulong[] m_PartyIds;
-
-        // track Hero's target to show when it is the Hero or an ally
-        private ulong m_CurrentTarget;
+        ulong[] m_PartyIds;
 
         ServerCharacter m_OwnedServerCharacter;
 
         ClientPlayerAvatar m_OwnedPlayerAvatar;
 
-        private Dictionary<ulong, ServerCharacter> m_TrackedAllies = new Dictionary<ulong, ServerCharacter>();
+        Dictionary<ulong, ServerCharacter> m_TrackedAllies = new Dictionary<ulong, ServerCharacter>();
 
-        private ClientInputSender m_ClientSender;
+        ClientInputSender m_ClientSender;
 
         void Awake()
         {
@@ -150,6 +147,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
             ulong id = serverCharacter.NetworkObjectId;
             int slot = FindOrAddAlly(id);
+
             // do nothing if not in a slot
             if (slot == -1)
             {
@@ -189,19 +187,22 @@ namespace Unity.BossRoom.Gameplay.UI
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         void SetAllyGodModeStatus(ulong id, bool newValue)
         {
-            int slot = FindOrAddAlly(id);
+            int slot = FindOrAddAlly(id, true);
+
             // do nothing if not in a slot
             if (slot == -1)
             {
                 return;
             }
+
             m_PartyHealthGodModeImages[slot].gameObject.SetActive(newValue);
         }
 #endif
 
         void SetAllyHealth(ulong id, int hp)
         {
-            int slot = FindOrAddAlly(id);
+            int slot = FindOrAddAlly(id, true);
+
             // do nothing if not in a slot
             if (slot == -1)
             {
@@ -211,29 +212,20 @@ namespace Unity.BossRoom.Gameplay.UI
             m_PartyHealthSliders[slot].value = hp;
         }
 
-        private void OnHeroSelectionChanged(ulong prevTarget, ulong newTarget)
+        void OnHeroSelectionChanged(ulong prevTarget, ulong newTarget)
         {
-            SetHeroSelectFX(m_CurrentTarget, false);
+            SetHeroSelectFX(prevTarget, false);
             SetHeroSelectFX(newTarget, true);
         }
 
         // Helper to change name appearance for selected or unselected party members
-        // also updates m_CurrentTarget
-        private void SetHeroSelectFX(ulong target, bool selected)
+        void SetHeroSelectFX(ulong target, bool selected)
         {
             // check id against all party slots
             int slot = FindOrAddAlly(target, true);
             if (slot >= 0)
             {
                 m_PartyNames[slot].color = selected ? Color.green : Color.white;
-                if (selected)
-                {
-                    m_CurrentTarget = target;
-                }
-                else
-                {
-                    m_CurrentTarget = 0;
-                }
             }
         }
 
@@ -244,7 +236,7 @@ namespace Unity.BossRoom.Gameplay.UI
         }
 
         // helper to initialize the Allies array - safe to call multiple times
-        private void InitPartyArrays()
+        void InitPartyArrays()
         {
             if (m_PartyIds == null)
             {
@@ -262,16 +254,26 @@ namespace Unity.BossRoom.Gameplay.UI
 
         // Helper to find ally slots, returns -1 if no slot is found for the id
         // If a slot is available one will be added for this id unless dontAdd=true
-        private int FindOrAddAlly(ulong id, bool dontAdd = false)
+        int FindOrAddAlly(ulong id, bool dontAdd = false)
         {
             // make sure allies array is ready
             InitPartyArrays();
+
+            if (id == 0)
+            {
+                // special case: id of 0 is uninitialized party id
+                return -1;
+            }
 
             int openslot = -1;
             for (int i = 0; i < m_PartyIds.Length; i++)
             {
                 // if this ID is in the list, return the slot index
-                if (m_PartyIds[i] == id) { return i; }
+                if (m_PartyIds[i] == id)
+                {
+                    return i;
+                }
+
                 // otherwise, record the first open slot (not slot 0 thats for the Hero)
                 if (openslot == -1 && i > 0 && m_PartyIds[i] == 0)
                 {
@@ -287,6 +289,7 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 // activeate the correct ally panel
                 m_AllyPanel[openslot - 1].SetActive(true);
+
                 // and save ally ID to party array
                 m_PartyIds[openslot] = id;
                 return openslot;
@@ -315,15 +318,18 @@ namespace Unity.BossRoom.Gameplay.UI
         /// <param name="id"> NetworkObjectID of the ally. </param>
         void RemoveAlly(ulong id)
         {
+            // remove potential selected state of party member UI
+            SetHeroSelectFX(id, false);
+
             for (int i = 0; i < m_PartyIds.Length; i++)
             {
                 // if this ID is in the list, return the slot index
                 if (m_PartyIds[i] == id)
                 {
                     m_AllyPanel[i - 1].SetActive(false);
+
                     // and save ally ID to party array
                     m_PartyIds[i] = 0;
-                    return;
                 }
             }
 

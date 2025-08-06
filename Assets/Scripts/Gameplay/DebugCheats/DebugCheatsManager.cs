@@ -7,6 +7,7 @@ using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using VContainer;
 
 namespace Unity.BossRoom.DebugCheats
@@ -30,7 +31,7 @@ namespace Unity.BossRoom.DebugCheats
         NetworkObject m_BossPrefab;
 
         [SerializeField]
-        KeyCode m_OpenWindowKeyCode = KeyCode.Slash;
+        InputActionReference m_ToggleCheatsAction;
 
         SwitchedDoor m_SwitchedDoor;
 
@@ -40,38 +41,32 @@ namespace Unity.BossRoom.DebugCheats
             {
                 if (m_SwitchedDoor == null)
                 {
-                    m_SwitchedDoor = FindObjectOfType<SwitchedDoor>();
+                    m_SwitchedDoor = FindAnyObjectByType<SwitchedDoor>();
                 }
+
                 return m_SwitchedDoor;
             }
         }
-
-        const int k_NbTouchesToOpenWindow = 4;
 
         bool m_DestroyPortalsOnNextToggle = true;
 
         [Inject]
         IPublisher<CheatUsedMessage> m_CheatUsedMessagePublisher;
 
-        void Update()
+        void Start()
         {
-            if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
-                m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
-            {
-                m_DebugCheatsPanel.SetActive(!m_DebugCheatsPanel.activeSelf);
-            }
+            m_ToggleCheatsAction.action.performed += OnToggleCheatsActionPerformed;
         }
 
-        static bool AnyTouchDown()
+        public override void OnDestroy()
         {
-            foreach (var touch in Input.touches)
-            {
-                if (touch.phase == TouchPhase.Began)
-                {
-                    return true;
-                }
-            }
-            return false;
+            base.OnDestroy();
+            m_ToggleCheatsAction.action.performed -= OnToggleCheatsActionPerformed;
+        }
+
+        void OnToggleCheatsActionPerformed(InputAction.CallbackContext obj)
+        {
+            m_DebugCheatsPanel.SetActive(!m_DebugCheatsPanel.activeSelf);
         }
 
         public void SpawnEnemy()
@@ -158,7 +153,7 @@ namespace Unity.BossRoom.DebugCheats
                     var damageable = obj.GetComponent<IDamageable>();
                     if (damageable != null && damageable.IsDamageable())
                     {
-                        damageable.ReceiveHP(playerServerCharacter, int.MinValue);
+                        damageable.ReceiveHitPoints(playerServerCharacter, int.MinValue);
                         PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "KillTarget");
                     }
                     else
@@ -166,23 +161,23 @@ namespace Unity.BossRoom.DebugCheats
                         UnityEngine.Debug.Log($"Target {targetId} has no IDamageable component or cannot be damaged.");
                     }
                 }
-
             }
         }
 
         [Rpc(SendTo.Server, RequireOwnership = false)]
         void ServerKillAllEnemiesRpc(RpcParams serverRpcParams = default)
         {
-            foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
+            foreach (var serverCharacter in FindObjectsByType<ServerCharacter>(FindObjectsSortMode.None))
             {
                 if (serverCharacter.IsNpc && serverCharacter.LifeState == LifeState.Alive)
                 {
                     if (serverCharacter.gameObject.TryGetComponent(out IDamageable damageable))
                     {
-                        damageable.ReceiveHP(null, -serverCharacter.HitPoints);
+                        damageable.ReceiveHitPoints(null, -serverCharacter.HitPoints);
                     }
                 }
             }
+
             PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "KillAllEnemies");
         }
 
@@ -214,9 +209,10 @@ namespace Unity.BossRoom.DebugCheats
                 {
                     if (playerServerCharacter.gameObject.TryGetComponent(out IDamageable damageable))
                     {
-                        damageable.ReceiveHP(null, baseHp);
+                        damageable.ReceiveHitPoints(null, baseHp);
                     }
                 }
+
                 PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "HealPlayer");
             }
         }
@@ -233,6 +229,7 @@ namespace Unity.BossRoom.DebugCheats
                     break;
                 }
             }
+
             PublishCheatUsedMessage(clientId, "ToggleSuperSpeed");
         }
 
@@ -248,6 +245,7 @@ namespace Unity.BossRoom.DebugCheats
                     break;
                 }
             }
+
             PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "ToggleTeleportMode");
         }
 
@@ -268,7 +266,7 @@ namespace Unity.BossRoom.DebugCheats
         [Rpc(SendTo.Server, RequireOwnership = false)]
         void ServerTogglePortalsRpc(RpcParams serverRpcParams = default)
         {
-            foreach (var portal in FindObjectsOfType<EnemyPortal>())
+            foreach (var portal in FindObjectsByType<EnemyPortal>(FindObjectsSortMode.None))
             {
                 if (m_DestroyPortalsOnNextToggle)
                 {

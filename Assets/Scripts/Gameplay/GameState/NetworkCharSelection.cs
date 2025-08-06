@@ -18,7 +18,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         }
 
         /// <summary>
-        /// Describes one of the players in the lobby, and their current character-select status.
+        /// Describes one of the players in the session, and their current character-select status.
         /// </summary>
         /// <remarks>
         /// Putting FixedString inside an INetworkSerializeByMemcpy struct is not recommended because it will lose the
@@ -26,7 +26,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         /// or through INetworkSerializable will use 4 bytes of bandwidth, but inside an INetworkSerializeByMemcpy, that
         /// same empty value would consume 132 bytes of bandwidth. 
         /// </remarks>
-        public struct LobbyPlayerState : INetworkSerializable, IEquatable<LobbyPlayerState>
+        public struct SessionPlayerState : INetworkSerializable, IEquatable<SessionPlayerState>
         {
             public ulong ClientId;
 
@@ -39,7 +39,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             public SeatState SeatState;
 
 
-            public LobbyPlayerState(ulong clientId, string name, int playerNumber, SeatState state, int seatIdx = -1, float lastChangeTime = 0)
+            public SessionPlayerState(ulong clientId, string name, int playerNumber, SeatState state, int seatIdx = -1, float lastChangeTime = 0)
             {
                 ClientId = clientId;
                 PlayerNumber = playerNumber;
@@ -67,7 +67,7 @@ namespace Unity.BossRoom.Gameplay.GameState
                 serializer.SerializeValue(ref LastChangeTime);
             }
 
-            public bool Equals(LobbyPlayerState other)
+            public bool Equals(SessionPlayerState other)
             {
                 return ClientId == other.ClientId &&
                        m_PlayerName.Equals(other.m_PlayerName) &&
@@ -78,27 +78,27 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
         }
 
-        private NetworkList<LobbyPlayerState> m_LobbyPlayers;
+        private NetworkList<SessionPlayerState> m_SessionPlayers;
 
         public Avatar[] AvatarConfiguration;
 
         private void Awake()
         {
-            m_LobbyPlayers = new NetworkList<LobbyPlayerState>();
+            m_SessionPlayers = new NetworkList<SessionPlayerState>();
         }
 
         /// <summary>
-        /// Current state of all players in the lobby.
+        /// Current state of all players in the session.
         /// </summary>
-        public NetworkList<LobbyPlayerState> LobbyPlayers => m_LobbyPlayers;
+        public NetworkList<SessionPlayerState> sessionPlayers => m_SessionPlayers;
 
         /// <summary>
-        /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).
+        /// When this becomes true, the session is closed and in process of terminating (switching to gameplay).
         /// </summary>
-        public NetworkVariable<bool> IsLobbyClosed { get; } = new NetworkVariable<bool>(false);
+        public NetworkVariable<bool> IsSessionClosed { get; } = new NetworkVariable<bool>(false);
 
         /// <summary>
-        /// Server notification when a client requests a different lobby-seat, or locks in their seat choice
+        /// Server notification when a client requests a different session-seat, or locks in their seat choice
         /// </summary>
         public event Action<ulong, int, bool> OnClientChangedSeat;
 

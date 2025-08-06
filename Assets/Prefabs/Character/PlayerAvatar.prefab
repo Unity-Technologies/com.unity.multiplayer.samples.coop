@@ -35,7 +35,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1829276847453002016
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -49,6 +49,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -66,6 +67,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9520a47fc61d5ab4ca99cdac2d574909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   m_ClientVisualsAnimator: {fileID: 1829276847453002016}
   m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
 --- !u!1001 &7831782662127126385
@@ -248,6 +250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d99850df10e83c142b4b65527d7cea91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &3481187672596608374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,6 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e363085af981a41fd816ab952a0a07c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &4354133789489545025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -272,6 +276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a46d628dbb19f12449867d14fa5268b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   m_CachedServerCharacter: {fileID: 741733315856861890}
 --- !u!114 &4781465086743528409
 MonoBehaviour:
@@ -285,7 +290,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 331c67f15523ad7419792662b9768f44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   m_ServerCharacter: {fileID: 741733315856861890}
+  m_TargetAction: {fileID: -2762237389118783121, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_Skill1Action: {fileID: 2701198716142841280, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_PointAction: {fileID: -1959881153152325168, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_Action1: {fileID: 916937064669491580, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_Action2: {fileID: 2288820758043559878, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_Action3: {fileID: 6071755229503605740, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_Action5: {fileID: -1289729065238941167, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_Action6: {fileID: -1072022056946843674, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_Action7: {fileID: 5111210855846757706, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
+  m_Action8: {fileID: -5605585424277066684, guid: add476edce0d24d26bcdaf1681449ecf, type: 3}
   m_PhysicsWrapper: {fileID: 6116655102486013040}
 --- !u!114 &4887850889182527394
 MonoBehaviour:
@@ -299,6 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ee3f8e8fb4491495b03f890258082e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   m_CharacterName: 
 --- !u!114 &5043718152237111612
 MonoBehaviour:
@@ -312,6 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9cdcc3c2393a2745a733ffa279642ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   m_PlayerAvatars: {fileID: 11400000, guid: 13c227b8a2f5f5f4a8c252835aaf648f, type: 2}
 --- !u!114 &4639653625902786935
 MonoBehaviour:
@@ -325,6 +343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99504426d7b854c33811fe398cf44a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   TransitionStateInfoList:
   - IsCrossFadeExit: 0
     Layer: 0
@@ -606,6 +625,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 119ee2e9b25694aa9b2f80b9a3d22c6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   m_FeedbackPrefab: {fileID: 9137928905311479176, guid: 5d22c1d86e0e5604cbe14004bf924827, type: 3}
 --- !u!114 &2576537793715222015
 MonoBehaviour:
@@ -619,6 +639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cead4253912fb1241be383143c5f3b59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   m_DisplayHealth: 1
   m_DisplayName: 1
   m_UIStatePrefab: {fileID: -1943162842029199943, guid: 2b07482491a17964380023240087ce16, type: 3}
@@ -630,7 +651,7 @@ MonoBehaviour:
   m_VerticalScreenOffset: 20
 --- !u!95 &4727018541459492655
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -644,6 +665,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1

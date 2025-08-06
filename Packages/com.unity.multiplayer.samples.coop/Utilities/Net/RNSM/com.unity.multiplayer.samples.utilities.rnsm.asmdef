@@ -2,7 +2,8 @@
     "name": "Unity.Multiplayer.Samples.Utilities.RNSM",
     "rootNamespace": "",
     "references": [
-        "GUID:2c360f3794ebc41388fc11424ddbfdd0"
+        "GUID:2c360f3794ebc41388fc11424ddbfdd0",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

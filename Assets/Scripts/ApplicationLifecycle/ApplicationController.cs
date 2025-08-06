@@ -7,7 +7,7 @@ using Unity.BossRoom.Gameplay.Messages;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices;
 using Unity.BossRoom.UnityServices.Auth;
-using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Sessions;
 using Unity.BossRoom.Utils;
 using Unity.Netcode;
 using UnityEngine;
@@ -29,8 +29,8 @@ namespace Unity.BossRoom.ApplicationLifecycle
         [SerializeField]
         NetworkManager m_NetworkManager;
 
-        LocalLobby m_LocalLobby;
-        LobbyServiceFacade m_LobbyServiceFacade;
+        LocalSession m_LocalSession;
+        MultiplayerServicesFacade m_MultiplayerServicesFacade;
 
         IDisposable m_Subscriptions;
 
@@ -41,47 +41,47 @@ namespace Unity.BossRoom.ApplicationLifecycle
             builder.RegisterComponent(m_ConnectionManager);
             builder.RegisterComponent(m_NetworkManager);
 
-            //the following singletons represent the local representations of the lobby that we're in and the user that we are
-            //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
-            builder.Register<LocalLobbyUser>(Lifetime.Singleton);
-            builder.Register<LocalLobby>(Lifetime.Singleton);
+            // The following singletons represent the local representations of the Session that we're in and the user that we are
+            // They can persist longer than the lifetime of the UI in MainMenu where we set up the Session that we create or join
+            builder.Register<LocalSessionUser>(Lifetime.Singleton);
+            builder.Register<LocalSession>(Lifetime.Singleton);
 
             builder.Register<ProfileManager>(Lifetime.Singleton);
 
             builder.Register<PersistentGameState>(Lifetime.Singleton);
 
-            //these message channels are essential and persist for the lifetime of the lobby and relay services
+            // These message channels are essential and persist for the lifetime of the Session and relay services
             // Registering as instance to prevent code stripping on iOS
             builder.RegisterInstance(new MessageChannel<QuitApplicationMessage>()).AsImplementedInterfaces();
             builder.RegisterInstance(new MessageChannel<UnityServiceErrorMessage>()).AsImplementedInterfaces();
             builder.RegisterInstance(new MessageChannel<ConnectStatus>()).AsImplementedInterfaces();
             builder.RegisterInstance(new MessageChannel<DoorStateChangedEventMessage>()).AsImplementedInterfaces();
 
-            //these message channels are essential and persist for the lifetime of the lobby and relay services
-            //they are networked so that the clients can subscribe to those messages that are published by the server
+            // These message channels are essential and persist for the lifetime of the Session and relay services
+            // They are networked so that the clients can subscribe to those messages that are published by the server
             builder.RegisterComponent(new NetworkedMessageChannel<LifeStateChangedEventMessage>()).AsImplementedInterfaces();
             builder.RegisterComponent(new NetworkedMessageChannel<ConnectionEventMessage>()).AsImplementedInterfaces();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             builder.RegisterComponent(new NetworkedMessageChannel<CheatUsedMessage>()).AsImplementedInterfaces();
 #endif
 
-            //this message channel is essential and persists for the lifetime of the lobby and relay services
+            // This message channel is essential and persists for the lifetime of the Session and relay services
             builder.RegisterInstance(new MessageChannel<ReconnectMessage>()).AsImplementedInterfaces();
 
-            //buffered message channels hold the latest received message in buffer and pass to any new subscribers
-            builder.RegisterInstance(new BufferedMessageChannel<LobbyListFetchedMessage>()).AsImplementedInterfaces();
+            // Buffered message channels hold the latest received message in buffer and pass to any new subscribers
+            builder.RegisterInstance(new BufferedMessageChannel<SessionListFetchedMessage>()).AsImplementedInterfaces();
 
-            //all the lobby service stuff, bound here so that it persists through scene loads
+            // All the Session service stuff, bound here so that it persists through scene loads
             builder.Register<AuthenticationServiceFacade>(Lifetime.Singleton); //a manager entity that allows us to do anonymous authentication with unity services
 
-            //LobbyServiceFacade is registered as entrypoint because it wants a callback after container is built to do it's initialization
-            builder.RegisterEntryPoint<LobbyServiceFacade>(Lifetime.Singleton).AsSelf();
+            // MultiplayerServicesFacade is registered as entrypoint because it wants a callback after container is built to do it's initialization
+            builder.RegisterEntryPoint<MultiplayerServicesFacade>(Lifetime.Singleton).AsSelf();
         }
 
         private void Start()
         {
-            m_LocalLobby = Container.Resolve<LocalLobby>();
-            m_LobbyServiceFacade = Container.Resolve<LobbyServiceFacade>();
+            m_LocalSession = Container.Resolve<LocalSession>();
+            m_MultiplayerServicesFacade = Container.Resolve<MultiplayerServicesFacade>();
 
             var quitApplicationSub = Container.Resolve<ISubscriber<QuitApplicationMessage>>();
 
@@ -103,24 +103,24 @@ namespace Unity.BossRoom.ApplicationLifecycle
                 m_Subscriptions.Dispose();
             }
 
-            if (m_LobbyServiceFacade != null)
+            if (m_MultiplayerServicesFacade != null)
             {
-                m_LobbyServiceFacade.EndTracking();
+                m_MultiplayerServicesFacade.EndTracking();
             }
 
             base.OnDestroy();
         }
 
         /// <summary>
-        ///     In builds, if we are in a lobby and try to send a Leave request on application quit, it won't go through if we're quitting on the same frame.
+        ///     In builds, if we are in a Session and try to send a Leave request on application quit, it won't go through if we're quitting on the same frame.
         ///     So, we need to delay just briefly to let the request happen (though we don't need to wait for the result).
         /// </summary>
         private IEnumerator LeaveBeforeQuit()
         {
-            // We want to quit anyways, so if anything happens while trying to leave the Lobby, log the exception then carry on
+            // We want to quit anyways, so if anything happens while trying to leave the Session, log the exception then carry on
             try
             {
-                m_LobbyServiceFacade.EndTracking();
+                m_MultiplayerServicesFacade.EndTracking();
             }
             catch (Exception e)
             {
@@ -135,7 +135,7 @@ namespace Unity.BossRoom.ApplicationLifecycle
         {
             Application.wantsToQuit -= OnWantToQuit;
 
-            var canQuit = m_LocalLobby != null && string.IsNullOrEmpty(m_LocalLobby.LobbyID);
+            var canQuit = m_LocalSession != null && string.IsNullOrEmpty(m_LocalSession.SessionID);
             if (!canQuit)
             {
                 StartCoroutine(LeaveBeforeQuit());

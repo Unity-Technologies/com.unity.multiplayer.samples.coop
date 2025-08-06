@@ -212,7 +212,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
                         if (m_CollisionCache[i].TryGetComponent(out IDamageable damageable))
                         {
-                            damageable.ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
+                            damageable.ReceiveHitPoints(spawnerObj, -m_ProjectileInfo.Damage);
                         }
                     }
 

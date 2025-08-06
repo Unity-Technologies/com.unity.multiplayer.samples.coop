@@ -12,16 +12,16 @@ namespace Unity.BossRoom.Gameplay.UI
     public class UITooltipPopup : MonoBehaviour
     {
         [SerializeField]
-        private Canvas m_Canvas;
+        Canvas m_Canvas;
         [SerializeField]
         [Tooltip("This transform is shown/hidden to show/hide the popup box")]
-        private GameObject m_WindowRoot;
+        GameObject m_WindowRoot;
         [SerializeField]
-        private TextMeshProUGUI m_TextField;
+        TextMeshProUGUI m_TextField;
         [SerializeField]
-        private Vector3 m_CursorOffset;
+        Vector3 m_CursorOffset;
 
-        private void Awake()
+        void Awake()
         {
             Assert.IsNotNull(m_Canvas);
         }
@@ -48,7 +48,7 @@ namespace Unity.BossRoom.Gameplay.UI
         /// <summary>
         /// Maps screen coordinates (e.g. Input.mousePosition) to coordinates on our Canvas.
         /// </summary>
-        private Vector3 GetCanvasCoords(Vector3 screenCoords)
+        Vector3 GetCanvasCoords(Vector3 screenCoords)
         {
             Vector2 canvasCoords;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -60,14 +60,14 @@ namespace Unity.BossRoom.Gameplay.UI
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        void OnValidate()
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
                 if (!m_Canvas)
                 {
                     // typically there's only one canvas in the scene, so pick that
-                    m_Canvas = FindObjectOfType<Canvas>();
+                    m_Canvas = FindAnyObjectByType<Canvas>();
                 }
             }
         }
