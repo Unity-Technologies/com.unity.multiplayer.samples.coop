@@ -7,7 +7,7 @@
 
 [![UnityVersion](https://img.shields.io/badge/Unity%20Version:-6000.0.52f1%20LTS-57b9d3.svg?logo=unity&color=2196F3)](https://unity.com/releases/editor/whats-new/6000.0.52)
 [![NetcodeVersion](https://img.shields.io/badge/Netcode%20Version:-2.4.3-57b9d3.svg?logo=unity&color=2196F3)](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/releases/tag/v2.4.3)
-[![LatestRelease](https://img.shields.io/badge/Latest%20Github%20Release:-v2.5.0-57b9d3.svg?logo=github&color=brightgreen)](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases/tag/v2.5.0)
+[![LatestRelease](https://img.shields.io/badge/Latest%20Github%20Release:-v3.0.0-57b9d3.svg?logo=github&color=brightgreen)](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases/tag/v3.0.0)
 <br><br>
 
 Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. It is an educational sample designed to showcase typical netcode [patterns](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom-actions/index.html) that are frequently featured in similar multiplayer games.
@@ -291,7 +291,7 @@ git clone https://github.com/Unity-Technologies/com.unity.multiplayer.samples.co
 <br><br>
 
 ## Community
-For help, questions, networking advice, or discussions about Netcode for GameObjects and its samples, please join our [Discord Community](https://discord.gg/FM8SE9E) or create a post in the [Unity Multiplayer Forum](https://forum.unity.com/forums/netcode-for-gameobjects.661/).
+For help, questions, networking advice, or discussions about Netcode for GameObjects and its samples, please join our [Discord Community](https://discord.com/channels/489222168727519232/1390346492019212368) or create a post in the [Unity Multiplayer Forum](https://forum.unity.com/forums/netcode-for-gameobjects.661/).
 <br><br>
 
 ## Feedback Form
@@ -308,7 +308,7 @@ Thank you for cloning Boss Room and taking a look at the project. To help us imp
 
 [![Documentation](https://img.shields.io/badge/Unity-boss--room--docs-57b9d3.svg?logo=unity&color=2196F3)](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom/bossroom)
 [![Forums](https://img.shields.io/badge/Unity-multiplayer--forum-57b9d3.svg?logo=unity&color=2196F3)](https://forum.unity.com/forums/multiplayer.26/)
-[![Discord](https://img.shields.io/discord/449263083769036810.svg?label=discord&logo=discord&color=5865F2)](https://discord.gg/FM8SE9E)
+[![Discord](https://img.shields.io/discord/449263083769036810.svg?label=discord&logo=discord&color=5865F2)](https://discord.com/channels/489222168727519232/1390346492019212368)
 <br><br>
   
   ![](Documentation/Images/Players.png)
