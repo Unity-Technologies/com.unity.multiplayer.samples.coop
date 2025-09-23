@@ -1,4 +1,3 @@
-using System;
 using Unity.BossRoom.Gameplay.Configuration;
 using TMPro;
 using Unity.BossRoom.ConnectionManagement;
@@ -43,8 +42,6 @@ namespace Unity.BossRoom.Gameplay.UI
 
         const string k_DefaultSessionName = "no-name";
         const int k_MaxPlayers = 8;
-
-        ISession m_Session;
 
         [Inject]
         void InjectDependenciesAndInitialize(

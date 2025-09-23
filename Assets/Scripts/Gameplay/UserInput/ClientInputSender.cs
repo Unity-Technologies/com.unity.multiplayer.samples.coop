@@ -145,8 +145,9 @@ namespace Unity.BossRoom.Gameplay.UserInput
             m_MainCamera = Camera.main;
         }
 
-        public override void OnNetworkSpawn()
+        protected override void OnNetworkPostSpawn()
         {
+            base.OnNetworkPostSpawn();
             if (!IsClient || !IsOwner)
             {
                 enabled = false;
@@ -195,6 +196,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
         public override void OnNetworkDespawn()
         {
+            base.OnNetworkDespawn();
             if (m_ServerCharacter)
             {
                 m_ServerCharacter.TargetId.OnValueChanged -= OnTargetChanged;

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.Configuration;
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.Gameplay.Messages;
@@ -25,6 +26,9 @@ namespace Unity.BossRoom.Gameplay.GameState
     [RequireComponent(typeof(NetcodeHooks))]
     public class ServerBossRoomState : GameStateBehaviour
     {
+        [SerializeField]
+        AvatarRegistry m_AvatarRegistry;
+        
         [FormerlySerializedAs("m_NetworkWinState")]
         [SerializeField]
         PersistentGameState persistentGameState;
@@ -192,23 +196,45 @@ namespace Unity.BossRoom.Gameplay.GameState
 
             // pass character type from persistent player to avatar
             var networkAvatarGuidStateExists =
-                newPlayer.TryGetComponent(out NetworkAvatarGuidState networkAvatarGuidState);
+                playerNetworkObject.TryGetComponent(out NetworkAvatarGuidState networkAvatarGuidState);
 
             Assert.IsTrue(networkAvatarGuidStateExists,
-                $"NetworkCharacterGuidState not found on player avatar!");
+                $"NetworkCharacterGuidState not found on PersistentPlayer!");
+            
+            var newPlayerNetworkAvatarExists =
+                newPlayer.TryGetComponent(out ClientPlayerAvatarNetworkAnimator clientPlayerAvatarNetworkAnimator);
 
+            Assert.IsTrue(newPlayerNetworkAvatarExists,
+                $"ClientPlayerAvatarNetworkAnimator not found on PlayerAvatar!");
+            
             // if reconnecting, set the player's position and rotation to its previous state
+            // instantiate new NetworkVariables above with a default value to ensure they're ready for use on OnNetworkSpawn
             if (lateJoin)
             {
-                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
-                if (sessionPlayerData is { HasCharacterSpawned: true })
+                var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+                if (sessionPlayerData.HasValue)
                 {
-                    physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, sessionPlayerData.Value.PlayerRotation);
+                    if (sessionPlayerData.Value.HasCharacterSpawned)
+                    {
+                        physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, sessionPlayerData.Value.PlayerRotation);
+                        networkAvatarGuidState.AvatarGuid = clientPlayerAvatarNetworkAnimator.AvatarGuid =
+                            new NetworkVariable<NetworkGuid>(sessionPlayerData.Value.AvatarNetworkGuid);
+                    }
+                    else
+                    {
+                        var randomAvatar = m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
+                        networkAvatarGuidState.AvatarGuid = clientPlayerAvatarNetworkAnimator.AvatarGuid = 
+                            new NetworkVariable<NetworkGuid>(randomAvatar);
+                        var playerData = sessionPlayerData.Value;
+                        playerData.AvatarNetworkGuid = networkAvatarGuidState.AvatarGuid.Value;
+                        SessionManager<SessionPlayerData>.Instance.SetPlayerData(clientId, playerData);
+                    }
                 }
             }
-
-            // instantiate new NetworkVariables with a default value to ensure they're ready for use on OnNetworkSpawn
-            networkAvatarGuidState.AvatarGuid = new NetworkVariable<NetworkGuid>(persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value);
+            else
+            {
+                clientPlayerAvatarNetworkAnimator.AvatarGuid = new NetworkVariable<NetworkGuid>(persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value);
+            }
 
             // pass name from persistent player to avatar
             if (newPlayer.TryGetComponent(out NetworkNameState networkNameState))

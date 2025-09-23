@@ -41,11 +41,7 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         NetworkNameState m_NetworkNameState;
 
-        ServerCharacter m_ServerCharacter;
-
         ClientPlayerAvatarNetworkAnimator m_ClientPlayerAvatarNetworkAnimator;
-
-        NetworkAvatarGuidState m_NetworkAvatarGuidState;
 
         [SerializeField]
         IntVariable m_BaseHP;
@@ -74,13 +70,9 @@ namespace Unity.BossRoom.Gameplay.UI
         // used to compute world position based on target and offsets
         Vector3 m_WorldPos;
 
-        void Awake()
+        protected override void OnNetworkPostSpawn()
         {
-            m_ServerCharacter = GetComponent<ServerCharacter>();
-        }
-
-        public override void OnNetworkSpawn()
-        {
+            base.OnNetworkPostSpawn();
             if (!NetworkManager.Singleton.IsClient)
             {
                 enabled = false;
@@ -110,9 +102,9 @@ namespace Unity.BossRoom.Gameplay.UI
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 
             // if PC, find our graphics transform and update health through callbacks, if displayed
-            if (TryGetComponent(out m_ClientPlayerAvatarNetworkAnimator) && TryGetComponent(out m_NetworkAvatarGuidState))
+            if (TryGetComponent(out m_ClientPlayerAvatarNetworkAnimator))
             {
-                m_BaseHP = m_NetworkAvatarGuidState.RegisteredAvatar.CharacterClass.BaseHP;
+                m_BaseHP = m_ClientPlayerAvatarNetworkAnimator.RegisteredAvatar.CharacterClass.BaseHP;
 
                 m_TransformToTrack = m_ClientPlayerAvatarNetworkAnimator.Animator.transform;
 

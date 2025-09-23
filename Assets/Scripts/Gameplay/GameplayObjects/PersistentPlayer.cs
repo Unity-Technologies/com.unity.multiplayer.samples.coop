@@ -1,4 +1,3 @@
-using System;
 using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.Utils;
@@ -35,6 +34,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public override void OnNetworkSpawn()
         {
+            base.OnNetworkSpawn();
             gameObject.name = "PersistentPlayer" + OwnerClientId;
 
             // Note that this is done here on OnNetworkSpawn in case this NetworkBehaviour's properties are accessed
@@ -48,16 +48,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 {
                     var playerData = sessionPlayerData.Value;
                     m_NetworkNameState.Name.Value = playerData.PlayerName;
-                    if (playerData.HasCharacterSpawned)
-                    {
-                        m_NetworkAvatarGuidState.AvatarGuid.Value = playerData.AvatarNetworkGuid;
-                    }
-                    else
-                    {
-                        m_NetworkAvatarGuidState.SetRandomAvatar();
-                        playerData.AvatarNetworkGuid = m_NetworkAvatarGuidState.AvatarGuid.Value;
-                        SessionManager<SessionPlayerData>.Instance.SetPlayerData(OwnerClientId, playerData);
-                    }
                 }
             }
         }
@@ -70,6 +60,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public override void OnNetworkDespawn()
         {
+            base.OnNetworkDespawn();
             RemovePersistentPlayer();
         }
 

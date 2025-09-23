@@ -10,11 +10,14 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         ClientPlayerAvatarRuntimeCollection m_PlayerAvatars;
 
         public static event Action<ClientPlayerAvatar> LocalClientSpawned;
+        
+        public static event Action<ClientPlayerAvatar> LocalClientPostSpawned;
 
         public static event Action LocalClientDespawned;
 
         public override void OnNetworkSpawn()
         {
+            base.OnNetworkSpawn();
             name = "PlayerAvatar" + OwnerClientId;
 
             if (IsClient && IsOwner)
@@ -28,8 +31,18 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             }
         }
 
+        protected override void OnNetworkPostSpawn()
+        {
+            base.OnNetworkPostSpawn();
+            if (IsClient && IsOwner)
+            {
+                LocalClientPostSpawned?.Invoke(this);
+            }
+        }
+
         public override void OnNetworkDespawn()
         {
+            base.OnNetworkDespawn();
             if (IsClient && IsOwner)
             {
                 LocalClientDespawned?.Invoke();

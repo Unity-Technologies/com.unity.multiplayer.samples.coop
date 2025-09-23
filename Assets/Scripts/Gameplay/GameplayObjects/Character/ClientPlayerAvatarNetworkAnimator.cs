@@ -1,6 +1,10 @@
+using System;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
+using Avatar = Unity.BossRoom.Gameplay.Configuration.Avatar;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
@@ -13,14 +17,63 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
     /// </summary>
     public class ClientPlayerAvatarNetworkAnimator : NetworkAnimator
     {
-        [SerializeField]
-        NetworkAvatarGuidState m_NetworkAvatarGuidState;
-
+        [HideInInspector]
+        public NetworkVariable<NetworkGuid> AvatarGuid = new NetworkVariable<NetworkGuid>();
+        
         bool m_AvatarInstantiated;
+        
+        [SerializeField]
+        AvatarRegistry m_AvatarRegistry;
 
+        Avatar m_Avatar;
+
+        public Avatar RegisteredAvatar
+        {
+            get
+            {
+                if (m_Avatar == null)
+                {
+                    RegisterAvatar(AvatarGuid.Value.ToGuid());
+                }
+
+                return m_Avatar;
+            }
+        }
+        
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
+
+            RegisterAvatar(AvatarGuid.Value.ToGuid());
+        }
+
+        void RegisterAvatar(Guid guid)
+        {
+            if (guid.Equals(Guid.Empty))
+            {
+                // not a valid Guid
+                return;
+            }
+
+            // based on the Guid received, Avatar is fetched from AvatarRegistry
+            if (!m_AvatarRegistry.TryGetAvatar(guid, out var avatar))
+            {
+                Debug.LogError("Avatar not found!");
+                return;
+            }
+
+            if (m_Avatar != null)
+            {
+                // already set, this is an idempotent call, we don't want to Instantiate twice
+                return;
+            }
+
+            m_Avatar = avatar;
+        }
+
+        protected override void OnNetworkPostSpawn()
+        {
+            base.OnNetworkPostSpawn();
             if (!IsClient || m_AvatarInstantiated)
             {
                 return;
@@ -60,7 +113,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             }
 
             // spawn avatar graphics GameObject
-            Instantiate(m_NetworkAvatarGuidState.RegisteredAvatar.Graphics, Animator.transform);
+            Instantiate(RegisteredAvatar.Graphics, Animator.transform);
 
             Animator.Rebind();
 

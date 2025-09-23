@@ -17,8 +17,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
     /// This class was separated in two to keep client and server context self contained. This way you don't have to continuously ask yourself if code is running client or server side.
     /// </summary>
     [RequireComponent(typeof(NetworkHealthState),
-        typeof(NetworkLifeState),
-        typeof(NetworkAvatarGuidState))]
+        typeof(NetworkLifeState))]
     public class ServerCharacter : NetworkBehaviour, ITargetable
     {
         [FormerlySerializedAs("m_ClientVisualization")]
@@ -30,20 +29,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         [SerializeField]
         CharacterClass m_CharacterClass;
 
-        public CharacterClass CharacterClass
-        {
-            get
-            {
-                if (m_CharacterClass == null)
-                {
-                    m_CharacterClass = m_State.RegisteredAvatar.CharacterClass;
-                }
-
-                return m_CharacterClass;
-            }
-
-            set => m_CharacterClass = value;
-        }
+        public CharacterClass CharacterClass => m_CharacterClass;
 
         /// Indicates how the character's movement should be depicted.
         public NetworkVariable<MovementStatus> MovementStatus { get; } = new NetworkVariable<MovementStatus>();
@@ -99,7 +85,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         public CharacterTypeEnum CharacterType => CharacterClass.CharacterType;
 
-        private ServerActionPlayer m_ServerActionPlayer;
+        ServerActionPlayer m_ServerActionPlayer;
 
         /// <summary>
         /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
@@ -109,16 +95,15 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
-        private bool m_BrainEnabled = true;
+        bool m_BrainEnabled = true;
 
         [SerializeField]
         [Tooltip("Setting negative value disables destroying object after it is killed.")]
-        private float m_KilledDestroyDelaySeconds = 3.0f;
+        float m_KilledDestroyDelaySeconds = 3.0f;
 
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
-        private Action m_StartingAction;
-
+        Action m_StartingAction;
 
         [SerializeField]
         DamageReceiver m_DamageReceiver;
@@ -139,18 +124,23 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         public ServerAnimationHandler serverAnimationHandler => m_ServerAnimationHandler;
 
         private AIBrain m_AIBrain;
-        NetworkAvatarGuidState m_State;
 
         void Awake()
         {
             m_ServerActionPlayer = new ServerActionPlayer(this);
             NetLifeState = GetComponent<NetworkLifeState>();
             NetHealthState = GetComponent<NetworkHealthState>();
-            m_State = GetComponent<NetworkAvatarGuidState>();
         }
 
         public override void OnNetworkSpawn()
         {
+            base.OnNetworkSpawn();
+            
+            if (m_CharacterClass == null)
+            {
+                m_CharacterClass = GetComponent<ClientPlayerAvatarNetworkAnimator>().RegisteredAvatar.CharacterClass;
+            }
+            
             if (!IsServer) { enabled = false; }
             else
             {
@@ -175,6 +165,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public override void OnNetworkDespawn()
         {
+            base.OnNetworkDespawn();
             NetLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
 
             if (m_DamageReceiver)
@@ -184,7 +175,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 m_DamageReceiver.GetTotalDamageFunc -= GetTotalDamage;
             }
         }
-
 
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
@@ -241,8 +231,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         void InitializeHitPoints()
         {
-            HitPoints = CharacterClass.BaseHP.Value;
-
             if (!IsNpc)
             {
                 SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
@@ -252,9 +240,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                     if (HitPoints <= 0)
                     {
                         LifeState = LifeState.Fainted;
+                        return;
                     }
                 }
             }
+            
+            HitPoints = CharacterClass.BaseHP.Value;
+            LifeState = LifeState.Alive;
         }
 
         /// <summary>

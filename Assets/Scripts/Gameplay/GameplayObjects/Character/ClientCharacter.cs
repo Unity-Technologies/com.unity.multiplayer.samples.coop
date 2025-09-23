@@ -46,6 +46,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public bool CanPerformActions => m_ServerCharacter.CanPerformActions;
 
+        [SerializeField]
         ServerCharacter m_ServerCharacter;
 
         public ServerCharacter serverCharacter => m_ServerCharacter;
@@ -109,8 +110,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             enabled = false;
         }
 
-        public override void OnNetworkSpawn()
+        protected override void OnNetworkPostSpawn()
         {
+            base.OnNetworkPostSpawn();
             if (!IsClient || transform.parent == null)
             {
                 return;
@@ -119,8 +121,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             enabled = true;
 
             m_ClientActionViz = new ClientActionPlayer(this);
-
-            m_ServerCharacter = GetComponentInParent<ServerCharacter>();
 
             m_ServerCharacter.IsStealthy.OnValueChanged += OnStealthyChanged;
             m_ServerCharacter.MovementStatus.OnValueChanged += OnMovementStatusChanged;
@@ -171,6 +171,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public override void OnNetworkDespawn()
         {
+            base.OnNetworkDespawn();
             if (m_ServerCharacter)
             {
                 m_ServerCharacter.IsStealthy.OnValueChanged -= OnStealthyChanged;

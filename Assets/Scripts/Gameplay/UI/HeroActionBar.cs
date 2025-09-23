@@ -128,26 +128,31 @@ namespace Unity.BossRoom.Gameplay.UI
             m_InputSender = inputSender;
             m_InputSender.action1ModifiedCallback += Action1ModifiedCallback;
 
-            Action action1 = null;
-            if (m_InputSender.actionState1 != null)
+            if (!clientPlayerAvatar.TryGetComponent(out ServerCharacter serverCharacter))
             {
-                GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState1.actionID, out action1);
+                Debug.LogError("ServerCharacter not found on ClientPlayerAvatar!", clientPlayerAvatar);
+            }
+            
+            Action action1 = null;
+            if (serverCharacter.CharacterClass.Skill1)
+            {
+                GameDataSource.Instance.TryGetActionPrototypeByID(serverCharacter.CharacterClass.Skill1.ActionID, out action1);
             }
 
             UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], action1);
 
             Action action2 = null;
-            if (m_InputSender.actionState2 != null)
+            if (serverCharacter.CharacterClass.Skill2)
             {
-                GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState2.actionID, out action2);
+                GameDataSource.Instance.TryGetActionPrototypeByID(serverCharacter.CharacterClass.Skill2.ActionID, out action2);
             }
 
             UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], action2);
 
             Action action3 = null;
-            if (m_InputSender.actionState3 != null)
+            if (serverCharacter.CharacterClass.Skill3)
             {
-                GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState3.actionID, out action3);
+                GameDataSource.Instance.TryGetActionPrototypeByID(serverCharacter.CharacterClass.Skill3.ActionID, out action3);
             }
 
             UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], action3);
@@ -184,7 +189,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
             m_ToggleEmoteBarAction.action.performed += OnToggleEmoteBarPerformed;
 
-            ClientPlayerAvatar.LocalClientSpawned += RegisterInputSender;
+            ClientPlayerAvatar.LocalClientPostSpawned += RegisterInputSender;
             ClientPlayerAvatar.LocalClientDespawned += DeregisterInputSender;
         }
 
@@ -210,7 +215,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
             m_ToggleEmoteBarAction.action.performed -= OnToggleEmoteBarPerformed;
 
-            ClientPlayerAvatar.LocalClientSpawned -= RegisterInputSender;
+            ClientPlayerAvatar.LocalClientPostSpawned -= RegisterInputSender;
             ClientPlayerAvatar.LocalClientDespawned -= DeregisterInputSender;
         }
 

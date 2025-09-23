@@ -19,10 +19,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public NetworkAnimator NetworkAnimator => m_NetworkAnimator;
 
-        public override void OnNetworkSpawn()
+        protected override void OnNetworkPostSpawn()
         {
+            base.OnNetworkPostSpawn();
             if (IsServer)
             {
+                OnLifeStateChanged(LifeState.Unset, m_NetworkLifeState.LifeState.Value);
                 m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
             }
         }
@@ -32,10 +34,15 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             switch (newValue)
             {
                 case LifeState.Alive:
-                    NetworkAnimator.SetTrigger(m_VisualizationConfiguration.AliveStateTriggerID);
+                    if (previousValue == LifeState.Fainted)
+                    {
+                        NetworkAnimator.SetTrigger(m_VisualizationConfiguration.AliveStateTriggerID);
+                    }
                     break;
                 case LifeState.Fainted:
-                    NetworkAnimator.SetTrigger(m_VisualizationConfiguration.FaintedStateTriggerID);
+                    NetworkAnimator.SetTrigger(previousValue == LifeState.Unset
+                        ? m_VisualizationConfiguration.EntryFaintedTriggerID
+                        : m_VisualizationConfiguration.FaintedStateTriggerID);
                     break;
                 case LifeState.Dead:
                     NetworkAnimator.SetTrigger(m_VisualizationConfiguration.DeadStateTriggerID);
@@ -47,6 +54,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public override void OnNetworkDespawn()
         {
+            base.OnNetworkDespawn();
             if (IsServer && m_NetworkLifeState != null)
             {
                 m_NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;

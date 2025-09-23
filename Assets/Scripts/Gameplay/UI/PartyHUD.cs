@@ -96,9 +96,9 @@ namespace Unity.BossRoom.Gameplay.UI
             m_PartyIds[0] = m_OwnedServerCharacter.NetworkObject.NetworkObjectId;
 
             // set hero portrait
-            if (m_OwnedServerCharacter.TryGetComponent(out NetworkAvatarGuidState avatarGuidState))
+            if (m_OwnedServerCharacter.TryGetComponent(out ClientPlayerAvatarNetworkAnimator clientPlayerAvatarNetworkAnimator))
             {
-                m_HeroPortrait.sprite = avatarGuidState.RegisteredAvatar.Portrait;
+                m_HeroPortrait.sprite = clientPlayerAvatarNetworkAnimator.RegisteredAvatar.Portrait;
             }
 
             SetUIFromSlotData(0, m_OwnedServerCharacter);
