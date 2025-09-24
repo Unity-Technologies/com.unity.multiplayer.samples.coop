@@ -14,7 +14,6 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using VContainer;
 using Random = UnityEngine.Random;
 
@@ -28,10 +27,6 @@ namespace Unity.BossRoom.Gameplay.GameState
     {
         [SerializeField]
         AvatarRegistry m_AvatarRegistry;
-        
-        [FormerlySerializedAs("m_NetworkWinState")]
-        [SerializeField]
-        PersistentGameState persistentGameState;
 
         [SerializeField]
         NetcodeHooks m_NetcodeHooks;
@@ -46,7 +41,7 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         private List<Transform> m_PlayerSpawnPointsList = null;
 
-        public override GameState ActiveState { get { return GameState.BossRoom; } }
+        public override GameState ActiveState => GameState.BossRoom;
 
         // Wait time constants for switching to post game after the game is won or lost
         private const float k_WinDelay = 7.0f;
@@ -80,6 +75,7 @@ namespace Unity.BossRoom.Gameplay.GameState
                 enabled = false;
                 return;
             }
+
             m_PersistentGameState.Reset();
             m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
 
@@ -130,7 +126,8 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
         }
 
-        void OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+        void OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted,
+            List<ulong> clientsTimedOut)
         {
             if (!InitialSpawnDone && loadSceneMode == LoadSceneMode.Single)
             {
@@ -200,13 +197,13 @@ namespace Unity.BossRoom.Gameplay.GameState
 
             Assert.IsTrue(networkAvatarGuidStateExists,
                 $"NetworkCharacterGuidState not found on PersistentPlayer!");
-            
+
             var newPlayerNetworkAvatarExists =
                 newPlayer.TryGetComponent(out ClientPlayerAvatarNetworkAnimator clientPlayerAvatarNetworkAnimator);
 
             Assert.IsTrue(newPlayerNetworkAvatarExists,
                 $"ClientPlayerAvatarNetworkAnimator not found on PlayerAvatar!");
-            
+
             // if reconnecting, set the player's position and rotation to its previous state
             // instantiate new NetworkVariables above with a default value to ensure they're ready for use on OnNetworkSpawn
             if (lateJoin)
@@ -216,14 +213,15 @@ namespace Unity.BossRoom.Gameplay.GameState
                 {
                     if (sessionPlayerData.Value.HasCharacterSpawned)
                     {
-                        physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, sessionPlayerData.Value.PlayerRotation);
+                        physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition,
+                            sessionPlayerData.Value.PlayerRotation);
                         networkAvatarGuidState.AvatarGuid = clientPlayerAvatarNetworkAnimator.AvatarGuid =
                             new NetworkVariable<NetworkGuid>(sessionPlayerData.Value.AvatarNetworkGuid);
                     }
                     else
                     {
                         var randomAvatar = m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
-                        networkAvatarGuidState.AvatarGuid = clientPlayerAvatarNetworkAnimator.AvatarGuid = 
+                        networkAvatarGuidState.AvatarGuid = clientPlayerAvatarNetworkAnimator.AvatarGuid =
                             new NetworkVariable<NetworkGuid>(randomAvatar);
                         var playerData = sessionPlayerData.Value;
                         playerData.AvatarNetworkGuid = networkAvatarGuidState.AvatarGuid.Value;
@@ -233,13 +231,15 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
             else
             {
-                clientPlayerAvatarNetworkAnimator.AvatarGuid = new NetworkVariable<NetworkGuid>(persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value);
+                clientPlayerAvatarNetworkAnimator.AvatarGuid =
+                    new NetworkVariable<NetworkGuid>(persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value);
             }
 
             // pass name from persistent player to avatar
             if (newPlayer.TryGetComponent(out NetworkNameState networkNameState))
             {
-                networkNameState.Name = new NetworkVariable<FixedPlayerName>(persistentPlayer.NetworkNameState.Name.Value);
+                networkNameState.Name =
+                    new NetworkVariable<FixedPlayerName>(persistentPlayer.NetworkNameState.Name.Value);
             }
 
             // spawn players characters with destroyWithScene = true
@@ -266,6 +266,7 @@ namespace Unity.BossRoom.Gameplay.GameState
                     {
                         BossDefeated();
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

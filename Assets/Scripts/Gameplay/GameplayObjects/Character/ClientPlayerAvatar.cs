@@ -10,7 +10,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         ClientPlayerAvatarRuntimeCollection m_PlayerAvatars;
 
         public static event Action<ClientPlayerAvatar> LocalClientSpawned;
-        
+
         public static event Action<ClientPlayerAvatar> LocalClientPostSpawned;
 
         public static event Action LocalClientDespawned;

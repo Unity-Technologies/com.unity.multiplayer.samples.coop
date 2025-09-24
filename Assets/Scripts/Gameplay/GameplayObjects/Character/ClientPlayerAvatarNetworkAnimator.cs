@@ -19,11 +19,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
     {
         [HideInInspector]
         public NetworkVariable<NetworkGuid> AvatarGuid = new NetworkVariable<NetworkGuid>();
-        
+
         bool m_AvatarInstantiated;
-        
-        [SerializeField]
-        AvatarRegistry m_AvatarRegistry;
+
+        [SerializeField] AvatarRegistry m_AvatarRegistry;
 
         Avatar m_Avatar;
 
@@ -39,7 +38,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 return m_Avatar;
             }
         }
-        
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();

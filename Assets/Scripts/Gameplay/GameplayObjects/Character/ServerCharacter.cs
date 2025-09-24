@@ -135,13 +135,16 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-            
+
             if (m_CharacterClass == null)
             {
                 m_CharacterClass = GetComponent<ClientPlayerAvatarNetworkAnimator>().RegisteredAvatar.CharacterClass;
             }
-            
-            if (!IsServer) { enabled = false; }
+
+            if (!IsServer)
+            {
+                enabled = false;
+            }
             else
             {
                 NetLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
@@ -159,6 +162,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                     var startingAction = new ActionRequestData() { ActionID = m_StartingAction.ActionID };
                     PlayAction(ref startingAction);
                 }
+
                 InitializeHitPoints();
             }
         }
@@ -233,7 +237,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         {
             if (!IsNpc)
             {
-                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                SessionPlayerData? sessionPlayerData =
+                    SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData is { HasCharacterSpawned: true })
                 {
                     HitPoints = sessionPlayerData.Value.CurrentHitPoints;
@@ -244,7 +249,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                     }
                 }
             }
-            
+
             HitPoints = CharacterClass.BaseHP.Value;
             LifeState = LifeState.Alive;
         }
@@ -396,7 +401,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// <summary>
         /// This character's AIBrain. Will be null if this is not an NPC.
         /// </summary>
-        public AIBrain AIBrain { get { return m_AIBrain; } }
-
+        public AIBrain AIBrain => m_AIBrain;
     }
 }
