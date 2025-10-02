@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
+## [unreleased] yyyy-mm-dd
+
+### Changed
+* Moved behaviour of client-side visual Components to OnNetworkPostSpawn method to prevent race conditions on other NetworkBehaviours that initialize on OnNetworkSpawn (#925)
+* Responsibility of the initialization of an Avatar's GUID is now deferred to ServerBossRoomState component (#925) This allows the Avatar's NetworkBehaviours to read the GUID value at spawn time.
+
+### Fixed
+* Fixed fainted players not spawning with the correct animation (#925)
+
 ## [3.0.0] 2025-08-06
 
 ### Added

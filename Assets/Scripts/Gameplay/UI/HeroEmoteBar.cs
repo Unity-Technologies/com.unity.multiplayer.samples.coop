@@ -17,7 +17,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void Awake()
         {
-            ClientPlayerAvatar.LocalClientSpawned += RegisterInputSender;
+            ClientPlayerAvatar.LocalClientPostSpawned += RegisterInputSender;
             ClientPlayerAvatar.LocalClientDespawned += DeregisterInputSender;
         }
 
@@ -45,7 +45,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void OnDestroy()
         {
-            ClientPlayerAvatar.LocalClientSpawned -= RegisterInputSender;
+            ClientPlayerAvatar.LocalClientPostSpawned -= RegisterInputSender;
             ClientPlayerAvatar.LocalClientDespawned -= DeregisterInputSender;
         }
 

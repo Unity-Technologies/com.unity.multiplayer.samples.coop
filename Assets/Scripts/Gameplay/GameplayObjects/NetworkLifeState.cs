@@ -1,4 +1,3 @@
-using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -6,6 +5,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     public enum LifeState
     {
+        Unset,
         Alive,
         Fainted,
         Dead,
@@ -17,7 +17,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
     public class NetworkLifeState : NetworkBehaviour
     {
         [SerializeField]
-        NetworkVariable<LifeState> m_LifeState = new NetworkVariable<LifeState>(GameplayObjects.LifeState.Alive);
+        NetworkVariable<LifeState> m_LifeState = new NetworkVariable<LifeState>(GameplayObjects.LifeState.Unset);
 
         public NetworkVariable<LifeState> LifeState => m_LifeState;
 
