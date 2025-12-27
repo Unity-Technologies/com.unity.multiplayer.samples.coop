@@ -12,6 +12,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _EMISSION
   - _FLIPBOOKBLENDING_ON
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []

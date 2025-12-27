@@ -177,6 +177,14 @@ PrefabInstance:
       propertyPath: m_CharacterClass
       value: 
       objectReference: {fileID: 11400000, guid: 686e97a1c3abaf243a72ce1c5a9d7a9f, type: 2}
+    - target: {fileID: 3966550235194772869, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: prefabId
+      value: 98fafd094d0c0fa41abe5c3322251839
+      objectReference: {fileID: 0}
+    - target: {fileID: 3966550235194772869, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: prefabReference
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6995351927119310807, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_ClientCharacterVisualization
       value: 

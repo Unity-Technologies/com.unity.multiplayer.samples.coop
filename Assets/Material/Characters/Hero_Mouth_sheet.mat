@@ -97,6 +97,7 @@ Material:
     - _Depth_Blend: 0
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
+    - _DstBlendAlpha: 10
     - _GlossMapScale: 1
     - _Glossiness: 1
     - _GlossinessSource: 0
@@ -117,6 +118,7 @@ Material:
     - _SpecSource: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
     - _Surface: 1
     - _UVSec: 0
     - _UseAlpha: 1

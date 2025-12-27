@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -5536186819612961332}
   - component: {fileID: 8450381715082006755}
   - component: {fileID: 596945379875709001}
+  - component: {fileID: 546668160595155040}
   m_Layer: 0
   m_Name: PersistentPlayer
   m_TagString: Untagged
@@ -27,13 +28,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4927145850774787080}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5202563697772659352
 MonoBehaviour:
@@ -47,13 +48,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 951099334
+  GlobalObjectIdHash: 1319132807
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  GhostAdapter: {fileID: 546668160595155040}
+  HasGhost: 1
+  DeferredDespawnTick: 0
+  Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+  NetworkObjectBridge: {fileID: 0}
 --- !u!114 &-5536186819612961332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,6 +76,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9bbde9373514244f989e226f86fdc6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   m_PersistentPlayerRuntimeCollection: {fileID: 11400000, guid: 23c3465e22da67c4e812c4faf3adb1cb, type: 2}
   m_NetworkNameState: {fileID: 8450381715082006755}
   m_NetworkAvatarGuidState: {fileID: 596945379875709001}
@@ -81,6 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d99850df10e83c142b4b65527d7cea91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &596945379875709001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,4 +105,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe9bfd21e47445488dfd84b4e0c9884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &546668160595155040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4927145850774787080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f668e4690f4a86838c7135ee10c69a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.NetCode::Unity.NetCode.GhostAdapter
+  HasOwner: 0
+  SupportAutoCommandTarget: 1
+  TrackInterpolationDelay: 0
+  GhostGroup: 0
+  UsePreSerialization: 0
+  UseSingleBaseline: 0
+  RollbackPredictedSpawnedGhostState: 0
+  RollbackPredictionOnStructuralChanges: 1
+  DefaultGhostMode: 0
+  SupportedGhostModes: 3
+  OptimizationMode: 0
+  Importance: 1
+  MaxSendRate: 0
+  prefabId: 1d3f5528d25661949890bcd7f47fe81a
+  prefabReference: {fileID: 0}
+  SkipAutomaticPrefabRegistration: 0
+  m_AllBehaviours:
+  - {fileID: 0}

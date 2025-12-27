@@ -89,6 +89,7 @@ Material:
     - Boolean_f3c76e1f79d04ab0a9f91a5dd13e3822: 0
     - _AlphaClip: 0
     - _AlphaCutoff: 0.5
+    - _AlphaToMask: 0
     - _Blend: 0
     - _BlendOp: 0
     - _BumpScale: 1
@@ -107,6 +108,7 @@ Material:
     - _DistortionStrength: 1
     - _DistortionStrengthScaled: 0.1
     - _DstBlend: 10
+    - _DstBlendAlpha: 10
     - _EmissionEnabled: 0
     - _EnvironmentReflections: 1
     - _FlipbookBlending: 0
@@ -130,6 +132,7 @@ Material:
     - _SoftParticlesNearFadeDistance: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
     - _Stencil: 0
     - _StencilComp: 287.04
     - _StencilOp: 131.3

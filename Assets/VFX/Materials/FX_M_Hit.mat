@@ -121,6 +121,7 @@ Material:
     - _Depth_Blend: 0
     - _DetailNormalMapScale: 1
     - _DstBlend: 1
+    - _DstBlendAlpha: 1
     - _Float0: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -134,6 +135,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
     - _Surface: 1
     - _Switch_Alpha: 1
     - _TransAmbient: 0.2

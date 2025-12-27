@@ -142,6 +142,7 @@ Material:
     - PixelSnap: 0
     - _Alpha: 1
     - _AlphaClip: 0
+    - _AlphaToMask: 0
     - _Blend: 2
     - _BlendOp: 0
     - _Brightness: 0
@@ -162,6 +163,7 @@ Material:
     - _DistortionStrength: 1
     - _DistortionStrengthScaled: 0
     - _DstBlend: 1
+    - _DstBlendAlpha: 1
     - _EmissionEnabled: 0
     - _EnableExternalAlpha: 0
     - _FlipbookBlending: 0
@@ -190,6 +192,7 @@ Material:
     - _SoftParticlesNearFadeDistance: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0

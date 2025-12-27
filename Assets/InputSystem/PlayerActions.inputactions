@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "PlayerActions",
     "maps": [
         {
@@ -114,18 +115,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Target",
+                    "name": "Skill1",
                     "type": "Button",
-                    "id": "43b99b7b-ca7a-4ef6-9d13-2751c2d2b3aa",
+                    "id": "b97db0db-4f74-415d-99bf-8b754bfa6827",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Skill1",
+                    "name": "Target",
                     "type": "Button",
-                    "id": "b97db0db-4f74-415d-99bf-8b754bfa6827",
+                    "id": "43b99b7b-ca7a-4ef6-9d13-2751c2d2b3aa",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",

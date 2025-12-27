@@ -119,6 +119,7 @@ Material:
     - _Dissolve: 1
     - _DissolveType: 2
     - _DstBlend: 1
+    - _DstBlendAlpha: 1
     - _Fresnel: 5
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -133,6 +134,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
     - _Surface: 1
     - _Switch_Alpha: 0
     - _UVSec: 0
