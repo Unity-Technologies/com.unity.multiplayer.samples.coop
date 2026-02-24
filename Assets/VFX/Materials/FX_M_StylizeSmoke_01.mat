@@ -130,6 +130,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _Dissolve: 0.35
     - _DstBlend: 10
+    - _DstBlendAlpha: 10
     - _Flowintencity: 0.15
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -152,6 +153,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
     - _StepSubtract: 1
     - _Surface: 1
     - _UVSec: 0

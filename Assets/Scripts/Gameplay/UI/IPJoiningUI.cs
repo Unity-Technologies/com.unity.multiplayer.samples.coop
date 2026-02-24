@@ -47,8 +47,8 @@ namespace Unity.BossRoom.Gameplay.UI
         /// </summary>
         public void SanitizeIPInputText()
         {
-            m_IPInputField.text = IPUIMediator.SanitizeIP(m_IPInputField.text);
-            m_JoinButton.interactable = IPUIMediator.AreIpAddressAndPortValid(m_IPInputField.text, m_PortInputField.text);
+            //m_IPInputField.text = IPUIMediator.SanitizeIP(m_IPInputField.text);
+            //m_JoinButton.interactable = IPUIMediator.AreIpAddressAndPortValid(m_IPInputField.text, m_PortInputField.text);
         }
 
         /// <summary>
