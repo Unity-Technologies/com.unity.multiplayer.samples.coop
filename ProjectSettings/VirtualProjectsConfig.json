@@ -1,4 +1,10 @@
 {
-  "PlayerTags": [],
+  "PlayerTags": [
+    "A",
+    "ABC 123",
+    "!@##$",
+    "AAAABBBBCCCCDDDDEEEE",
+    "my tag"
+  ],
   "version": "6000.5.0b2"
 }
