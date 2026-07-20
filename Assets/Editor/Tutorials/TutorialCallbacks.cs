@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEditor;
-using Unity.Tutorials.Core.Editor;
+
 
 namespace Unity.Netcode.Samples.BossRoom
 {
@@ -27,7 +27,7 @@ namespace Unity.Netcode.Samples.BossRoom
         /// <returns>The created asset</returns>
         public static ScriptableObject CreateAndShowAsset(string assetPath = null)
         {
-            assetPath = assetPath ?? $"{TutorialEditorUtils.GetActiveFolderPath()}/{k_DefaultFileName}.asset";
+            assetPath = assetPath ?? $"{Unity.Tutorials.Editor.TutorialEditorUtils.GetActiveFolderPath()}/{k_DefaultFileName}.asset";
             var asset = CreateInstance<TutorialCallbacks>();
             AssetDatabase.CreateAsset(asset, AssetDatabase.GenerateUniqueAssetPath(assetPath));
             EditorUtility.FocusProjectWindow(); // needed in order to make the selection of newly created asset to really work
@@ -35,9 +35,9 @@ namespace Unity.Netcode.Samples.BossRoom
             return asset;
         }
 
-        public void StartTutorial(Tutorial tutorial)
+        public void StartTutorial(Unity.Tutorials.Editor.Tutorial tutorial)
         {
-            TutorialWindow.StartTutorial(tutorial);
+            Unity.Tutorials.Editor.TutorialWindow.StartTutorial(tutorial);
         }
 
         public bool IsConnectedToUgs()
@@ -52,7 +52,7 @@ namespace Unity.Netcode.Samples.BossRoom
 
         public void OpenURL(string url)
         {
-            TutorialEditorUtils.OpenUrl(url);
+            Unity.Tutorials.Editor.TutorialEditorUtils.OpenUrl(url);
         }
 
         public void LoadStartupScene()
