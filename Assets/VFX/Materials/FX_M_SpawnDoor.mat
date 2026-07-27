@@ -177,6 +177,7 @@ Material:
     - _DistortionStrength: 500
     - _DistortionStrengthScaled: 50
     - _DstBlend: 1
+    - _DstBlendAlpha: 1
     - _EmissionEnabled: 1
     - _EnableExternalAlpha: 0
     - _FlipbookBlending: 0
@@ -205,6 +206,7 @@ Material:
     - _SoftParticlesNearFadeDistance: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
