@@ -9,6 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [unreleased] yyyy-mm-dd
 
 ### Changed
+* Upgraded editor version to 6000.3.20f1 and upgraded Boss Room to Netcode for GameObjects v2.13.1 (#890)
 * Moved behaviour of client-side visual Components to OnNetworkPostSpawn method to prevent race conditions on other NetworkBehaviours that initialize on OnNetworkSpawn (#925)
 * Responsibility of the initialization of an Avatar's GUID is now deferred to ServerBossRoomState component (#925) This allows the Avatar's NetworkBehaviours to read the GUID value at spawn time.
 

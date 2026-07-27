@@ -170,7 +170,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "2.13.0",
+      "version": "2.13.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -385,7 +385,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "2.7.3",
+      "version": "2.7.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {
